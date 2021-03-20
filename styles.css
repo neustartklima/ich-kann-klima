@@ -1,0 +1,111 @@
+html body {
+  font: 18px Arial,Helvetica,sans-serif;
+  padding: 2%;
+}
+
+h1 {
+  display: inline-block;
+  color: black;
+  background-color: yellow;
+  margin: 2em 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 50px;
+}
+
+p {
+  display: inline-block;
+}
+p::after {
+  content: " ";
+  display: table;
+}
+
+#question {
+  font-size: 40px;
+  background: green;
+  color: white;
+  padding: .3em .5em;
+}
+
+#infos {
+  display: inline-block;
+  position: relative;
+  top: -2.5em;
+  left: -1em;
+}
+
+#infos:hover p {
+  display: inline-block;
+}
+
+#infos span {
+  display: inline-block;
+  background-color: white;
+  text-align: center;
+  font: 28px Courier, serif;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border: 2px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#infos p {
+  display: none;
+  background-color: white;
+  position: absolute;
+  padding: 15px;
+  font-size: 24px;
+  top: -5px;
+  left: -5px;
+}
+
+#slider {
+  padding: 5px;
+  background: white;
+  width: 60%;
+  margin: 3em auto;
+  border: 2px solid black;
+}
+
+#slider .handle {
+  display: inline-block;
+  position: absolute;
+  background: white;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: 2px solid black;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#slider select {
+  display: none;
+}
+
+#result {
+  background: white;
+  font-size: 32px;
+  padding: .3em .5em;
+  margin-left: 50%;
+}
+
+.city-img {
+  position: absolute;
+  z-index: -1;
+}
+
+.city-img div {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-size: cover;
+  background-position: 50%;
+  z-index: -1;
+}

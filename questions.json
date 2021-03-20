@@ -1,0 +1,13 @@
+[
+  {
+    "question": "Wie soll Deutschland mit Autos mit Verbrennungsmotor umgehen?",
+    "detailsLink": "Autos mit Verbrennungsmotor tragen einen erheblichen Anteil am CO2 Ausstoß bei.",
+    "answers": [
+      "Verbrenner weiter steuerbegünstigen",
+      "Steuerbegünstigungen nur für Elektroautos",
+      "Verkauf von Verbrennern ab 2040 verbieten",
+      "Verkauf von Verbrennern ab 2025 verbieten"
+    ],
+    "images": ["Mit-Auto.jpg", "Ohne-Auto.jpg"]
+  }
+]
