@@ -35,6 +35,9 @@ async function showQuestions(questions) {
 
 async function handleQuestion(questions, questionNo) {
   if (questionNo >= questions.length) {
+    document.querySelectorAll(".city-img").forEach(el => el.remove())
+    const img = "https://steemitimages.com/DQmTKDdDwzdnR35krM1TPjGYs2HMwEEZgxGdZPSwUU5es3q/green-city.jpg"
+    addBgImg(img, true)
     document.body.classList.toggle("show-total-results")
   } else {
     const question = questions[questionNo]
@@ -48,18 +51,20 @@ async function handleQuestion(questions, questionNo) {
   }
 }
 
+function addBgImg(img, isFirst) {
+  const url = img.match(/^https?:\/\//) ? img : "img/" + img
+  const container = document.createElement("div")
+  container.setAttribute("class", "city-img")
+  container.setAttribute("style", "opacity: " + (isFirst ? 1 : 0))
+  const image = document.createElement("div")
+  image.setAttribute("style", `background-image: url(${url})`)
+  container.appendChild(image)
+  document.body.appendChild(container)
+}
+
 async function replaceImages(images) {
   const oldImages = document.querySelectorAll(".city-img")
-  images.forEach((img, index) => {
-    const url = img.match(/^https?:\/\//) ? img : "img/" + img
-    const container = document.createElement("div")
-    container.setAttribute("class", "city-img")
-    container.setAttribute("style", "opacity: " + (index === 0 ? 1 : 0))
-    const image = document.createElement("div")
-    image.setAttribute("style", `background-image: url(${url})`)
-    container.appendChild(image)
-    document.body.appendChild(container)
-  })
+  images.forEach((img, index) => addBgImg(img, index === 0))
   oldImages.forEach(el => el.remove())
 }
 

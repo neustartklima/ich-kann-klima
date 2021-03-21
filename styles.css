@@ -141,3 +141,12 @@ button {
 .show-total-results #questions {
   display: none;
 }
+
+#total-results a {
+  display: block;
+}
+
+#restart {
+  margin-top: 2em;
+  display: block;
+}
