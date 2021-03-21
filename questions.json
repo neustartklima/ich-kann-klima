@@ -3,12 +3,12 @@
     "question": "Individuelle Mobilität: Wie soll Deutschland mit Autos mit Verbrennungsmotoren umgehen?",
     "detailsLink": "Autos mit Verbrennungsmotor tragen einen erheblichen Anteil am CO2 Ausstoß bei.",
     "answers": [
-      { "text": "Keine Antriebsart sollte bevorzugt behandelt werden", "co2": 0 },
+      { "text": "Keine Antriebsart sollte bevorzugt behandelt werden", "co2": -1 },
       { "text": "Keine Verbote. Steuervorteile soll es sowohl für Diesel als auch Hybride und Elektroautos geben.", "co2": 0 },
-      { "text": "Keine Verbote. Stärkere Förderung für Elektroautos. Verbrenner sollen, je nach Gewicht, höher besteuert werden", "co2": 0 },
-      { "text": "Ab 2035 sollten keine Verbrenner mehr verkauft werden dürfen, ab 2040 auch keine Hybride mehr", "co2": 0 },
-      { "text": "Ab 2030 sollen nur noch voll emissionsfreie Autos verkauft werden dürfen", "co2": 0 },
-      { "text": "grünes Methanol kann die herkömmliche Infrastruktur nutzen", "co2": 0 }
+      { "text": "Keine Verbote. Stärkere Förderung für Elektroautos. Verbrenner sollen, je nach Gewicht, höher besteuert werden", "co2": 1 },
+      { "text": "Ab 2035 sollten keine Verbrenner mehr verkauft werden dürfen, ab 2040 auch keine Hybride mehr", "co2": 2 },
+      { "text": "Ab 2030 sollen nur noch voll emissionsfreie Autos verkauft werden dürfen", "co2": 3 },
+      { "text": "grünes Methanol kann die herkömmliche Infrastruktur nutzen", "co2": 4 }
     ],
     "images": [
       "Mit-Verbrenner.jpg",
