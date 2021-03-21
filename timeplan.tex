@@ -1,0 +1,42 @@
+\documentclass{standalone}
+
+\usepackage{pgfgantt}
+
+\begin{document}
+\begin{ganttchart}[
+    time slot format=little-endian,
+    time slot unit=day,
+    hgrid,
+    x unit=2mm,
+  ]{01.04.2020}{30.09.2020}
+  \gantttitlecalendar{month, week} \\
+    \ganttgroup{Implementierung}{01.04.2020}{31.07.2020} \\
+      \ganttbar{Domain registrieren}{01.04.2020}{14.04.2020} \\ 
+      \ganttbar{Technologie Festlegung}{07.04.2020}{21.04.2020} \\ 
+      \ganttbar{Implementierung Prototyp}{14.04.2020}{30.06.2020} \\ 
+      \ganttmilestone{Interner Probebetrieb}{30.06.2020} \\ 
+      \ganttbar{Implementierung Feedback Präsentation}{01.07.2020}{13.07.2020} \\ 
+      \ganttmilestone{Freundeskreis Test?}{14.07.2020} \\ 
+      \ganttbar{Finalisierung}{26.07.2020}{31.07.2020} \\ 
+      \ganttmilestone{Online!}{01.08.2020} \\ 
+      \ganttbar{Wartung}{14.07.2020}{26.09.2020} \\ 
+    \ganttgroup{Inhalt}{01.04.2020}{14.07.2020} \\
+      \ganttbar{Recherche Parteiziele}{01.04.2020}{30.04.2020} \\ 
+      \ganttbar{Recherche Klimaabkommen}{01.04.2020}{30.04.2020} \\ 
+      \ganttbar{Recherche Maßnahmen Impact}{01.05.2020}{31.05.2020} \\ 
+      \ganttbar{Entscheidung gemeinsame Maßnahmen}{01.06.2020}{07.06.2020} \\ 
+      \ganttbar{Vorschlag Fragenkatalog}{08.06.2020}{30.06.2020} \\ 
+      \ganttbar{Abschätzung Maßnahmenauswirkung}{01.07.2020}{14.07.2020} \\ 
+    \ganttgroup{Design}{01.04.2020}{25.07.2020} \\
+      \ganttbar{Designvorschlag}{01.04.2020}{30.04.2020} \\ 
+      \ganttbar{Website Design}{01.05.2020}{30.05.2020} \\ 
+      \ganttbar{Background Grafik/Animation}{01.06.2020}{25.07.2020} \\ 
+    \ganttgroup{Öffentlichkeitsarbeit}{01.07.2020}{30.09.2020} \\
+      \ganttbar{Banner vorbereiten}{01.07.2020}{31.07.2020} \\ 
+      \ganttbar{Communities pitchen (FFX, etc)}{21.07.2020}{7.08.2020} \\ 
+      \ganttbar{Radiosender ansprechen}{01.08.2020}{07.08.2020} \\ 
+      \ganttbar{Sticker}{01.08.2020}{31.08.2020} \\ 
+      \ganttbar{Abschlussstatistik}{27.09.2020}{30.09.2020} \\ 
+    \ganttvrule{Bundestagswahl}{26.09.2020}
+\end{ganttchart}
+\end{document}
