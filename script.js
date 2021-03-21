@@ -10,7 +10,8 @@ const elems = {
 elems.sliderSelect = elems.slider.querySelector("select")
 elems.sliderSelect.addEventListener("change", changeSlider)
 elems.sliderHandle = elems.slider.querySelector(".handle")
-elems.slider.addEventListener("mousedown", startSliderMove)
+elems.slider.addEventListener("mousedown", startSliderMove, { passive: true })
+elems.slider.addEventListener("touchstart", startSliderMove, { passive: true })
 
 loadQuestions()
   .then(showQuestions)
@@ -97,11 +98,13 @@ function startSliderMove() {
 
   function removeHandler() {
     document.removeEventListener("mousemove", handleMove)
-    document.removeEventListener("mouseup", removeHandler)
+    document.removeEventListener("touchmove", handleMove)
   }
 
-  document.addEventListener("mousemove", handleMove)
-  document.addEventListener("mouseup", removeHandler)
+  document.addEventListener("mousemove", handleMove, { passive: true })
+  document.addEventListener("touchmove", handleMove, { passive: true })
+  document.addEventListener("mouseup", removeHandler, { passive: true, once: true })
+  document.addEventListener("touchup", removeHandler, { passive: true, once: true })
 }
 
 function preloadImages(images) {
