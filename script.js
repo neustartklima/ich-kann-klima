@@ -38,8 +38,10 @@ async function handleQuestion(questions, questionNo) {
     document.querySelectorAll(".city-img").forEach(el => el.remove())
     const img = "https://steemitimages.com/DQmTKDdDwzdnR35krM1TPjGYs2HMwEEZgxGdZPSwUU5es3q/green-city.jpg"
     addBgImg(img, true)
-    document.body.classList.toggle("show-total-results")
+    document.body.classList.add("show-total-results")
   } else {
+    document.body.classList.remove("show-total-results")
+
     const question = questions[questionNo]
     elems.question.innerText = question.question
     elems.infos.querySelector("p").innerText = question.detailsLink
