@@ -24,7 +24,7 @@ p::after {
 
 #question {
   font-size: 40px;
-  background: green;
+  background: #E91D63;
   color: white;
   padding: .3em .5em;
 }
@@ -132,6 +132,10 @@ button {
 
 #total-results {
   display: none;
+  margin: 10%;
+  padding: 10%;
+  background-color: #E91D63;
+  font-size: 28px;
 }
 
 .show-total-results #total-results {
@@ -148,6 +152,10 @@ button {
   text-decoration: none;
   color: black;
   line-height: 2em;
+}
+
+#total-results a img {
+  width: 32px;
 }
 
 #restart {
