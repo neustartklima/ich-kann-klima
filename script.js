@@ -27,6 +27,7 @@ async function loadQuestions() {
 
 async function showQuestions(questions) {
   let questionNo = 0
+  preloadImages(questions.flatMap(q => q.images))
 
   elems.prev.addEventListener("click", () => handleQuestion(questions, --questionNo))
   elems.next.addEventListener("click", () => handleQuestion(questions, ++questionNo))
@@ -48,7 +49,7 @@ async function handleQuestion(questions, questionNo) {
 
 async function replaceImages(images) {
   const oldImages = document.querySelectorAll(".city-img")
-  await Promise.all(images.map((img, index) => new Promise((resolve) => {
+  images.forEach((img, index) => {
     const url = img.match(/^https?:\/\//) ? img : "img/" + img
     const container = document.createElement("div")
     container.setAttribute("class", "city-img")
@@ -56,11 +57,8 @@ async function replaceImages(images) {
     const image = document.createElement("div")
     image.setAttribute("style", `background-image: url(${url})`)
     container.appendChild(image)
-    const bgImg = document.createElement("img")
-    bgImg.addEventListener("load", () => resolve())
-    bgImg.setAttribute("src", url)
     document.body.appendChild(container)
-  })))
+  })
   oldImages.forEach(el => el.remove())
 }
 
@@ -73,6 +71,7 @@ async function setupSlider(answers) {
   })
   elems.sliderSelect.selectedIndex = 0
   changeSlider()
+  elems.sliderHandle.setAttribute("style", "left: " + elems.slider.offsetLeft + "px")
 }
 
 function changeSlider() {
@@ -103,4 +102,10 @@ function startSliderMove() {
 
   document.addEventListener("mousemove", handleMove)
   document.addEventListener("mouseup", removeHandler)
+}
+
+function preloadImages(images) {
+  images.forEach((img) => {
+    document.createElement("img").src = img.match(/^https?:\/\//) ? img : "img/" + img
+  })
 }
