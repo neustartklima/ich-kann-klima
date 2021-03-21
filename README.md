@@ -16,7 +16,7 @@ Und das Ganze spielerisch!
 
 Teste Dein Können und finde heraus, ob Du einen besseren Plan von Klimapolitik hast als Merkel, Habeck und Co.
 
-*Ich kann Klima* führt Dich durch 12 Bereiche - vom Verkehr über die Energie bis hin zur Landwirtschaft -
+**Ich kann Klima** führt Dich durch 12 Bereiche - vom Verkehr über die Energie bis hin zur Landwirtschaft -
 und überlässt es Dir, was Deutschland tun soll, um die Klimakatastrophe abzuwenden.
 
 Am Ende erfährst Du, ob du einfallsloser bist als die AfD oder kosteneffektiver als die Grünen.
