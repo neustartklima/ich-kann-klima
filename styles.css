@@ -110,3 +110,21 @@ p::after {
   background-position: 50%;
   z-index: -1;
 }
+
+.button-bar {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+}
+
+button {
+  font-size: 24px;
+  padding: .5em 2em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#next {
+  float: right;
+}

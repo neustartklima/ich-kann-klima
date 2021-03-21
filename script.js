@@ -42,14 +42,14 @@ async function handleQuestion(questions, questionNo) {
   await replaceImages(question.images)
   await setupSlider(question.answers)
 
-  elems.prev.setAttribute("disabled", questionNo === 0)
-  elems.next.setAttribute("disabled", questionNo === questions.length)
+  elems.prev.disabled = questionNo === 0
+  elems.next.disabled = questionNo === questions.length - 1
 }
 
 async function replaceImages(images) {
   const oldImages = document.querySelectorAll(".city-img")
   await Promise.all(images.map((img, index) => new Promise((resolve) => {
-    const url = "img/" + img
+    const url = img.match(/^https?:\/\//) ? img : "img/" + img
     const container = document.createElement("div")
     container.setAttribute("class", "city-img")
     container.setAttribute("style", "opacity: " + (index === 0 ? 1 : 0))

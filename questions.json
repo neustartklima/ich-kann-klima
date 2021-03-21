@@ -1,13 +1,46 @@
 [
   {
-    "question": "Wie soll Deutschland mit Autos mit Verbrennungsmotor umgehen?",
+    "question": "Individuelle Mobilität: Wie soll Deutschland mit Autos mit Verbrennungsmotoren umgehen?",
     "detailsLink": "Autos mit Verbrennungsmotor tragen einen erheblichen Anteil am CO2 Ausstoß bei.",
     "answers": [
-      "Verbrenner weiter steuerbegünstigen",
-      "Steuerbegünstigungen nur für Elektroautos",
-      "Verkauf von Verbrennern ab 2040 verbieten",
-      "Verkauf von Verbrennern ab 2025 verbieten"
+      "Keine Antriebsart sollte bevorzugt behandelt werden",
+      "Keine Verbote. Steuervorteile soll es sowohl für Diesel als auch Hybride und Elektroautos geben.",
+      "Keine Verbote. Stärkere Förderung für Elektroautos. Verbrenner sollen, je nach Gewicht, höher besteuert werden",
+      "Ab 2035 sollten keine Verbrenner mehr verkauft werden dürfen, ab 2040 auch keine Hybride mehr",
+      "Ab 2030 sollen nur noch voll emissionsfreie Autos verkauft werden dürfen",
+      "grünes Methanol kann die herkömmliche Infrastruktur nutzen"
     ],
-    "images": ["Mit-Verbrenner.jpg", "Mit-Auto.jpg", "Ohne-Auto.jpg"]
+    "images": [
+      "Mit-Verbrenner.jpg",
+      "Mit-Auto.jpg",
+      "Ohne-Auto.jpg"
+    ]
+  },{
+    "question": "Stromproduktion: Wie soll Deutschland seinen Strom gewinnen?",
+    "detailsLink": "Strom aus fossilen Brennstoffen erzeugt viel CO2",
+    "answers": [
+      "Status Quo: Bis spätestens 2038 Ausstieg aus der Kohle; dafür erhalten die Betreiber hohe Entschädigungen fürs Abschalten",
+      "Keine Verbote. Der Energiemix wird dem Markt überlassen",
+      "Kohleausstieg bis 2033, mit Entschädigungen für Betreiber. Massive Investitionen in Erneuerbare. Gas darf weiter verfeuert werden",
+      "Bis 2030 soll der Strom vollständig erneuerbar sein, dafür subventionieren wir Windräder, Sonnenenergie und Wasserstoff."
+    ],
+    "images": [
+      "https://magazin-forum.de/sites/default/files/2018-04/16_KuK_05.jpg",
+      "https://www.dw.com/image/16040728_401.jpg",
+      "https://www.ndr.de/nachrichten/mecklenburg-vorpommern/energie153_v-contentgross.jpg"
+    ]
+  },{
+    "question": "Wärme: Wie heizen wir unsere Wohnungen und Büros?",
+    "detailsLink": "",
+    "answers": [
+      "Freier Markt: Sämtliche Förderungen (Sanierung, KfW, KWK, EEG) werden zurückgenommen",
+      "Status Quo: Weiter wie bisher",
+      "Moderater Ausbau der Förderung für Dämmung",
+      "Deutlicher Ausbau der Förderung für Dämmung. Förderung erneuerbarer Heiztechnologien und dezentraler KWK"
+    ],
+    "images": [
+      "https://3.bp.blogspot.com/-7NuprqWHxxM/T2S6TV3S6uI/AAAAAAAAGyU/X-8xdKcjXts/s1600/image_109.jpg",
+      "https://www.australiansolarquotes.com.au/wp-content/uploads/2015/03/rooftop-solar-power.gif"
+    ]
   }
 ]
