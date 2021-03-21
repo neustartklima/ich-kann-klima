@@ -8,18 +8,15 @@ h1 {
   display: inline-block;
   color: black;
   background-color: yellow;
-  margin: 2em 50%;
-  transform: translateX(-50%);
+  margin: 2em 0 1em 10%;
   white-space: nowrap;
   font-size: 50px;
 }
 
-p {
-  display: inline-block;
-}
-p::after {
-  content: " ";
-  display: table;
+#questions {
+  min-height: calc(100% - 20em);
+  position: relative;
+  padding-bottom: 7em;
 }
 
 #question {
@@ -61,6 +58,7 @@ p::after {
   font-size: 24px;
   top: -5px;
   left: -5px;
+  z-index: 9999;
 }
 
 #slider {
@@ -92,7 +90,7 @@ p::after {
   background: white;
   font-size: 32px;
   padding: .3em .5em;
-  margin-left: 50%;
+  margin-left: 5em;
 }
 
 .city-img {
@@ -151,7 +149,7 @@ button {
   font-size: 28px;
   text-decoration: none;
   color: black;
-  line-height: 2em;
+  margin-bottom: .7em;
 }
 
 #total-results a img {
@@ -161,4 +159,31 @@ button {
 #restart {
   margin-top: 2em;
   display: block;
+}
+
+
+@media (max-width: 769px) {
+  html body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  #question {
+    font-size: 28px;
+  }
+
+  #result {
+    font-size: 24px;
+  }
+
+  button {
+    font-size: 18px; 
+  }
+
+  #total-results a {
+    font-size: 20px;
+  }
 }
