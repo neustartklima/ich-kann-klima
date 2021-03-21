@@ -144,6 +144,10 @@ button {
 
 #total-results a {
   display: block;
+  font-size: 28px;
+  text-decoration: none;
+  color: black;
+  line-height: 2em;
 }
 
 #restart {

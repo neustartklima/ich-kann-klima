@@ -3,12 +3,12 @@
     "question": "Individuelle Mobilität: Wie soll Deutschland mit Autos mit Verbrennungsmotoren umgehen?",
     "detailsLink": "Autos mit Verbrennungsmotor tragen einen erheblichen Anteil am CO2 Ausstoß bei.",
     "answers": [
-      "Keine Antriebsart sollte bevorzugt behandelt werden",
-      "Keine Verbote. Steuervorteile soll es sowohl für Diesel als auch Hybride und Elektroautos geben.",
-      "Keine Verbote. Stärkere Förderung für Elektroautos. Verbrenner sollen, je nach Gewicht, höher besteuert werden",
-      "Ab 2035 sollten keine Verbrenner mehr verkauft werden dürfen, ab 2040 auch keine Hybride mehr",
-      "Ab 2030 sollen nur noch voll emissionsfreie Autos verkauft werden dürfen",
-      "grünes Methanol kann die herkömmliche Infrastruktur nutzen"
+      { "text": "Keine Antriebsart sollte bevorzugt behandelt werden", "co2": 0 },
+      { "text": "Keine Verbote. Steuervorteile soll es sowohl für Diesel als auch Hybride und Elektroautos geben.", "co2": 0 },
+      { "text": "Keine Verbote. Stärkere Förderung für Elektroautos. Verbrenner sollen, je nach Gewicht, höher besteuert werden", "co2": 0 },
+      { "text": "Ab 2035 sollten keine Verbrenner mehr verkauft werden dürfen, ab 2040 auch keine Hybride mehr", "co2": 0 },
+      { "text": "Ab 2030 sollen nur noch voll emissionsfreie Autos verkauft werden dürfen", "co2": 0 },
+      { "text": "grünes Methanol kann die herkömmliche Infrastruktur nutzen", "co2": 0 }
     ],
     "images": [
       "Mit-Verbrenner.jpg",
@@ -19,10 +19,10 @@
     "question": "Stromproduktion: Wie soll Deutschland seinen Strom gewinnen?",
     "detailsLink": "Strom aus fossilen Brennstoffen erzeugt viel CO2",
     "answers": [
-      "Status Quo: Bis spätestens 2038 Ausstieg aus der Kohle; dafür erhalten die Betreiber hohe Entschädigungen fürs Abschalten",
-      "Keine Verbote. Der Energiemix wird dem Markt überlassen",
-      "Kohleausstieg bis 2033, mit Entschädigungen für Betreiber. Massive Investitionen in Erneuerbare. Gas darf weiter verfeuert werden",
-      "Bis 2030 soll der Strom vollständig erneuerbar sein, dafür subventionieren wir Windräder, Sonnenenergie und Wasserstoff."
+      { "text": "Status Quo: Bis spätestens 2038 Ausstieg aus der Kohle; dafür erhalten die Betreiber hohe Entschädigungen fürs Abschalten", "co2": 0 },
+      { "text": "Keine Verbote. Der Energiemix wird dem Markt überlassen", "co2": 0 },
+      { "text": "Kohleausstieg bis 2033, mit Entschädigungen für Betreiber. Massive Investitionen in Erneuerbare. Gas darf weiter verfeuert werden", "co2": 0 },
+      { "text": "Bis 2030 soll der Strom vollständig erneuerbar sein, dafür subventionieren wir Windräder, Sonnenenergie und Wasserstoff.", "co2": 0 }
     ],
     "images": [
       "https://magazin-forum.de/sites/default/files/2018-04/16_KuK_05.jpg",
@@ -33,10 +33,10 @@
     "question": "Wärme: Wie heizen wir unsere Wohnungen und Büros?",
     "detailsLink": "",
     "answers": [
-      "Freier Markt: Sämtliche Förderungen (Sanierung, KfW, KWK, EEG) werden zurückgenommen",
-      "Status Quo: Weiter wie bisher",
-      "Moderater Ausbau der Förderung für Dämmung",
-      "Deutlicher Ausbau der Förderung für Dämmung. Förderung erneuerbarer Heiztechnologien und dezentraler KWK"
+      { "text": "Freier Markt: Sämtliche Förderungen (Sanierung, KfW, KWK, EEG) werden zurückgenommen", "co2": 0 },
+      { "text": "Status Quo: Weiter wie bisher", "co2": 0 },
+      { "text": "Moderater Ausbau der Förderung für Dämmung", "co2": 0 },
+      { "text": "Deutlicher Ausbau der Förderung für Dämmung. Förderung erneuerbarer Heiztechnologien und dezentraler KWK", "co2": 0 }
     ],
     "images": [
       "https://3.bp.blogspot.com/-7NuprqWHxxM/T2S6TV3S6uI/AAAAAAAAGyU/X-8xdKcjXts/s1600/image_109.jpg",

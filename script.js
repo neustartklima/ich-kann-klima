@@ -72,7 +72,7 @@ async function setupSlider(answers) {
   elems.sliderSelect.innerHTML = ''
   answers.forEach((answer) => {
     const option = document.createElement("option")
-    option.innerText = answer
+    option.innerText = answer.text
     elems.sliderSelect.appendChild(option)
   })
   elems.sliderSelect.selectedIndex = 0
