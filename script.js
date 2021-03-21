@@ -1,12 +1,6 @@
-const elems = {
-  question: document.querySelector("#question"),
-  infos: document.querySelector("#infos"),
-  slider: document.querySelector("#slider"),
-  result: document.querySelector("#result"),
-  prev: document.querySelector("#prev"),
-  next: document.querySelector("#next"),
-}
-
+const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart"]
+  .map((id) => ({[id]: document.querySelector("#" + id)}))))
+  
 elems.sliderSelect = elems.slider.querySelector("select")
 elems.sliderSelect.addEventListener("change", changeSlider)
 elems.sliderHandle = elems.slider.querySelector(".handle")
@@ -28,24 +22,30 @@ async function loadQuestions() {
 
 async function showQuestions(questions) {
   let questionNo = 0
+  const gotoPage = (pageNo) => handleQuestion(questions, questionNo = pageNo)
+  
   preloadImages(questions.flatMap(q => q.images))
 
-  elems.prev.addEventListener("click", () => handleQuestion(questions, --questionNo))
-  elems.next.addEventListener("click", () => handleQuestion(questions, ++questionNo))
+  elems.prev.addEventListener("click", () => gotoPage(questionNo - 1), { passive: true })
+  elems.next.addEventListener("click", () => gotoPage(questionNo + 1), { passive: true })
+  elems.restart.addEventListener("click", () => gotoPage(0), { passive: true })
 
   handleQuestion(questions, questionNo = 0)
 }
 
 async function handleQuestion(questions, questionNo) {
-  const question = questions[questionNo]
-  elems.question.innerText = question.question
-  elems.infos.querySelector("p").innerText = question.detailsLink
-  
-  await replaceImages(question.images)
-  await setupSlider(question.answers)
+  if (questionNo >= questions.length) {
+    document.body.classList.toggle("show-total-results")
+  } else {
+    const question = questions[questionNo]
+    elems.question.innerText = question.question
+    elems.infos.querySelector("p").innerText = question.detailsLink
+    
+    await replaceImages(question.images)
+    await setupSlider(question.answers)
 
-  elems.prev.disabled = questionNo === 0
-  elems.next.disabled = questionNo === questions.length - 1
+    elems.prev.disabled = questionNo === 0
+  }
 }
 
 async function replaceImages(images) {

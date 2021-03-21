@@ -1,28 +1,36 @@
 <html>
   <head>
-    <title>Der Klimawahl-Rechner</title>
+    <title>Ich kann Klima!</title>
     <link href="styles.css" rel="stylesheet">
   </head>
   <body>
 
-    <h1>Der Klimawahl-Rechner</h1>
+    <h1>Ich kann Klima!</h1>
 
-    <p id="question"></p>
-    <div id="infos">
-      <span>i</span>
-      <p></p>
+    <div id="questions">
+      <p id="question"></p>
+      <div id="infos">
+        <span>i</span>
+        <p></p>
+      </div>
+
+      <div id="slider">
+        <select></select>
+        <div class="handle"></div>
+      </div>
+
+      <p id="result"></p>
+
+      <div class="button-bar">
+        <button id="prev">Zurück</button>
+        <button id="next">Weiter</button>
+      </div>
     </div>
 
-    <div id="slider">
-      <select></select>
-      <div class="handle"></div>
-    </div>
+    <div id="total-results">
+      <p>Du kannst Klima!</p>
 
-    <p id="result"></p>
-
-    <div class="button-bar">
-      <button id="prev">Zurück</button>
-      <button id="next">Weiter</button>
+      <button id="restart">Noch mal</button>
     </div>
 
     <script src="script.js" type="module"></script>
