@@ -20,9 +20,9 @@
     "detailsLink": "Strom aus fossilen Brennstoffen erzeugt viel CO2",
     "answers": [
       { "text": "Status Quo: Bis spätestens 2038 Ausstieg aus der Kohle; dafür erhalten die Betreiber hohe Entschädigungen fürs Abschalten", "co2": 0 },
-      { "text": "Keine Verbote. Der Energiemix wird dem Markt überlassen", "co2": 0 },
-      { "text": "Kohleausstieg bis 2033, mit Entschädigungen für Betreiber. Massive Investitionen in Erneuerbare. Gas darf weiter verfeuert werden", "co2": 0 },
-      { "text": "Bis 2030 soll der Strom vollständig erneuerbar sein, dafür subventionieren wir Windräder, Sonnenenergie und Wasserstoff.", "co2": 0 }
+      { "text": "Keine Verbote. Der Energiemix wird dem Markt überlassen", "co2": -2 },
+      { "text": "Kohleausstieg bis 2033, mit Entschädigungen für Betreiber. Massive Investitionen in Erneuerbare. Gas darf weiter verfeuert werden", "co2": 2 },
+      { "text": "Bis 2030 soll der Strom vollständig erneuerbar sein, dafür subventionieren wir Windräder, Sonnenenergie und Wasserstoff.", "co2": 4 }
     ],
     "images": [
       "https://magazin-forum.de/sites/default/files/2018-04/16_KuK_05.jpg",
@@ -33,10 +33,10 @@
     "question": "Wärme: Wie heizen wir unsere Wohnungen und Büros?",
     "detailsLink": "",
     "answers": [
-      { "text": "Freier Markt: Sämtliche Förderungen (Sanierung, KfW, KWK, EEG) werden zurückgenommen", "co2": 0 },
       { "text": "Status Quo: Weiter wie bisher", "co2": 0 },
-      { "text": "Moderater Ausbau der Förderung für Dämmung", "co2": 0 },
-      { "text": "Deutlicher Ausbau der Förderung für Dämmung. Förderung erneuerbarer Heiztechnologien und dezentraler KWK", "co2": 0 }
+      { "text": "Freier Markt: Sämtliche Förderungen (Sanierung, KfW, KWK, EEG) werden zurückgenommen", "co2": -2 },
+      { "text": "Moderater Ausbau der Förderung für Dämmung", "co2": 1 },
+      { "text": "Deutlicher Ausbau der Förderung für Dämmung. Förderung erneuerbarer Heiztechnologien und dezentraler KWK", "co2": 3 }
     ],
     "images": [
       "https://3.bp.blogspot.com/-7NuprqWHxxM/T2S6TV3S6uI/AAAAAAAAGyU/X-8xdKcjXts/s1600/image_109.jpg",
