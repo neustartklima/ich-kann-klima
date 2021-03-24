@@ -1,6 +1,12 @@
-const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart"]
+import Thermometer from "./Thermometer.js"
+
+const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "capillary"]
   .map((id) => ({[id]: document.querySelector("#" + id)}))))
-  
+
+const selectedOption = () => elems.sliderSelect.options[elems.sliderSelect.selectedIndex]
+const changeSlider = () => elems.result.innerText = selectedOption().innerText
+let thermometer
+    
 elems.sliderSelect = elems.slider.querySelector("select")
 elems.sliderSelect.addEventListener("change", changeSlider)
 elems.sliderHandle = elems.slider.querySelector(".handle")
@@ -25,10 +31,14 @@ async function showQuestions(questions) {
   const gotoPage = (pageNo) => handleQuestion(questions, questionNo = pageNo)
   
   preloadImages(questions.flatMap(q => q.images))
+  thermometer = Thermometer(elems.capillary, questions)
 
   elems.prev.addEventListener("click", () => gotoPage(questionNo - 1), { passive: true })
   elems.next.addEventListener("click", () => gotoPage(questionNo + 1), { passive: true })
-  elems.restart.addEventListener("click", () => gotoPage(0), { passive: true })
+  elems.restart.addEventListener("click", () => {
+    thermometer = Thermometer(elems.capillary, questions)
+    gotoPage(0)
+  }, { passive: true })
 
   handleQuestion(questions, questionNo = 0)
 }
@@ -75,15 +85,12 @@ async function setupSlider(answers) {
   answers.forEach((answer) => {
     const option = document.createElement("option")
     option.innerText = answer.text
+    option.setAttribute("value", answer.co2)
     elems.sliderSelect.appendChild(option)
   })
   elems.sliderSelect.selectedIndex = 0
   changeSlider()
   elems.sliderHandle.setAttribute("style", "left: " + elems.slider.offsetLeft + "px")
-}
-
-function changeSlider() {
-  elems.result.innerText = elems.sliderSelect.options[elems.sliderSelect.selectedIndex].innerText
 }
 
 function startSliderMove() {
@@ -93,7 +100,9 @@ function startSliderMove() {
   function handleMove(event) {
     const pos = Math.max(Math.min((event.clientX - offset) / width, 1), 0)
     elems.sliderHandle.setAttribute("style", "left: " + (pos * width + offset) + "px")
+    thermometer.addCO2Reduction(+selectedOption().value)
     elems.sliderSelect.selectedIndex = Math.round(pos * (elems.sliderSelect.options.length - 1))
+    thermometer.addCO2Reduction(-selectedOption().value)
     changeSlider()
     const images = document.querySelectorAll(".city-img")
     images.forEach((img, index) => {
