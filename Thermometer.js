@@ -9,7 +9,6 @@ export default function Thermometer(el, questions) {
   let factor = 10 / (max - min)
   let value = 10 + min * factor
 
-  console.log({factor, value, min, max})
   el.setAttribute("height", value)
 
   return {
