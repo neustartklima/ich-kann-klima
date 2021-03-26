@@ -1,28 +1,30 @@
-export default function(el, answers, onChange) {
-  const offset = el.offsetLeft
-  const width = el.clientWidth - 40
-  const sliderSelect = el.querySelector("select")
-  const sliderHandle = el.querySelector(".handle")
+export default function(el, answers, onChange, testParams = {}) {
+  const document = el.ownerDocument
+  const options = answers.map((answer) => {
+    const selected = answer.co2 === 0 ? ' selected' : ''
+    return `<option value="${answer.co2}"${selected}>${answer.text}</option>`
+  }).join("\n")
+  el.innerHTML = `<select>${options}</select><div class="handle"></div>`
+
+  const select = el.querySelector("select")
+  const handle = el.querySelector(".handle")
+  const handleWidth = handle.clientWidth || testParams.handleWidth
+  const left = el => el.offsetLeft + (el.offsetParent ? left(el.offsetParent) : 0)
+  const clientLeft = left(el)
+  const offset = el.offsetLeft || testParams.left
+  const width = (el.clientWidth || testParams.width) - handleWidth
   let currentValue = 0
 
-  sliderSelect.addEventListener("change", update)
+  select.addEventListener("change", update)
   el.addEventListener("mousedown", startSliderMove, { passive: true })
   el.addEventListener("touchstart", startSliderMove, { passive: true })
 
-  sliderSelect.innerHTML = ''
-  answers.forEach((answer) => {
-    const option = document.createElement("option")
-    option.innerText = answer.text
-    option.setAttribute("value", answer.co2)
-    answer.co2 && option.setAttribute("selected", true)
-    sliderSelect.appendChild(option)
-  })
-  sliderSelect.selectedIndex = 0
-  sliderHandle.setAttribute("style", "left: " + offset + "px")
+  const pos = select.selectedIndex / (select.options.length - 1)
+  handle.setAttribute("style", "left: " + (pos * width + offset) + "px")
   setTimeout(update, 0)
 
   function selectedOption() {
-    return sliderSelect.options[sliderSelect.selectedIndex]
+    return select.options[select.selectedIndex]
   }
 
   function update() {
@@ -33,9 +35,9 @@ export default function(el, answers, onChange) {
 
   function startSliderMove() {
     function handleMove(event) {
-      const pos = Math.max(Math.min((event.clientX - offset) / width, 1), 0)
-      sliderHandle.setAttribute("style", "left: " + (pos * width + offset) + "px")
-      sliderSelect.selectedIndex = Math.round(pos * (sliderSelect.options.length - 1))
+      const pos = Math.max(Math.min((event.clientX - clientLeft - handleWidth / 2) / width, 1), 0)
+      handle.setAttribute("style", "left: " + (pos * width + offset) + "px")
+      select.selectedIndex = Math.round(pos * (select.options.length - 1))
       update()
     }
   
@@ -51,9 +53,9 @@ export default function(el, answers, onChange) {
   }
 
   return {
-    getPosition: () => sliderSelect.selectedIndex,
-    getPercent: () => sliderSelect.selectedIndex / (answers.length - 1),
-    getValue: () => selectedOption().value,
-    getText: () => selectedOption().innerText,
+    getPosition: () => select.selectedIndex,
+    getPercent: () => select.selectedIndex / (answers.length - 1),
+    getValue: () => +selectedOption().value,
+    getText: () => selectedOption().text,
   }
 }
