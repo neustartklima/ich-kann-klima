@@ -71,10 +71,11 @@ h1 {
 }
 
 #slider {
-  padding: 5px;
+  box-sizing: border-box;
+  padding: 5px 0;
   background: white;
   width: 60%;
-  margin: 3em auto;
+  margin: 3em 20%;
   border: 2px solid grey;
   border-radius: 5px;
   box-shadow: 0 0 20px #E91D63;

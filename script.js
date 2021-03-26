@@ -1,17 +1,22 @@
 import Thermometer from "./Thermometer.js"
+import Slider from "./Slider.js"
 
 const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "capillary"]
   .map((id) => ({[id]: document.querySelector("#" + id)}))))
 
-const selectedOption = () => elems.sliderSelect.options[elems.sliderSelect.selectedIndex]
-const changeSlider = () => elems.result.innerText = selectedOption().innerText
 let thermometer
-    
-elems.sliderSelect = elems.slider.querySelector("select")
-elems.sliderSelect.addEventListener("change", changeSlider)
-elems.sliderHandle = elems.slider.querySelector(".handle")
-elems.slider.addEventListener("mousedown", startSliderMove, { passive: true })
-elems.slider.addEventListener("touchstart", startSliderMove, { passive: true })
+let slider
+
+function sliderChange(change) {
+  thermometer.addCO2Reduction(change)
+  elems.result.innerText = slider.getText()
+  const images = document.querySelectorAll(".city-img")
+  images.forEach((img, index) => {
+    const opacity = Math.max(0, 1 - Math.abs(slider.getPercent() * (images.length - 1) - index))
+    const style = img.getAttribute("style").replace(/opacity: [\d.]+/, "opacity: " + opacity)
+    img.setAttribute("style", style)
+  })
+}
 
 loadQuestions()
   .then(showQuestions)
@@ -57,7 +62,7 @@ async function handleQuestion(questions, questionNo) {
     elems.infos.querySelector("p").innerText = question.detailsLink
     
     await replaceImages(question.images)
-    await setupSlider(question.answers)
+    slider = Slider(document.getElementById("slider"), question.answers, sliderChange)
 
     elems.prev.disabled = questionNo === 0
   }
@@ -78,49 +83,6 @@ async function replaceImages(images) {
   const oldImages = document.querySelectorAll(".city-img")
   images.forEach((img, index) => addBgImg(img, index === 0))
   oldImages.forEach(el => el.remove())
-}
-
-async function setupSlider(answers) {
-  elems.sliderSelect.innerHTML = ''
-  answers.forEach((answer) => {
-    const option = document.createElement("option")
-    option.innerText = answer.text
-    option.setAttribute("value", answer.co2)
-    elems.sliderSelect.appendChild(option)
-  })
-  elems.sliderSelect.selectedIndex = 0
-  changeSlider()
-  elems.sliderHandle.setAttribute("style", "left: " + elems.slider.offsetLeft + "px")
-}
-
-function startSliderMove() {
-  const offset = elems.slider.offsetLeft
-  const width = elems.slider.clientWidth - 40
-
-  function handleMove(event) {
-    const pos = Math.max(Math.min((event.clientX - offset) / width, 1), 0)
-    elems.sliderHandle.setAttribute("style", "left: " + (pos * width + offset) + "px")
-    thermometer.addCO2Reduction(+selectedOption().value)
-    elems.sliderSelect.selectedIndex = Math.round(pos * (elems.sliderSelect.options.length - 1))
-    thermometer.addCO2Reduction(-selectedOption().value)
-    changeSlider()
-    const images = document.querySelectorAll(".city-img")
-    images.forEach((img, index) => {
-      const opacity = Math.max(0, 1 - Math.abs(pos * (images.length - 1) - index))
-      const style = img.getAttribute("style").replace(/opacity: [\d.]+/, "opacity: " + opacity)
-      img.setAttribute("style", style)
-    })
-  }
-
-  function removeHandler() {
-    document.removeEventListener("mousemove", handleMove)
-    document.removeEventListener("touchmove", handleMove)
-  }
-
-  document.addEventListener("mousemove", handleMove, { passive: true })
-  document.addEventListener("touchmove", handleMove, { passive: true })
-  document.addEventListener("mouseup", removeHandler, { passive: true, once: true })
-  document.addEventListener("touchup", removeHandler, { passive: true, once: true })
 }
 
 function preloadImages(images) {
