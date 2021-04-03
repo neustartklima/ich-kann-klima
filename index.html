@@ -31,19 +31,7 @@
           <p id="result"></p>
         </div>
 
-        <div>
-          <svg xmlns="http://www.w3.org/2000/svg" id="thermometer" viewBox="0 0 140 512">
-            <path id="scale" d="m80 64h20M80 96 h10M80 128h10M80 160h10M80 192h10M80 224h20M80 256h10M80 288h10M80 320h10M80 352h10M80 384h20"/>
-            <rect id="background" rx="16" ry="16" height="400" width="32" y="32" x="48"/>
-            <g id="bulb">
-              <rect rx="0" ry="0" height="64" width="32" y="384" x="48"/>
-              <path d="m96 448a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z"/>
-            </g>
-            <!-- set the height attribute to something between 0 and 10.  Can be floating-point. -->
-            <rect id="capillary" transform="scale(-1 -32)" rx="0" ry="0" height="5" width="32" y="-12" x="-80"/>
-            <path id="body" d="m64 32c-8.864 0-16 7.136-16 16v372.28c-9.564 5.54-16 15.88-16 27.72 0 17.66 14.336 32 32 32s32-14.34 32-32c0-11.84-6.436-22.18-16-27.72v-372.28c0-8.864-7.136-16-16-16z"/>
-          </svg>
-        </div>
+        <div id="thermometer"></div>
       </div>
 
       <div class="button-bar">

@@ -1,7 +1,7 @@
-import Thermometer from "./Thermometer.js"
+import Thermometer from "./components/CO2Thermometer.js"
 import Slider from "./Slider.js"
 
-const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "capillary"]
+const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "thermometer"]
   .map((id) => ({[id]: document.querySelector("#" + id)}))))
 
 let thermometer
@@ -36,12 +36,12 @@ async function showQuestions(questions) {
   const gotoPage = (pageNo) => handleQuestion(questions, questionNo = pageNo)
   
   preloadImages(questions.flatMap(q => q.images))
-  thermometer = Thermometer(elems.capillary, questions)
+  thermometer = Thermometer(elems.thermometer, questions)
 
   elems.prev.addEventListener("click", () => gotoPage(questionNo - 1), { passive: true })
   elems.next.addEventListener("click", () => gotoPage(questionNo + 1), { passive: true })
   elems.restart.addEventListener("click", () => {
-    thermometer = Thermometer(elems.capillary, questions)
+    thermometer = Thermometer(elems.thermometer, questions)
     gotoPage(0)
   }, { passive: true })
 

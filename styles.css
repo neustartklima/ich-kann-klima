@@ -121,34 +121,6 @@ h1 {
   z-index: -1;
 }
 
-#thermometer {
-  height: 60vh;
-  margin: 40px 0;
-}
-
-#thermometer #scale {
-  stroke: white;
-  stroke-width: 4;
-  fill: none;
-}
-
-#thermometer #background {
-  fill: #eeeeec;
-}
-
-#thermometer #bulb,
-#thermometer #capillary {
-  fill: #E91D63;
-}
-
-#thermometer #body {
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  stroke-width: 4;
-  stroke: black;
-  fill: none;
-}
-
 .button-bar {
   position: absolute;
   bottom: 20px;
