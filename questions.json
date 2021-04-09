@@ -4,7 +4,7 @@
     "detailsLink": "Autos mit Verbrennungsmotor tragen einen erheblichen Anteil am CO2 Ausstoß bei.",
     "answers": [
       { "text": "Abschaffung der Mineralölsteuer / Ausbau von Straßen", "co2": -1 },
-      { "text": "Alles bleibt so wie es ist. Co2 Steuer gilt nicht für Kraftstoffe", "co2": 0 },
+      { "text": "Alles bleibt so wie es ist. CO2 Steuer gilt nicht für Kraftstoffe", "co2": 0 },
       { "text": "Autos in Innenstädten verbieten", "co2": 1 },
       { "text": "Abschaffung von Diesel / Dienstwagen Privilegien", "co2": 2 },
       { "text": "Ab 2030 sollen nur noch voll emissionsfreie Autos verkauft werden dürfen", "co2": 3 },

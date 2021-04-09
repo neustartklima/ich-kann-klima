@@ -1,14 +1,16 @@
-import Thermometer from "./components/CO2Thermometer.js"
-import Slider from "./Slider.js"
+import Thermometer from "./src/components/Thermometer.js"
+import Slider from "./src/components/Slider.js"
+import CO2Value from "./src/CO2Value.js"
 
 const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "thermometer"]
   .map((id) => ({[id]: document.querySelector("#" + id)}))))
 
 let thermometer
 let slider
+let co2Value
 
 function sliderChange(change) {
-  thermometer.addCO2Reduction(change)
+  co2Value.add(change)
   elems.result.innerText = slider.getText()
   const images = document.querySelectorAll(".city-img")
   images.forEach((img, index) => {
@@ -36,12 +38,14 @@ async function showQuestions(questions) {
   const gotoPage = (pageNo) => handleQuestion(questions, questionNo = pageNo)
   
   preloadImages(questions.flatMap(q => q.images))
-  thermometer = Thermometer(elems.thermometer, questions)
+  co2Value = CO2Value(questions)
+  thermometer = await Thermometer(elems.thermometer, co2Value)
 
   elems.prev.addEventListener("click", () => gotoPage(questionNo - 1), { passive: true })
   elems.next.addEventListener("click", () => gotoPage(questionNo + 1), { passive: true })
-  elems.restart.addEventListener("click", () => {
-    thermometer = Thermometer(elems.thermometer, questions)
+  elems.restart.addEventListener("click", async () => {
+    co2Value = CO2Value(questions)
+    thermometer = await Thermometer(elems.thermometer, co2Value)
     gotoPage(0)
   }, { passive: true })
 

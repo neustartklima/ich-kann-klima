@@ -2,7 +2,7 @@ import "should"
 import Sinon from "sinon"
 import "should-sinon"
 import { JSDOM } from "jsdom"
-import Slider from "../Slider.js"
+import Slider from "./Slider.js"
 
 const answers = [
   { co2: 2, text: "first" },
