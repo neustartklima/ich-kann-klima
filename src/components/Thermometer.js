@@ -11,12 +11,12 @@ export default async function(el, observablePercentage) {
 
   const clampPercent = clamp(0, 100)
 
-  function setValue(value) {
-    capillary && capillary.setAttribute("height", clampPercent(value.getValue()) / 10)
+  function setValue(observable) {
+    capillary && capillary.setAttribute("height", clampPercent(observable.value) / 10)
   }
 
   return {
-    getValue: observablePercentage.getValue,
+    getValue: () => observablePercentage.value,
 
     destroy: () => observablePercentage.unsubscribe(setValue),
   }

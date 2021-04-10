@@ -8,11 +8,11 @@ const el = document.querySelector("#thermometer")
 
 describe("Thermometer", () => {
   let thermometer
-  let value
+  let percentage
   
   beforeEach(async () => {
-    value = Observable(20)
-    thermometer = await Thermometer(el, value)
+    percentage = Observable(20)
+    thermometer = await Thermometer(el, percentage)
   })
 
   afterEach(() => {
@@ -28,14 +28,14 @@ describe("Thermometer", () => {
   })
 
   it("should adapt height of capillary", () => {
-    value.setValue(80)
+    percentage.value = 80
     el.querySelector(".capillary").getAttribute("height").should.equal("8")
   })
 
   it("should clamp values outside of the range", () => {
-    value.setValue(-10)
+    percentage.value = -10
     el.querySelector(".capillary").getAttribute("height").should.equal("0")
-    value.setValue(120)
+    percentage.value = 120
     el.querySelector(".capillary").getAttribute("height").should.equal("10")
   })
 })

@@ -1,5 +1,4 @@
 const isBrowser = (new Function("try {return this===window;}catch(e){ return false;}"))()
-console.log("Runs in " + (isBrowser ? "browser" : "nodejs"))
 
 export async function loadFile(name) {
   if (isBrowser) {
