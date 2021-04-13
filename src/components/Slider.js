@@ -35,6 +35,7 @@ export default function(el, answers, onChange, testParams = {}) {
 
   function startSliderMove() {
     function handleMove(event) {
+      event.preventDefault()
       const pos = Math.max(Math.min((event.clientX - clientLeft - handleWidth / 2) / width, 1), 0)
       handle.setAttribute("style", "left: " + (pos * width + offset) + "px")
       select.selectedIndex = Math.round(pos * (select.options.length - 1))
@@ -46,10 +47,10 @@ export default function(el, answers, onChange, testParams = {}) {
       document.removeEventListener("touchmove", handleMove)
     }
   
-    document.addEventListener("mousemove", handleMove, { passive: true })
-    document.addEventListener("touchmove", handleMove, { passive: true })
+    document.addEventListener("mousemove", handleMove, { passive: false })
+    document.addEventListener("touchmove", handleMove, { passive: false })
     document.addEventListener("mouseup", removeHandler, { passive: true, once: true })
-    document.addEventListener("touchup", removeHandler, { passive: true, once: true })
+    document.addEventListener("touchend", removeHandler, { passive: true, once: true })
   }
 
   return {
