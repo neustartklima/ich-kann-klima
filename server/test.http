@@ -1,0 +1,5 @@
+GET http://localhost:3000/laws
+
+###
+
+POST http://localhost:3000/simulations
