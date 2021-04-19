@@ -1,43 +1,32 @@
-import { v4 as uuid } from "uuid"
-import { LawId } from "../server/laws/index"
-
-export type SimulationId = string
-
-export type Simulation = {
-  id: SimulationId
-  laws: LawReference[],
-  currentYear: number
-}
-
-type LawReference = {
-  lawId: LawId,
-  effectiveSince: number
-}
-
-export function startSimulation() {
-  const simulation: Simulation = {
-    id: uuid(),
-    laws: [],
-    currentYear: 2021,
-  }
-
-  return getCurrentValues(simulation.id)
-}
-
-export function getCurrentValues(simulationId: SimulationId) {
-  return {
-    simulationId,
-    co2Emmissions: 805, // in mio t co2 equivalents in 2019, source https://www.bundesregierung.de/breg-de/aktuelles/bilanz-umweltbundesamt-1730880
-    stateDebt: 1899,   // in 10^9€ in 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands
-    unemployment: 2695, // in thousands in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
-    gdp: 3332, // in 10^9€ in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
-  }
-}
+import laws, { LawId } from "../server/laws/index"
+import { initialValues } from "./Model"
+import { getById, save, Simulation, SimulationId } from "./Simulation"
 
 export function acceptLaw(simulationId: SimulationId, lawId: LawId) {
+  const simulation = getById(simulationId)
+  if (simulation.laws.some((lawRef) => lawRef.lawId === lawId)) {
+    throw { httpStatus: 409, message: "Law is already in effect" }
+  }
+  simulation.laws.push({ lawId, effectiveSince: simulation.year })
+  save(simulation)
+  return simulation
+}
 
+function calculateValues(simulation: Simulation) {
+  //  calcluate values for current year
+  simulation.currentValues = initialValues()
+  simulation.laws.forEach((lawRef) => {
+    const law = laws.getById(lawRef.lawId)
+    Object.keys(law.effectOn).forEach((name) => {
+      simulation.currentValues[name] += law.effectOn[name]
+    })
+  })
 }
 
 export function completeYear(simulationId: SimulationId) {
-
+  const simulation = getById(simulationId)
+  simulation.year++
+  calculateValues(simulation)
+  save(simulation)
+  return simulation
 }

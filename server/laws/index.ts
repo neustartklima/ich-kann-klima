@@ -1,11 +1,16 @@
 import fs from 'fs'
+import { ModelValues } from '../Model'
 
 export type LawId = number
 
-export type Law = {
-  id: LawId
+export type LawDef = {
   title: string
-  effectiveFrom?: Date
+  description?: string
+  effectOn: Partial<ModelValues>
+}
+
+export type Law = LawDef & {
+  id: LawId
 }
 
 const laws = [] as Law[]
