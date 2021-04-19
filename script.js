@@ -1,6 +1,6 @@
-import Thermometer from "./src/components/Thermometer.js"
-import Slider from "./src/components/Slider.js"
-import CO2Value from "./src/CO2Value.js"
+import Thermometer from "./frontend/components/Thermometer.js"
+import Slider from "./frontend/components/Slider.js"
+import CO2Value from "./frontend/CO2Value.js"
 
 const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "thermometer"]
   .map((id) => ({[id]: document.querySelector("#" + id)}))))
