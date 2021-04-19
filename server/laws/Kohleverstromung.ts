@@ -1,8 +1,13 @@
-import { Simulation } from "../Simulator"
+import { LawDef } from "."
 
 export default {
   title: "Die Verstromung von Kohle zur Erzeugung von Strom wird verboten.",
   description: "Die Verstromung von Kohle zur Erzeugung von Strom wird verboten.",
 
-  apply(simulation: Simulation) {},
-}
+  effectOn: {
+    co2emmissions: -200,
+    stateDebt: -1000, // compensation, in Mio €
+    unemployment: 20 + 60 / 2, // direct, indirect, in thousands
+    gdp: -200,
+  },
+} as LawDef

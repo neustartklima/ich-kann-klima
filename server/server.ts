@@ -1,6 +1,7 @@
 import express from "express"
 import laws from "./laws/index"
-import { startSimulation, getCurrentValues, acceptLaw, completeYear } from "./Simulator"
+import { create, getById } from "./Simulation"
+import { acceptLaw, completeYear } from "./Simulator"
 
 const port = process.env.PORT || 3000
 const app = express()
@@ -10,19 +11,20 @@ function jsonResponse(func: (req: express.Request) => unknown) {
     try {
       res.json(func(req))
     } catch (error) {
-      res.send(error.httpStatus || 500).json({ error })
+      console.error(error)
+      res.status(error.httpStatus || 500).json({ error })
     }
   }
 }
 
-app.post("/simulations", jsonResponse(startSimulation))
+app.post("/simulations", jsonResponse(create))
 app.get("/laws", jsonResponse(laws.getAll))
 app.get(
   "/simulations/:simulationId",
-  jsonResponse((req) => getCurrentValues(req.params.simulationId))
+  jsonResponse((req) => getById(req.params.simulationId))
 )
 app.post(
-  "/simulations/:simulationId/proposal/:lawId/",
+  "/simulations/:simulationId/proposals/:lawId/",
   jsonResponse((req) => acceptLaw(req.params.simulationId, +req.params.lawId))
 )
 app.post(
