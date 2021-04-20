@@ -41,6 +41,7 @@
   },
   "mocha": {
     "spec": "frontend/**/*.spec.js",
-    "exit": true
+    "exit": true,
+    "require": ["esm"]
   }
 }
