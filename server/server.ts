@@ -1,34 +1,12 @@
-import express from "express"
+import APIServer from "./lib/APIServer"
 import laws from "./laws/index"
-import * as Simulation from "./Simulation"
-import * as Simulator from "./Simulator"
+import { create, getById } from "./Simulation"
+import { acceptLaw, advanceYear } from "./Simulator"
 
-const port = process.env.PORT || 3000
-const app = express()
-
-function json(func: (req: express.Request) => unknown) {
-  return function (req: express.Request, res: express.Response): void {
-    try {
-      res.json(func(req))
-    } catch (error) {
-      console.error(error)
-      res.status(error.httpStatus || 500).json({ error })
-    }
-  }
-}
-
-const getAllLawProposals = json(laws.getAll)
-const startNewSimulation = json(Simulation.create)
-const getSimulation = json((req) => Simulation.getById(req.params.simId))
-const acceptLawProposal = json((req) => Simulator.acceptLaw(req.params.simId, +req.params.lawId))
-const advanceYear = json((req) => Simulator.advanceYear(req.params.simId))
-
-app.get("/laws", getAllLawProposals)
-app.post("/simulations", startNewSimulation)
-app.get("/simulations/:simId", getSimulation)
-app.post("/simulations/:simId/proposals/:lawId/", acceptLawProposal)
-app.post("/simulations/:simId/years", advanceYear)
-
-app.listen(port, () => {
-  console.log(`Listening on http://localhost/${port}`)
+APIServer(+process.env.PORT || 3000, (server) => {
+  server.get("/laws", () => laws.getAll())
+  server.post("/simulations", () => create())
+  server.get("/simulations/:simId", (req) => getById(req.params.simId))
+  server.post("/simulations/:simId/proposals/:lawId/", (req) => acceptLaw(req.params.simId, +req.params.lawId))
+  server.post("/simulations/:simId/years", (req) => advanceYear(req.params.simId))  
 })
