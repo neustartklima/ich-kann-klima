@@ -1,15 +1,16 @@
-const values = {
-  co2Emmissions: 0, // in mio t co2 equivalents
-  stateDebt: 0, // in mrd €
-  unemployment: 0, // in thousands
-  gdp: 0, //in mrd €
+type MioTons = number
+type MrdEuro = number
+type TsdPeople = number
+type GWh = number
 
-  electrictyDemandTotal: 0, // in GWh
+export type ModelValues = {
+  co2Emmissions: MioTons
+  stateDebt: MrdEuro
+  unemployment: TsdPeople
+  gdp: MrdEuro
+
+  electrictyDemandTotal: GWh
 }
-
-export type ModelValues = typeof values
-
-export default values
 
 export function initialValues(): ModelValues {
   return {
