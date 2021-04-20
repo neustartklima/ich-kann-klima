@@ -1,12 +1,12 @@
 import express from "express"
 import laws from "./laws/index"
-import { create, getById } from "./Simulation"
-import { acceptLaw, completeYear } from "./Simulator"
+import * as Simulation from "./Simulation"
+import * as Simulator from "./Simulator"
 
 const port = process.env.PORT || 3000
 const app = express()
 
-function jsonResponse(func: (req: express.Request) => unknown) {
+function json(func: (req: express.Request) => unknown) {
   return function (req: express.Request, res: express.Response): void {
     try {
       res.json(func(req))
@@ -17,20 +17,17 @@ function jsonResponse(func: (req: express.Request) => unknown) {
   }
 }
 
-app.post("/simulations", jsonResponse(create))
-app.get("/laws", jsonResponse(laws.getAll))
-app.get(
-  "/simulations/:simulationId",
-  jsonResponse((req) => getById(req.params.simulationId))
-)
-app.post(
-  "/simulations/:simulationId/proposals/:lawId/",
-  jsonResponse((req) => acceptLaw(req.params.simulationId, +req.params.lawId))
-)
-app.post(
-  "/simulations/:simulationId/years",
-  jsonResponse((req) => completeYear(req.params.simulationId))
-)
+const getAllLawProposals = json(laws.getAll)
+const startNewSimulation = json(Simulation.create)
+const getSimulation = json((req) => Simulation.getById(req.params.simId))
+const acceptLawProposal = json((req) => Simulator.acceptLaw(req.params.simId, +req.params.lawId))
+const advanceYear = json((req) => Simulator.advanceYear(req.params.simId))
+
+app.get("/laws", getAllLawProposals)
+app.post("/simulations", startNewSimulation)
+app.get("/simulations/:simId", getSimulation)
+app.post("/simulations/:simId/proposals/:lawId/", acceptLawProposal)
+app.post("/simulations/:simId/years", advanceYear)
 
 app.listen(port, () => {
   console.log(`Listening on http://localhost/${port}`)

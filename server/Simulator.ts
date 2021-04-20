@@ -23,7 +23,7 @@ function calculateValues(simulation: Simulation) {
   })
 }
 
-export function completeYear(simulationId: SimulationId) {
+export function advanceYear(simulationId: SimulationId) {
   const simulation = getById(simulationId)
   simulation.year++
   calculateValues(simulation)

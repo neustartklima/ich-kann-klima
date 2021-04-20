@@ -1,6 +1,6 @@
 {
   "name": "ich-kann-klima",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Das Klimawahl Challenge Game",
   "scripts": {
     "test": "mocha",
