@@ -14,7 +14,8 @@ function json(func: HandlerFunc) {
       res.json(func(req))
     } catch (error) {
       console.error(error)
-      next({ httpStatus: error.httpStatus || 500, message: error.toString() })
+      error.httpStatus = error.httpStatus || 500
+      next(error)
     }
   }
 }
@@ -38,7 +39,7 @@ export default function (port: number, connectRoutes: ConnectRoutesFunc) {
   app.use((error: ServerError, req: Request, res: Response, next: NextFunction) => {
     res.status(error.httpStatus || 500).json({ error })
   })
-  
+
   app.listen(port, () => {
     console.log(`Listening on http://localhost/${port}`)
   })
