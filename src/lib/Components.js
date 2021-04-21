@@ -10,7 +10,7 @@ export async function loadFile(name) {
     console.error(`'${name}' could not be loaded (${response.status} ${response.statusText})`, content)
   } else {
     const { readFileSync } = await import("fs")
-    return readFileSync(name.replace(/^file:\/\//, "")).toString()
+    return readFileSync(name.replace(/^file:\/\/(\/([a-z]:\/))?/, "$2")).toString()
   }
 }
 
