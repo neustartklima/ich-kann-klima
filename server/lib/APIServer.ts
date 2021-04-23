@@ -1,3 +1,4 @@
+import path from "path"
 import express, { Request, Response, NextFunction } from "express"
 
 const app = express()
@@ -30,12 +31,17 @@ const serverFuncs = {
 
 type ConnectRoutesFunc = (server: typeof serverFuncs) => void
 
-export default function (port: number, connectRoutes: ConnectRoutesFunc) {
+const projectRoot = path.resolve(__dirname, "..", "..")
+export default function (port: number, connectRoutes: ConnectRoutesFunc): void {
+  app.use("/", express.static(path.resolve(projectRoot, "public")))
+  app.use("/", express.static(path.resolve(projectRoot, "dist")))
+
   connectRoutes(serverFuncs)
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     next({ httpStatus: 404, message: "path not found" })
   })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((error: ServerError, req: Request, res: Response, next: NextFunction) => {
     res.status(error.httpStatus || 500).json({ error })
   })

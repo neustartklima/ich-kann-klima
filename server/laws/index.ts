@@ -25,7 +25,7 @@ fs.readdirSync(__dirname).forEach(async entry => {
 })
 
 export default {
-  getAll() {
+  getAll(): Law[] {
     return laws
   },
 
