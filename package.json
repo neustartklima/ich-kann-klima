@@ -1,0 +1,20 @@
+{
+  "name": "ich-kann-klima",
+  "version": "1.0.0",
+  "description": "## Das Klimawahl Challenge Game",
+  "scripts": {
+    "build": "docker build -t ichkannklima .",
+    "start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neustartklima/ich-kann-klima.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neustartklima/ich-kann-klima/issues"
+  },
+  "homepage": "https://github.com/neustartklima/ich-kann-klima#readme"
+}

@@ -39,6 +39,7 @@ export default function (port: number, connectRoutes: ConnectRoutesFunc): void {
   })
   app.use("/", express.static(path.resolve(projectRoot, "frontend", "public")))
   app.use("/", express.static(path.resolve(projectRoot, "frontend", "dist")))
+  app.use("/", express.static(path.resolve(projectRoot, "frontend")))
 
   connectRoutes(serverFuncs)
 
