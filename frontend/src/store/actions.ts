@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
 import { LawId } from '../types';
-import { createCommand } from '.';
+import { createCommand, Command } from '.';
 import { lawAccepted } from './mutations';
 import { State } from './state';
 
@@ -10,4 +10,4 @@ export const actions: ActionTree<State, State> = {
   },
 };
 
-export const acceptLaw = (lawId: LawId) => createCommand('acceptLaw', { lawId });
+export const acceptLaw = (lawId: LawId): Command => createCommand('acceptLaw', { lawId });

@@ -6,8 +6,9 @@ import { state, State } from './state';
 
 export const key: InjectionKey<Store<State>> = Symbol();
 
-export const createCommand = (name: string, payload: Record<string, unknown>): Record<string, unknown> => ({ type: name, ...payload });
-export const createMutation = (name: string, payload: Record<string, unknown>): Record<string, unknown> => ({ type: name, ...payload });
+export type Command = { type: string }
+export const createCommand = (name: string, payload: Record<string, unknown>): Command => ({ type: name, ...payload });
+export const createMutation = (name: string, payload: Record<string, unknown>) => ({ type: name, ...payload });
 
 export const store = createStore<State>({
   state,
