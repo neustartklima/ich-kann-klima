@@ -1,4 +1,4 @@
-import laws, { LawId } from "../server/laws/index"
+import laws, { LawId } from "./laws/index"
 import { initialValues, ModelValues } from "./Model"
 import { getById, save, Simulation, SimulationId } from "./Simulation"
 

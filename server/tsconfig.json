@@ -4,7 +4,8 @@
     "module": "CommonJS",
     "esModuleInterop": true,
     "inlineSourceMap": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "outDir": "./dist"
   },
-  "include": ["**/*.ts", "frontend/CO2Value.spec.js"]
+  "include": ["**/*.ts"],
 }
