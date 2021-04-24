@@ -3,7 +3,7 @@
 This is a monorepo, containing both, server and frontend.
 So, to run #ich-kann-klima on your local machine, clone the repository, install dependencies in `/server` and `/frontend`, and start both, server and fronted:
 
-```
+```bash
 git clone https://github.com/neustartklima/ich-kann-klima.git
 cd ich-kann-klima
 
