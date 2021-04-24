@@ -1,6 +1,6 @@
-import Thermometer from "./old-frontend/components/Thermometer.js"
-import Slider from "./old-frontend/components/Slider.js"
-import CO2Value from "./old-frontend/CO2Value.js"
+import Thermometer from "./components/Thermometer.js"
+import Slider from "./components/Slider.js"
+import CO2Value from "./CO2Value.js"
 
 const elems = Object.assign({}, ...(["question", "infos", "slider", "result", "prev", "next", "restart", "thermometer"]
   .map((id) => ({[id]: document.querySelector("#" + id)}))))
@@ -73,7 +73,7 @@ async function handleQuestion(questions, questionNo) {
 }
 
 function addBgImg(img, isFirst) {
-  const url = img.match(/^https?:\/\//) ? img : "img/" + img
+  const url = img.match(/^https?:\/\//) ? img : "old-frontend/img/" + img
   const container = document.createElement("div")
   container.setAttribute("class", "city-img")
   container.setAttribute("style", "opacity: " + (isFirst ? 1 : 0))
@@ -91,6 +91,6 @@ async function replaceImages(images) {
 
 function preloadImages(images) {
   images.forEach((img) => {
-    document.createElement("img").src = img.match(/^https?:\/\//) ? img : "img/" + img
+    document.createElement("img").src = img.match(/^https?:\/\//) ? img : "old-frontend/img/" + img
   })
 }
