@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "mhutchie.git-graph",
+    "ms-vsliveshare.vsliveshare",
+    "shd101wyy.markdown-preview-enhanced",
+    "hbenl.vscode-mocha-test-adapter",
+    "davidanson.vscode-markdownlint",
+    "esbenp.prettier-vscode",
+    "rvest.vs-code-prettier-eslint",
+    "humao.rest-client",
+    "hbenl.vscode-test-explorer",
+    "octref.vetur"
+  ]
+}
