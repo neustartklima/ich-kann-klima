@@ -33,6 +33,10 @@ type ConnectRoutesFunc = (server: typeof serverFuncs) => void
 
 const projectRoot = path.resolve(__dirname, "..", "..")
 export default function (port: number, connectRoutes: ConnectRoutesFunc): void {
+  app.use((req, res, next) => {
+    console.debug(req.method + " " + req.path)
+    next()
+  })
   app.use("/", express.static(path.resolve(projectRoot, "frontend", "public")))
   app.use("/", express.static(path.resolve(projectRoot, "frontend", "dist")))
 
