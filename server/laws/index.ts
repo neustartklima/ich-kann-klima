@@ -24,12 +24,17 @@ fs.readdirSync(__dirname).forEach(async entry => {
   }
 })
 
+export interface LawController {
+  getAll(): Law[]
+  getById(lawId: LawId): Law | undefined
+}
+
 export default {
-  getAll(): Law[] {
+  getAll() {
     return laws
   },
 
-  getById(lawId: LawId): Law | undefined {
+  getById(lawId: LawId) {
     return laws.find((law) => law.id === lawId)
   }
 }
