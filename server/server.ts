@@ -1,12 +1,16 @@
+import express from "express"
+import lawController from "./laws"
+import SimulationController from "./Simulation"
 import APIServer from "./lib/APIServer"
-import laws from "./laws/index"
-import { create, getById } from "./Simulation"
-import { acceptLaw, advanceYear } from "./Simulator"
+import { connectRoutes } from "./router"
 
-APIServer(+(process.env.PORT || 3000), (server) => {
-  server.get("/laws", () => laws.getAll())
-  server.post("/simulations", () => create())
-  server.get("/simulations/:simId", (req) => getById(req.params.simId))
-  server.post("/simulations/:simId/proposals/:lawId/", (req) => acceptLaw(req.params.simId, +req.params.lawId))
-  server.post("/simulations/:simId/years", (req) => advanceYear(req.params.simId))
-})
+const port = +(process.env.PORT || 3000)
+const app = express()
+const simulationController = SimulationController()
+
+const server = APIServer(app)
+server.logAPICalls()
+server.connectStaticPaths()
+connectRoutes(app, lawController, simulationController)
+server.connectErrorHandlers()
+server.listenOnPort(port)
