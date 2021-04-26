@@ -1,7 +1,7 @@
 import { Router } from "express-serve-static-core"
 import { LawController } from "./laws/index"
 import { json } from "./lib/APIServer"
-import { SimulationController } from "./Simulation"
+import { SimulationController } from "./SimulationController"
 
 export function connectRoutes(router: Router, lawController: LawController, simulationController: SimulationController) {
   function getAllLaws() {

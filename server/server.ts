@@ -1,6 +1,6 @@
 import express from "express"
 import lawController from "./laws"
-import SimulationController from "./Simulation"
+import SimulationController from "./SimulationController"
 import APIServer from "./lib/APIServer"
 import { connectRoutes } from "./router"
 

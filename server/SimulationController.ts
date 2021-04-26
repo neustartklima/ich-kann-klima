@@ -1,8 +1,5 @@
-import fs from "fs"
-import path from "path"
-import { v4 as uuid } from "uuid"
 import laws, { LawId } from "./laws"
-import { ModelValues, initialValues } from "./Model"
+import { Model, ModelValues, initialValues } from "./Model"
 
 export type SimulationId = string
 
@@ -28,45 +25,35 @@ export interface SimulationController {
   advanceYear(simulationId: SimulationId): Simulation
 }
 
-function getFileNameAndPath(id: SimulationId): string {
-  return path.resolve(__dirname, "..", "data", id + ".json")
-}
-
 function calculateValues(simulation: Simulation) {
   //  calcluate values for current year
   simulation.currentValues = initialValues()
   simulation.laws.forEach((lawRef) => {
     const law = laws.getById(lawRef.lawId)
     if (law) {
-      (Object.keys(law.effectOn) as ModelKey[]).forEach((name) => {
+      ;(Object.keys(law.effectOn) as ModelKey[]).forEach((name) => {
         simulation.currentValues[name] += law.effectOn[name]! // eslint-disable-line @typescript-eslint/no-non-null-assertion
       })
     }
   })
 }
 
-export default function (): SimulationController {
+export default function (model: Model): SimulationController {
   return {
     create() {
-      return this.save({
-        simulationId: uuid(),
-        year: 2021,
-        currentValues: initialValues(),
-        laws: [],
-      })
+      return this.save(model.SimulationModel.initialValues())
     },
 
     getById(simulationId: SimulationId) {
-      const fileName = getFileNameAndPath(simulationId)
-      if (!fs.existsSync(fileName)) {
-        throw { httpStatus: 404 }
+      try {
+        return model.SimulationModel.getById(simulationId)
+      } catch (error) {
+        throw { httpStatus: 404, ...error }
       }
-      return JSON.parse(fs.readFileSync(fileName).toString())
     },
 
     save(simulation: Simulation) {
-      fs.writeFileSync(getFileNameAndPath(simulation.simulationId), JSON.stringify(simulation, null, 2))
-      return simulation
+      return model.SimulationModel.save(simulation)
     },
 
     acceptLaw(simulationId: SimulationId, lawId: LawId) {
