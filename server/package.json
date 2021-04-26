@@ -31,6 +31,7 @@
     "@types/sinon": "^10.0.0",
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^8.3.0",
+    "eslint": "^7.25.0",
     "esm": "^3.2.25",
     "jsdom": "^16.5.1",
     "mocha": "^8.3.2",

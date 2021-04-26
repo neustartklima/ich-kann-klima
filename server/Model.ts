@@ -1,3 +1,8 @@
+import fs from "fs"
+import path from "path"
+import { v4 as uuid } from "uuid"
+import { Simulation, SimulationId } from "./SimulationController"
+
 type MioTons = number
 type MrdEuro = number
 type TsdPeople = number
@@ -22,3 +27,38 @@ export function initialValues(): ModelValues {
     electrictyDemandTotal: 2300 // TODO source?
   }
 }
+
+function getFileNameAndPath(id: SimulationId): string {
+  return path.resolve(__dirname, "..", "data", id + ".json")
+}
+
+export const SimulationModel = {
+  initialValues(): Simulation {
+    return {
+      simulationId: uuid(),
+      year: 2021,
+      currentValues: initialValues(),
+      laws: [],
+    }
+  },
+
+  getById(simulationId: SimulationId): Simulation {
+    const fileName = getFileNameAndPath(simulationId)
+    if (!fs.existsSync(fileName)) {
+      throw { message: "simulation not found" }
+    }
+    return JSON.parse(fs.readFileSync(fileName).toString())
+  },
+
+  save(simulation: Simulation): Simulation {
+    fs.writeFileSync(getFileNameAndPath(simulation.simulationId), JSON.stringify(simulation, null, 2))
+    return simulation
+  },
+}
+
+const Model = {
+  SimulationModel,
+}
+
+export default Model
+export type Model = typeof Model
