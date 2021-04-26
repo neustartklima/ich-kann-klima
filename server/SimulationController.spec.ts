@@ -2,7 +2,6 @@ import "mocha"
 import "should-sinon"
 import Sinon from "sinon"
 import should from "should"
-import { Model } from "./Model"
 import SimulationController from "./SimulationController"
 
 describe("SimulationController", () => {
