@@ -53,28 +53,52 @@ describe("Server", () => {
     request = supertest(app)
   })
 
-  it("should have a route to get all proposed laws", async () => {
-    const response = await request.get("/laws")
-    response.should.be.ok()
-    response.body.should.deepEqual([law])
+  describe("GET /laws", () => {
+    it("should get all proposed laws", async () => {
+      const response = await request.get("/laws")
+      response.should.be.ok()
+      response.body.should.deepEqual([law])
+    })
   })
 
-  it("should have a route to create new simulations", async () => {
-    const response = await request.post("/simulations")
-    response.should.be.ok()
-    response.body.should.deepEqual(testSimulation)
+  describe("POST /simulations", () => {
+    it("should create a new simulation", async () => {
+      const response = await request.post("/simulations")
+      response.should.be.ok()
+      response.body.should.deepEqual(testSimulation)
+    })
   })
 
-  it("should have a route to get data from the given simulation", async () => {
-    const response = await request.get("/simulations/12345")
-    response.ok.should.be.true()
-    response.body.should.deepEqual(testSimulation)
+  describe("GET /simulation/:simId", () => {
+    it("should return data from the given simulation", async () => {
+      const response = await request.get("/simulations/12345")
+      response.ok.should.be.true()
+      response.body.should.deepEqual(testSimulation)
+    })
+  
+    it("should report non-existing simulations", async () => {
+      const response = await request.get("/simulations/1")
+      response.ok.should.be.false()
+      response.status.should.equal(404)
+      response.body.error.httpStatus.should.equal(404)
+    })
   })
 
-  it("should report non-existing simulations", async () => {
-    const response = await request.get("/simulations/1")
-    response.ok.should.be.false()
-    response.status.should.equal(404)
-    response.body.error.httpStatus.should.equal(404)
+  describe("POST //simulations/:simId/proposals/:lawId", () => {
+    it("should accept a law proposal", async () => {
+      const response = await request.post("/simulations/12345/proposals/42")
+      response.ok.should.be.true()
+      response.body.should.deepEqual({ ...testSimulation, laws: [{ lawId: 42, effectiveSince: 2021 }] })
+    })
+
+    it("should report non-existing laws")
+  })
+
+  describe("POST /simulations/:simId/years", () => {
+    it("should advance the year", async () => {
+      const response = await request.post("/simulations/12345/years")
+      response.ok.should.be.true()
+      response.body.should.deepEqual({ ...testSimulation, year: 2022 })
+    })
   })
 })

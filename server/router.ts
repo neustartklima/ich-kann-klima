@@ -27,6 +27,6 @@ export function connectRoutes(router: Router, lawController: LawController, simu
   router.get("/laws", getAllLaws())
   router.post("/simulations", createSimulation())
   router.get("/simulations/:simId", getSimulation())
-  router.post("/simulations/:simId/proposals/:lawId/", acceptLaw())
+  router.post("/simulations/:simId/proposals/:lawId", acceptLaw())
   router.post("/simulations/:simId/years", advanceYear())
 }
