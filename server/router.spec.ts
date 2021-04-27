@@ -3,10 +3,10 @@ import "should"
 import sinon from "sinon"
 import express from "express"
 import supertest from "supertest"
-import { connectRoutes } from "./router"
+import connectRoutes from "./router"
+import APIServer from "./lib/APIServer"
 import { LawId, LawController } from "./laws"
 import { Simulation, SimulationController, SimulationId } from "./SimulationController"
-import APIServer from "./lib/APIServer"
 
 const law = { id: 1, title: "test-law", effectOn: {} }
 const lawsController: LawController = {
