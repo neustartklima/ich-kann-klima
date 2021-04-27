@@ -27,22 +27,32 @@ export function json(func: HandlerFunc) {
   }
 }
 
-export default function (app: Application, logger: Logger = console) {
+export interface APIServer {
+  app: Application
+  logAPICalls(): void
+  connectStaticPaths(): void
+  connectErrorHandlers(): void
+  listenOnPort(port: number): void
+}
+
+export default function (app: Application, logger: Logger = console): APIServer {
   return {
-    logAPICalls(): void {
+    app,
+    
+    logAPICalls() {
       app.use((req: Request, res: Response, next: NextFunction) => {
         logger.debug(req.method + " " + req.path)
         next()
       })
     },
 
-    connectStaticPaths(): void {
+    connectStaticPaths() {
       staticPaths.forEach((staticPath) => {
         app.use(express.static(path.resolve(projectRoot, staticPath)))
       })
     },
 
-    connectErrorHandlers(): void {
+    connectErrorHandlers() {
       app.use((req: Request, res: Response, next: NextFunction) => {
         next({ httpStatus: 404, message: "path not found" })
       })
@@ -53,7 +63,7 @@ export default function (app: Application, logger: Logger = console) {
       })
     },
 
-    listenOnPort(port: number): void {
+    listenOnPort(port: number) {
       app.listen(port, () => {
         logger.info(`Listening on http://localhost/${port}`)
       })

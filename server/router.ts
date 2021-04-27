@@ -1,9 +1,9 @@
-import { Router } from "express-serve-static-core"
+import express from "express-serve-static-core"
 import { LawController } from "./laws/index"
 import { json } from "./lib/APIServer"
 import { SimulationController } from "./SimulationController"
 
-export function connectRoutes(router: Router, lawController: LawController, simulationController: SimulationController) {
+function router(router: express.Router, lawController: LawController, simulationController: SimulationController): void {
   function getAllLaws() {
     return json(() => lawController.getAll())
   }
@@ -30,3 +30,6 @@ export function connectRoutes(router: Router, lawController: LawController, simu
   router.post("/simulations/:simId/proposals/:lawId", acceptLaw())
   router.post("/simulations/:simId/years", advanceYear())
 }
+
+export default router
+export type Router = typeof router
