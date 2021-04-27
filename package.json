@@ -4,7 +4,8 @@
   "description": "## Das Klimawahl Challenge Game",
   "scripts": {
     "build": "docker build -t ichkannklima .",
-    "start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima"
+    "start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima",
+    "test": "cd server && npm test"
   },
   "repository": {
     "type": "git",
