@@ -1,13 +1,13 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Law } from '../types';
+import { defineComponent, PropType } from "vue"
+import { Law } from "../types"
 
 export default defineComponent({
   props: {
     title: String,
     laws: Array as PropType<Law[]>,
   },
-});
+})
 </script>
 
 <template>
@@ -40,5 +40,4 @@ h2 {
   margin-bottom: 1em;
   box-sizing: border-box;
 }
-
 </style>

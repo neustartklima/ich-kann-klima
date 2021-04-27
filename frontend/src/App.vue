@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
-import AcceptedLaws from './components/AcceptedLaws.vue';
-import CurrentIndicators from './components/CurrentIndicators.vue';
-import LawProposals from './components/LawProposals.vue';
+import { defineComponent } from "vue"
+import AcceptedLaws from "./components/AcceptedLaws.vue"
+import CurrentIndicators from "./components/CurrentIndicators.vue"
+import LawProposals from "./components/LawProposals.vue"
 
 export default defineComponent({
   components: {
@@ -10,7 +10,7 @@ export default defineComponent({
     LawProposals,
     AcceptedLaws,
   },
-});
+})
 </script>
 
 <template>
