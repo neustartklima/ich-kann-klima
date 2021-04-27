@@ -1,14 +1,14 @@
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
-import { Law } from '../types';
-import { useStore } from '../store';
-import Laws from './Laws.vue';
+import { computed, defineComponent } from "vue"
+import { Law } from "../types"
+import { useStore } from "../store"
+import Laws from "./Laws.vue"
 
 export default defineComponent({
-  components: {Laws },
-  
+  components: { Laws },
+
   setup() {
-    const store = useStore();
+    const store = useStore()
 
     return {
       store,
@@ -19,7 +19,7 @@ export default defineComponent({
 
   computed: {
     accepted(): Law[] {
-      return this.allLaws.filter((law) => this.acceptedLaws.includes(law.id));
+      return this.allLaws.filter((law) => this.acceptedLaws.includes(law.id))
     },
   },
 })

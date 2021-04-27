@@ -9,6 +9,6 @@
     "rvest.vs-code-prettier-eslint",
     "humao.rest-client",
     "hbenl.vscode-test-explorer",
-    "octref.vetur"
+    "johnsoncodehk.volar"
   ]
 }

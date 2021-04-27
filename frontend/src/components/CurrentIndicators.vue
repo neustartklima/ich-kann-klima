@@ -1,17 +1,17 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue"
 
 export default defineComponent({
   data() {
     return {
       indicators: [
-        { id: '1', name: 'CO2 Emmissionen', value: 805, unit: "Mio t" },
-        { id: '2', name: 'Bruttoinlandsprodukt', value: 2300, unit: "Mrd €" },
-        { id: '3', name: 'Arbeitslosenzahl', value: 2700, unit: "Tsd." },
+        { id: "1", name: "CO2 Emmissionen", value: 805, unit: "Mio t" },
+        { id: "2", name: "Bruttoinlandsprodukt", value: 2300, unit: "Mrd €" },
+        { id: "3", name: "Arbeitslosenzahl", value: 2700, unit: "Tsd." },
       ],
-    };
+    }
   },
-});
+})
 </script>
 
 <template>

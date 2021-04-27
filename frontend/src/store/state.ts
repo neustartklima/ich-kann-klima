@@ -1,5 +1,5 @@
-import { Law, LawId } from '../types';
-import { allLaws } from '../allLaws';
+import { Law, LawId } from "../types"
+import { allLaws } from "../allLaws"
 
 export const state = {
   allLaws,
