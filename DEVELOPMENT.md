@@ -43,6 +43,6 @@ The server serves the frontend as well, so that it is not necessary to start the
 You can build a docker image by using the `package.json` scripts in the project folder itself:
 
 ```bash
-npm build
+npm run build
 npm start
 ```
