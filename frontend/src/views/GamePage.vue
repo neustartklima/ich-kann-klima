@@ -21,7 +21,7 @@ export default defineComponent({
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .wrapper {
   max-width: 1024px;
   margin: 0 auto;
