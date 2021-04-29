@@ -1,7 +1,7 @@
 import { LawDef } from "."
 
 export default {
-  title: "Die Verstromung von Kohle zur Erzeugung von Strom wird verboten.",
+  title: "Kohleverstromung",
   description: "Die Verstromung von Kohle zur Erzeugung von Strom wird verboten.",
 
   effectOn: {

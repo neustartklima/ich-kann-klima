@@ -1,26 +1,13 @@
 <script lang="ts">
 import { defineComponent } from "vue"
-import AcceptedLaws from "./components/AcceptedLaws.vue"
-import CurrentIndicators from "./components/CurrentIndicators.vue"
-import LawProposals from "./components/LawProposals.vue"
 
-export default defineComponent({
-  components: {
-    CurrentIndicators,
-    LawProposals,
-    AcceptedLaws,
-  },
-})
+export default defineComponent({ })
 </script>
 
 <template>
   <h1>#ich-kann-klima</h1>
 
-  <CurrentIndicators />
-  <div class="wrapper">
-    <LawProposals />
-    <AcceptedLaws />
-  </div>
+  <router-view />
 </template>
 
 <style>
@@ -34,12 +21,5 @@ export default defineComponent({
 
 h1 {
   text-align: center;
-}
-
-.wrapper {
-  max-width: 1024px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
 }
 </style>

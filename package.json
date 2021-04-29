@@ -17,5 +17,15 @@
   "bugs": {
     "url": "https://github.com/neustartklima/ich-kann-klima/issues"
   },
-  "homepage": "https://github.com/neustartklima/ich-kann-klima#readme"
+  "homepage": "https://github.com/neustartklima/ich-kann-klima#readme",
+  "dependencies": {
+    "@types/uuid": "^8.3.0",
+    "uuid": "^8.3.2",
+    "vue": "^3.0.11",
+    "vue-router": "^4.0.6",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "sass": "^1.32.12"
+  }
 }
