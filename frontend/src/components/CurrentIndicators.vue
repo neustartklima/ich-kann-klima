@@ -1,9 +1,10 @@
 <script lang="ts">
-import { computed, defineComponent } from "vue"
-import { mapState } from "vuex"
-import { useStore } from "../store"
+import { defineComponent } from "vue"
+import TimeIndicator from "../components/TimeIndicator.vue"
 
 export default defineComponent({
+  components: { TimeIndicator },
+
   data() {
     return {
       indicators: [
@@ -13,29 +14,17 @@ export default defineComponent({
       ],
     }
   },
-
-  setup() {
-    const store = useStore()
-
-    return {
-      store,
-      currentYear: computed(() => store.state.game?.currentYear),
-    }
-  },
 })
 </script>
 
 <template>
   <ul>
-    <li>
-      <div>Aktuelles Jahr</div>
-      <div>{{ currentYear }}</div>
-    </li>
     <li v-for="(indicator, index) in indicators" :key="index">
       <div>{{ indicator.name }}</div>
       <div>{{ indicator.value }} {{ indicator.unit }}</div>
     </li>
   </ul>
+  <TimeIndicator />
 </template>
 
 <style scoped>

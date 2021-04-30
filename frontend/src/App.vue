@@ -23,6 +23,13 @@ h1 {
   text-align: center;
 }
 
+.game-setup {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+}
+
 .wrapper {
   max-width: 800px;
   margin: 0 auto;
