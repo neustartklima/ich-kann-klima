@@ -32,4 +32,13 @@ export default defineComponent({})
   flex-direction: column;
   justify-content: space-between;
 }
+
+.button-bar {
+  max-width: 800px;
+  margin: 0 auto;
+
+  button {
+    padding: 8px 16px;
+  }
+}
 </style>

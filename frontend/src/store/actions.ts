@@ -1,10 +1,13 @@
 import { ActionTree } from "vuex"
-import { LawId, LawReference, GameId, Game } from "../types"
+import { LawId, GameId, Game } from "../types"
 import { createCommand, Command } from "."
-import { gameLoaded, lawAccepted } from "./mutations"
+import { gameUpdated } from "./mutations"
 import { State } from "./state"
 import { v4 as uuid } from "uuid"
 import router from "../router"
+import RepositoryFactory from "../repository"
+
+const repository = RepositoryFactory()
 
 const defaultValues = {
   co2Emmissions: 805, // in 2019, source https://www.bundesregierung.de/breg-de/aktuelles/bilanz-umweltbundesamt-1730880
@@ -14,38 +17,40 @@ const defaultValues = {
   electrictyDemandTotal: 2300, // TODO source?
 }
 
+function persistGame(game: Game) {
+  repository.saveGame(game)
+  return gameUpdated(game)
+}
+
 export const actions: ActionTree<State, State> = {
-  startGame(context) {
+  startGame() {
     const game: Game = {
       id: uuid(),
+      currentYear: 2021,
       values: { ...defaultValues },
+      acceptedLaws: [],
     }
-    localStorage.setItem("game", JSON.stringify(game))
-    localStorage.setItem("acceptedLaws", JSON.stringify([]))
+    repository.saveGame(game)
     router.push("/games/" + game.id)
   },
 
   loadGame(context, payload: { gameId: GameId }) {
-    const storedItem = localStorage.getItem("game")
-    if (!storedItem) {
-      throw Error("Game not found")
-    }
-    context.commit(gameLoaded(JSON.parse(storedItem) as Game))
-    const acceptedLaws = localStorage.getItem("acceptedLaws")
-    if (!acceptedLaws) {
-      throw Error("Inconsistent storage: no accepted laws in local cache")
-    }
-    JSON.parse(acceptedLaws).forEach((lawRef: LawReference) => {
-      context.commit(lawAccepted(lawRef.lawId))
-    })
+    context.commit(persistGame(repository.loadGame(payload.gameId)))
   },
 
   acceptLaw(context, payload: { lawId: LawId }) {
-    context.commit(lawAccepted(payload.lawId))
-    localStorage.setItem("acceptedLaws", JSON.stringify(context.state.acceptedLaws))
+    const game = context.state.game as Game
+    const newLawRef = { lawId: payload.lawId, effectiveSince: game.currentYear + 1 }
+    context.commit(persistGame({ ...game, acceptedLaws: [...game.acceptedLaws, newLawRef] }))
+  },
+
+  advanceYear(context) {
+    const game = context.state.game as Game
+    context.commit(persistGame({ ...game, currentYear: game.currentYear + 1 }))
   },
 }
 
 export const startGame = (): Command => createCommand("startGame", {})
 export const loadGame = (gameId: GameId): Command => createCommand("loadGame", { gameId })
 export const acceptLaw = (lawId: LawId): Command => createCommand("acceptLaw", { lawId })
+export const advanceYear = (): Command => createCommand("advanceYear", {})

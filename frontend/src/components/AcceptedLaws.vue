@@ -13,13 +13,13 @@ export default defineComponent({
     return {
       store,
       allLaws: computed(() => store.state.allLaws),
-      acceptedLaws: computed(() => store.state.acceptedLaws),
+      acceptedLaws: computed(() => store.state.game?.acceptedLaws),
     }
   },
 
   computed: {
     accepted(): Law[] {
-      return this.allLaws.filter((law) => this.acceptedLaws.includes(law.id))
+      return this.allLaws.filter((law) => this.acceptedLaws?.some(l => l.lawId === law.id))
     },
   },
 })

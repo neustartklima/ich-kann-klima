@@ -14,7 +14,7 @@ export default defineComponent({
     return {
       store,
       allLaws: computed(() => store.state.allLaws),
-      acceptedLaws: computed(() => store.state.acceptedLaws),
+      acceptedLaws: computed(() => store.state.game?.acceptedLaws),
     }
   },
 
@@ -27,7 +27,7 @@ export default defineComponent({
   computed: {
     proposed(): Law[] {
       const laws = this.allLaws.filter((law) => {
-        return !this.acceptedLaws.includes(law.id) && !this.declined.includes(law.id)
+        return !this.acceptedLaws?.some(l => l.lawId === law.id) && !this.declined.includes(law.id)
       })
       return laws
     },
