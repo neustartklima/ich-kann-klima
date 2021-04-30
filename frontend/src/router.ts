@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
 import { store } from "./store"
 import { loadGame, startGame } from "./store/actions"
-import MainPage from "./views/MainPage.vue"
 import GamePage from "./views/GamePage.vue"
+import StartPage from "./views/StartPage.vue"
+import MainPage from "./views/MainPage.vue"
 
 const routes: RouteRecordRaw[] = [
   { path: "/", component: MainPage },
+  { path: "/start", component: StartPage },
   { path: "/games", component: GamePage, beforeEnter: () => store.dispatch(startGame()) },
   {
     path: "/games/:id",

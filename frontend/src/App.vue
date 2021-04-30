@@ -10,7 +10,7 @@ export default defineComponent({ })
   <router-view />
 </template>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -21,5 +21,26 @@ export default defineComponent({ })
 
 h1 {
   text-align: center;
+}
+
+.wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+ul {
+  list-style-type: "... ";
+}
+
+.button-bar {
+  max-width: 800px;
+  margin: 0 auto;
+
+  button {
+    padding: 8px 16px;
+  }
 }
 </style>
