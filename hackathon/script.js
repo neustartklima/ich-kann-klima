@@ -73,7 +73,7 @@ async function handleQuestion(questions, questionNo) {
 }
 
 function addBgImg(img, isFirst) {
-  const url = img.match(/^https?:\/\//) ? img : "old-frontend/img/" + img
+  const url = img.match(/^https?:\/\//) ? img : "img/" + img
   const container = document.createElement("div")
   container.setAttribute("class", "city-img")
   container.setAttribute("style", "opacity: " + (isFirst ? 1 : 0))
@@ -91,6 +91,6 @@ async function replaceImages(images) {
 
 function preloadImages(images) {
   images.forEach((img) => {
-    document.createElement("img").src = img.match(/^https?:\/\//) ? img : "old-frontend/img/" + img
+    document.createElement("img").src = img.match(/^https?:\/\//) ? img : "img/" + img
   })
 }

@@ -13,4 +13,4 @@ export function setupServer(server: APIServer, port: number, router: Router): vo
   server.listenOnPort(port)
 }
 
-setupServer(createAPIServer(express()), +(process.env.PORT || 3000), router)
+setupServer(createAPIServer(express()), +(process.env.PORT || 3001), router)
