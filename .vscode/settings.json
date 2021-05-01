@@ -1,7 +1,0 @@
-{
-  "editor.linkedEditing": true,
-  "html.autoClosingTags": true,
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-  "volar.tsPlugin": true
-}
