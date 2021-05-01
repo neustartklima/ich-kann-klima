@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  setup:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     strategy:
@@ -41,45 +41,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-build-${{ env.cache-name }}-
 
-    - name: Create zipped archives of node_modules
-      run: tar zcf node_modules.tgz frontend/node_modules server/node_modules
-
-    - name: Save node_modules folders
-      uses: actions/upload-artifact@v2
-      with:
-        name: node_modules
-        path: node_modules.tgz
-
-  test:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: fetch node_modules
-      uses: actions/download-artifact@v2
-      with:
-        name: node_modules
-
-    - name: unpack artifacts
-      run: tar zxf node_modules.tgz
-
     - name: Run tests
       run: npm test --if-present
-
-  build:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: fetch node_modules
-      uses: actions/download-artifact@v2
-      with:
-        name: node_modules
-
-    - name: unpack artifacts
-      run: tar zxf node_modules.tgz
 
     - name: Build production code
       run: npm run build
