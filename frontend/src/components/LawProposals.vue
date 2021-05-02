@@ -29,7 +29,7 @@ export default defineComponent({
       const laws = this.allLaws.filter((law) => {
         return !this.acceptedLaws?.some(l => l.lawId === law.id) && !this.declined.includes(law.id)
       })
-      return laws
+      return laws.slice(0, 6)
     },
   },
 
@@ -46,7 +46,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Laws :laws="proposed" title="Gesetzesvorschläge" v-slot:default="slotProps">
+  <Laws :laws="proposed" v-slot:default="slotProps">
     <button class="accept" @click="accept(slotProps.id)">✓</button>
     <button class="decline" @click="decline(slotProps.id)">✗</button>
   </Laws>

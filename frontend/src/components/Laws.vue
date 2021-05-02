@@ -11,11 +11,11 @@ export default defineComponent({
 </script>
 
 <template>
+  <h2 v-if="title">{{ title }}</h2>
   <div class="Laws">
-    <h2>{{ title }}</h2>
     <div v-for="(law, index) in laws" :key="index" class="Law">
       <slot :id="law.id" />
-      <h2>{{ law.name }}</h2>
+      <h3>{{ law.name }}</h3>
       <div>{{ law.description }}</div>
     </div>
   </div>
@@ -23,21 +23,24 @@ export default defineComponent({
 
 <style scoped>
 .Laws {
-  padding: 30px;
-  max-width: 400px;
-  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 h2 {
+  margin: 0 1em;
+}
+
+h3 {
   margin-top: 0;
 }
 
 .Law {
-  width: 100%;
+  width: 15em;
   padding: 10px;
-  border: 1px solid #2c3e50;
-  border-radius: 4px;
-  margin-bottom: 1em;
+  border: 1px solid orange;
+  border-radius: 20px;
+  margin: .5em;
   box-sizing: border-box;
 }
 </style>
