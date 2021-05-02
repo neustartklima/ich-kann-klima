@@ -1,44 +1,25 @@
 <script lang="ts">
 import { defineComponent } from "vue"
+import Indicator from "../components/Indicator.vue"
 import TimeIndicator from "../components/TimeIndicator.vue"
 
 export default defineComponent({
-  components: { TimeIndicator },
-
-  data() {
-    return {
-      indicators: [
-        { id: "1", name: "CO2 Emmissionen", value: 805, unit: "Mio t" },
-        { id: "2", name: "Bruttoinlandsprodukt", value: 2300, unit: "Mrd €" },
-        { id: "3", name: "Arbeitslosenzahl", value: 2700, unit: "Tsd." },
-      ],
-    }
-  },
+  components: { TimeIndicator, Indicator },
 })
 </script>
 
 <template>
-  <ul>
-    <li v-for="(indicator, index) in indicators" :key="index">
-      <div>{{ indicator.name }}</div>
-      <div>{{ indicator.value }} {{ indicator.unit }}</div>
-    </li>
-  </ul>
-  <TimeIndicator />
+  <div class="CurrentIndicators">
+    <Indicator :value="1" color="#EE8AC1" />
+    <Indicator :value="3" color="#A9D18E" />
+    <Indicator :value="2" color="#8FAADC" />
+    <TimeIndicator />
+  </div>
 </template>
 
-<style scoped>
-ul {
-  padding: 30px;
-  max-width: 400px;
-  margin: 0 auto;
-  border: 1px solid #2c3e50;
-  border-radius: 4px;
-}
-
-li {
+<style lang="scss" scoped>
+.CurrentIndicators {
   display: flex;
-  width: 100%;
-  justify-content: space-between;
+  flex-direction: row;
 }
 </style>

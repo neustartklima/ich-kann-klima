@@ -42,9 +42,10 @@ $border: 1px;
 
 .container {
   width: $width;
+  height: calc(10 * (3em + 11px));  // Number of circles multiplies with circle height plus margin/border
   border: $border solid $color;
   border-top: 0;
-  margin-right: 2em;
+  margin: 0 2em;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
