@@ -31,11 +31,11 @@ h1 {
 }
 
 .wrapper {
-  max-width: 800px;
+  width: 800px;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 ul {

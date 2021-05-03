@@ -30,6 +30,8 @@ export default defineComponent({
 <template>
   <GameSetup>
     <LawProposals />
+
+    <h2>Beschlossene Gesetze</h2>
     <AcceptedLaws />
 
     <p>Wenn Du fertig bist, wechsle zum nächsten Jahr und sieh' Dir die Auswirkungen an.</p>
@@ -41,5 +43,7 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-
+h2 {
+  margin: 0 1em;
+}
 </style>
