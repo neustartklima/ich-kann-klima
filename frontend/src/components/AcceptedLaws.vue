@@ -42,7 +42,7 @@ export default defineComponent({
     :class="{ opened: index === opened }"
     @click="toggleOpen(index)"
   >
-    <h3>{{ law.name }}</h3>
+    <h3>{{ law.title }}</h3>
     <div>{{ law.description }}</div>
   </div>
 </template>

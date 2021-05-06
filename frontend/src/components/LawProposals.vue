@@ -45,7 +45,7 @@ export default defineComponent({
 <template>
   <div class="ProposedLaws">
     <div v-for="(law, index) in proposed" :key="index" class="Law">
-      <h3>{{ law.name }}</h3>
+      <h3>{{ law.title }}</h3>
       <div>{{ law.description }}</div>
 
       <div class="button-bar">

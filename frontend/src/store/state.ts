@@ -1,5 +1,5 @@
 import { Game } from "../types"
-import { allLaws } from "../allLaws"
+import { allLaws } from "../laws"
 
 export const state = {
   allLaws,
