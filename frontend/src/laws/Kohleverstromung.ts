@@ -1,6 +1,6 @@
-import { Law } from "../types"
+import { createLaw } from "."
 
-export default {
+export default createLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verstromung von Kohle zur Erzeugung von Strom wird verboten.",
 
@@ -19,4 +19,4 @@ export default {
       unemployment: jobs,
     }
   },
-} as Law
+})
