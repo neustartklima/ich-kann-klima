@@ -1,4 +1,4 @@
-import { createEvent } from "."
+import { createEvent } from "../Factory"
 
 export default createEvent({
   title: "Anruf von befreundetem Unternehmer",

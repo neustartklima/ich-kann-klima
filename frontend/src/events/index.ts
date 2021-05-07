@@ -6,7 +6,3 @@ export const allEvents = [
   socialMedia,
   bestechung,
 ]
-
-export function createEvent(event: Event): Event {
-  return event
-}

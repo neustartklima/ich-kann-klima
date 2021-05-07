@@ -1,4 +1,4 @@
-import { createLaw } from "."
+import { createLaw } from "../Factory"
 
 export default createLaw({
   title: "Kernenergienutzung verlängern",

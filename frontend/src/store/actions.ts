@@ -1,24 +1,15 @@
 import { ActionTree } from "vuex"
-import { LawId, GameId, Game } from "../types"
+import { LawId, GameId, Game, LawReference, AcceptedLaw } from "../types"
 import { createCommand, Command } from "."
 import { gameUpdated } from "./mutations"
 import { State } from "./state"
 import { v4 as uuid } from "uuid"
 import router from "../router"
 import RepositoryFactory from "../repository"
+import { calculateNextYear, defaultValues } from "../Calculator"
+import { allLaws } from "../laws"
 
 const repository = RepositoryFactory()
-
-const defaultValues = {
-  co2emmissions: 805, // in 2019, source https://www.bundesregierung.de/breg-de/aktuelles/bilanz-umweltbundesamt-1730880
-  stateDebt: 1899, // in 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands
-  popularity: 50, // 50% of all people accept you as your chancellor
-
-  // hidden
-  unemployment: 2695, // in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
-  gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
-  electricityDemand: 2300, // TODO source?
-}
 
 function persistGame(game: Game) {
   repository.saveGame(game)
@@ -48,8 +39,18 @@ export const actions: ActionTree<State, State> = {
   },
 
   advanceYear(context) {
+    function getLaw(lawRef: LawReference): AcceptedLaw {
+      const law = allLaws.find(law => law.id === lawRef.lawId)
+      if (law) {
+        return { ...law, effectiveSince: lawRef.effectiveSince }
+      }
+      throw Error(`Law #${lawRef.lawId} not found`)
+    }
+
     const game = context.state.game as Game
-    context.commit(persistGame({ ...game, currentYear: game.currentYear + 1 }))
+    const laws = game.acceptedLaws.map(getLaw)
+    const newValues = calculateNextYear(game.values, laws, game.currentYear + 1)
+    context.commit(persistGame({ ...game, values: newValues, currentYear: game.currentYear + 1 }))
   },
 }
 

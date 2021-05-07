@@ -1,5 +1,4 @@
-import { createEvent } from "."
-import { Event } from "../types"
+import { createEvent } from "../Factory"
 
 export default createEvent({
   title: "Social Media Alarm!",

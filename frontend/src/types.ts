@@ -5,9 +5,11 @@ type GWh = number
 type Percent = number
 
 export type BaseParams = {
-  co2emmissions: MioTons
+  co2budget: MioTons
   stateDebt: MrdEuro
   popularity: Percent
+
+  co2emissions: MioTons
   unemployment: TsdPeople
   gdp: MrdEuro
   electricityDemand: GWh
@@ -30,6 +32,8 @@ export type LawReference = {
   effectiveSince: number
 }
 
+export type AcceptedLaw = Law & { effectiveSince: number }
+
 export type Event = {
   title: string
   description: string
@@ -41,6 +45,6 @@ export type GameId = string
 export type Game = {
   id: GameId
   currentYear: number
-  values: BaseParams,
+  values: BaseParams
   acceptedLaws: LawReference[]
 }
