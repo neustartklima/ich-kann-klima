@@ -5,7 +5,7 @@ import TimeIndicator from "../components/TimeIndicator.vue"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 import { Game } from "../types"
-import coin from "../assets/1-euro.gif"
+import coin from "../assets/euro.svg"
 import hands from "../assets/clapping-hands.png"
 
 const co2budget = 4500

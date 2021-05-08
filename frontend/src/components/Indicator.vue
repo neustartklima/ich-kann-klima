@@ -54,6 +54,6 @@ $size: 3em; // If you change this, remember to change TimeIndicator as well!
   border-radius: 50%;
   margin-bottom: 10px;
   border: 1px solid grey;
-  background-size: contain;
+  background: no-repeat center/2em;
 }
 </style>

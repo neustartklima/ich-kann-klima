@@ -12,8 +12,9 @@ export default defineComponent({})
   <details class="attribution">
     <summary>Attribution</summary>
     <ul>
-      <li>Euro coin from Tommaso.sansone91, CC0, via Wikimedia commons</li>
-      <li>Clapping hands CC 4.0 BY-NC from pngimg.com</li>
+      <li>CO2 symbol: Tommaso.sansone91, CC0 1.0, via Wikimedia commons</li>
+      <li>Euro coin: Verdy_p, Public domain, via Wikimedia commons</li>
+      <li>Clapping hands: pngimg.com, CC 4.0 BY-NC</li>
     </ul>
   </details>
 </template>
