@@ -1,16 +1,6 @@
 import { BaseParams, AcceptedLaw, Game } from "./types"
 import "should"
 
-const remainingBudget = {
-  2021: 5000,
-  2022: 4300,
-  2023: 3700,
-  2024: 3200,
-  2025: 2800,
-  2026: 2600,
-  2027: 2500,
-}
-
 export const defaultValues = {
   co2budget: 5000,
   stateDebt: 1899, // in 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands
@@ -39,6 +29,10 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
   return values
 }
 
+function clampToPercent(value: number) {
+  return Math.max(0, Math.min(100, value))
+}
+
 export function co2Rating(game: Game): number {
   if (game.values.co2emissions === 0) {
     return 100 // nothing is better than no emissions!
@@ -47,5 +41,11 @@ export function co2Rating(game: Game): number {
   const yearBudget = game.values.co2budget * 0.15
   // the ratio of actual emissions to the yearly budget: < 1 is bad, > 1 is good
   const ratio = yearBudget / game.values.co2emissions
-  return Math.max(0, Math.min(100, ratio * 50))
+  return clampToPercent(ratio * 50)
 }
+
+export function financeRating(game: Game): number {
+  const ratio = game.values.stateDebt / defaultValues.stateDebt
+  return clampToPercent(100 - ratio * 50)
+}
+

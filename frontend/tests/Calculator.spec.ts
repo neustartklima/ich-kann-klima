@@ -1,4 +1,4 @@
-import { calculateNextYear, co2Rating, defaultValues } from "../src/Calculator"
+import { calculateNextYear, co2Rating, defaultValues, financeRating } from "../src/Calculator"
 import { createLaw } from "../src/Factory"
 import { BaseParams } from "../src/types"
 
@@ -29,21 +29,42 @@ describe("Calculator.calculateNextYear", () => {
   })
 })
 
+const simpleGame = { id: "1", values: defaultValues, acceptedLaws: [], currentYear: 2021 }
+
 describe("Calculator.co2Rating", () => {
-  it("should return 50 in initial state", () => {
-    const rating = co2Rating({ id: "1", values: defaultValues, acceptedLaws: [], currentYear: 2021 })
+  it("should be nearly 50 in initial state", () => {
+    const rating = co2Rating({ ...simpleGame })
     Math.round(rating / 10).should.equal(5)
   })
 
   it("should return 0 if budget is used up", () => {
     const values = { ...defaultValues, co2budget: 0 }
-    const rating = co2Rating({ id: "2", values, acceptedLaws: [], currentYear: 2021 })
+    const rating = co2Rating({ ...simpleGame, values })
     rating.should.equal(0)
   })
 
   it("should return 100 if no additional emissions are made", () => {
     const values = { ...defaultValues, co2emissions: 0 }
-    const rating = co2Rating({ id: "3", values, acceptedLaws: [], currentYear: 2021 })
+    const rating = co2Rating({ ...simpleGame, values })
+    rating.should.equal(100)
+  })
+})
+
+describe("Calculator.financeRating", () => {
+  it("should be nearly 50 for current debt", () => {
+    const rating = financeRating({ ...simpleGame })
+    Math.round(rating / 10).should.equal(5)
+  })
+
+  it("should return 0 if debt is doubled", () => {
+    const values = { ...defaultValues, stateDebt: defaultValues.stateDebt * 2 }
+    const rating = financeRating({ ...simpleGame, values })
+    rating.should.equal(0)
+  })
+
+  it("should return 100 if there is no debt any more", () => {
+    const values = { ...defaultValues, stateDebt: 0 }
+    const rating = financeRating({ ...simpleGame, values })
     rating.should.equal(100)
   })
 })
