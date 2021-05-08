@@ -5,6 +5,8 @@ import TimeIndicator from "../components/TimeIndicator.vue"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 import { Game } from "../types"
+import coin from "../assets/1-euro.gif"
+import hands from "../assets/clapping-hands.png"
 
 const co2budget = 4500
 
@@ -17,7 +19,7 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
-    return { store }
+    return { store, coin, hands }
   },
 
   computed: {
@@ -42,9 +44,13 @@ export default defineComponent({
 
 <template>
   <div class="CurrentIndicators">
-    <Indicator :value="co2value" color="#EE8AC1" />
-    <Indicator :value="financeValue" color="#A9D18E" />
-    <Indicator :value="popularityValue" color="#8FAADC" />
+    <Indicator
+      :value="co2value"
+      color="#EE8AC1"
+      img="https://upload.wikimedia.org/wikipedia/commons/2/26/Co2_carbon_dioxide_icon.png"
+    />
+    <Indicator :value="financeValue" color="#A9D18E" :img="coin" />
+    <Indicator :value="popularityValue" color="#8FAADC" :img="hands" />
     <TimeIndicator />
   </div>
 </template>

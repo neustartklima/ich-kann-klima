@@ -7,6 +7,7 @@ export default defineComponent({
   props: {
     value: { type: Number, required: true },
     color: { type: String, required: true },
+    img: { type: String }
   },
 
   computed: {
@@ -18,8 +19,16 @@ export default defineComponent({
       return this.value
     },
 
-    style(): (type: string) => string {
-      return (type: string) => (type === "filled" ? "background" : "border-color") + ": " + this.color
+    style() {
+      return (type: string) => {
+        if (type === "empty") {
+          return "border-color: " + this.color
+        } else if (this.$props.img) {
+          return "background-image: url(" + this.$props.img + ")"
+        } else {
+          return "background: " + this.color
+        }
+      }
     }
   },
 })
@@ -45,5 +54,6 @@ $size: 3em; // If you change this, remember to change TimeIndicator as well!
   border-radius: 50%;
   margin-bottom: 10px;
   border: 1px solid grey;
+  background-size: contain;
 }
 </style>

@@ -1,13 +1,21 @@
 <script lang="ts">
 import { defineComponent } from "vue"
 
-export default defineComponent({ })
+export default defineComponent({})
 </script>
 
 <template>
   <h1>#ich-kann-klima</h1>
 
   <router-view />
+
+  <details class="attribution">
+    <summary>Attribution</summary>
+    <ul>
+      <li>Euro coin from Tommaso.sansone91, CC0, via Wikimedia commons</li>
+      <li>Clapping hands CC 4.0 BY-NC from pngimg.com</li>
+    </ul>
+  </details>
 </template>
 
 <style lang="scss">
@@ -20,7 +28,8 @@ export default defineComponent({ })
 }
 
 h1 {
-  text-align: center;
+  text-align: right;
+  margin-right: 1.3em;
 }
 
 .game-setup {
@@ -49,5 +58,12 @@ ul {
   button {
     padding: 8px 16px;
   }
+}
+
+.attribution {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  font-size: 10px;
 }
 </style>
