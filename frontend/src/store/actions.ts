@@ -3,10 +3,9 @@ import { LawId, GameId, Game, LawReference, AcceptedLaw } from "../types"
 import { createCommand, Command } from "."
 import { gameUpdated } from "./mutations"
 import { State } from "./state"
-import { v4 as uuid } from "uuid"
 import router from "../router"
-import RepositoryFactory from "../repository"
-import { calculateNextYear, defaultValues } from "../Calculator"
+import RepositoryFactory, { defaultValues, createGame } from "../repository"
+import { calculateNextYear } from "../Calculator"
 import { allLaws } from "../laws"
 
 const repository = RepositoryFactory()
@@ -18,12 +17,11 @@ function persistGame(game: Game) {
 
 export const actions: ActionTree<State, State> = {
   startGame() {
-    const game: Game = {
-      id: uuid(),
+    const game = createGame({
       currentYear: 2021,
-      values: { ...defaultValues },
+      values: defaultValues,
       acceptedLaws: [],
-    }
+    })
     repository.saveGame(game)
     router.push("/games/" + game.id)
   },

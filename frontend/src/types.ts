@@ -1,10 +1,10 @@
 type MioTons = number
 type MrdEuro = number
 type TsdPeople = number
-type GWh = number
+type TWh = number
 type Percent = number
 
-export type BaseParams = {
+export type WritableBaseParams = {
   co2budget: MioTons
   stateDebt: MrdEuro
   popularity: Percent
@@ -12,7 +12,18 @@ export type BaseParams = {
   co2emissions: MioTons
   unemployment: TsdPeople
   gdp: MrdEuro
-  electricityDemand: GWh
+
+  electricitySolar: TWh
+  electricityWind: TWh
+  electricityWater: TWh
+  electricityCoal: TWh
+  electricityBiomass: TWh
+  electricityNuclear: TWh
+  electricityGas: TWh
+}
+
+export type BaseParams = WritableBaseParams & {
+  electricityDemand: TWh
 }
 
 export type LawId = string
@@ -41,6 +52,12 @@ export type Event = {
 }
 
 export type GameId = string
+
+export type GameDefinition = {
+  currentYear: number
+  values: WritableBaseParams
+  acceptedLaws: LawReference[]
+}
 
 export type Game = {
   id: GameId
