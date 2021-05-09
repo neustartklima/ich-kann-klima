@@ -2,8 +2,8 @@
   "name": "ichkannklima",
   "version": "0.0.0",
   "scripts": {
-    "dev": "NODE_ENV=development vite",
-    "test": "NODE_ENV=test vite",
+    "dev": "cross-env NODE_ENV=development vite",
+    "test": "cross-env NODE_ENV=test vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },
@@ -17,6 +17,7 @@
     "@types/uuid": "^8.3.0",
     "@vitejs/plugin-vue": "^1.2.1",
     "@vue/compiler-sfc": "^3.0.5",
+    "cross-env": "^7.0.3",
     "mocha": "^8.3.2",
     "puppeteer": "^9.1.1",
     "sass": "^1.32.12",
