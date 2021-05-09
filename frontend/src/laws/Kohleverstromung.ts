@@ -7,16 +7,20 @@ export default createLaw({
   effects(data, startYear, currentYear) {
     const yearsActive = currentYear - startYear
     
-    const compensation = yearsActive < 18 ? 0 : 1000   // Mio €
+    const compensation = yearsActive < 18 ? 4300 / 18 : 0   // Mio €
+    const subventions = 2500 // Mio €
 
     const directJobsInvolved = 20 // Tsd people
     const indirectJobsInvolved = 60
-    const jobs = Math.max((directJobsInvolved + indirectJobsInvolved / 2) * (10 - yearsActive) / 10, 0)
+    const settlingFactor = (10 - yearsActive) / 10
+    const jobs = Math.max((directJobsInvolved + indirectJobsInvolved / 2) * settlingFactor, 0)
 
     return {
-      co2emmissions: -200,
-      stateDebt: -compensation,
+      co2emmissions: - data.electricityCoal * 0.399,
+      stateDebt: -compensation + subventions,
       unemployment: jobs,
+      electricityCoal: -data.electricityCoal,
+      electricityGas: data.electricityGas + data.electricityCoal,
     }
   },
 })
