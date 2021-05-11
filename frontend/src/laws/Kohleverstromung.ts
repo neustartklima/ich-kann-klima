@@ -2,7 +2,7 @@ import { createLaw } from "../Factory"
 
 export default createLaw({
   title: "Kohleverstromung einstellen",
-  description: "Die Verstromung von Kohle zur Erzeugung von Strom wird verboten.",
+  description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
 
   effects(data, startYear, currentYear) {
     const yearsActive = currentYear - startYear

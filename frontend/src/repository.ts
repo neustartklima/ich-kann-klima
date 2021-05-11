@@ -13,14 +13,13 @@ export const defaultValues = {
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
 
   // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
-  // electricityDemand: 484.22,
+  electricityDemand: 484.22,
   electricitySolar: 51.42,
   electricityWind: 131.85,
   electricityWater: 18.4,
   electricityCoal: 117.72,
   electricityBiomass: 47.15,
-  electricityNuclear: 60.92,
-  electricityGas: 56.77
+  electricityNuclear: 60.92
 }
 
 export const initialGame = {
@@ -33,15 +32,16 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
   return {
     ...values,
 
-    get electricityDemand(): number {
+    get electricityGas(): number {
       return (
-        this.electricitySolar +
-        this.electricityWind +
-        this.electricityWater +
-        this.electricityCoal +
-        this.electricityBiomass +
-        this.electricityNuclear +
-        this.electricityGas
+        this.electricityDemand -
+        this.electricitySolar -
+        this.electricityWind -
+        this.electricityWater -
+        this.electricityCoal -
+        this.electricityBiomass -
+        this.electricityNuclear
+        
       )
     }
   }

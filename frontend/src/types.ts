@@ -13,17 +13,18 @@ export type WritableBaseParams = {
   unemployment: TsdPeople
   gdp: MrdEuro
 
+  electricityDemand: TWh
+
   electricitySolar: TWh
   electricityWind: TWh
   electricityWater: TWh
   electricityCoal: TWh
   electricityBiomass: TWh
   electricityNuclear: TWh
-  electricityGas: TWh
 }
 
 export type BaseParams = WritableBaseParams & {
-  electricityDemand: TWh
+  electricityGas: TWh
 }
 
 export type LawId = string
