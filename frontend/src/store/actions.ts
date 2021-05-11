@@ -4,7 +4,7 @@ import { createCommand, Command } from "."
 import { gameUpdated } from "./mutations"
 import { State } from "./state"
 import router from "../router"
-import RepositoryFactory, { defaultValues, createGame } from "../repository"
+import RepositoryFactory, { initialGame, createGame } from "../repository"
 import { calculateNextYear } from "../Calculator"
 import { allLaws } from "../laws"
 
@@ -17,11 +17,15 @@ function persistGame(game: Game) {
 
 export const actions: ActionTree<State, State> = {
   startGame() {
-    const game = createGame({
-      currentYear: 2021,
-      values: defaultValues,
-      acceptedLaws: [],
-    })
+    const game = createGame(initialGame)
+    game.acceptedLaws = allLaws
+      .filter((law) => law.labels?.includes("initial"))
+      .map<LawReference>((law) => {
+        return {
+          lawId: law.id,
+          effectiveSince: game.currentYear,
+        }
+      })
     repository.saveGame(game)
     router.push("/games/" + game.id)
   },
@@ -38,7 +42,7 @@ export const actions: ActionTree<State, State> = {
 
   advanceYear(context) {
     function getLaw(lawRef: LawReference): AcceptedLaw {
-      const law = allLaws.find(law => law.id === lawRef.lawId)
+      const law = allLaws.find((law) => law.id === lawRef.lawId)
       if (law) {
         return { ...law, effectiveSince: lawRef.effectiveSince }
       }

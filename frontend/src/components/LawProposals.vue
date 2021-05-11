@@ -23,9 +23,11 @@ export default defineComponent({
 
   computed: {
     proposed(): Law[] {
-      const laws = this.allLaws.filter((law) => {
-        return !this.acceptedLaws?.some((l) => l.lawId === law.id) && !this.declined.includes(law.id)
-      })
+      const laws = this.allLaws.filter((law) =>
+        !this.acceptedLaws?.some((l) => l.lawId === law.id)
+        && !this.declined.includes(law.id)
+        && !(law.labels?.includes("hidden"))
+      )
       return laws.slice(0, 6)
     },
   },
