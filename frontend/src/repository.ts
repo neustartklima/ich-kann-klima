@@ -23,6 +23,12 @@ export const defaultValues = {
   electricityGas: 56.77
 }
 
+export const initialGame = {
+  currentYear: 2021,
+  values: defaultValues,
+  acceptedLaws: [],
+}
+
 export function createBaseValues(values: WritableBaseParams): BaseParams {
   return {
     ...values,

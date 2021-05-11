@@ -21,8 +21,11 @@ export default defineComponent({
   },
 
   computed: {
-    accepted(): Law[] {
-      return this.allLaws.filter((law) => this.acceptedLaws?.some((l) => l.lawId === law.id))
+    visibleAccepted(): Law[] {
+      return this.allLaws.filter((law) => 
+        this.acceptedLaws?.some((l) => l.lawId === law.id)
+        && !(law.labels?.includes("hidden"))
+      )
     },
   },
 
@@ -36,7 +39,7 @@ export default defineComponent({
 
 <template>
   <div
-    v-for="(law, index) in accepted"
+    v-for="(law, index) in visibleAccepted"
     :key="index"
     class="Law"
     :class="{ opened: index === opened }"
