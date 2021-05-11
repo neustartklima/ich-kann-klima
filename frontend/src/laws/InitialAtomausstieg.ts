@@ -6,17 +6,13 @@ export default createLaw({
   labels: ["hidden", "initial"],
 
   effects(data, startYear, currentYear) {
-    const newValue = () => {
-      if (currentYear == 2021) {
-        return 60.45
-      }
-      if (currentYear == 2022) {
-        return 30.21
-      }
-      return 0
+    const mapping: Record<number, number> = {
+      2021: 60.45,
+      2022: 30.21,
     }
+    const newValue = mapping[currentYear] || 0
     return {
-      electricityNuclear: newValue() - data.electricityNuclear,
+      electricityNuclear: newValue - data.electricityNuclear,
     }
   },
 })
