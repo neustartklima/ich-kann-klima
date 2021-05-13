@@ -11,7 +11,6 @@ export type WritableBaseParams = {
   stateDebt: MrdEuro
   popularity: Percent
 
-  co2emissions: MioTons
   unemployment: TsdPeople
   gdp: MrdEuro
 
@@ -23,10 +22,18 @@ export type WritableBaseParams = {
   electricityCoal: TWh
   electricityBiomass: TWh
   electricityNuclear: TWh
+
+  co2emissionsIndustry: MioTons
+  co2emissionsMobility: MioTons
+  co2emissionsBuildings: MioTons
+  co2emissionsAgriculture: MioTons
+  co2emissionsOthers: MioTons
 }
 
 export type BaseParams = WritableBaseParams & {
   electricityGas: TWh
+  co2emissionsEnergy: MioTons
+  co2emissions: MioTons
 }
 
 export type LawId = string

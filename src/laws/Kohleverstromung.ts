@@ -20,7 +20,6 @@ export default {
       stateDebt: -compensation + subventions,
       unemployment: jobs,
       electricityCoal: -data.electricityCoal,
-      electricityGas: data.electricityGas + data.electricityCoal,
     }
   },
 

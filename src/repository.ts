@@ -19,7 +19,14 @@ export const defaultValues = {
   electricityWater: 18.4,
   electricityCoal: 117.72,
   electricityBiomass: 47.15,
-  electricityNuclear: 60.92
+  electricityNuclear: 60.92,
+
+  // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
+  co2emissionsIndustry: 186,
+  co2emissionsBuildings: 118,
+  co2emissionsMobility: 150,
+  co2emissionsAgriculture: 70,
+  co2emissionsOthers: 9
 }
 
 const initialGame = {
@@ -43,6 +50,20 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.electricityCoal -
         this.electricityBiomass -
         this.electricityNuclear
+      )
+    },
+
+    get co2emissionsEnergy(): number {
+      return this.electricityCoal + this.electricityGas * 0.399 // should sum up to 280 in 2020
+    },
+
+    get co2emissions(): number {
+      return (
+        this.co2emissionsEnergy +
+        this.co2emissionsIndustry +
+        this.co2emissionsMobility +
+        this.co2emissionsBuildings +
+        this.co2emissionsOthers
       )
     }
   }
