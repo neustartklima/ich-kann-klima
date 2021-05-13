@@ -63,8 +63,11 @@ ul {
 
 .attribution {
   position: fixed;
-  bottom: 5px;
-  right: 5px;
+  bottom: 0;
+  right: 0;
+  padding: 5px;
   font-size: 10px;
+  background: white;
+  border: 1px solid #aaaaaa;
 }
 </style>
