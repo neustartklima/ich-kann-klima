@@ -1,12 +1,13 @@
 import { ActionTree } from "vuex"
-import { LawId, GameId, Game, LawReference, AcceptedLaw } from "../types"
+import { LawId, GameId, Game, LawReference, AcceptedLaw, Event, BaseParams, Law } from "../types"
 import { createCommand, Command } from "."
-import { gameUpdated } from "./mutations"
+import { gameUpdated, showEvent } from "./mutations"
 import { State } from "./state"
 import router from "../router"
-import RepositoryFactory, { initialGame, createGame } from "../repository"
-import { calculateNextYear } from "../Calculator"
+import RepositoryFactory, { createGame } from "../repository"
+import * as Calculator from "../Calculator"
 import { allLaws } from "../laws"
+import { fillUpLawProposals, getAcceptedLaw, replaceLawProposal } from "../LawProposer"
 
 const repository = RepositoryFactory()
 
@@ -17,7 +18,7 @@ function persistGame(game: Game) {
 
 export const actions: ActionTree<State, State> = {
   startGame() {
-    const game = createGame(initialGame)
+    const game = createGame()
     game.acceptedLaws = allLaws
       .filter((law) => law.labels?.includes("initial"))
       .map<LawReference>((law) => {
@@ -26,6 +27,7 @@ export const actions: ActionTree<State, State> = {
           effectiveSince: game.currentYear,
         }
       })
+    fillUpLawProposals(game, allLaws)
     repository.saveGame(game)
     router.push("/games/" + game.id)
   },
@@ -35,28 +37,44 @@ export const actions: ActionTree<State, State> = {
   },
 
   acceptLaw(context, payload: { lawId: LawId }) {
-    const game = context.state.game as Game
+    const game = { ...(context.state.game as Game) }
     const newLawRef = { lawId: payload.lawId, effectiveSince: game.currentYear + 1 }
-    context.commit(persistGame({ ...game, acceptedLaws: [...game.acceptedLaws, newLawRef] }))
+    game.acceptedLaws = [...game.acceptedLaws, newLawRef]
+    replaceLawProposal(game, payload.lawId)
+    context.commit(persistGame(game))
+  },
+
+  rejectLaw(context, payload: { lawId: LawId }) {
+    const game = { ...(context.state.game as Game) }
+    game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
+    replaceLawProposal(game, payload.lawId)
+    context.commit(persistGame(game))
   },
 
   advanceYear(context) {
-    function getLaw(lawRef: LawReference): AcceptedLaw {
-      const law = allLaws.find((law) => law.id === lawRef.lawId)
-      if (law) {
-        return { ...law, effectiveSince: lawRef.effectiveSince }
-      }
-      throw Error(`Law #${lawRef.lawId} not found`)
-    }
+    const game = { ...(context.state.game as Game) }
+    const laws = game.acceptedLaws.map(getAcceptedLaw)
+    game.currentYear++
+    game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
+    context.commit(persistGame(game))
+  },
 
-    const game = context.state.game as Game
-    const laws = game.acceptedLaws.map(getLaw)
-    const newValues = calculateNextYear(game.values, laws, game.currentYear + 1)
-    context.commit(persistGame({ ...game, values: newValues, currentYear: game.currentYear + 1 }))
+  applyEvent(context, payload: { event: Event }) {
+    const game = { ...(context.state.game as Game) }
+    payload.event.apply(game)
+    context.commit(showEvent(payload.event))
+    context.commit(persistGame(game))
+  },
+
+  eventAcknowledged(context) {
+    context.commit(showEvent(null))
   },
 }
 
 export const startGame = (): Command => createCommand("startGame", {})
 export const loadGame = (gameId: GameId): Command => createCommand("loadGame", { gameId })
 export const acceptLaw = (lawId: LawId): Command => createCommand("acceptLaw", { lawId })
+export const rejectLaw = (lawId: LawId): Command => createCommand("rejectLaw", { lawId })
 export const advanceYear = (): Command => createCommand("advanceYear", {})
+export const applyEvent = (event: Event): Command => createCommand("applyEvent", { event })
+export const eventAcknowledged = (): Command => createCommand("eventAcknowledged", {})

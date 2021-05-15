@@ -52,7 +52,8 @@ export type AcceptedLaw = Law & { effectiveSince: number }
 export type Event = {
   title: string
   description: string
-  effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams>
+  apply(game: Game): void
+  probability(game: Game): Percent
 }
 
 export type GameId = string
@@ -61,6 +62,8 @@ export type GameDefinition = {
   currentYear: number
   values: WritableBaseParams
   acceptedLaws: LawReference[]
+  proposedLaws: LawId[]
+  rejectedLaws: LawId[]
 }
 
 export type Game = {
@@ -68,4 +71,6 @@ export type Game = {
   currentYear: number
   values: BaseParams
   acceptedLaws: LawReference[]
+  proposedLaws: LawId[]
+  rejectedLaws: LawId[]
 }

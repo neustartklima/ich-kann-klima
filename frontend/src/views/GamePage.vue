@@ -1,10 +1,14 @@
 <script lang="ts">
-import { defineComponent } from "vue"
+import { computed, defineComponent } from "vue"
 import GameSetup from "../components/GameSetup.vue"
 import AcceptedLaws from "../components/AcceptedLaws.vue"
 import LawProposals from "../components/LawProposals.vue"
+import { getAnEvent } from "../EventMachine"
 import { useStore } from "../store"
-import { advanceYear } from "../store/actions"
+import { advanceYear, applyEvent } from "../store/actions"
+import { Law } from "../types"
+import { allEvents } from "../events"
+import { getLaw } from "../LawProposer"
 
 export default defineComponent({
   components: {
@@ -16,10 +20,35 @@ export default defineComponent({
   setup() {
     const store = useStore()
 
-    return { store }
+    return {
+      store,
+      allLaws: computed(() => store.state.allLaws),
+      acceptedLaws: computed(() => store.state.game?.acceptedLaws),
+      proposedLaws: computed(() => store.state.game?.proposedLaws.map(getLaw) as Law[])
+    }
+  },
+
+  data() {
+    return {
+      eventOccured: false,
+    }
+  },
+
+  mounted() {
+    setTimeout(this.initiateEvent, 20000)
   },
 
   methods: {
+    initiateEvent() {
+      const game = this.store.state.game
+      if (game) {
+        const event = getAnEvent(game, allEvents)
+        if (event) {
+          this.$store.dispatch(applyEvent(event))
+        }
+      }
+    },
+
     advanceYear() {
       this.$store.dispatch(advanceYear())
     },
@@ -29,7 +58,7 @@ export default defineComponent({
 
 <template>
   <GameSetup>
-    <LawProposals />
+    <LawProposals :proposed-laws="proposedLaws" />
 
     <h2>Beschlossene Gesetze</h2>
     <AcceptedLaws />

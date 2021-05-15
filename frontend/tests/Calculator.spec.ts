@@ -1,7 +1,7 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
 import { createLaw } from "../src/Factory"
 import { createBaseValues, defaultValues } from "../src/repository"
-import { BaseParams } from "../src/types"
+import { BaseParams, Game } from "../src/types"
 
 function effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams> {
   return { co2emissions: -42 }
@@ -32,7 +32,14 @@ describe("Calculator.calculateNextYear", () => {
   })
 })
 
-const simpleGame = { id: "1", values: createBaseValues(defaultValues), acceptedLaws: [], currentYear: 2021 }
+const simpleGame: Game = {
+  id: "1",
+  values: createBaseValues(defaultValues),
+  acceptedLaws: [],
+  proposedLaws: [],
+  rejectedLaws: [],
+  currentYear: 2021,
+}
 
 describe("Calculator.co2Rating", () => {
   it("should be nearly 50 in initial state", () => {
