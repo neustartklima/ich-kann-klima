@@ -1,35 +1,18 @@
 <script lang="ts">
-import { computed, defineComponent } from "vue"
+import { defineComponent, PropType } from "vue"
 import { Law, LawId } from "../types"
 import { useStore } from "../store"
-import { acceptLaw } from "../store/actions"
+import { acceptLaw, rejectLaw } from "../store/actions"
 
 export default defineComponent({
   setup() {
     const store = useStore()
 
-    return {
-      store,
-      allLaws: computed(() => store.state.allLaws),
-      acceptedLaws: computed(() => store.state.game?.acceptedLaws),
-    }
+    return { store }
   },
 
-  data() {
-    return {
-      declined: [] as LawId[],
-    }
-  },
-
-  computed: {
-    proposed(): Law[] {
-      const laws = this.allLaws.filter((law) =>
-        !this.acceptedLaws?.some((l) => l.lawId === law.id)
-        && !this.declined.includes(law.id)
-        && !(law.labels?.includes("hidden"))
-      )
-      return laws.slice(0, 6)
-    },
+  props: {
+    proposedLaws: Array as PropType<Law[]>
   },
 
   methods: {
@@ -38,15 +21,15 @@ export default defineComponent({
     },
 
     decline(lawId: LawId) {
-      this.declined.push(lawId)
+      this.store.dispatch(rejectLaw(lawId))
     },
-  },
+  }
 })
 </script>
 
 <template>
   <div class="ProposedLaws">
-    <div v-for="(law, index) in proposed" :key="index" class="Law">
+    <div v-for="(law, index) in proposedLaws" :key="index" class="Law">
       <h3>{{ law.title }}</h3>
       <div>{{ law.description }}</div>
 

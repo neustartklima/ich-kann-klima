@@ -1,9 +1,10 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
+import EventOccurred from "../components/EventOccurred.vue"
 
 export default defineComponent({
-  components: { CurrentIndicators },
+  components: { CurrentIndicators, EventOccurred },
 })
 </script>
 
@@ -15,10 +16,12 @@ export default defineComponent({
 
     <CurrentIndicators />
   </div>
+  
+  <EventOccurred />
 </template>
 
 <style lang="scss">
-  .game-setup {
-    position: relative;
-  }
+.game-setup {
+  position: relative;
+}
 </style>

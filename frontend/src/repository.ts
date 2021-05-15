@@ -22,10 +22,12 @@ export const defaultValues = {
   electricityNuclear: 60.92
 }
 
-export const initialGame = {
+const initialGame = {
   currentYear: 2021,
   values: defaultValues,
   acceptedLaws: [],
+  proposedLaws: [],
+  rejectedLaws: [],
 }
 
 export function createBaseValues(values: WritableBaseParams): BaseParams {
@@ -41,17 +43,18 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.electricityCoal -
         this.electricityBiomass -
         this.electricityNuclear
-        
       )
     }
   }
 }
 
-export function createGame(game: GameDefinition): Game {
+export function createGame(game: GameDefinition = initialGame): Game {
   const newGame = {
     id: uuid(),
     currentYear: game.currentYear,
     acceptedLaws: game.acceptedLaws,
+    proposedLaws: game.proposedLaws,
+    rejectedLaws: game.rejectedLaws,
     values: createBaseValues(game.values)
   }
 

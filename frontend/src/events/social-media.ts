@@ -1,4 +1,5 @@
 import { createEvent } from "../Factory"
+import { Game } from "../types"
 
 export default createEvent({
   title: "Social Media Alarm!",
@@ -7,9 +8,11 @@ export default createEvent({
     Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
   `,
 
-  effects(data, startYear, currentYear) {
-    return {
-      popularity: startYear === currentYear ? -20 : 0
-    }
+  apply(game) {
+    game.values.popularity -= 20
+  },
+
+  probability(game: Game) {
+    return Math.random()
   },
 })
