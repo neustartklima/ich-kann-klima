@@ -8,7 +8,7 @@ export const mutations: MutationTree<State> = {
     state.game = payload.game
   },
 
-  showEvent(state, payload: { event?: Event }) {
+  showEvent(state, payload: { event: Event }) {
     state.visibleEvent = payload.event
   },
 }
