@@ -1,6 +1,6 @@
 import "should"
 import { createGame } from "../src/repository"
-import { fillUpLawProposals } from "../src/LawProposer"
+import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
 import { Law } from "../src/types"
 import { createLaw } from "../src/Factory"
 
@@ -48,9 +48,19 @@ describe("LawProposer", () => {
   })
 
   describe("replaceLawProposal()", () => {
-    it("should remove the given law")
+    it("should remove the given law", () => {
+      const game = createGame()
+      fillUpLawProposals(game, allLaws)
+      replaceLawProposal(game, allLaws[0].id)
+      game.proposedLaws.should.not.containEql(allLaws[0].id)
+    })
 
-    it("should add another law")
+    it("should fill up after remove", () => {
+      const game = createGame()
+      fillUpLawProposals(game, allLaws)
+      replaceLawProposal(game, allLaws[0].id)
+      game.proposedLaws.length.should.equal(6)
+    })
   })
 
   describe("getLaw()", () => {
