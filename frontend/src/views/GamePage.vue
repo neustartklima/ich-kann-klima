@@ -5,7 +5,6 @@ import AcceptedLaws from "../components/AcceptedLaws.vue"
 import LawProposals from "../components/LawProposals.vue"
 import { getAnEvent } from "../EventMachine"
 import { useStore } from "../store"
-import { advanceYear, applyEvent } from "../store/actions"
 import { Law } from "../types"
 import { allEvents } from "../events"
 import { getLaw } from "../LawProposer"
@@ -24,7 +23,7 @@ export default defineComponent({
       store,
       allLaws: computed(() => store.state.allLaws),
       acceptedLaws: computed(() => store.state.game?.acceptedLaws),
-      proposedLaws: computed(() => store.state.game?.proposedLaws.map(getLaw) as Law[])
+      proposedLaws: computed(() => store.state.game?.proposedLaws.map(getLaw) as Law[]),
     }
   },
 
@@ -44,13 +43,13 @@ export default defineComponent({
       if (game) {
         const event = getAnEvent(game, allEvents)
         if (event) {
-          this.$store.dispatch(applyEvent(event))
+          this.store.dispatch("applyEvent", { event })
         }
       }
     },
 
     advanceYear() {
-      this.$store.dispatch(advanceYear())
+      this.store.dispatch("advanceYear", undefined)
     },
   },
 })
