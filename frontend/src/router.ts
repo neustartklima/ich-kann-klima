@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
-import { useStore } from "./store"
 import GamePage from "./views/GamePage.vue"
 import StartPage from "./views/StartPage.vue"
 import MainPage from "./views/MainPage.vue"

@@ -6,5 +6,3 @@ export const state = {
   game: undefined as Game | undefined,
   visibleEvent: null as Event | null,
 }
-
-export type State = typeof state

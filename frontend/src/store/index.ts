@@ -10,8 +10,9 @@ import {
 import { actions } from "./actions"
 import { mutations } from "./mutations"
 import { getters } from "./getters"
-import { state, State } from "./state"
+import { state } from "./state"
 
+export type State = typeof state
 export type Mutations = typeof mutations
 export type Actions = typeof actions
 export type Getters = typeof getters

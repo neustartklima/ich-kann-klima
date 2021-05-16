@@ -1,5 +1,5 @@
 import { Event, Game } from "../types"
-import { State } from "./state"
+import { State } from "."
 
 export const mutations = {
   gameLoaded(state: State, payload: { game: Game }) {
