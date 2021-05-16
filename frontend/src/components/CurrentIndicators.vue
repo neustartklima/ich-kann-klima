@@ -9,8 +9,6 @@ import co2 from "../assets/co2.png"
 import coin from "../assets/euro.svg"
 import hands from "../assets/clapping-hands.png"
 
-const co2budget = 4500
-
 function get(game: Game, func: (game: Game) => number): number {
   return game ? Math.round(func(game) / 10) : 0
 }
@@ -37,19 +35,15 @@ export default defineComponent({
     },
 
     popularityValue(): number {
-      return get(this.game, game => game.values.popularity)
-    }
-  }
+      return get(this.game, (game) => game.values.popularity)
+    },
+  },
 })
 </script>
 
 <template>
   <div class="CurrentIndicators">
-    <Indicator
-      :value="co2value"
-      color="#EE8AC1"
-      :img="co2"
-    />
+    <Indicator :value="co2value" color="#EE8AC1" :img="co2" />
     <Indicator :value="financeValue" color="#A9D18E" :img="coin" />
     <Indicator :value="popularityValue" color="#8FAADC" :img="hands" />
     <TimeIndicator />

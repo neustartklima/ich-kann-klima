@@ -1,6 +1,5 @@
 import { Event, Game } from "../types"
 import { allLaws } from "../laws"
-import { h } from "@vue/runtime-core"
 
 export const state = {
   allLaws,

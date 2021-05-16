@@ -1,12 +1,11 @@
 import { createEvent } from "../Factory"
-import { Law } from "../types"
-import { store } from "../store"
-import { getLaw } from "../LawProposer"
-import { rejectLaw } from "../store/actions"
+import { useStore } from "../store"
+
+const store = useStore()
 
 // if proposed laws contain at least one with the words 'subvention' and 'abbau', this event might occur
-function getFirstMatchingLaw(laws: Law[]) {
-  return laws.find((law) => law.title.match(/subvention/i) && law.title.match(/abbau/i))
+function getFirstMatchingLaw() {
+  return store.getters.proposedLaws.find((law) => law.title.match(/subvention/i) && law.title.match(/abbau/i))
 }
 
 export default createEvent({
@@ -17,14 +16,14 @@ export default createEvent({
   `,
 
   apply(game) {
-    const law = getFirstMatchingLaw(game.proposedLaws.map(getLaw))
+    const law = getFirstMatchingLaw()
     if (law) {
-      store.dispatch(rejectLaw(law.id))
+      store.dispatch("rejectLaw", { lawId: law.id })
     }
   },
 
   probability(game) {
-    const law = getFirstMatchingLaw(game.proposedLaws.map(getLaw))
+    const law = getFirstMatchingLaw()
     return law ? Math.random() : 0
   },
 })

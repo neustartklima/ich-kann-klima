@@ -1,7 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent } from "@vue/runtime-core"
 import { useStore } from "../store"
-import { eventAcknowledged } from "../store/actions"
 import { Event } from "../types"
 
 export default defineComponent({
@@ -16,7 +15,7 @@ export default defineComponent({
 
   methods: {
     close() {
-      this.store.dispatch(eventAcknowledged())
+      this.store.dispatch("eventAcknowledged", undefined)
     },
   },
 })

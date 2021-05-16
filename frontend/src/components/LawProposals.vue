@@ -2,7 +2,6 @@
 import { defineComponent, PropType } from "vue"
 import { Law, LawId } from "../types"
 import { useStore } from "../store"
-import { acceptLaw, rejectLaw } from "../store/actions"
 
 export default defineComponent({
   setup() {
@@ -12,18 +11,18 @@ export default defineComponent({
   },
 
   props: {
-    proposedLaws: Array as PropType<Law[]>
+    proposedLaws: Array as PropType<Law[]>,
   },
 
   methods: {
     accept(lawId: LawId) {
-      this.store.dispatch(acceptLaw(lawId))
+      this.store.dispatch("acceptLaw", { lawId })
     },
 
     decline(lawId: LawId) {
-      this.store.dispatch(rejectLaw(lawId))
+      this.store.dispatch("rejectLaw", { lawId })
     },
-  }
+  },
 })
 </script>
 
