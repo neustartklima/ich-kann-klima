@@ -1,11 +1,9 @@
 import { createEvent } from "../Factory"
 import { useStore } from "../store"
 
-const store = useStore()
-
 // if proposed laws contain at least one with the words 'subvention' and 'abbau', this event might occur
 function getFirstMatchingLaw() {
-  return store.getters.proposedLaws.find((law) => law.title.match(/subvention/i) && law.title.match(/abbau/i))
+  return useStore().getters.proposedLaws.find((law) => law.title.match(/subvention/i) && law.title.match(/abbau/i))
 }
 
 export default createEvent({
@@ -18,7 +16,7 @@ export default createEvent({
   apply(game) {
     const law = getFirstMatchingLaw()
     if (law) {
-      store.dispatch("rejectLaw", { lawId: law.id })
+      useStore().dispatch("rejectLaw", { lawId: law.id })
     }
   },
 

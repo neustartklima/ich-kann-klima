@@ -4,17 +4,11 @@ import GamePage from "./views/GamePage.vue"
 import StartPage from "./views/StartPage.vue"
 import MainPage from "./views/MainPage.vue"
 
-const store = useStore()
-
 const routes: RouteRecordRaw[] = [
   { path: "/", component: MainPage },
   { path: "/start", component: StartPage },
-  { path: "/games", component: GamePage, beforeEnter: () => store.dispatch("startGame", undefined) },
-  {
-    path: "/games/:id",
-    component: GamePage,
-    beforeEnter: (to) => store.dispatch("loadGame", { gameId: to.params.id as string }),
-  },
+  { path: "/games", component: GamePage },
+  { path: "/games/:id", component: GamePage },
 ]
 
 const router = createRouter({
