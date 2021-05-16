@@ -1,5 +1,4 @@
 import { createEvent } from "../Factory"
-import { Game } from "../types"
 
 export default createEvent({
   title: "Social Media Alarm!",
@@ -12,7 +11,7 @@ export default createEvent({
     game.values.popularity -= 20
   },
 
-  probability(game: Game) {
+  probability() {
     return Math.random()
   },
 })
