@@ -5,9 +5,9 @@ import AcceptedLaws from "../components/AcceptedLaws.vue"
 import LawProposals from "../components/LawProposals.vue"
 import { getAnEvent } from "../EventMachine"
 import { useStore } from "../store"
-import { Law } from "../types"
+import { GameId } from "../types"
 import { allEvents } from "../events"
-import { getLaw } from "../LawProposer"
+import { mapGetters } from "vuex"
 
 export default defineComponent({
   components: {
@@ -23,7 +23,6 @@ export default defineComponent({
       store,
       allLaws: computed(() => store.state.allLaws),
       acceptedLaws: computed(() => store.state.game?.acceptedLaws),
-      proposedLaws: computed(() => store.state.game?.proposedLaws.map(getLaw) as Law[]),
     }
   },
 
@@ -33,11 +32,23 @@ export default defineComponent({
     }
   },
 
+  computed: {
+    ...mapGetters(["proposedLaws"]),
+  },
+
   mounted() {
     setTimeout(this.initiateEvent, 20000)
   },
 
   methods: {
+    startGame(gameId: GameId | undefined) {
+      if (gameId) {
+        this.store.dispatch("loadGame", { gameId })
+      } else {
+        this.store.dispatch("startGame", undefined)
+      }
+    },
+
     initiateEvent() {
       const game = this.store.state.game
       if (game) {
@@ -51,6 +62,10 @@ export default defineComponent({
     advanceYear() {
       this.store.dispatch("advanceYear", undefined)
     },
+  },
+
+  beforeRouteEnter(to, from, next) {
+    next((vm) => ((vm as unknown) as { startGame: (gameId: GameId) => void }).startGame(to.params.id as GameId))
   },
 })
 </script>

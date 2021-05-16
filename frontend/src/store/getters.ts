@@ -1,10 +1,9 @@
-import { GetterTree } from "vuex"
 import { Law } from "../types"
 import { State } from "./state"
 
 export const getters = {
   proposedLaws(state: State): Law[] {
-    if (!state.game) {
+    if (!state.game || !state.game.proposedLaws) {
       return []
     }
     return state.game.proposedLaws
