@@ -7,8 +7,10 @@ export default createEvent({
     Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
   `,
 
-  apply(game) {
-    game.values.popularity -= 20
+  apply(context) {
+    if (context.state.game) {
+      context.state.game.values.popularity -= 20
+    }
   },
 
   probability() {

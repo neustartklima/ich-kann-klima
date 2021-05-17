@@ -1,3 +1,5 @@
+import { Context } from "./store"
+
 type MioTons = number
 type MrdEuro = number
 type TsdPeople = number
@@ -52,7 +54,7 @@ export type AcceptedLaw = Law & { effectiveSince: number }
 export type Event = {
   title: string
   description: string
-  apply(game: Game): void
+  apply(context: Context): void
   probability(game: Game): Percent
 }
 

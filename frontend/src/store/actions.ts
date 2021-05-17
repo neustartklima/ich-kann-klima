@@ -57,8 +57,8 @@ export const actions = {
 
   applyEvent(context: Context, payload: { event: Event }) {
     const game = { ...(context.state.game as Game) }
-    payload.event.apply(game)
-    context.commit("showEvent", { event: payload.event })
+    payload.event.apply(context)
+    context.commit("showEvent", payload)
     repository.saveGame(game)
     context.commit("gameLoaded", { game })
   },

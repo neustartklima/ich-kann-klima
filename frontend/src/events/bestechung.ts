@@ -9,14 +9,14 @@ function getFirstMatchingLaw() {
 export default createEvent({
   title: "Anruf von befreundetem Unternehmer",
   description: `Klaus, ein Unternehmer, den du auf einer Dienstreise kennen gelernt hast, ruft an und möchte dich in seine
-    Ferienvilla auf Sardinien einladen. Er geht natürlich davon aus, dass du dem Gesetzentwurf zum Abbau von Subventionen
+    Ferienvilla auf Sardinien einladen. Er verlässt sich natürlich darauf, dass du dem Gesetzentwurf zum Abbau von Subventionen
     nicht zustimmen wirst.
   `,
 
-  apply(game) {
+  apply(context) {
     const law = getFirstMatchingLaw()
     if (law) {
-      useStore().dispatch("rejectLaw", { lawId: law.id })
+      context.dispatch("rejectLaw", { lawId: law.id })
     }
   },
 
