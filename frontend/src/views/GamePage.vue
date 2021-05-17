@@ -52,7 +52,7 @@ export default defineComponent({
     initiateEvent() {
       const game = this.store.state.game
       if (game) {
-        const event = getAnEvent(game, allEvents)
+        const event = getAnEvent(this.store, allEvents)
         if (event) {
           this.store.dispatch("applyEvent", { event })
         }
