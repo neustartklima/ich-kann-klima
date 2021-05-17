@@ -32,6 +32,10 @@ describe("Calculator.calculateNextYear", () => {
   })
 })
 
+describe("Calculator.applyEffects()", () => {
+  it("should apply the effects to the game values")
+})
+
 const simpleGame: Game = {
   id: "1",
   values: createBaseValues(defaultValues),
