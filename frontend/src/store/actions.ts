@@ -1,5 +1,5 @@
 import { Context } from "."
-import { LawId, GameId, Game, LawReference, Event } from "../types"
+import { LawId, GameId, Game, LawReference, Event, AcceptedLaw, LawLabel } from "../types"
 import router from "../router"
 import RepositoryFactory, { createGame } from "../repository"
 import * as Calculator from "../Calculator"
@@ -32,7 +32,16 @@ export const actions = {
   acceptLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     const newLawRef = { lawId: payload.lawId, effectiveSince: game.currentYear + 1 }
-    game.acceptedLaws = [...game.acceptedLaws, newLawRef]
+    const newLaw = getAcceptedLaw(newLawRef)
+    const removeLawsWithLabels = newLaw.removeLawsWithLabels
+    const filteredLawRefs = game.acceptedLaws
+      .map(getAcceptedLaw)
+      .filter(
+        (lawToCheck: AcceptedLaw) =>
+          !removeLawsWithLabels?.some((labelToRemove) => lawToCheck.labels?.includes(labelToRemove))
+      )
+      .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
+    game.acceptedLaws = [...filteredLawRefs, newLawRef]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
     context.commit("gameLoaded", { game })
