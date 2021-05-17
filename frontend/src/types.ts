@@ -1,4 +1,4 @@
-import { Context } from "./store"
+import { Context, Store } from "./store"
 
 type MioTons = number
 type MrdEuro = number
@@ -55,7 +55,7 @@ export type Event = {
   title: string
   description: string
   apply(context: Context): void
-  probability(game: Game): Percent
+  probability(store: Store): Percent
 }
 
 export type GameId = string
