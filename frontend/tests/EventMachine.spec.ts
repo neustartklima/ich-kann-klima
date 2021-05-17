@@ -1,5 +1,5 @@
 import should from "should"
-import { getAnEvent, applyEffects } from "../src/EventMachine"
+import { getAnEvent } from "../src/EventMachine"
 import { Event, Game } from "../src/types"
 import { createBaseValues, defaultValues } from "../src/repository"
 
@@ -50,8 +50,4 @@ describe("EventMachine.getOne()", () => {
     const allEvents = [createEvent("t1", 0), createEvent("t2", 0)]
     should(getAnEvent(game, allEvents)).be.null()
   })
-})
-
-describe("EventMachine.applyEffects()", () => {
-  it("should apply the effects to the game values")
 })

@@ -1,7 +1,15 @@
 import { BaseParams, AcceptedLaw, Game, Event, Law } from "./types"
 import "should"
 import { defaultValues } from "./repository"
-import { applyEffects } from "./EventMachine"
+
+export function applyEffects(values: BaseParams, effects: Partial<BaseParams>) {
+  const effectedProperties = Object.keys(effects) as Array<keyof BaseParams>
+  effectedProperties.forEach((property) => {
+    values[property] += effects[property] || 0
+  })
+  
+  return values
+}
 
 export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): BaseParams {
   const values = { ...currentValues }
@@ -9,6 +17,10 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
     const effects = law.effects(values, law.effectiveSince, year)
     applyEffects(values, effects)
   })
+
+  // re-calculate remaining CO2 budget
+  values.co2budget -= values.co2emissions
+
   return values
 }
 
