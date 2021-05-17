@@ -29,12 +29,13 @@ export type BaseParams = WritableBaseParams & {
 
 export type LawId = string
 
-export type LawLabel = "hidden" | "initial"
+export type LawLabel = "hidden" | "initial" | "Kernenergie"
 
 export type LawDefinition = {
   title: string
   description: string
   labels?: LawLabel[]
+  removeLawsWithLabels?: LawLabel[]
   effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams>
 }
 

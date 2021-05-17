@@ -1,4 +1,4 @@
-import { BaseParams, AcceptedLaw, Game, Event, Law } from "./types"
+import { BaseParams, AcceptedLaw, Game, LawReference } from "./types"
 import "should"
 import { defaultValues } from "./repository"
 import { applyEffects } from "./EventMachine"
@@ -10,6 +10,10 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
     applyEffects(values, effects)
   })
   return values
+}
+
+export function lawsForNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): LawReference[] {
+  return [{lawId: "ASDF", effectiveSince: 0}]
 }
 
 function clampToPercent(value: number) {

@@ -3,7 +3,7 @@ import { createLaw } from "../Factory"
 export default createLaw({
   title: "Atomausstieg finded wie beschlossen 2022 statt",
   description: "",
-  labels: ["hidden", "initial"],
+  labels: ["hidden", "initial", "Kernenergie"],
 
   effects(data, startYear, currentYear) {
     const mapping: Record<number, number> = {
