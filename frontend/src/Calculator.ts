@@ -1,4 +1,4 @@
-import { BaseParams, AcceptedLaw, Game, Event, Law } from "./types"
+import { BaseParams, AcceptedLaw, Game, LawReference } from "./types"
 import "should"
 import { defaultValues } from "./repository"
 
@@ -22,6 +22,10 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
   values.co2budget -= values.co2emissions
 
   return values
+}
+
+export function lawsForNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): LawReference[] {
+  return [{lawId: "ASDF", effectiveSince: 0}]
 }
 
 function clampToPercent(value: number) {
