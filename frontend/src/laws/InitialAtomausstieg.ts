@@ -1,6 +1,7 @@
 import { createLaw } from "../Factory"
 
 export default createLaw({
+  id: "InitialAtomausstieg",
   title: "Atomausstieg finded wie beschlossen 2022 statt",
   description: "",
   labels: ["hidden", "initial", "Kernenergie"],
