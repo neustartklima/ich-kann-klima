@@ -4,6 +4,7 @@
   "description": "## Das Klimawahl Challenge Game",
   "scripts": {
     "start": "cd frontend && npm start",
+    "test": "cd frontend && npm test",
     "build": "cd frontend && npm run build && cd ../server && npm run build",
     "docker:build": "docker build -t ichkannklima .",
     "docker:start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima",
