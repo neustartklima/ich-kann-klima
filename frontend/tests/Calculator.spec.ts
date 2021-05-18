@@ -20,13 +20,17 @@ describe("Calculator.calculateNextYear", () => {
   })
 
   it("should return modified base params", () => {
-    const acceptedLaws = [{ ...createLaw({ title: "test", description: "test", effects }), effectiveSince: 2021 }]
+    const acceptedLaws = [
+      { ...createLaw("test", { title: "test", description: "test", effects }), effectiveSince: 2021 },
+    ]
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     newValues.co2emissions.should.equal(startValues.co2emissions - 42)
   })
 
   it("should calculate remaining co2 budget", () => {
-    const acceptedLaws = [{ ...createLaw({ title: "test", description: "test", effects }), effectiveSince: 2021 }]
+    const acceptedLaws = [
+      { ...createLaw("test", { title: "test", description: "test", effects }), effectiveSince: 2021 },
+    ]
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     newValues.co2budget.should.equal(startValues.co2budget - newValues.co2emissions)
   })
