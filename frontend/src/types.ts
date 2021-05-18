@@ -34,6 +34,7 @@ export type LawId = string
 export type LawLabel = "hidden" | "initial" | "Kernenergie"
 
 export type LawDefinition = {
+  id: LawId
   title: string
   description: string
   labels?: LawLabel[]
@@ -41,9 +42,7 @@ export type LawDefinition = {
   effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams>
 }
 
-export type Law = LawDefinition & {
-  id: LawId
-}
+export type Law = LawDefinition & {}
 
 export type LawReference = {
   lawId: LawId

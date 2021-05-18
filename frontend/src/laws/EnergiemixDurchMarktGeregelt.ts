@@ -1,6 +1,7 @@
 import { createLaw } from "../Factory"
 
 export default createLaw({
+  id: "EnergiemixDurchMarktGeregelt",
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
 
