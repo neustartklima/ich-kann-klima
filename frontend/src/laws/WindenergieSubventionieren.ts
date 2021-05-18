@@ -1,7 +1,6 @@
 import { createLaw } from "../Factory"
 
-export default createLaw({
-  id: "WindenergieSubventionieren",
+export default createLaw(import.meta.url, {
   title: "Windkraft fördern",
   description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
 
