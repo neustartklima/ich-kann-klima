@@ -1,8 +1,11 @@
 import { Event, Law, LawDefinition } from "./types"
 
-let index = 0
-export function createLaw(law: LawDefinition): Law {
-  return law
+export function createLaw(url: string, law: LawDefinition): Law {
+  const id = url
+    .replace(/\.ts\?.*/, "")
+    .split(/[\\/]/)
+    .pop() as string
+  return { ...law, id: id }
 }
 
 export function createEvent(event: Event): Event {

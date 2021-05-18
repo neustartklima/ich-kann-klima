@@ -1,7 +1,6 @@
 import { createLaw } from "../Factory"
 
-export default createLaw({
-  id: "KeineFoerderungFuerTierhaltung",
+export default createLaw(import.meta.url, {
   title: "Förderung für Tierhaltung abschaffen",
   description: "Subventionen für Tierhaltung werden insgesamt eingestellt.",
 

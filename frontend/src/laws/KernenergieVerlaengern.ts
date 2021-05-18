@@ -1,8 +1,7 @@
 import { createLaw } from "../Factory"
 import { BaseParams, LawDefinition } from "../types"
 
-export default createLaw({
-  id: "KernenergieVerlaengern",
+export default createLaw(import.meta.url, {
   title: "Kernenergienutzung verlängern",
   description: "Kernkraftwerke länger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],

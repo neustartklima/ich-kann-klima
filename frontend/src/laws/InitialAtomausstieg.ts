@@ -1,7 +1,6 @@
 import { createLaw } from "../Factory"
 
-export default createLaw({
-  id: "InitialAtomausstieg",
+export default createLaw(import.meta.url, {
   title: "Atomausstieg finded wie beschlossen 2022 statt",
   description: "",
   labels: ["hidden", "initial", "Kernenergie"],

@@ -1,7 +1,6 @@
 import { createLaw } from "../Factory"
 
-export default createLaw({
-  id: "Kohleverstromung",
+export default createLaw(import.meta.url, {
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
 
