@@ -1,16 +1,20 @@
 import "should"
 import { createGame } from "../src/repository"
 import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
-import { Law } from "../src/types"
+import { Game, Law } from "../src/types"
 import { createLaw } from "../src/Factory"
 
+function priority(game: Game): number {
+  return 1
+}
+
 const allLaws: Law[] = [
-  createLaw("law1", { title: "law 1", description: "", effects: () => undefined }),
-  createLaw("law2", { title: "law 2", description: "", effects: () => undefined }),
-  createLaw("law3", { title: "law 3", description: "", effects: () => undefined }),
-  createLaw("law4", { title: "law 4", description: "", effects: () => undefined }),
-  createLaw("law5", { title: "law 5", description: "", effects: () => undefined }),
-  createLaw("law6", { title: "law 6", description: "", effects: () => undefined }),
+  createLaw("law1", { title: "law 1", description: "", effects: () => undefined, priority }),
+  createLaw("law2", { title: "law 2", description: "", effects: () => undefined, priority }),
+  createLaw("law3", { title: "law 3", description: "", effects: () => undefined, priority }),
+  createLaw("law4", { title: "law 4", description: "", effects: () => undefined, priority }),
+  createLaw("law5", { title: "law 5", description: "", effects: () => undefined, priority }),
+  createLaw("law6", { title: "law 6", description: "", effects: () => undefined, priority }),
 ]
 
 describe("LawProposer", () => {
