@@ -18,7 +18,7 @@ export function fillUpLawProposals(game: Game, allLaws: Law[]): void {
       .map((law) => ({ law: law, priority: law.priority ? law.priority(game) : 1 }))
       .filter((law) => law.priority > 0)
       .sort((a, b) => a.priority - b.priority)
-      .splice(0, requiredLaws)
+      .slice(0, requiredLaws)
     game.proposedLaws = game.proposedLaws.concat(newProposals.map((law) => law.law.id))
   }
 }
