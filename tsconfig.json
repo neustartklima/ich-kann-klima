@@ -11,5 +11,10 @@
     "lib": ["esnext", "dom"],
     "types": ["vite/client", "mocha"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "tests/Calculator.spec.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "tests/Calculator.spec.ts"
+  ]
 }

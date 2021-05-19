@@ -26,10 +26,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies for frontend
-      run: cd frontend && npm ci
-
-    - name: Install dependencies for backend
-      run: cd server && npm ci
+      run: npm ci
 
     - name: Cache node modules
       uses: actions/cache@v2
@@ -52,5 +49,5 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@4.1.1
       with:
         branch: gh-pages
-        folder: frontend/dist
+        folder: dist
  
