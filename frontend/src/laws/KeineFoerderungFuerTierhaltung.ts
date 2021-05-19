@@ -11,4 +11,8 @@ export default createLaw(import.meta.url, {
       popularity: -data.popularity * 0.1,
     }
   },
+
+  priority(game) {
+    return 100 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
+  },
 })

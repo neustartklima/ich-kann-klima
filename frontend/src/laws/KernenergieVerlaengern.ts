@@ -15,4 +15,11 @@ export default createLaw(import.meta.url, {
       popularity: -data.popularity * 0.1,
     }
   },
+
+  priority(game) {
+    // More likely if lots of Gas usage leads to dependency of Russia etc..
+    const electricityGasAtStart = 56.77 // TODO: Put constants in central place
+    const gasChangeRelStart = game.values.electricityGas - electricityGasAtStart
+    return (1000 * gasChangeRelStart) / electricityGasAtStart
+  },
 })

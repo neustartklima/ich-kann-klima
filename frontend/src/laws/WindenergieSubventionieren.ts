@@ -10,4 +10,15 @@ export default createLaw(import.meta.url, {
       stateDebt: -1000,
     }
   },
+
+  priority(game) {
+    const electricityNonRenewable =
+      game.values.electricityDemand -
+      game.values.electricityWind -
+      game.values.electricitySolar -
+      game.values.electricityWater -
+      game.values.electricityBiomass
+    const ratio = electricityNonRenewable / game.values.electricityDemand
+    return 100 * ratio
+  },
 })
