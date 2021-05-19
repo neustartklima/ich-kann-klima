@@ -7,6 +7,10 @@ function effects(data: BaseParams, startYear: number, currentYear: number): Part
   return { co2emissions: -42 }
 }
 
+function priority(game: Game): number {
+  return 1
+}
+
 const startValues = createBaseValues(defaultValues)
 
 describe("Calculator.calculateNextYear", () => {
@@ -21,7 +25,7 @@ describe("Calculator.calculateNextYear", () => {
 
   it("should return modified base params", () => {
     const acceptedLaws = [
-      { ...createLaw("test", { title: "test", description: "test", effects }), effectiveSince: 2021 },
+      { ...createLaw("test", { title: "test", description: "test", effects, priority }), effectiveSince: 2021 },
     ]
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     newValues.co2emissions.should.equal(startValues.co2emissions - 42)
@@ -29,7 +33,7 @@ describe("Calculator.calculateNextYear", () => {
 
   it("should calculate remaining co2 budget", () => {
     const acceptedLaws = [
-      { ...createLaw("test", { title: "test", description: "test", effects }), effectiveSince: 2021 },
+      { ...createLaw("test", { title: "test", description: "test", effects, priority }), effectiveSince: 2021 },
     ]
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     newValues.co2budget.should.equal(startValues.co2budget - newValues.co2emissions)
