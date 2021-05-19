@@ -10,4 +10,12 @@ export default createLaw(import.meta.url, {
       stateDebt: -1000,
     }
   },
+
+  priority(game) {
+    const startYear = 2021 // TODO: Put constants in central place
+    const endYear = 2030 // TODO: Put constants in central place
+    const yearsTotal = endYear - startYear
+    const yearsToGo = endYear - game.currentYear
+    return (yearsToGo / yearsTotal) * 100
+  },
 })
