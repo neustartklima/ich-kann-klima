@@ -47,10 +47,9 @@ export type LawDefinition = {
    *
    * The six laws with highest priority will be shown.
    * Laws with priority <= 0 will not be shown.
-   * If no function is given, priority 1 is assumed.
    * @param game The current game.
    */
-  priority?(game: Game): number
+  priority(game: Game): number
 }
 
 export type Law = LawDefinition & {

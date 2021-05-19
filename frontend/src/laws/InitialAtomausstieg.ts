@@ -15,4 +15,8 @@ export default createLaw(import.meta.url, {
       electricityNuclear: newValue - data.electricityNuclear,
     }
   },
+
+  priority(game) {
+    return 0
+  },
 })
