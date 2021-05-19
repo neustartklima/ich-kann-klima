@@ -4,7 +4,7 @@ type MioTons = number
 type MrdEuro = number
 type TsdPeople = number
 type TWh = number
-type Percent = number
+export type Percent = number
 
 export type WritableBaseParams = {
   co2budget: MioTons
@@ -39,6 +39,18 @@ export type LawDefinition = {
   labels?: LawLabel[]
   removeLawsWithLabels?: LawLabel[]
   effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams>
+
+  /**
+   * Current priority of this law.
+   *
+   * Will be used to filter and sort the proposed laws.
+   *
+   * The six laws with highest priority will be shown.
+   * Laws with priority <= 0 will not be shown.
+   * If no function is given, priority 1 is assumed.
+   * @param game The current game.
+   */
+  priority?(game: Game): number
 }
 
 export type Law = LawDefinition & {
