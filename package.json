@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "## Das Klimawahl Challenge Game",
   "scripts": {
-    "start": "cd frontend && npm start",
-    "test": "cd frontend && npm test",
-    "build": "cd frontend && npm run build && cd ../server && npm run build",
+    "dev": "cross-env NODE_ENV=development vite",
+    "test": "cross-env NODE_ENV=test vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview",
     "docker:build": "docker build -t ichkannklima .",
-    "docker:start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima",
-    "server:test": "cd server && npm test"
+    "docker:start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,25 @@
     "node": ">=14",
     "npm": ">=6"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "uuid": "^8.3.2",
+    "vue": "^3.0.11",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^8.2.2",
+    "@types/uuid": "^8.3.0",
+    "@vitejs/plugin-vue": "^1.2.2",
+    "@vue/compiler-sfc": "^3.0.11",
+    "mocha": "^8.4.0",
+    "puppeteer": "^9.1.1",
+    "sass": "^1.32.13",
+    "should": "^13.2.3",
+    "typescript": "^4.2.4",
+    "vite": "^2.3.3",
+    "vite-plugin-test": "0.0.5",
+    "vue-router": "^4.0.8",
+    "vue-tsc": "^0.1.4"
+  }
 }
