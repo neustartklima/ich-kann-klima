@@ -17,7 +17,8 @@ export const defaultValues = {
   electricitySolar: 51.42,
   electricityWind: 131.85,
   electricityWater: 18.4,
-  electricityCoal: 117.72,
+  electricityHardCoal: 35.46,
+  electricityBrownCoal: 82.13,
   electricityBiomass: 47.15,
   electricityNuclear: 60.92,
 
@@ -47,14 +48,18 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.electricitySolar -
         this.electricityWind -
         this.electricityWater -
-        this.electricityCoal -
+        this.electricityHardCoal -
+        this.electricityBrownCoal -
         this.electricityBiomass -
         this.electricityNuclear
       )
     },
 
     get co2emissionsEnergy(): number {
-      return this.electricityCoal + this.electricityGas * 0.399 // should sum up to 280 in 2020
+      // should sum up to 220 in 2020
+      return this.electricityHardCoal * 0.835 +
+        this.electricityBrownCoal * 1.137 +
+        this.electricityGas * 0.399
     },
 
     get co2emissions(): number {

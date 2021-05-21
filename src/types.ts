@@ -19,7 +19,8 @@ export type WritableBaseParams = {
   electricitySolar: TWh
   electricityWind: TWh
   electricityWater: TWh
-  electricityCoal: TWh
+  electricityHardCoal: TWh
+  electricityBrownCoal: TWh
   electricityBiomass: TWh
   electricityNuclear: TWh
 
