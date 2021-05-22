@@ -42,7 +42,11 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
   return {
     ...values,
 
-    get electricityGas(): number {
+    get electricityCoal() {
+      return this.electricityHardCoal + this.electricityBrownCoal
+    },
+
+    get electricityGas() {
       return (
         this.electricityDemand -
         this.electricitySolar -
@@ -55,11 +59,17 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       )
     },
 
-    get co2emissionsEnergy(): number {
+    get co2emissionsEnergy() {
       // should sum up to 220 in 2020
-      return this.electricityHardCoal * 0.835 +
+      // factors from https://www.rensmart.com/Calculators/KWH-to-CO2 and @thomas-olszamowski
+      return this.electricityGas * 0.399 +
+        this.electricitySolar * 0.058 +
+        this.electricityWind * 0.005 +
+        this.electricityWater * 0.02 +
+        this.electricityHardCoal * 0.835 +
         this.electricityBrownCoal * 1.137 +
-        this.electricityGas * 0.399
+        this.electricityBiomass * 0 + // TODO find correct factor (no source found)
+        this.electricityNuclear * 0.005
     },
 
     get co2emissions(): number {

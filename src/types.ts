@@ -32,6 +32,7 @@ export type WritableBaseParams = {
 }
 
 export type BaseParams = WritableBaseParams & {
+  electricityCoal: TWh
   electricityGas: TWh
   co2emissionsEnergy: MioTons
   co2emissions: MioTons
