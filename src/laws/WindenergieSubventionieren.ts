@@ -1,6 +1,6 @@
-import { createLaw } from "../Factory"
+import { LawDefinition } from "../types"
 
-export default createLaw(import.meta.url, {
+export default {
   title: "Windkraft fördern",
   description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
 
@@ -21,4 +21,4 @@ export default createLaw(import.meta.url, {
     const ratio = electricityNonRenewable / game.values.electricityDemand
     return 100 * ratio
   },
-})
+} as LawDefinition

@@ -1,6 +1,6 @@
-import { createLaw } from "../Factory"
+import { LawDefinition } from "../types"
 
-export default createLaw(import.meta.url, {
+export default {
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
 
@@ -18,4 +18,4 @@ export default createLaw(import.meta.url, {
     const yearsToGo = endYear - game.currentYear
     return (yearsToGo / yearsTotal) * 100
   },
-})
+} as LawDefinition

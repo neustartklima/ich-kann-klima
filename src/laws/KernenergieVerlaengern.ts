@@ -1,7 +1,6 @@
-import { createLaw } from "../Factory"
-import { BaseParams, LawDefinition } from "../types"
+import { LawDefinition } from "../types"
 
-export default createLaw(import.meta.url, {
+export default {
   title: "Kernenergienutzung verlängern",
   description: "Kernkraftwerke länger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],
@@ -22,4 +21,4 @@ export default createLaw(import.meta.url, {
     const gasChangeRelStart = game.values.electricityGas - electricityGasAtStart
     return (1000 * gasChangeRelStart) / electricityGasAtStart
   },
-})
+} as LawDefinition

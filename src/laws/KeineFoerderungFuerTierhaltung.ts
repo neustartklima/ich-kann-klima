@@ -1,6 +1,6 @@
-import { createLaw } from "../Factory"
+import { LawDefinition } from "../types"
 
-export default createLaw(import.meta.url, {
+export default {
   title: "Förderung für Tierhaltung abschaffen",
   description: "Subventionen für Tierhaltung werden insgesamt eingestellt.",
 
@@ -15,4 +15,4 @@ export default createLaw(import.meta.url, {
   priority(game) {
     return 100 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
   },
-})
+} as LawDefinition

@@ -1,6 +1,6 @@
-import { createLaw } from "../Factory"
+import { LawDefinition } from "../types"
 
-export default createLaw(import.meta.url, {
+export default {
   title: "Atomausstieg finded wie beschlossen 2022 statt",
   description: "",
   labels: ["hidden", "initial", "Kernenergie"],
@@ -19,4 +19,4 @@ export default createLaw(import.meta.url, {
   priority(game) {
     return 0
   },
-})
+} as LawDefinition
