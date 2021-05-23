@@ -10,11 +10,21 @@ export default defineComponent({
     return { store }
   },
 
+  data() {
+    return {
+      selectedLaw: undefined as LawId | undefined,
+    }
+  },
+
   props: {
     proposedLaws: Array as PropType<Law[]>,
   },
 
   methods: {
+    select(lawId: LawId) {
+      this.selectedLaw = lawId
+    },
+
     accept(lawId: LawId) {
       this.store.dispatch("acceptLaw", { lawId })
     },
@@ -28,7 +38,13 @@ export default defineComponent({
 
 <template>
   <div class="ProposedLaws">
-    <div v-for="(law, index) in proposedLaws" :key="index" class="Law">
+    <div
+      v-for="(law, index) in proposedLaws"
+      :key="index"
+      class="Law"
+      :class="{ selected: law.id === selectedLaw }"
+      @click="select(law.id)"
+    >
       <h3>{{ law.title }}</h3>
       <div>{{ law.description }}</div>
 
@@ -87,7 +103,8 @@ export default defineComponent({
       color: red;
     }
 
-    &:hover {
+    &:hover,
+    &.selected {
       background: orange;
 
       button {
