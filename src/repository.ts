@@ -8,7 +8,7 @@ export const defaultValues = {
   popularity: 50, // 50% of all people accept you as your chancellor
 
   // hidden
-  co2emissions: 805, // in 2019, source https://www.bundesregierung.de/breg-de/aktuelles/bilanz-umweltbundesamt-1730880
+  co2emissions: 739, // in 2020, source https://www.bmu.de/pressemitteilung/treibhausgasemissionen-sinken-2020-um-87-prozent/
   unemployment: 2695, // in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
 
@@ -17,9 +17,17 @@ export const defaultValues = {
   electricitySolar: 51.42,
   electricityWind: 131.85,
   electricityWater: 18.4,
-  electricityCoal: 117.72,
+  electricityHardCoal: 35.46,
+  electricityBrownCoal: 82.13,
   electricityBiomass: 47.15,
-  electricityNuclear: 60.92
+  electricityNuclear: 60.92,
+
+  // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
+  co2emissionsIndustry: 186,
+  co2emissionsBuildings: 118,
+  co2emissionsMobility: 150,
+  co2emissionsAgriculture: 70,
+  co2emissionsOthers: 9
 }
 
 const initialGame = {
@@ -34,15 +42,43 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
   return {
     ...values,
 
-    get electricityGas(): number {
+    get electricityCoal() {
+      return this.electricityHardCoal + this.electricityBrownCoal
+    },
+
+    get electricityGas() {
       return (
         this.electricityDemand -
         this.electricitySolar -
         this.electricityWind -
         this.electricityWater -
-        this.electricityCoal -
+        this.electricityHardCoal -
+        this.electricityBrownCoal -
         this.electricityBiomass -
         this.electricityNuclear
+      )
+    },
+
+    get co2emissionsEnergy() {
+      // should sum up to 220 in 2020
+      // factors from https://www.rensmart.com/Calculators/KWH-to-CO2 and @thomas-olszamowski
+      return this.electricityGas * 0.399 +
+        this.electricitySolar * 0.058 +
+        this.electricityWind * 0.005 +
+        this.electricityWater * 0.02 +
+        this.electricityHardCoal * 0.835 +
+        this.electricityBrownCoal * 1.137 +
+        this.electricityBiomass * 0 + // TODO find correct factor (no source found)
+        this.electricityNuclear * 0.005
+    },
+
+    get co2emissions(): number {
+      return (
+        this.co2emissionsEnergy +
+        this.co2emissionsIndustry +
+        this.co2emissionsMobility +
+        this.co2emissionsBuildings +
+        this.co2emissionsOthers
       )
     }
   }
