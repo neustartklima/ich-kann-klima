@@ -2,6 +2,11 @@
 import { computed, defineComponent } from "@vue/runtime-core"
 import { useStore } from "../store"
 
+interface MyScreen extends Screen {
+  mozOrientation: string
+  msOrientation: string
+}
+
 export default defineComponent({
   setup() {
     const store = useStore()
@@ -9,6 +14,12 @@ export default defineComponent({
     return {
       store,
       currentYear: computed(() => store.state.game?.currentYear as number),
+    }
+  },
+
+  data() {
+    return {
+      orientation: "portrait",
     }
   },
 
@@ -21,64 +32,49 @@ export default defineComponent({
       return this.currentYear - 2020
     },
 
-    height(): string {
-      return "height: " + (this.years / this.timespan) * 100 + "%"
+    size(): string {
+      const attr = this.orientation.match(/landscape/) ? "height" : "width"
+      return attr + ": " + (this.years / this.timespan) * 100 + "%"
+    },
+  },
+
+  mounted() {
+    window.addEventListener("orientationchange", this.setOrientation)
+  },
+
+  methods: {
+    setOrientation(): void {
+      if (screen.orientation) {
+        this.orientation =
+          screen.orientation.type || (screen as MyScreen).mozOrientation || (screen as MyScreen).msOrientation
+      } else {
+        this.orientation = window.innerWidth > window.innerHeight ? "landscape" : "portrait"
+      }
     },
   },
 })
 </script>
 
 <template>
-  <div class="container">
-    <div class="arrow-head"></div>
-    <div class="indicator" :style="height"></div>
-  </div>
+  <div class="Indicator" :style="size"></div>
 </template>
 
 <style lang="scss" scoped>
 $color: orange;
-$width: 20px;
+$width: 3vh;
 $border: 1px;
 
-.container {
-  width: $width;
-  height: calc(10 * (3em + 11px));  // Number of circles multiplies with circle height plus margin/border
-  border: $border solid $color;
-  border-top: 0;
-  margin: 0 2em;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
+.Indicator {
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: orange;
 
-  &::before, &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0px;
+  @media all and (orientation: landscape) {
+    top: auto;
   }
-
-  &::before {
-    border-top: $border solid $color;
-    width: ($width + $border) * 2;
-    left: -$width / 2;
-  }
-
-  &::after {
-    border-top: $border solid white;
-    width: $width;
-  }
-}
-
-.indicator {
-  background-color: $color;
-}
-
-.arrow-head {
-  border: 0 solid $color;
-  border-width: $border $border 0 0;
-  width: $width * 1.5;
-  height: $width * 1.5;
-  transform: translate(-$width * 0.25, -$width * 0.75) rotate(-45deg);
 }
 </style>

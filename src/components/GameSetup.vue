@@ -11,17 +11,29 @@ export default defineComponent({
 <template>
   <div class="game-setup">
     <div class="wrapper">
+      <h1>#ich-kann-klima</h1>
+
       <slot />
     </div>
 
     <CurrentIndicators />
   </div>
-  
+
   <EventOccurred />
 </template>
 
 <style lang="scss">
 .game-setup {
   position: relative;
+
+  @media all and (orientation: portrait) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+.wrapper {
+  height: 100vh;
+  overflow: auto;
 }
 </style>

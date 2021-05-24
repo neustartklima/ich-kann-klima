@@ -54,6 +54,7 @@ export default defineComponent({
   align-items: center;
 
   > div {
+    box-sizing: border-box;
     width: 400px;
     max-width: 100%;
     padding: 15px;

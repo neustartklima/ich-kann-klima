@@ -7,7 +7,7 @@ export default defineComponent({
   props: {
     value: { type: Number, required: true },
     color: { type: String, required: true },
-    img: { type: String }
+    img: { type: String },
   },
 
   computed: {
@@ -29,7 +29,7 @@ export default defineComponent({
           return "background: " + this.color
         }
       }
-    }
+    },
   },
 })
 </script>
@@ -42,18 +42,35 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-$size: 3em; // If you change this, remember to change TimeIndicator as well!
-
 .Indicator {
-  margin: 0 10px;
+  margin: 0;
+  box-sizing: content-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  @media all and (orientation: portrait) {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
 }
 
 .circle {
-  width: $size;
-  height: $size;
+  display: inline-block;
+  width: 4vh;
+  height: 4vh;
+  margin: 0.5vh;
   border-radius: 50%;
-  margin-bottom: 10px;
   border: 1px solid grey;
-  background: no-repeat center/2em;
+  background: no-repeat center/2vh white;
+  box-shadow: 0 0 1px white;
+
+  @media all and (orientation: landscape) {
+    width: 4vw;
+    height: 4vw;
+    margin: 0.5vw;
+    background-size: 2vw;
+  }
 }
 </style>
