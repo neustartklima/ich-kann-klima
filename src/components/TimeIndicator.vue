@@ -40,6 +40,7 @@ export default defineComponent({
 
   mounted() {
     window.addEventListener("orientationchange", this.setOrientation)
+    this.setOrientation()
   },
 
   methods: {
