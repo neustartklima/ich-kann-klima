@@ -89,4 +89,8 @@ export default defineComponent({
 h2 {
   margin: 0 1em;
 }
+
+p {
+  padding: 0.5rem;
+}
 </style>

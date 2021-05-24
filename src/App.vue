@@ -5,8 +5,6 @@ export default defineComponent({})
 </script>
 
 <template>
-  <h1>#ich-kann-klima</h1>
-
   <router-view />
 
   <details class="attribution">
@@ -20,17 +18,22 @@ export default defineComponent({})
 </template>
 
 <style lang="scss">
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 30px;
 }
 
 h1 {
-  text-align: right;
-  margin-right: 1.3em;
+  text-align: left;
+  margin: 0.3em;
 }
 
 .game-setup {
@@ -63,11 +66,14 @@ ul {
 
 .attribution {
   position: fixed;
-  bottom: 0;
-  right: 0;
-  padding: 5px;
+  bottom: -1px;
+  right: -1px;
+  padding: 0 5px;
   font-size: 10px;
   background: white;
-  border: 1px solid #aaaaaa;
+
+  &[open] {
+    border: 1px solid #cccccc;
+  }
 }
 </style>

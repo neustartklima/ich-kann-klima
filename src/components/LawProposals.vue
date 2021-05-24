@@ -38,19 +38,15 @@ export default defineComponent({
 
 <template>
   <div class="ProposedLaws">
-    <div
-      v-for="(law, index) in proposedLaws"
-      :key="index"
-      class="Law"
-      :class="{ selected: law.id === selectedLaw }"
-      @click="select(law.id)"
-    >
-      <h3>{{ law.title }}</h3>
-      <div>{{ law.description }}</div>
+    <div v-for="(law, index) in proposedLaws" :key="index" class="Law" :class="{ selected: law.id === selectedLaw }">
+      <div @click="select(law.id)">
+        <h3>{{ law.title }}</h3>
+        <div>{{ law.description }}</div>
 
-      <div class="button-bar">
-        <button class="accept" @click="accept(law.id)">✓</button>
-        <button class="decline" @click="decline(law.id)">✗</button>
+        <div class="button-bar">
+          <button class="accept" @click="accept(law.id)">✓</button>
+          <button class="decline" @click="decline(law.id)">✗</button>
+        </div>
       </div>
     </div>
   </div>
@@ -67,48 +63,63 @@ export default defineComponent({
 
   .Law {
     position: relative;
-    width: 15em;
-    padding: 10px;
-    border: 1px solid orange;
-    border-radius: 20px;
-    margin: 0.5em;
+    width: 33%;
+    padding: 0.5rem;
     box-sizing: border-box;
 
-    .button-bar {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+    @media (max-width: 800px) {
+      font-size: 85%;
+    
+    }
+    @media (max-width: 600px) {
+      width: 50%;
     }
 
-    button {
-      display: none;
-      border: 1px solid #2c3e50;
-      border-radius: 4px;
-      width: 32px;
-      margin-left: 5px;
-      padding: 0;
-    }
+    > div {
+      border: 1px solid orange;
+      border-radius: 20px;
+      padding: 0.5rem;
+      position: relative;
 
-    button:hover {
-      background: #eeeeee;
-    }
+      .button-bar {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
 
-    .accept {
-      font-size: 28px;
-      color: green;
-    }
+      button {
+        display: none;
+        border: 1px solid #2c3e50;
+        border-radius: 4px;
+        width: 32px;
+        margin-left: 5px;
+        padding: 0;
+        background: white;
+      }
 
-    .decline {
-      font-size: 30px;
-      color: red;
+      button:hover {
+        background: #eeeeee;
+      }
+
+      .accept {
+        font-size: 28px;
+        color: green;
+      }
+
+      .decline {
+        font-size: 30px;
+        color: red;
+      }
     }
 
     &:hover,
     &.selected {
-      background: orange;
+      > div {
+        background: orange;
 
-      button {
-        display: inline;
+        button {
+          display: inline;
+        }
       }
     }
   }
