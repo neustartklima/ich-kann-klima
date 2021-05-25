@@ -1,13 +1,13 @@
-import { LawDefinition } from "../types"
+import { LawDefinition, MrdEuro, TWh, WritableBaseParams } from "../types"
 
 export default {
   title: "Windenergie subventionieren",
   description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     return {
-      co2emmissions: -100,
-      stateDebt: -1000,
+      electricityWind: 20 as TWh,
+      stateDebt: 1 as MrdEuro,
     }
   },
 

@@ -1,13 +1,18 @@
-import { LawDefinition } from "../types"
+import { defaultValues } from "../repository"
+import { LawDefinition, WritableBaseParams } from "../types"
 
 export default {
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     return {
-      co2emmissions: -100,
-      stateDebt: -1000,
+      stateDebt: -37,
+      electricityHardCoal: -Math.min(0.1 * defaultValues.electricityHardCoal, data.electricityHardCoal),
+      electricityBrownCoal: -Math.min(0.05 * defaultValues.electricityBrownCoal, data.electricityBrownCoal),
+      electricityWind: 5.0,
+      electricitySolar: 3.0,
+      electricityWater: 0.5,
     }
   },
 

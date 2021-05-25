@@ -1,11 +1,11 @@
-import { LawDefinition } from "../types"
+import { LawDefinition, WritableBaseParams } from "../types"
 
 export default {
   title: "Initial: Atomausstieg",
   description: "Atomausstieg finded wie beschlossen 2022 statt",
   labels: ["hidden", "initial", "Kernenergie"],
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     const mapping: Record<number, number> = {
       2021: 60.45,
       2022: 30.21,

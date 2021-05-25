@@ -1,14 +1,14 @@
 import { BaseParams, Game, GameDefinition, GameId, WritableBaseParams } from "./types"
 import { v4 as uuid } from "uuid"
 
-export const defaultValues = {
+export const defaultValues: WritableBaseParams = {
   co2budget: 6700, // https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22
 
   stateDebt: 1899, // in 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands
   popularity: 50, // 50% of all people accept you as your chancellor
 
   // hidden
-  co2emissions: 739, // in 2020, source https://www.bmu.de/pressemitteilung/treibhausgasemissionen-sinken-2020-um-87-prozent/
+  //co2emissions: 739, // in 2020, source https://www.bmu.de/pressemitteilung/treibhausgasemissionen-sinken-2020-um-87-prozent/
   unemployment: 2695, // in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
 
@@ -27,7 +27,7 @@ export const defaultValues = {
   co2emissionsBuildings: 118,
   co2emissionsMobility: 150,
   co2emissionsAgriculture: 70,
-  co2emissionsOthers: 9
+  co2emissionsOthers: 9,
 }
 
 const initialGame = {
@@ -62,7 +62,8 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
     get co2emissionsEnergy() {
       // should sum up to 220 in 2020
       // factors from https://www.rensmart.com/Calculators/KWH-to-CO2 and @thomas-olszamowski
-      return this.electricityGas * 0.399 +
+      return (
+        this.electricityGas * 0.399 +
         this.electricitySolar * 0.058 +
         this.electricityWind * 0.005 +
         this.electricityWater * 0.02 +
@@ -70,6 +71,7 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.electricityBrownCoal * 1.137 +
         this.electricityBiomass * 0 + // TODO find correct factor (no source found)
         this.electricityNuclear * 0.005
+      )
     },
 
     get co2emissions(): number {
@@ -80,7 +82,7 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.co2emissionsBuildings +
         this.co2emissionsOthers
       )
-    }
+    },
   }
 }
 
@@ -91,7 +93,7 @@ export function createGame(game: GameDefinition = initialGame): Game {
     acceptedLaws: game.acceptedLaws,
     proposedLaws: game.proposedLaws,
     rejectedLaws: game.rejectedLaws,
-    values: createBaseValues(game.values)
+    values: createBaseValues(game.values),
   }
 
   return newGame
@@ -111,6 +113,6 @@ export default function() {
 
     saveGame(game: Game) {
       localStorage.setItem("game", JSON.stringify(game))
-    }
+    },
   }
 }

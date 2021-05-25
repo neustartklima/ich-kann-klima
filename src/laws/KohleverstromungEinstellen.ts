@@ -1,29 +1,32 @@
-import { LawDefinition } from "../types"
+import { LawDefinition, WritableBaseParams, MrdEuro, TsdPeople } from "../types"
 
 export default {
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     const yearsActive = currentYear - startYear
 
-    const compensation = yearsActive < 18 ? 4300 / 18 : 0 // Mio €
-    const subventions = 2500 // Mio €
+    const compensation: MrdEuro = yearsActive < 18 ? 4.3 / 18 : 0
+    const subventions: MrdEuro = 2.5
 
-    const directJobsInvolved = 20 // Tsd people
-    const indirectJobsInvolved = 60
-    const settlingFactor = (10 - yearsActive) / 10
+    const directJobsInvolved: TsdPeople = 20
+    const indirectJobsInvolved: TsdPeople = 60
+    const settlingFactor = (10 - yearsActive) / 55 // 10 + 9 + ... + 1 = 55
     const jobs = Math.max((directJobsInvolved + indirectJobsInvolved / 2) * settlingFactor, 0)
 
     return {
-      co2emmissions: -data.electricityCoal * 0.399,
+      electricityHardCoal: -data.electricityHardCoal,
+      electricityBrownCoal: -data.electricityBrownCoal,
       stateDebt: -compensation + subventions,
       unemployment: jobs,
-      electricityCoal: -data.electricityCoal,
     }
   },
 
   priority(game) {
-    return 100 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
+    if (game.values.electricityCoal / game.values.electricityDemand <= 0.1) {
+      return 0
+    }
+    return 10000 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
   },
 } as LawDefinition

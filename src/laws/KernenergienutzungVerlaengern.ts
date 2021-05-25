@@ -1,17 +1,15 @@
-import { LawDefinition } from "../types"
+import { LawDefinition, WritableBaseParams } from "../types"
 
 export default {
   title: "Kernenergienutzung verlängern",
   description: "Kernkraftwerke länger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],
 
-  effects(data, startYear, currentYear) {
-    const subventions = 2500 // Mio €
-
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     return {
       electricityNuclear: 104.3 - data.electricityNuclear,
-      stateDebt: subventions,
-      popularity: -data.popularity * 0.1,
+      stateDebt: -2.5, // Mrd €
+      popularity: -data.popularity * 0.04,
     }
   },
 

@@ -1,9 +1,9 @@
 import { Context, Store } from "./store"
 
-type MioTons = number
-type MrdEuro = number
-type TsdPeople = number
-type TWh = number
+export type MioTons = number
+export type MrdEuro = number
+export type TsdPeople = number
+export type TWh = number
 export type Percent = number
 
 export type WritableBaseParams = {
@@ -47,7 +47,7 @@ export type LawDefinition = {
   description: string
   labels?: LawLabel[]
   removeLawsWithLabels?: LawLabel[]
-  effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams>
+  effects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams>
 
   /**
    * Current priority of this law.
