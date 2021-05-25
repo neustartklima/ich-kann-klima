@@ -6,8 +6,11 @@
     "dev": "cross-env NODE_ENV=development vite",
     "test": "mocha --require ts-node/register tests/**/*.spec.ts",
     "test:vite": "cross-env NODE_ENV=test vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build && npm run server:build",
     "serve": "vite preview",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "server:start": "esbuild --bundle --platform=node --sourcemap src/server.ts | node --inspect",
+    "server:build": "esbuild --bundle --platform=node src/server.ts --outfile=dist/server.js",
     "docker:build": "docker build -t ichkannklima .",
     "docker:start": "docker run -it --rm --name ichkannklima -p 3000:3000 ichkannklima"
   },
@@ -28,11 +31,13 @@
   },
   "dependencies": {
     "cross-env": "^7.0.3",
+    "express": "^4.17.1",
     "uuid": "^8.3.2",
     "vue": "^3.1.1",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.11",
     "@types/mocha": "^8.2.2",
     "@types/uuid": "^8.3.0",
     "@vitejs/plugin-vue": "^1.2.3",
