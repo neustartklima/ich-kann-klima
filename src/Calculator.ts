@@ -1,13 +1,13 @@
 import { BaseParams, AcceptedLaw, Game, LawReference } from "./types"
 import "should"
-import { defaultValues } from "./repository"
+import { createBaseValues, defaultValues } from "./repository"
 
 export function applyEffects(values: BaseParams, effects: Partial<BaseParams>) {
   const effectedProperties = Object.keys(effects) as Array<keyof BaseParams>
   effectedProperties.forEach((property) => {
     values[property] += effects[property] || 0
   })
-  
+
   return values
 }
 
@@ -25,7 +25,7 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
 }
 
 export function lawsForNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): LawReference[] {
-  return [{lawId: "ASDF", effectiveSince: 0}]
+  return [{ lawId: "ASDF", effectiveSince: 0 }]
 }
 
 function clampToPercent(value: number) {
@@ -37,7 +37,7 @@ export function co2Rating(game: Game): number {
     return 100 // nothing is better than no emissions!
   }
   // the year's budget should be only a part of the remaining total budget
-  const yearBudget = game.values.co2budget * defaultValues.co2emissions / defaultValues.co2budget * 0.8
+  const yearBudget = (game.values.co2budget * createBaseValues(defaultValues).co2emissions) / defaultValues.co2budget
   // the ratio of actual emissions to the yearly budget: < 1 is bad, > 1 is good
   const ratio = yearBudget / game.values.co2emissions
   return clampToPercent(ratio * 50)
