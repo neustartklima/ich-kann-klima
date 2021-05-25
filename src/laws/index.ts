@@ -1,17 +1,17 @@
 import { createLaw } from "../Factory"
-import Kohleverstromung from "./Kohleverstromung"
-import EnergiemixDurchMarktGeregelt from "./EnergiemixDurchMarktGeregelt"
-import KernenergieVerlaengern from "./KernenergieVerlaengern"
+import KohleverstromungEinstellen from "./KohleverstromungEinstellen"
+import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
+import KernenergienutzungVerlaengern from "./KernenergienutzungVerlaengern"
 import WindenergieSubventionieren from "./WindenergieSubventionieren"
 import InitialAtomausstieg from "./InitialAtomausstieg"
-import KeineFoerderungFuerTierhaltung from "./KeineFoerderungFuerTierhaltung"
+import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbschaffen"
 
 export const allLaws = Object.entries({
-  Kohleverstromung,
-  EnergiemixDurchMarktGeregelt,
-  KernenergieVerlaengern,
+  KohleverstromungEinstellen,
+  EnergiemixRegeltDerMarkt,
+  KernenergienutzungVerlaengern,
   WindenergieSubventionieren,
-  KeineFoerderungFuerTierhaltung,
+  FoerderungFuerTierhaltungAbschaffen,
   InitialAtomausstieg,
 }).map(([name, module]) => {
   return createLaw(name, module)

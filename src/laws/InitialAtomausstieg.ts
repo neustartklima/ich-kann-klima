@@ -1,8 +1,8 @@
 import { LawDefinition } from "../types"
 
 export default {
-  title: "Atomausstieg finded wie beschlossen 2022 statt",
-  description: "",
+  title: "Initial: Atomausstieg",
+  description: "Atomausstieg finded wie beschlossen 2022 statt",
   labels: ["hidden", "initial", "Kernenergie"],
 
   effects(data, startYear, currentYear) {

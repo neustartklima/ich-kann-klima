@@ -1,7 +1,7 @@
 import { LawDefinition } from "../types"
 
 export default {
-  title: "Windkraft fördern",
+  title: "Windenergie subventionieren",
   description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
 
   effects(data, startYear, currentYear) {
