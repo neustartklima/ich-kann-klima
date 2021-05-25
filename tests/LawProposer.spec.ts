@@ -1,5 +1,6 @@
 import "should"
-import { createGame } from "../src/repository"
+import API from "../src/api"
+import repository from "../src/repository"
 import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
 import { Game, Law } from "../src/types"
 
@@ -16,17 +17,28 @@ const allLaws: Law[] = [
   { id: "law6", title: "law 6", description: "", effects: () => ({}), priority },
 ]
 
+function mockedFetch(info: RequestInfo, init?: RequestInit) {
+  return Promise.resolve({
+    ok: true,
+    headers: { get: (which: string) => "application/json" },
+    json: () => Promise.resolve({ ...JSON.parse(init.body.toString()), id: "12345" }),
+  } as Response)
+}
+
+const mockedApi = API("http://test.localhost", mockedFetch)
+const { createGame } = repository(mockedApi)
+
 describe("LawProposer", () => {
   describe("fillUpLawProposals()", () => {
-    it("should fill up an empty array", () => {
-      const game = createGame()
+    it("should fill up an empty array", async () => {
+      const game = await createGame()
       fillUpLawProposals(game, allLaws)
       game.proposedLaws.length.should.equal(6)
       game.proposedLaws.should.deepEqual(allLaws.map((law) => law.id))
     })
 
-    it("should add missing laws", () => {
-      const game = createGame()
+    it("should add missing laws", async () => {
+      const game = await createGame()
       fillUpLawProposals(game, allLaws)
       game.proposedLaws.shift()
       fillUpLawProposals(game, allLaws)
@@ -36,14 +48,14 @@ describe("LawProposer", () => {
       game.proposedLaws.should.deepEqual(ids)
     })
 
-    it("should only fill up if enough laws exist", () => {
-      const game = createGame()
+    it("should only fill up if enough laws exist", async () => {
+      const game = await createGame()
       fillUpLawProposals(game, allLaws.slice(0, 3))
       game.proposedLaws.length.should.equal(3)
     })
 
-    it("should not fill up already proposed laws", () => {
-      const game = createGame()
+    it("should not fill up already proposed laws", async () => {
+      const game = await createGame()
       fillUpLawProposals(game, allLaws.slice(0, 3))
       fillUpLawProposals(game, allLaws.slice(0, 3))
       game.proposedLaws.length.should.equal(3)
@@ -51,15 +63,15 @@ describe("LawProposer", () => {
   })
 
   describe("replaceLawProposal()", () => {
-    it("should remove the given law", () => {
-      const game = createGame()
+    it("should remove the given law", async () => {
+      const game = await createGame()
       fillUpLawProposals(game, allLaws)
       replaceLawProposal(game, allLaws[0].id)
       game.proposedLaws.should.not.containEql(allLaws[0].id)
     })
 
-    it("should fill up after remove", () => {
-      const game = createGame()
+    it("should fill up after remove", async () => {
+      const game = await createGame()
       fillUpLawProposals(game, allLaws)
       replaceLawProposal(game, allLaws[0].id)
       game.proposedLaws.length.should.equal(6)

@@ -11,6 +11,7 @@ import {
 } from "./types"
 import { v4 as uuid } from "uuid"
 import { startYear } from "./constants"
+import { API } from "./api"
 
 export const defaultValues: WritableBaseParams = {
   co2budget: 6700, // https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22
@@ -169,19 +170,39 @@ export function createGame(game: GameDefinition = initialGame): Game {
   return newGame
 }
 
-export default function() {
+export default function(api: API) {
   return {
-    loadGame(id: GameId): Game {
+    async createGame(game: GameDefinition = initialGame): Promise<Game> {
+      const newGame: Game = {
+        id: "",
+        currentYear: game.currentYear,
+        acceptedLaws: game.acceptedLaws,
+        proposedLaws: game.proposedLaws,
+        rejectedLaws: game.rejectedLaws,
+        values: createBaseValues(game.values),
+        events: [],
+        over: false
+      }
+      try {
+        return await api.createGame(newGame)
+      } catch (error) {
+        console.warn("Cannot save new game - trying again later", error)
+        newGame.id = "00000"
+        return newGame
+      }
+    },
+
+    async loadGame(id: GameId): Promise<Game> {
       const storedItem = localStorage.getItem("game")
       if (!storedItem) {
         throw Error("Game not found")
       }
-      const game = createGame(JSON.parse(storedItem))
+      const game = await this.createGame(JSON.parse(storedItem))
       game.id = id
       return game
     },
 
-    saveGame(game: Game) {
+    async saveGame(game: Game) {
       localStorage.setItem("game", JSON.stringify(game))
     },
   }

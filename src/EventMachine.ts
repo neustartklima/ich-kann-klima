@@ -2,7 +2,7 @@ import { Store } from "./store"
 import { Event } from "./types"
 
 export default function(store: Store, allEvents: Event[]) {
-  let timer: number
+  let timer: NodeJS.Timeout | undefined
 
   function getPriorizedEvents(): Event[] {
     return allEvents
@@ -30,7 +30,7 @@ export default function(store: Store, allEvents: Event[]) {
 
     pause() {
       timer && clearTimeout(timer)
-      timer = 0
+      timer = undefined
     },
 
     initiateEvent,

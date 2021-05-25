@@ -20,4 +20,12 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3099",
+        timeout: 1000,
+      }
+    }
+  }
 })
