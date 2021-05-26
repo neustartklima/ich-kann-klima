@@ -13,14 +13,14 @@ export const defaultValues: WritableBaseParams = {
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
 
   // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
-  electricityDemand: 484.22,
+  electricityDemand: 480.54,
   electricitySolar: 51.42,
   electricityWind: 131.85,
-  electricityWater: 18.4,
+  electricityWater: 14.99,
   electricityHardCoal: 35.46,
   electricityBrownCoal: 82.13,
-  electricityBiomass: 47.15,
-  electricityNuclear: 60.92,
+  electricityBiomass: 43.19,
+  electricityNuclear: 60.91,
 
   // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
   co2emissionsIndustry: 186,
