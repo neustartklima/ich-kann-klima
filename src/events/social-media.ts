@@ -1,4 +1,5 @@
 import { createEvent } from "../Factory"
+import { Percent } from "../types"
 
 export default createEvent({
   title: "Social Media Alarm!",
@@ -8,8 +9,9 @@ export default createEvent({
   `,
 
   apply(context) {
-    if (context.state.game) {
-      context.state.game.values.popularity -= 20
+    const g = context.state.game
+    if (g) {
+      g.values.popularity += Math.max(-g.values.popularity, -20 as Percent)
     }
   },
 
