@@ -1,4 +1,4 @@
-import { LawDefinition, WritableBaseParams } from "../types"
+import { LawDefinition, TWh, WritableBaseParams } from "../types"
 
 export default {
   title: "Initial: Atomausstieg",
@@ -7,8 +7,8 @@ export default {
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     const mapping: Record<number, number> = {
-      2021: 60.45,
-      2022: 30.21,
+      2021: 60.45 as TWh,
+      2022: 30.21 as TWh,
     }
     const newValue = mapping[currentYear] || 0
     return {

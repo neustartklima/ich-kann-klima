@@ -1,4 +1,4 @@
-import { LawDefinition, WritableBaseParams } from "../types"
+import { LawDefinition, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
 
 export default {
   title: "Förderung für Tierhaltung abschaffen",
@@ -7,13 +7,13 @@ export default {
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     if (startYear === currentYear) {
       return {
-        co2emissionsAgriculture: -Math.min(data.co2emissionsAgriculture, 10),
-        stateDebt: -10,
-        popularity: -0.2 * data.popularity,
+        co2emissionsAgriculture: Math.max(-data.co2emissionsAgriculture, -10 as MioTons),
+        stateDebt: -10 as MrdEuro,
+        popularity: Math.max(-data.popularity, -20 as Percent),
       }
     } else {
       return {
-        stateDebt: -10,
+        stateDebt: -10 as MrdEuro,
       }
     }
   },

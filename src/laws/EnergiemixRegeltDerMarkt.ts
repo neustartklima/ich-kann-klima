@@ -1,5 +1,5 @@
 import { defaultValues } from "../repository"
-import { LawDefinition, WritableBaseParams } from "../types"
+import { LawDefinition, MrdEuro, TWh, WritableBaseParams } from "../types"
 
 export default {
   title: "Energiemix regelt der Markt",
@@ -7,12 +7,12 @@ export default {
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     return {
-      stateDebt: -37,
-      electricityHardCoal: -Math.min(0.1 * defaultValues.electricityHardCoal, data.electricityHardCoal),
-      electricityBrownCoal: -Math.min(0.05 * defaultValues.electricityBrownCoal, data.electricityBrownCoal),
-      electricityWind: 5.0,
-      electricitySolar: 3.0,
-      electricityWater: 0.5,
+      stateDebt: -37 as MrdEuro,
+      electricityHardCoal: Math.max(-data.electricityHardCoal, -0.1 * defaultValues.electricityHardCoal),
+      electricityBrownCoal: Math.max(-data.electricityBrownCoal, -0.05 * defaultValues.electricityBrownCoal),
+      electricityWind: 5.0 as TWh,
+      electricitySolar: 3.0 as TWh,
+      electricityWater: 0.5 as TWh,
     }
   },
 
