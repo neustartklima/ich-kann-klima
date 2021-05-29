@@ -1,11 +1,18 @@
-import { Context } from "."
-import { LawId, GameId, Game, LawReference, Event, AcceptedLaw, LawLabel } from "../types"
+import { Context, store } from "."
+import { LawId, GameId, Game, LawReference, Event, AcceptedLaw } from "../types"
 import router from "../router"
 import RepositoryFactory, { createGame } from "../repository"
 import * as Calculator from "../Calculator"
 import { fillUpLawProposals, getAcceptedLaw, replaceLawProposal } from "../LawProposer"
+import EventMachine from "../EventMachine"
+import { allEvents } from "../events"
 
 const repository = RepositoryFactory()
+let eventMachine: ReturnType<typeof EventMachine>
+
+function getEventMachine() {
+  return eventMachine || (eventMachine = EventMachine(store, allEvents))
+}
 
 export const actions = {
   startGame(context: Context) {
@@ -20,12 +27,14 @@ export const actions = {
       })
     fillUpLawProposals(game, context.state.allLaws)
     repository.saveGame(game)
+    getEventMachine().start()
     router.push("/games/" + game.id)
   },
 
   loadGame(context: Context, payload: { gameId: GameId }) {
     const game = repository.loadGame(payload.gameId)
     repository.saveGame(game)
+    getEventMachine().start()
     context.commit("gameLoaded", { game })
   },
 
@@ -62,6 +71,7 @@ export const actions = {
     game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
     repository.saveGame(game)
     context.commit("gameLoaded", { game })
+    getEventMachine().start()
   },
 
   applyEvent(context: Context, payload: { event: Event }) {
@@ -74,5 +84,6 @@ export const actions = {
 
   eventAcknowledged(context: Context) {
     context.commit("hideEvent", undefined)
+    getEventMachine().start()
   },
 }

@@ -3,10 +3,8 @@ import { computed, defineComponent } from "vue"
 import GameSetup from "../components/GameSetup.vue"
 import AcceptedLaws from "../components/AcceptedLaws.vue"
 import LawProposals from "../components/LawProposals.vue"
-import { getAnEvent } from "../EventMachine"
 import { useStore } from "../store"
 import { GameId } from "../types"
-import { allEvents } from "../events"
 import { mapGetters } from "vuex"
 
 export default defineComponent({
@@ -36,26 +34,12 @@ export default defineComponent({
     ...mapGetters(["proposedLaws"]),
   },
 
-  mounted() {
-    setTimeout(this.initiateEvent, 20000)
-  },
-
   methods: {
     startGame(gameId: GameId | undefined) {
       if (gameId) {
         this.store.dispatch("loadGame", { gameId })
       } else {
         this.store.dispatch("startGame", undefined)
-      }
-    },
-
-    initiateEvent() {
-      const game = this.store.state.game
-      if (game) {
-        const event = getAnEvent(this.store, allEvents)
-        if (event) {
-          this.store.dispatch("applyEvent", { event })
-        }
       }
     },
 
