@@ -38,6 +38,10 @@ export const actions = {
     context.commit("gameLoaded", { game })
   },
 
+  gameOver(context: Context) {
+    
+  },
+
   acceptLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     const newLawRef = { lawId: payload.lawId, effectiveSince: game.currentYear + 1 }
