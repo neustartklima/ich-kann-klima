@@ -39,7 +39,7 @@ export const actions = {
   },
 
   gameOver(context: Context) {
-    
+    context.commit("gameOver", undefined)
   },
 
   acceptLaw(context: Context, payload: { lawId: LawId }) {
@@ -79,15 +79,17 @@ export const actions = {
   },
 
   applyEvent(context: Context, payload: { event: Event }) {
-    const game = { ...(context.state.game as Game) }
     payload.event.apply(context)
     context.commit("showEvent", payload)
-    repository.saveGame(game)
-    context.commit("gameLoaded", { game })
+    repository.saveGame(context.state.game as Game)
   },
 
   eventAcknowledged(context: Context) {
     context.commit("hideEvent", undefined)
-    getEventMachine().start()
+    if (context.state.game?.over) {
+      router.push("/games/" + context.state.game?.id + "/over")
+    } else {
+      getEventMachine().start()
+    }
   },
 }

@@ -13,4 +13,8 @@ export const mutations = {
   hideEvent(state: State) {
     state.visibleEvent = null
   },
+
+  gameOver(state: State) {
+    state.game = { ...state.game as Game, over: true }
+  },
 }

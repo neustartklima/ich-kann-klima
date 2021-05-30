@@ -24,7 +24,7 @@ export default defineComponent({
       Es kann aber auch sein, dass du dir durch bestimmte Entscheidungen andere Möglichkeiten nimmst.
     </p>
 
-    <o> Gar nicht so einfach, Politiker zu sein, oder? </o>
+    <p>Gar nicht so einfach, Politiker zu sein, oder?</p>
 
     <div class="button-bar">
       <button @click="newGame">Leg' los</button>

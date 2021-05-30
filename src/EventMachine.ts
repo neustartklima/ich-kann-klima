@@ -24,6 +24,7 @@ export default function(store: Store, allEvents: Event[]) {
   return {
     start() {
       // Check for events once in a minute
+      this.pause()
       timer = setTimeout(initiateEvent, Math.random() * 60000)
     },
 

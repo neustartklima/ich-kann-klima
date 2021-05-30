@@ -96,4 +96,5 @@ export type Game = {
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
+  over: boolean
 }
