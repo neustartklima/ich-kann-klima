@@ -94,6 +94,7 @@ export function createGame(game: GameDefinition = initialGame): Game {
     proposedLaws: game.proposedLaws,
     rejectedLaws: game.rejectedLaws,
     values: createBaseValues(game.values),
+    over: false,
   }
 
   return newGame

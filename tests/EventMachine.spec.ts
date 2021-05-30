@@ -11,6 +11,7 @@ const game: Game = {
   proposedLaws: [],
   rejectedLaws: [],
   currentYear: 2021,
+  over: false, 
 }
 
 function createEvent(title: string, probability: number): Event {
