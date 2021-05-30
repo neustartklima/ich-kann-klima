@@ -51,6 +51,7 @@ const initialGame: Game = {
   proposedLaws: [],
   rejectedLaws: [],
   currentYear: 2021,
+  over: false,
 }
 
 describe("Calculator.co2Rating", () => {
