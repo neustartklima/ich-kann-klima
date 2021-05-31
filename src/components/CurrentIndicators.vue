@@ -63,6 +63,11 @@ export default defineComponent({
     @media all and (orientation: portrait) {
       flex-direction: column;
     }
+
+    @media all and (orientation: landscape) {
+      padding: 0px;
+      height: 100vh;
+    }
   }
 }
 
