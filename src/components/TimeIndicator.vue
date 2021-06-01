@@ -1,5 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent } from "@vue/runtime-core"
+import { endYear, startYear } from "../constants"
 import { useStore } from "../store"
 
 interface MyScreen extends Screen {
@@ -25,11 +26,11 @@ export default defineComponent({
 
   computed: {
     timespan(): number {
-      return 2050 - 2021
+      return endYear - startYear
     },
 
     years(): number {
-      return this.currentYear - 2020
+      return this.currentYear - startYear + 1
     },
 
     size(): string {
