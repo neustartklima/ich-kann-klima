@@ -36,21 +36,6 @@ h1 {
   margin: 0.3em;
 }
 
-.game-setup {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row;
-}
-
-.wrapper {
-  width: 800px;
-  max-width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-}
-
 ul {
   list-style-type: "... ";
 }

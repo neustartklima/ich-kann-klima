@@ -2,9 +2,10 @@
 import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
 import EventOccurred from "../components/EventOccurred.vue"
+import PeekInside from "./PeekInside.vue"
 
 export default defineComponent({
-  components: { CurrentIndicators, EventOccurred },
+  components: { CurrentIndicators, EventOccurred, PeekInside },
 })
 </script>
 
@@ -15,8 +16,12 @@ export default defineComponent({
 
       <slot />
     </div>
-
-    <CurrentIndicators />
+    <div class="indicators">
+      <CurrentIndicators />
+    </div>
+  </div>
+  <div class="peek">
+    <PeekInside/>
   </div>
 
   <EventOccurred />
@@ -24,16 +29,29 @@ export default defineComponent({
 
 <style lang="scss">
 .game-setup {
-  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  justify-content: left;
 
   @media all and (orientation: portrait) {
-    display: flex;
     flex-direction: column-reverse;
   }
 }
 
 .wrapper {
-  height: 100vh;
-  overflow: auto;
+  max-height: 100%;
+  width: 800px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
+.peek {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
 </style>
