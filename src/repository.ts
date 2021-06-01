@@ -1,5 +1,6 @@
 import { BaseParams, Game, GameDefinition, GameId, WritableBaseParams } from "./types"
 import { v4 as uuid } from "uuid"
+import { startYear } from "./constants"
 
 export const defaultValues: WritableBaseParams = {
   co2budget: 6700, // https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22
@@ -31,7 +32,7 @@ export const defaultValues: WritableBaseParams = {
 }
 
 const initialGame = {
-  currentYear: 2021,
+  currentYear: startYear,
   values: defaultValues,
   acceptedLaws: [],
   proposedLaws: [],
