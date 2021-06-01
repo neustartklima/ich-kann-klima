@@ -58,19 +58,13 @@ export default defineComponent({
 
 .circle {
   display: inline-block;
-  width: 4vh;
-  height: 4vh;
-  margin: 0.5vh;
+  width: 7.5vmin;
+  height: 7.5vmin;
+  margin: 1vmin;
   border-radius: 50%;
   border: 1px solid grey;
   background: no-repeat center/2vh white;
   box-shadow: 0 0 1px white;
-
-  @media all and (orientation: landscape) {
-    width: 4vw;
-    height: 4vw;
-    margin: 0.5vw;
-    background-size: 2vw;
-  }
+  background-size: 4vmin;
 }
 </style>

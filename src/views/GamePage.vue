@@ -24,12 +24,6 @@ export default defineComponent({
     }
   },
 
-  data() {
-    return {
-      eventOccured: false,
-    }
-  },
-
   computed: {
     ...mapGetters(["proposedLaws"]),
   },

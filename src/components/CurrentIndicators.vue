@@ -43,31 +43,27 @@ export default defineComponent({
 
 <template>
   <div class="CurrentIndicators">
-    <div>
-      <TimeIndicator />
-      <Indicator :value="co2value" color="#EE8AC1" :img="co2" />
-      <Indicator :value="financeValue" color="#A9D18E" :img="coin" />
-      <Indicator :value="popularityValue" color="#8FAADC" :img="hands" />
-    </div>
+    <TimeIndicator />
+    <Indicator :value="co2value" color="#EE8AC1" :img="co2" />
+    <Indicator :value="financeValue" color="#A9D18E" :img="coin" />
+    <Indicator :value="popularityValue" color="#8FAADC" :img="hands" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .CurrentIndicators {
-  > div {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    padding: 10px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  padding: 10px;
 
-    @media all and (orientation: portrait) {
-      flex-direction: column;
-    }
+  @media all and (orientation: portrait) {
+    flex-direction: column;
+  }
 
-    @media all and (orientation: landscape) {
-      padding: 0px;
-      height: 100vh;
-    }
+  @media all and (orientation: landscape) {
+    padding: 0px;
+    height: 100vh;
   }
 }
 
