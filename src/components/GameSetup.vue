@@ -6,6 +6,11 @@ import PeekInside from "./PeekInside.vue"
 
 export default defineComponent({
   components: { CurrentIndicators, EventOccurred, PeekInside },
+  data() {
+    return {
+      devMode: (import.meta.env.MODE === "development"),
+    }
+  }
 })
 </script>
 
@@ -21,7 +26,7 @@ export default defineComponent({
     </div>
   </div>
   <div class="peek">
-    <PeekInside/>
+    <PeekInside v-if="devMode"/>
   </div>
 
   <EventOccurred />
