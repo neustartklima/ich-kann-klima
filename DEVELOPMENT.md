@@ -24,3 +24,15 @@ you can run `npm run serve` which starts a simple one which should not really be
 This repository uses GitHub Actions to build and deploy the frontend to GitHub Pages. So, every time you push to `main` branch,
 a pipeline is started which runs the test, builds the production version and copies the generated files to `gh-pages` branch.
 See `.github/workflows` how this is done.
+
+## Peek Mode
+
+In development mode "Peek" is displayed in the upper right corner. Click on it to reveal
+a whole bunch of information about the current game state.
+In production this can be enabled by setting the key `devMode` to `true` in
+the local store of the web browser.
+
+This can be done by selecting "Inspect" or "Untersuchen" in the context menu of the web page.
+Then locate the local storage (firefox: "Web-Storage", chrome: "Application").
+It should contain a key `game`.
+Add a key (double click or plus sign) and change it to `devMode` and change its value to `true`.
