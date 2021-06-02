@@ -8,9 +8,9 @@ export default defineComponent({
   components: { CurrentIndicators, EventOccurred, PeekInside },
   data() {
     return {
-      devMode: (import.meta.env.MODE === "development"),
+      devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
     }
-  }
+  },
 })
 </script>
 
