@@ -30,7 +30,11 @@ See `.github/workflows` how this is done.
 In development mode "Peek" is displayed in the upper right corner. Click on it to reveal
 a whole bunch of information about the current game state.
 In production this can be enabled by setting the key `devMode` to `true` in
-the local store of the web browser.
+the local store of the web browser:
+
+```
+localStorage.setItem("devMode", "true")
+```
 
 This can be done by selecting "Inspect" or "Untersuchen" in the context menu of the web page.
 Then locate the local storage (firefox: "Web-Storage", chrome: "Application").
