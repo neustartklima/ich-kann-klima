@@ -1,10 +1,10 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
 import { createLaw } from "../src/Factory"
 import { createBaseValues, defaultValues } from "../src/repository"
-import { BaseParams, Game } from "../src/types"
+import { BaseParams, Game, WritableBaseParams } from "../src/types"
 
-function effects(data: BaseParams, startYear: number, currentYear: number): Partial<BaseParams> {
-  return { co2emissions: -42 }
+function effects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams> {
+  return { co2emissionsAgriculture: -42 }
 }
 
 function priority(game: Game): number {
@@ -23,18 +23,27 @@ describe("Calculator.calculateNextYear", () => {
     })
   })
 
-  it("should return modified base params", () => {
-    const acceptedLaws = [
-      { ...createLaw("test", { title: "test", description: "test", effects, priority }), effectiveSince: 2021 },
-    ]
+  const acceptedLaws = [
+    { ...createLaw("test", { title: "test", description: "test", effects, priority }), effectiveSince: 2021 },
+  ]
+
+  it("should return modified value if it is modified by a law directly", () => {
+    const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
+    newValues.co2emissionsAgriculture.should.equal(startValues.co2emissionsAgriculture - 42)
+  })
+
+  it("should return modified values calculated from other modified values", () => {
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     newValues.co2emissions.should.equal(startValues.co2emissions - 42)
   })
 
+  it("should return modifications from two years", () => {
+    const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
+    const thirdValues = calculateNextYear(newValues, acceptedLaws, 2023)
+    thirdValues.co2emissions.should.equal(startValues.co2emissions - 84)
+  })
+
   it("should calculate remaining co2 budget", () => {
-    const acceptedLaws = [
-      { ...createLaw("test", { title: "test", description: "test", effects, priority }), effectiveSince: 2021 },
-    ]
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     newValues.co2budget.should.equal(startValues.co2budget - newValues.co2emissions)
   })
