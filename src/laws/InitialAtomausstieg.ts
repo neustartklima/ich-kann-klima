@@ -1,6 +1,6 @@
-import { LawDefinition, TWh, WritableBaseParams } from "../types"
+import { defineLaw, TWh, WritableBaseParams } from "../types"
 
-export default {
+export default defineLaw({
   title: "Initial: Atomausstieg",
   description: "Atomausstieg finded wie beschlossen 2022 statt",
   labels: ["hidden", "initial", "Kernenergie"],
@@ -19,4 +19,4 @@ export default {
   priority(game) {
     return 0
   },
-} as LawDefinition
+})

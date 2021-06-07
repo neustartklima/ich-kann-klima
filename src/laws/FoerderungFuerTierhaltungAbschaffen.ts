@@ -1,6 +1,6 @@
-import { LawDefinition, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
+import { defineLaw, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
 
-export default {
+export default defineLaw({
   title: "Förderung für Tierhaltung abschaffen",
   description: "Subventionen für Tierhaltung werden ersatzlos gestrichen",
 
@@ -21,4 +21,4 @@ export default {
   priority(game) {
     return 100 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
   },
-} as LawDefinition
+})

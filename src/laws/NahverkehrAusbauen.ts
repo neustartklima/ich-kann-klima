@@ -1,6 +1,6 @@
-import { LawDefinition, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
+import { defineLaw, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
 
-export default {
+export default defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit stärker bezuschusst.",
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
@@ -22,4 +22,4 @@ export default {
     const mobilityFraction = game.values.co2emissionsMobility / game.values.co2emissions
     return 1000 * (mobilityFraction - 0.25)
   },
-} as LawDefinition
+})

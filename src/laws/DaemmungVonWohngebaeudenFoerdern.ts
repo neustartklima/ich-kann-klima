@@ -1,6 +1,6 @@
-import { LawDefinition, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
+import { defineLaw, MioTons, MrdEuro, WritableBaseParams } from "../types"
 
-export default {
+export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",
   description: "Die nachträgliche Dämmung von Wohngebäuden wird mit günstigen Krediten gefördert.",
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
@@ -21,4 +21,4 @@ export default {
     const buildingsFraction = game.values.co2emissionsBuildings / game.values.co2emissions
     return 1000 * (buildingsFraction - 0.15)
   },
-} as LawDefinition
+})
