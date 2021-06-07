@@ -1,6 +1,6 @@
-import { LawDefinition, MrdEuro, TWh, WritableBaseParams } from "../types"
+import { defineLaw, MrdEuro, TWh, WritableBaseParams } from "../types"
 
-export default {
+export default defineLaw({
   title: "Windenergie subventionieren",
   description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
 
@@ -21,4 +21,4 @@ export default {
     const ratio = electricityNonRenewable / game.values.electricityDemand
     return 100 * ratio
   },
-} as LawDefinition
+})

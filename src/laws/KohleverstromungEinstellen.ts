@@ -1,6 +1,6 @@
-import { LawDefinition, WritableBaseParams, MrdEuro, TsdPeople } from "../types"
+import { WritableBaseParams, MrdEuro, TsdPeople, defineLaw } from "../types"
 
-export default {
+export default defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
 
@@ -29,4 +29,4 @@ export default {
     }
     return 10000 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
   },
-} as LawDefinition
+})

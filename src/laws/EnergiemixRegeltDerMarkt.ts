@@ -1,8 +1,8 @@
 import { endYear, startYear } from "../constants"
 import { defaultValues } from "../repository"
-import { LawDefinition, MrdEuro, TWh, WritableBaseParams } from "../types"
+import { defineLaw, MrdEuro, TWh, WritableBaseParams } from "../types"
 
-export default {
+export default defineLaw({
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
 
@@ -22,4 +22,4 @@ export default {
     const yearsToGo = endYear - game.currentYear
     return (yearsToGo / yearsTotal) * 100
   },
-} as LawDefinition
+})

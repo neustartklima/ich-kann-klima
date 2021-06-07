@@ -61,6 +61,10 @@ export type LawDefinition = {
   priority(game: Game): number
 }
 
+export function defineLaw(law: LawDefinition): LawDefinition {
+  return law
+}
+
 export type Law = LawDefinition & {
   id: LawId
 }
