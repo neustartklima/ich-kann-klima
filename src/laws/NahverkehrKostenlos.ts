@@ -7,8 +7,8 @@ export default {
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     if (startYear === currentYear) {
       return {
-        unemployment: 20, // [Tsd] 80 Tsd Beschäftigte im ÖPNV.
-        stateDebt: 10, // [Mrd €] 13.3 Mrd € Ticketeinnahmen pro Jahr
+        unemployment: 20, // [Tsd] 80 Tsd Beschäftigte im ÖPNV, geschätzt 1/4 für Ticketverkauf, -kontrolle und -abrechnung.
+        stateDebt: 10, // [Mrd €] 13.3 Mrd € Ticketeinnahmen pro Jahr, Einsparung durch Ticketverkauf und Personal
         popularity: Math.min(100 - data.popularity, 10 as Percent),
         co2emissionsMobility: Math.max(-data.co2emissionsMobility, -2 as MioTons),
         //Anzahl Leute, die Nahverkehr nutzen, steigt.
