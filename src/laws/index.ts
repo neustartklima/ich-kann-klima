@@ -7,6 +7,7 @@ import WindenergieSubventionieren from "./WindenergieSubventionieren"
 import DaemmungVonWohngebaeudenFoerdern from "./DaemmungVonWohngebaeudenFoerdern"
 import NahverkehrAusbauen from "./NahverkehrAusbauen"
 import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbschaffen"
+import NahverkehrKostenlos from "./NahverkehrKostenlos"
 
 export const allLaws = Object.entries({
   KohleverstromungEinstellen,
@@ -17,6 +18,7 @@ export const allLaws = Object.entries({
   DaemmungVonWohngebaeudenFoerdern,
   NahverkehrAusbauen,
   FoerderungFuerTierhaltungAbschaffen,
+  NahverkehrKostenlos,
 }).map(([name, module]) => {
   return createLaw(name, module)
 })
