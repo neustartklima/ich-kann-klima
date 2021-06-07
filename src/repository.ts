@@ -81,6 +81,7 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.co2emissionsIndustry +
         this.co2emissionsMobility +
         this.co2emissionsBuildings +
+        this.co2emissionsAgriculture +
         this.co2emissionsOthers
       )
     },

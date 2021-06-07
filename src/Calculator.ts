@@ -1,9 +1,9 @@
-import { BaseParams, AcceptedLaw, Game, LawReference } from "./types"
+import { BaseParams, AcceptedLaw, Game, LawReference, WritableBaseParams } from "./types"
 import "should"
 import { createBaseValues, defaultValues } from "./repository"
 
-export function applyEffects(values: BaseParams, effects: Partial<BaseParams>) {
-  const effectedProperties = Object.keys(effects) as Array<keyof BaseParams>
+export function applyEffects(values: BaseParams, effects: Partial<WritableBaseParams>) {
+  const effectedProperties = Object.keys(effects) as Array<keyof WritableBaseParams>
   effectedProperties.forEach((property) => {
     values[property] += effects[property] || 0
   })
@@ -12,7 +12,7 @@ export function applyEffects(values: BaseParams, effects: Partial<BaseParams>) {
 }
 
 export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): BaseParams {
-  const values = { ...currentValues }
+  const values = createBaseValues(currentValues)
   laws.forEach((law) => {
     const effects = law.effects(values, law.effectiveSince, year)
     applyEffects(values, effects)
