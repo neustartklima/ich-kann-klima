@@ -35,11 +35,12 @@ export const actions = {
     const game = repository.loadGame(payload.gameId)
     repository.saveGame(game)
     getEventMachine().start()
-    context.commit("gameLoaded", { game })
+    context.commit("setGameState", { game })
   },
 
   gameOver(context: Context) {
     context.commit("gameOver", undefined)
+    router.push("/games/" + context.state.game?.id + "/over")
   },
 
   acceptLaw(context: Context, payload: { lawId: LawId }) {
@@ -57,7 +58,7 @@ export const actions = {
     game.acceptedLaws = [...filteredLawRefs, newLawRef]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
-    context.commit("gameLoaded", { game })
+    context.commit("setGameState", { game })
   },
 
   rejectLaw(context: Context, payload: { lawId: LawId }) {
@@ -65,7 +66,7 @@ export const actions = {
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
-    context.commit("gameLoaded", { game })
+    context.commit("setGameState", { game })
   },
 
   advanceYear(context: Context) {
@@ -74,22 +75,15 @@ export const actions = {
     game.currentYear++
     game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
     repository.saveGame(game)
-    context.commit("gameLoaded", { game })
+    context.commit("setGameState", { game })
     getEventMachine().start()
   },
 
   applyEvent(context: Context, payload: { event: Event }) {
     payload.event.apply(context)
-    context.commit("showEvent", payload)
+    const game = { ...(context.state.game as Game) }
+    game.events.unshift(payload.event)
+    context.commit("setGameState", { game })
     repository.saveGame(context.state.game as Game)
-  },
-
-  eventAcknowledged(context: Context) {
-    context.commit("hideEvent", undefined)
-    if (context.state.game?.over) {
-      router.push("/games/" + context.state.game?.id + "/over")
-    } else {
-      getEventMachine().start()
-    }
   },
 }
