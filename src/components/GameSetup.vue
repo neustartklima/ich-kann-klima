@@ -1,11 +1,11 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
-import EventOccurred from "../components/EventOccurred.vue"
+import EventList from "./EventList.vue"
 import PeekInside from "./PeekInside.vue"
 
 export default defineComponent({
-  components: { CurrentIndicators, EventOccurred, PeekInside },
+  components: { CurrentIndicators, EventList, PeekInside },
   data() {
     return {
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
@@ -18,6 +18,8 @@ export default defineComponent({
   <div class="game-setup">
     <div class="wrapper">
       <h1>#ich-kann-klima</h1>
+      
+      <EventList />
 
       <slot />
     </div>
@@ -26,10 +28,8 @@ export default defineComponent({
     </div>
   </div>
   <div class="peek">
-    <PeekInside v-if="devMode"/>
+    <PeekInside v-if="devMode" />
   </div>
-
-  <EventOccurred />
 </template>
 
 <style lang="scss">
@@ -58,5 +58,4 @@ export default defineComponent({
   top: 0;
   right: 0;
 }
-
 </style>

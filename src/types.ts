@@ -81,6 +81,7 @@ export type Event = {
   description: string
   apply(context: Context): void
   probability(store: Store): Percent
+  acknowledged?: boolean
 }
 
 export type GameId = string
@@ -100,5 +101,6 @@ export type Game = {
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
+  events: Event[]
   over: boolean
 }
