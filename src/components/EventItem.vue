@@ -51,14 +51,15 @@ li {
   p {
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.5s ease;
+    margin: 0;
+    transition: all 0.5s ease;
   }
 
   &.open {
     list-style: "▼ ";
 
     p {
-      height: auto;
+      margin: 10px 0;
       max-height: var(--max-height);
     }
   }
