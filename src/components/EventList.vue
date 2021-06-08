@@ -72,4 +72,14 @@ header {
 ul {
   padding: 0 1rem;
 }
+
+button {
+  display: inline-block;
+  width: 60px;
+  margin-left: 10px;
+  background: white;
+  border: 1px solid #888;
+  border-radius: 4px;
+  padding: 5px 10px;
+}
 </style>
