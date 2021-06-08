@@ -40,11 +40,12 @@ li {
   list-style: "▶ ";
   position: relative;
 
-  &.new {
-    title {
-      font-weight: bold;
-      display: block;
-    }
+  &.new title {
+    font-weight: bold;
+  }
+
+  title {
+    display: block;
   }
 
   p {

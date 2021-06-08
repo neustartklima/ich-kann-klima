@@ -12,13 +12,23 @@ export default defineComponent({
     return {
       store,
       events: computed(() => store.state.game?.events),
-      visible: computed(() => store?.state.game?.events.some((e) => !e.acknowledged)),
+    }
+  },
+
+  data() {
+    return {
+      visible: false as boolean,
     }
   },
 
   methods: {
     close() {
+      this.visible = false
       this.events?.filter((e) => !e.acknowledged).forEach((e) => (e.acknowledged = true))
+    },
+
+    show() {
+      this.visible = true
     },
   },
 })
@@ -27,22 +37,29 @@ export default defineComponent({
 <template>
   <div v-if="visible">
     <header>
-      Breaking News!
+      News Ticker
     </header>
 
-    <ul>
+    <ul v-if="events?.length">
       <EventItem v-for="event in events" :key="event.title" :event="event" />
     </ul>
+    <p v-else>
+      Keine Nachrichten bisher
+    </p>
 
     <footer>
       <button @click="close">Ok</button>
     </footer>
   </div>
+  <button v-else @click="show">
+    News
+  </button>
 </template>
 
 <style lang="scss" scoped>
 div {
   border: 2px solid red;
+  border-radius: 6px;
   padding: 10px;
 }
 
