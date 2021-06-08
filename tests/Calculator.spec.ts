@@ -60,6 +60,7 @@ const initialGame: Game = {
   proposedLaws: [],
   rejectedLaws: [],
   currentYear: 2021,
+  events: [],
   over: false,
 }
 
