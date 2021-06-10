@@ -10,8 +10,17 @@ export const defaultValues: WritableBaseParams = {
 
   // hidden
   //co2emissions: 739, // in 2020, source https://www.bmu.de/pressemitteilung/treibhausgasemissionen-sinken-2020-um-87-prozent/
-  unemployment: 2695, // in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
+  numberOfCitizens: 83157, // Tsd people in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html
+  unemployment: 2695, // Tsd people in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
+  publicTransport: {
+    usage: 10400,  // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
+    passengerKm: 94600, // Mio passenger km in 2019, source https://www.vdv.de/daten-fakten.aspx
+    ridesPerCitizen: 138, // in 2019, source https://www.vdv.de/daten-fakten.aspx
+    revenue: 13.3, // Mrd € from ticket sale in 2019, source https://www.vdv.de/daten-fakten.aspx
+    publicOperationCost: 9.4, // Mrd € in 2019, source https://www.vdv.de/daten-fakten.aspx
+    publicInvestmentsPerCitizen: 19.3, // in 2019, source https://www.vdv.de/daten-fakten.aspx
+  },
 
   // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
   electricityDemand: 480.54,
