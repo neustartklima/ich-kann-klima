@@ -1,18 +1,31 @@
 import { Context, Store } from "./store"
 
 export type MioTons = number
+export type Euro = number
 export type MrdEuro = number
 export type TsdPeople = number
 export type TWh = number
 export type Percent = number
+
+export type MioRides = number
+export type MioKm = number
 
 export type WritableBaseParams = {
   co2budget: MioTons
   stateDebt: MrdEuro
   popularity: Percent
 
+  numberOfCitizens: TsdPeople
   unemployment: TsdPeople
   gdp: MrdEuro
+  publicTransport: {
+    usage: MioRides
+    passengerKm: MioKm
+    ridesPerCitizen: number
+    revenue: MrdEuro
+    publicOperationCost: MrdEuro
+    publicInvestmentsPerCitizen: Euro
+  }
 
   electricityDemand: TWh
 
