@@ -37,7 +37,7 @@ export default defineComponent({
 <template>
   <div class="Indicator">
     <div v-for="index in emptyCircles" class="circle" :style="style('empty')" />
-    <div v-for="index in value" class="circle" :style="style('filled')" />
+    <div v-for="index in value" class="circle" :style="style(index === 1 ? 'filled' : 'empty')" />
   </div>
 </template>
 
