@@ -2,6 +2,7 @@ import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
 import { createLaw } from "../src/Factory"
 import { createBaseValues, defaultValues } from "../src/repository"
 import { BaseParams, Game, WritableBaseParams } from "../src/types"
+import should from "should"
 
 function effects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams> {
   return { co2emissionsAgriculture: -42 }
