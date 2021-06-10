@@ -18,14 +18,13 @@ export type WritableBaseParams = {
   numberOfCitizens: TsdPeople
   unemployment: TsdPeople
   gdp: MrdEuro
-  publicTransport: {
-    usage: MioRides
-    passengerKm: MioKm
-    ridesPerCitizen: number
-    revenue: MrdEuro
-    publicOperationCost: MrdEuro
-    publicInvestmentsPerCitizen: Euro
-  }
+  
+  publicTransportUsage: MioRides
+  publicTransportPassengerKm: MioKm
+  publicTransportRidesPerCitizen: number
+  publicTransportRevenue: MrdEuro
+  publicTransportSubventions: MrdEuro
+  publicTransportInvestmentsPerCitizen: Euro
 
   electricityDemand: TWh
 

@@ -1,5 +1,4 @@
 import { BaseParams, AcceptedLaw, Game, LawReference, WritableBaseParams } from "./types"
-import "should"
 import { createBaseValues, defaultValues } from "./repository"
 
 export function applyEffects(values: BaseParams, effects: Partial<WritableBaseParams>) {
