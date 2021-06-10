@@ -3,5 +3,8 @@
   "html.autoClosingTags": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-  "volar.tsPlugin": true
+  "volar.tsPlugin": true,
+  "[vue]": {
+    "editor.defaultFormatter": "johnsoncodehk.volar"
+  }
 }
