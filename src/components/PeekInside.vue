@@ -1,42 +1,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { BaseParams, Game, GameId } from "../types"
-import { mapGetters } from "vuex"
+import { Game, WritableBaseParams } from "../types"
 import { startYear } from "../constants"
-
-const sortOrder: BaseParams = {
-  co2budget: 100,
-  co2emissionsIndustry: 200,
-  co2emissionsMobility: 200,
-  co2emissionsBuildings: 200,
-  co2emissionsAgriculture: 200,
-  co2emissionsOthers: 200,
-  co2emissionsEnergy: 200,
-  co2emissions: 299,
-  electricityDemand: 300,
-  electricitySolar: 400,
-  electricityWind: 400,
-  electricityWater: 400,
-  electricityBiomass: 400,
-  electricityHardCoal: 450,
-  electricityBrownCoal: 450,
-  electricityCoal: 459,
-  electricityNuclear: 430,
-  electricityGas: 460,
-  stateDebt: 500,
-  popularity: 600,
-  unemployment: 700,
-  gdp: 800,
-}
-
-function genCompare(a: number | string, b: number | string) {
-  if (a < b) return -1;
-  if (a > b) return 1;
-  return 0;
-}
-
-type LawSortCols = "state" | "id" | "priority"
+import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
 
 export default defineComponent({
   setup() {
@@ -44,6 +11,7 @@ export default defineComponent({
 
     return {
       store,
+      allLaws: store.state.allLaws,
       game: computed(() => store.state.game),
     }
   },
@@ -58,68 +26,42 @@ export default defineComponent({
   methods: {
     sortLaws(column: LawSortCols) {
       if (column === this.lawsSortCol) {
-        this.lawsSortDir = (this.lawsSortDir > 0) ? -1 : 1
+        this.lawsSortDir = this.lawsSortDir > 0 ? -1 : 1
       }
       this.lawsSortCol = column
     },
     selectLaw(id: string | undefined) {
       this.lawSelected = id
-    }
+    },
   },
 
   computed: {
-    effectsOfSelected(): Partial<BaseParams> {
+    startYearOfSelected(): number {
+      if (!this.lawSelected || !this.game) return startYear
+      const acceptedLaws = this.game.acceptedLaws
+      const acceptedLaw = acceptedLaws.find(al => al.lawId === this.lawSelected)
+      if (acceptedLaw) return acceptedLaw.effectiveSince
+      return startYear
+    },
+
+    effectsOfSelected(): Partial<WritableBaseParams> {
       if (!this.lawSelected || !this.game) return {}
       const game: Game = this.game
-      const law = this.store.state.allLaws.find((law) => law.id === this.lawSelected)
+      const law = this.allLaws.find((law) => law.id === this.lawSelected)
       if (!law) return {}
-      return law.effects(game.values, startYear, game.currentYear)
+      return law.effects(this.game.values, this.startYearOfSelected, this.game.currentYear)
     },
 
-    sortedValues(): [string, string, string][] {
-      if (this.game === undefined) {
-        return []
-      }
-      const values: BaseParams = this.game.values
-      const effects = this.effectsOfSelected
-      function format(effect: number | undefined)
-      {
-        if (effect) return effect.toFixed(2)
-        return "-"
-      }
-      return Object.entries(sortOrder)
-        .sort((a, b) => a[1] - b[1])
-        .map(entry => entry[0])
-        .map(key => [key, values[key as keyof BaseParams].toFixed(2), format(effects[key as keyof BaseParams])])
+    sortedValues(): ValueRow[] {
+      if (!this.game) return []
+      return getSortedValues(this.game.values, this.effectsOfSelected)
     },
 
-    sortedLaws(): {id: string, priority: string, state: string}[] {
-      if (this.game === undefined) {
-        return []
-      }
-      const game: Game = this.game
-      const sortCol: LawSortCols = this.lawsSortCol
-      const proposed = this.game.proposedLaws
-      const accepted = this.game.acceptedLaws.map(lawRef => lawRef.lawId)
-      const rejected = this.game.rejectedLaws
-      function findState(lawId: string)
-      {
-        if(accepted.includes(lawId)) return "a";
-        if(proposed.includes(lawId)) return "p";
-        if(rejected.includes(lawId)) return "r";
-        return "x"
-      }
-      return this.store.state.allLaws
-        .map(law => ({
-          id: law.id,
-          priority: law.priority(game),
-          state: findState(law.id),
-        }))
-        .sort((a, b) => genCompare(a[sortCol], b[sortCol]) * this.lawsSortDir)
-        .map(law => ({...law, priority: law.priority.toFixed(2)}))
+    sortedLaws(): LawRow[] {
+      if (!this.game) return []
+      return getSortedLaws(this.game, this.lawsSortCol, this.lawsSortDir, this.allLaws)
     },
   },
-
 })
 </script>
 
@@ -127,10 +69,11 @@ export default defineComponent({
   <details class="peekData">
     <summary>Peek</summary>
     <table>
-      <tr v-for="[key, value, effect] in sortedValues" :key="key">
-        <td>{{key}}</td>
-        <td class="numbercol">{{value}}</td>
-        <td>{{effect}}</td>
+      <tr v-for="row in sortedValues" :key="row.id" :class="row.class">
+        <td>{{ row.id }}</td>
+        <td>{{ row.unit }}</td>
+        <td class="numbercol">{{ row.value }}</td>
+        <td class="effcol">{{ row.effect }}</td>
       </tr>
     </table>
     <table>
@@ -139,10 +82,16 @@ export default defineComponent({
         <th @click="sortLaws('id')">ID</th>
         <th @click="sortLaws('priority')" class="numbercol">Priority</th>
       </tr>
-      <tr v-for="law in sortedLaws" :key="law.id" :class="law.state" @mouseenter="selectLaw(law.id)" @mouseleave="selectLaw(undefined)">
-        <td>{{law.state}}</td>
-        <td>{{law.id}}</td>
-        <td class="numbercol">{{law.priority}}</td>
+      <tr
+        v-for="law in sortedLaws"
+        :key="law.id"
+        :class="law.state"
+        @mouseenter="selectLaw(law.id)"
+        @mouseleave="selectLaw(undefined)"
+      >
+        <td>{{ law.state }}</td>
+        <td>{{ law.id }}</td>
+        <td class="numbercol">{{ law.priority }}</td>
       </tr>
     </table>
   </details>
@@ -154,25 +103,33 @@ export default defineComponent({
   font-size: 12px;
   background: white;
 
+  .calculated {
+    font-weight: bold;
+  }
+
   .a {
-    background: lightblue
+    background: lightblue;
   }
 
   .p {
-    background: lightyellow
+    background: lightyellow;
   }
 
   .r {
-    background: lightgrey
+    background: lightgrey;
   }
 
   .numbercol {
     text-align: right;
+    min-width: 4em;
+  }
+
+  .effcol {
+    min-width: 4em;
   }
 
   &[open] {
     border: 1px solid #cccccc;
   }
 }
-
 </style>
