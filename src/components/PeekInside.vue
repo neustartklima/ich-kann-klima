@@ -1,49 +1,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { BaseParams, Game, WritableBaseParams } from "../types"
+import { Game, WritableBaseParams } from "../types"
 import { startYear } from "../constants"
-import { getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
-
-const sortOrder: BaseParams = {
-  co2budget: 100,
-  co2emissionsIndustry: 200,
-  co2emissionsMobility: 200,
-  co2emissionsBuildings: 200,
-  co2emissionsAgriculture: 200,
-  co2emissionsOthers: 200,
-  co2emissionsEnergy: 200,
-  co2emissions: 299,
-  electricityDemand: 300,
-  electricitySolar: 400,
-  electricityWind: 400,
-  electricityWater: 400,
-  electricityBiomass: 400,
-  electricityHardCoal: 450,
-  electricityBrownCoal: 450,
-  electricityCoal: 459,
-  electricityNuclear: 430,
-  electricityGas: 460,
-  stateDebt: 500,
-  popularity: 600,
-  numberOfCitizens: 700,
-  unemployment: 700,
-  gdp: 800,
-  publicTransportUsage: 470,
-  publicTransportPassengerKm: 470,
-  publicTransportRidesPerCitizen: 470,
-  publicTransportRevenue: 470,
-  publicTransportSubventions: 470,
-  publicTransportInvestmentsPerCitizen: 470,
-}
-
-function genCompare(a: number | string, b: number | string) {
-  if (a < b) return -1;
-  if (a > b) return 1;
-  return 0;
-}
-
-type LawSortCols = "state" | "id" | "priority"
+import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
 
 export default defineComponent({
   setup() {
