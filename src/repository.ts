@@ -21,6 +21,10 @@ export const defaultValues: WritableBaseParams = {
   publicTransportSubventions: 9.4, // Mrd € in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportInvestmentsPerCitizen: 19.3, // in 2019, source https://www.vdv.de/daten-fakten.aspx
 
+  flightsPassengersDomestic: 23100, // Tsd People in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
+  flightsPassengersNonDomestic: 101300, // Tsd People in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
+  flightsCargo: 4.7, // Mio tons in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
+
   // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
   electricityDemand: 480.54,
   electricitySolar: 51.42,
