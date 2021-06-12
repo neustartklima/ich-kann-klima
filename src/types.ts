@@ -26,6 +26,10 @@ export type WritableBaseParams = {
   publicTransportSubventions: MrdEuro
   publicTransportInvestmentsPerCitizen: Euro
 
+  flightsPassengersDomestic: TsdPeople
+  flightsPassengersNonDomestic: TsdPeople
+  flightsCargo: MioTons
+
   electricityDemand: TWh
 
   electricitySolar: TWh
