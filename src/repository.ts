@@ -13,9 +13,11 @@ export const defaultValues: WritableBaseParams = {
   numberOfCitizens: 83157, // Tsd people in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html
   unemployment: 2695, // Tsd people in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
-  
-  publicTransportUsage: 10400,  // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
-  publicTransportPassengerKm: 10400,  // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
+
+  publicTransportUsage: 10400, // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
+  publicTransportTrainPassengerKm: 48900, // Mio passenger km by train in 2019, source https://www.vdv.de/daten-fakten.aspx
+  publicTransportBusPassengerKm: 27900, // Mio passenger km by bus in 2019, source https://www.vdv.de/daten-fakten.aspx
+  publicTransportMetroPassengerKm: 17800, // Mio passenger km by metro in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportRidesPerCitizen: 138, // in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportRevenue: 13.3, // Mrd € from ticket sale in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportSubventions: 9.4, // Mrd € in 2019, source https://www.vdv.de/daten-fakten.aspx
@@ -69,6 +71,14 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.electricityBrownCoal -
         this.electricityBiomass -
         this.electricityNuclear
+      )
+    },
+
+    get publicTransportPassengerKm() {
+      return (
+        this.publicTransportTrainPassengerKm +
+        this.publicTransportBusPassengerKm +
+        this.publicTransportMetroPassengerKm
       )
     },
 
