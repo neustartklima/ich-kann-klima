@@ -4,7 +4,7 @@ import router from "../router"
 import API from "../api"
 import RepositoryFactory from "../repository"
 import * as Calculator from "../Calculator"
-import { fillUpLawProposals, getAcceptedLaw, replaceLawProposal } from "../LawProposer"
+import { fillUpLawProposals, getAcceptedLaw, getLaw, replaceLawProposal } from "../LawProposer"
 import EventMachine from "../EventMachine"
 import { allEvents } from "../events"
 
@@ -14,8 +14,9 @@ function getEventMachine() {
   return eventMachine || (eventMachine = EventMachine(store, allEvents))
 }
 
-const backendURL = localStorage.getItem("backendURL") || "https://api.ich-kann-klima.de/api"
-const repository = RepositoryFactory(API(backendURL, fetch))
+const backendURL = localStorage.getItem("backendURL") || "https://api.ich-kann-klima.de"
+const api = API(backendURL, fetch)
+const repository = RepositoryFactory(api)
 
 export const actions = {
   async startGame(context: Context) {
@@ -61,6 +62,7 @@ export const actions = {
     game.acceptedLaws = [...filteredLawRefs, newLawRef]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
+    api.decisionMade(game, newLaw, true)
     context.commit("setGameState", { game })
   },
 
@@ -69,6 +71,7 @@ export const actions = {
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
+    api.decisionMade(game, getLaw(payload.lawId), false)
     context.commit("setGameState", { game })
   },
 
@@ -88,5 +91,6 @@ export const actions = {
     game.events.unshift(payload.event)
     context.commit("setGameState", { game })
     repository.saveGame(context.state.game as Game)
+    api.eventOccurred(game, payload.event)
   },
 }

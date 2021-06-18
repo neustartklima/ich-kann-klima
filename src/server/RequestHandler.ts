@@ -33,6 +33,14 @@ export function logAPICalls(logger: Logger = console) {
   }
 }
 
+export function cors() {
+  return (req: Request, res: Response, next: NextFunction) => {
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "*")
+    next()
+  }
+}
+
 export function error404(logger: Logger = console) {
   return (req: Request, res: Response, next: NextFunction) => {
     const details = isProduction ? undefined : { path: req.path }
