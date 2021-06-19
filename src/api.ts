@@ -43,7 +43,7 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
     },
 
     eventOccurred(game, event) {
-      return request("post", "/games/" + game.id + "/events/" + event)
+      return request("post", "/games/" + game.id + "/events/" + event.title.replace(/\w/g, "_"))
     },
   }
 }
