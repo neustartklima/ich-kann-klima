@@ -1,4 +1,3 @@
-import { lawsForNextYear } from "./Calculator"
 import { allLaws } from "./laws"
 import { AcceptedLaw, Game, Law, LawId, LawReference, Percent } from "./types"
 

@@ -1,4 +1,5 @@
-import { defineLaw, TWh, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { TWh, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Initial: Atomausstieg",

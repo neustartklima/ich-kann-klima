@@ -1,4 +1,5 @@
-import { defineLaw, MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Förderung für Tierhaltung abschaffen",

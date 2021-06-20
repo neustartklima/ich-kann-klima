@@ -1,15 +1,18 @@
-import bestechung from "./bestechung"
-import socialMedia from "./social-media"
-import wahlVerloren from "./WahlVerloren"
-import finanzKollaps from "./Finanzkollaps"
+import SocialMedia from "./SocialMedia"
+import Bestechung from "./bestechung"
+import WahlVerloren from "./WahlVerloren"
+import FinanzKollaps from "./Finanzkollaps"
 import TimesUp from "./TimesUp"
 import Hitzehölle from "./Hitzehölle"
 
-export const allEvents = [
-  socialMedia,
-  bestechung,
-  wahlVerloren,
-  finanzKollaps,
+import { prepareModuleList } from "../Factory"
+import { Event } from "../types"
+
+export const allEvents = prepareModuleList({
+  SocialMedia,
+  Bestechung,
+  WahlVerloren,
+  FinanzKollaps,
   TimesUp,
   Hitzehölle,
-]
+}) as Event[]

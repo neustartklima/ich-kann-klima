@@ -1,4 +1,5 @@
-import { defineLaw, MioTons, MrdEuro, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { MioTons, MrdEuro, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",

@@ -1,9 +1,13 @@
-import { Event, Law, LawDefinition } from "./types"
+import { EventDefinition, LawDefinition } from "./types"
 
-export function createLaw(id: string, law: LawDefinition): Law {
-  return { ...law, id }
+export function defineLaw(law: LawDefinition): LawDefinition {
+  return law
 }
 
-export function createEvent(event: Event): Event {
+export function defineEvent(event: EventDefinition): EventDefinition {
   return event
+}
+
+export function prepareModuleList(modules: Record<string, Record<string, unknown>>): unknown[] {
+  return Object.entries(modules).map(([name, module]) => ({ ...module, id: name.replace(/\W/g, "_") }))
 }

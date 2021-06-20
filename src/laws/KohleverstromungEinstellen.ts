@@ -1,4 +1,5 @@
-import { WritableBaseParams, MrdEuro, TsdPeople, defineLaw } from "../types"
+import { defineLaw } from "../Factory"
+import { WritableBaseParams, MrdEuro, TsdPeople } from "../types"
 
 export default defineLaw({
   title: "Kohleverstromung einstellen",

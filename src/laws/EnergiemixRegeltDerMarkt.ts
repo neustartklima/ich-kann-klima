@@ -1,6 +1,7 @@
 import { endYear, startYear } from "../constants"
 import { defaultValues } from "../repository"
-import { defineLaw, MrdEuro, TWh, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { MrdEuro, TWh, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Energiemix regelt der Markt",

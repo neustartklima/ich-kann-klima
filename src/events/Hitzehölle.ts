@@ -1,7 +1,7 @@
-import { createEvent } from "../Factory"
+import { defineEvent } from "../Factory"
 import { Store } from "../store"
 
-export default createEvent({
+export default defineEvent({
   title: "Hitzehölle",
   description: `Die CO2-Werte sind soweit gestiegen, dass die Erde nur noch an wenigen Orten bewohnbar ist. Die ehemaligen Küstenregionen
   stehen unter Wasser, ganze Landstriche sind verschwunden. In den trockeneren Gebieten ist die Temperatur so hoch, dass nichts mehr wächst.

@@ -1,4 +1,5 @@
-import { defineLaw, MioTons, MrdEuro, Percent, TsdPeople, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { MioTons, MrdEuro, Percent, TsdPeople, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Nahverkehr Kostenlos",
