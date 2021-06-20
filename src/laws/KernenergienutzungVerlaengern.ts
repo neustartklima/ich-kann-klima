@@ -1,4 +1,5 @@
-import { defineLaw, MrdEuro, Percent, TWh, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { MrdEuro, Percent, TWh, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Kernenergienutzung verlängern",

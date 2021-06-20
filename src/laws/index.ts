@@ -1,4 +1,3 @@
-import { createLaw } from "../Factory"
 import KohleverstromungEinstellen from "./KohleverstromungEinstellen"
 import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
 import KernenergienutzungVerlaengern from "./KernenergienutzungVerlaengern"
@@ -9,7 +8,12 @@ import NahverkehrAusbauen from "./NahverkehrAusbauen"
 import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbschaffen"
 import NahverkehrKostenlos from "./NahverkehrKostenlos"
 
-export const allLaws = Object.entries({
+import { prepareModuleList } from "../Factory"
+import { Law } from "../types"
+
+export const allLaws: Law[] = []
+
+export const lawsLoaded = prepareModuleList({
   KohleverstromungEinstellen,
   EnergiemixRegeltDerMarkt,
   KernenergienutzungVerlaengern,
@@ -19,6 +23,4 @@ export const allLaws = Object.entries({
   NahverkehrAusbauen,
   FoerderungFuerTierhaltungAbschaffen,
   NahverkehrKostenlos,
-}).map(([name, module]) => {
-  return createLaw(name, module)
-})
+}) as Law[]

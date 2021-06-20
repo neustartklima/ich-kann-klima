@@ -1,7 +1,7 @@
-import { createEvent } from "../Factory"
+import { defineEvent } from "../Factory"
 import { Store } from "../store"
 
-export default createEvent({
+export default defineEvent({
   title: "Wahl verloren",
   description: `Deine Beliebtheit in der Bevölkerung ist katastrophal, lieber würde man Mao Zedong wählen als dich.
     Deine Partei hat daher bei der Wahl gerade mal 1.3% erreicht (weil wohl manche nicht wussten, zu welcher Partei du gehörst) und ist damit unter

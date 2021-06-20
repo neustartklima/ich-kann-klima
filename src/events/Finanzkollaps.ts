@@ -1,8 +1,8 @@
-import { createEvent } from "../Factory"
+import { defineEvent } from "../Factory"
 import { defaultValues } from "../repository"
 import { Store } from "../store"
 
-export default createEvent({
+export default defineEvent({
   title: "Zusammenbruch des Finanzsystems",
   description: `Deine Staatsfinanzen sind desaströs. Kein Land der Welt, keine Institutionen oder Privatpersonen trauen dir zu, dass du deine Schulden
     jemals wieder wirst zurückahlen können. Daher gibt dir auch niemand mehr Geld, mit dem du die Staatsangestellten oder die offenen Verpflichtungen zahlen

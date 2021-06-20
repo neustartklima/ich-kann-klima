@@ -1,7 +1,7 @@
-import { createEvent } from "../Factory"
+import { defineEvent } from "../Factory"
 import { Percent } from "../types"
 
-export default createEvent({
+export default defineEvent({
   title: "Social Media Alarm!",
   description: `Deine Wahlkampfberaterin ruft dich völlig aufgelöst an. Ob denn an den Geschichten was dran sein, die da im
     Netz kursieren, dass du vor einigen Jahren bei einer Demo dabei warst, bei der die Gewalt eskaliert ist.

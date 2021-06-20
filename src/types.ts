@@ -80,10 +80,6 @@ export type LawDefinition = {
   priority(game: Game): number
 }
 
-export function defineLaw(law: LawDefinition): LawDefinition {
-  return law
-}
-
 export type Law = LawDefinition & {
   id: LawId
 }
@@ -95,12 +91,17 @@ export type LawReference = {
 
 export type AcceptedLaw = Law & { effectiveSince: number }
 
-export type Event = {
+export type EventId = string
+export type EventDefinition = {
   title: string
   description: string
   apply(context: Context): void
   probability(store: Store): Percent
   acknowledged?: boolean
+}
+
+export type Event = EventDefinition & {
+  id: EventId
 }
 
 export type GameId = string

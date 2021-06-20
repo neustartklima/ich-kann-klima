@@ -2,19 +2,18 @@ import "should"
 import { createGame } from "../src/repository"
 import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
 import { Game, Law } from "../src/types"
-import { createLaw } from "../src/Factory"
 
 function priority(game: Game): number {
   return 1
 }
 
 const allLaws: Law[] = [
-  createLaw("law1", { title: "law 1", description: "", effects: () => undefined, priority }),
-  createLaw("law2", { title: "law 2", description: "", effects: () => undefined, priority }),
-  createLaw("law3", { title: "law 3", description: "", effects: () => undefined, priority }),
-  createLaw("law4", { title: "law 4", description: "", effects: () => undefined, priority }),
-  createLaw("law5", { title: "law 5", description: "", effects: () => undefined, priority }),
-  createLaw("law6", { title: "law 6", description: "", effects: () => undefined, priority }),
+  { id: "law1", title: "law 1", description: "", effects: () => ({}), priority },
+  { id: "law2", title: "law 2", description: "", effects: () => ({}), priority },
+  { id: "law3", title: "law 3", description: "", effects: () => ({}), priority },
+  { id: "law4", title: "law 4", description: "", effects: () => ({}), priority },
+  { id: "law5", title: "law 5", description: "", effects: () => ({}), priority },
+  { id: "law6", title: "law 6", description: "", effects: () => ({}), priority },
 ]
 
 describe("LawProposer", () => {
@@ -33,7 +32,7 @@ describe("LawProposer", () => {
       fillUpLawProposals(game, allLaws)
       game.proposedLaws.length.should.equal(6)
       const ids = allLaws.map((law) => law.id)
-      ids.push(ids.shift())
+      ids.push(ids.shift() as string)
       game.proposedLaws.should.deepEqual(ids)
     })
 

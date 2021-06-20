@@ -1,8 +1,7 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
-import { createLaw } from "../src/Factory"
 import { createBaseValues, defaultValues } from "../src/repository"
 import { BaseParams, Game, WritableBaseParams } from "../src/types"
-import should from "should"
+import "should"
 
 function effects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams> {
   return { co2emissionsAgriculture: -42 }
@@ -25,7 +24,7 @@ describe("Calculator.calculateNextYear", () => {
   })
 
   const acceptedLaws = [
-    { ...createLaw("test", { title: "test", description: "test", effects, priority }), effectiveSince: 2021 },
+    { id: "test", title: "test", description: "test", effects, priority , effectiveSince: 2021 },
   ]
 
   it("should return modified value if it is modified by a law directly", () => {

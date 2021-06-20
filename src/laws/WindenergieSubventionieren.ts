@@ -1,4 +1,5 @@
-import { defineLaw, MrdEuro, TWh, WritableBaseParams } from "../types"
+import { defineLaw } from "../Factory"
+import { MrdEuro, TWh, WritableBaseParams } from "../types"
 
 export default defineLaw({
   title: "Windenergie subventionieren",

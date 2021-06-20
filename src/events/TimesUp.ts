@@ -1,7 +1,7 @@
-import { createEvent } from "../Factory"
+import { defineEvent } from "../Factory"
 import { Store } from "../store"
 
-export default createEvent({
+export default defineEvent({
   title: "Du hast durchgehalten",
   description: `Es ist vielleicht nicht alles optimal nach deiner inzwischen sehr langen Amtszeit, aber du hast es geschafft,
     bis hierhin durchzuhalten! Das ist wunderbar, denn noch immer ist der Planet bewohnbar, deine Maßnahmen waren zu finanzieren
