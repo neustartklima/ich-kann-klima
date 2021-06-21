@@ -1,4 +1,5 @@
 import { endYear, startYear } from "../constants"
+import { changeTWhBy } from "../lawTools"
 import { defaultValues } from "../repository"
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh, WritableBaseParams } from "../types"
@@ -10,8 +11,8 @@ export default defineLaw({
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     return {
       stateDebt: -37 as MrdEuro,
-      electricityHardCoal: Math.max(-data.electricityHardCoal, -0.1 * defaultValues.electricityHardCoal),
-      electricityBrownCoal: Math.max(-data.electricityBrownCoal, -0.05 * defaultValues.electricityBrownCoal),
+      electricityHardCoal: changeTWhBy(data.electricityHardCoal, -0.1 * defaultValues.electricityHardCoal),
+      electricityBrownCoal: changeTWhBy(data.electricityBrownCoal, -0.05 * defaultValues.electricityBrownCoal),
       electricityWind: 5.0 as TWh,
       electricitySolar: 3.0 as TWh,
       electricityWater: 0.5 as TWh,

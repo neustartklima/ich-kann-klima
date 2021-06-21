@@ -1,5 +1,6 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro, Percent, TWh, WritableBaseParams } from "../types"
+import { MrdEuro, TWh, WritableBaseParams } from "../types"
+import { changePercentBy } from "../lawTools"
 
 export default defineLaw({
   title: "Kernenergienutzung verlängern",
@@ -10,7 +11,7 @@ export default defineLaw({
     return {
       electricityNuclear: (104.3 as TWh) - data.electricityNuclear,
       stateDebt: -2.5 as MrdEuro,
-      popularity: Math.max(-data.popularity, -4 as Percent),
+      popularity: changePercentBy(data.popularity, -4),
     }
   },
 

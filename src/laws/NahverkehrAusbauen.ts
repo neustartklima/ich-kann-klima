@@ -1,5 +1,6 @@
 import { defineLaw } from "../Factory"
-import { MioTons, MrdEuro, Percent, WritableBaseParams } from "../types"
+import { MrdEuro, WritableBaseParams } from "../types"
+import { changeEmissionsBy, changePercentBy } from "../lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Ausbauen",
@@ -10,8 +11,8 @@ export default defineLaw({
     if (yearsActive >= 5) {
       return {
         stateDebt: costsPerYear,
-        co2emissionsMobility: Math.max(-data.co2emissionsMobility, -2 as MioTons),
-        popularity: Math.min(100 - data.popularity, 2 as Percent),
+        co2emissionsMobility: changeEmissionsBy(data.co2emissionsMobility, -2),
+        popularity: changePercentBy(data.popularity, 2),
       }
     } else {
       return {

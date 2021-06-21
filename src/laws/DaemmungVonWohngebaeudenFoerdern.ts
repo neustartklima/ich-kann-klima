@@ -1,5 +1,6 @@
 import { defineLaw } from "../Factory"
-import { MioTons, MrdEuro, WritableBaseParams } from "../types"
+import { MrdEuro, WritableBaseParams } from "../types"
+import { changeEmissionsBy } from "../lawTools"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",
@@ -10,7 +11,7 @@ export default defineLaw({
     if (yearsActive >= 2) {
       return {
         stateDebt: costsPerYear,
-        co2emissionsBuildings: Math.max(-data.co2emissionsBuildings, -2 as MioTons),
+        co2emissionsBuildings: changeEmissionsBy(data.co2emissionsBuildings, -2),
       }
     } else {
       return {
