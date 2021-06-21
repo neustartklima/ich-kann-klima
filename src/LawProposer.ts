@@ -16,7 +16,7 @@ export function fillUpLawProposals(game: Game, allLaws: Law[]): void {
       .filter((law) => !law.labels?.includes("hidden"))
       .map((law) => ({ law: law, priority: law.priority ? law.priority(game) : 1 }))
       .filter((law) => law.priority > 0)
-      .sort((a, b) => a.priority - b.priority)
+      .sort((a, b) => b.priority - a.priority)
       .slice(0, requiredLaws)
     game.proposedLaws = game.proposedLaws.concat(newProposals.map((law) => law.law.id))
   }
