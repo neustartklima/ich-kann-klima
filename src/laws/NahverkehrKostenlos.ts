@@ -1,16 +1,21 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, TsdPeople, WritableBaseParams } from "../types"
-import { changeEmissionsBy, changePercentBy, linear } from "../lawTools"
+import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Kostenlos",
   description:
     "Die Kosten für den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr benötigt werden.",
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+    const percentage = startYear === currentYear ? 10 : 1
+    const potentialUsageIncrease = (percentage / 100) * data.localTransportUsage
+    // Need to use change...By for carUsage here, to ensure it does not fall below zero:
+    const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
+
     const yearly: Partial<WritableBaseParams> = {
       stateDebt: 10 as MrdEuro, // 13.3 Mrd € Ticketeinnahmen pro Jahr, Einsparung durch Ticketverkauf und Personal
-      co2emissionsMobility: changeEmissionsBy(data.co2emissionsMobility, -2),
-      //TODO Anzahl Leute, die Nahverkehr nutzen, steigt.
+      localTransportUsage: usageIncrease,
+      carUsage: -usageIncrease,
     }
     if (startYear === currentYear) {
       return {

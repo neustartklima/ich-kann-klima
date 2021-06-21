@@ -7,6 +7,8 @@ import DaemmungVonWohngebaeudenFoerdern from "./DaemmungVonWohngebaeudenFoerdern
 import NahverkehrAusbauen from "./NahverkehrAusbauen"
 import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbschaffen"
 import NahverkehrKostenlos from "./NahverkehrKostenlos"
+import AutosInInnenstaedtenVerbieten from "./AutosInInnenstaedtenVerbieten"
+import FernverkehrVerbindungenAusbauen from "./FernverkehrVerbindungenAusbauen"
 
 import { prepareModuleList } from "../Factory"
 import { Law } from "../types"
@@ -21,4 +23,6 @@ export const allLaws: Law[] = prepareModuleList({
   NahverkehrAusbauen,
   FoerderungFuerTierhaltungAbschaffen,
   NahverkehrKostenlos,
+  AutosInInnenstaedtenVerbieten,
+  FernverkehrVerbindungenAusbauen,
 }) as Law[]
