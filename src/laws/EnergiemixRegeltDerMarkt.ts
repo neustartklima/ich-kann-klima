@@ -1,5 +1,5 @@
 import { endYear, startYear } from "../constants"
-import { changeTWhBy } from "../lawTools"
+import { changeTWhBy, linear } from "../lawTools"
 import { defaultValues } from "../repository"
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh, WritableBaseParams } from "../types"
@@ -20,8 +20,6 @@ export default defineLaw({
   },
 
   priority(game) {
-    const yearsTotal = endYear - startYear
-    const yearsToGo = endYear - game.currentYear
-    return (yearsToGo / yearsTotal) * 100
+    return linear(endYear, startYear, game.currentYear)
   },
 })

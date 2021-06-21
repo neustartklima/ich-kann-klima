@@ -1,5 +1,5 @@
 import "should"
-import { changeBy, changePercentBy } from "../src/lawTools"
+import { changeBy, changePercentBy, linear } from "../src/lawTools"
 import { Percent } from "../src/types"
 
 describe("changePercentBy()", () => {
@@ -60,5 +60,32 @@ describe("changeBy()", () => {
     const changeAnyBy = changeBy<Any>(undefined, undefined)
     changeAnyBy(4, Number.MAX_SAFE_INTEGER).should.equal(Number.MAX_SAFE_INTEGER)
     changeAnyBy(4, Number.MIN_SAFE_INTEGER).should.equal(Number.MIN_SAFE_INTEGER)
+  })
+})
+
+describe("linear()", () => {
+  it("should return 0%, when zero === actual", () => {
+    linear(45, 46, 45).should.equal(0)
+  })
+  it("should return 100%, when hundret === actual", () => {
+    linear(-3, 27.5, 27.5).should.equal(100)
+  })
+  it("should return 50%, when actual === (hundret + zero) / 2", () => {
+    linear(-14.5, 45.5, 15.5).should.equal(50)
+  })
+  it("should return a negative value, if actual < zero < hundret", () => {
+    linear(10, 100000, 9).should.be.lessThan(0)
+  })
+  it("should return a value > 100, if actual > hundret > zero", () => {
+    linear(-100000, 25, 25.1).should.be.greaterThan(100)
+  })
+  it("should return a negative value, if actual > zero > hundret", () => {
+    linear(1, 0, 2).should.be.lessThan(0)
+  })
+  it("should return a value > 100, if actual < hundret < zero", () => {
+    linear(100, 0, -0.1).should.be.greaterThan(100)
+  })
+  it("should throw an exception, when hundret === zero", () => {
+    linear.bind(5, 5, 5).should.throw()
   })
 })

@@ -1,6 +1,9 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh, WritableBaseParams } from "../types"
-import { changePercentBy } from "../lawTools"
+import { changePercentBy, linear } from "../lawTools"
+import { createBaseValues, defaultValues } from "../repository"
+
+const electricityGasAtStart: TWh = createBaseValues(defaultValues).electricityGas
 
 export default defineLaw({
   title: "Kernenergienutzung verlängern",
@@ -16,9 +19,6 @@ export default defineLaw({
   },
 
   priority(game) {
-    // More likely if lots of Gas usage leads to dependency of Russia etc..
-    const electricityGasAtStart: TWh = 56.77 // TODO: Put constants in central place
-    const gasChangeRelStart = game.values.electricityGas - electricityGasAtStart
-    return (1000 * gasChangeRelStart) / electricityGasAtStart
+    return linear(electricityGasAtStart, 1.1 * electricityGasAtStart, game.values.electricityGas)
   },
 })
