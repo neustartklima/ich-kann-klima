@@ -6,6 +6,7 @@ import {
   GramPerPsgrKm,
   MioPsgrKm,
   MioTons,
+  Percent,
   WritableBaseParams,
 } from "./types"
 import { v4 as uuid } from "uuid"
@@ -23,12 +24,15 @@ export const defaultValues: WritableBaseParams = {
   unemployment: 2695, // Tsd people in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
 
-  carUsage: (632254 * 1.4) as MioPsgrKm, // https://www.kba.de/DE/Statistik/Kraftverkehr/VerkehrKilometer/vk_inlaenderfahrleistung/vk_inlaenderfahrleistung_inhalt.html;jsessionid=1C1067E94F7732D7241CD45D6F39843D.live11292?nn=2351536
-  //                         1,4 passenger / car: https://www.vdv.de/vdv-statistik-2019.pdfx Page 11
-  localTransportUsage: 107500 as MioPsgrKm, // https://www.vdv.de/vdv-statistik-2019.pdfx Page 24
-  localTransportCapacity: 107500 as MioPsgrKm, // Our definition: current situation is 100%
-  longdistanceTransportUsage: 44700 as MioPsgrKm, // https://www.vdv.de/vdv-statistik-2019.pdfx Page 24
-  longdistanceTransportCapacity: 44700 as MioPsgrKm, // Our defionition current situation is 100%
+  // https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile p. 219 column 2019
+  carUsage: 917000 as MioPsgrKm,
+  carRenewablePercentage: 1 as Percent, // https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)
+  localTransportUsage: 112600 as MioPsgrKm,
+  localTransportCapacity: 112600 as MioPsgrKm, // Our definition: current situation is 100%
+  longdistanceTransportUsage: 67300 as MioPsgrKm, // public - local - air = 251700 - 71800 - 112600 = 67300
+  longdistanceTransportCapacity: 67300 as MioPsgrKm, // Our defionition current situation is 100%
+  airDomesticUsage: 10100 as MioPsgrKm,
+  airIntlUsage: 61700 as MioPsgrKm,
 
   publicTransportUsage: 10400, // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportRidesPerCitizen: 138, // in 2019, source https://www.vdv.de/daten-fakten.aspx
@@ -51,10 +55,11 @@ export const defaultValues: WritableBaseParams = {
   electricityNuclear: 60.91,
 
   // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
-  co2emissionsIndustry: 186,
-  co2emissionsBuildings: 118,
-  co2emissionsAgriculture: 70,
-  co2emissionsOthers: 9,
+  // https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
+  co2emissionsIndustry: 186.793,
+  co2emissionsBuildings: 123.461,
+  co2emissionsAgriculture: 67.936,
+  co2emissionsOthers: 9.243,
 }
 
 const initialGame = {
@@ -101,15 +106,36 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       )
     },
 
+    get passengerTransportUsage(): MioPsgrKm {
+      return (
+        this.carUsage +
+        this.localTransportUsage +
+        this.longdistanceTransportUsage +
+        this.airDomesticUsage +
+        this.airIntlUsage
+      )
+    },
+
+    get co2emissionsStreetVehicles(): MioTons {
+      const carNonrenewable: MioPsgrKm = this.carUsage * (1 - this.carRenewablePercentage / 100)
+      // https://www.vdv.de/vdv-statistik-2019.pdfx page 11 would lead to about 160 g/Pkm
+      const co2emissionsCars: MioTons = (carNonrenewable * (160 as GramPerPsgrKm)) / 1000000
+      // 47.4 MioTons for 2019 https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr
+      // ...but using this to adjust to the correct total emissions
+      // TODO: Check, what is correct.
+      const co2emissionsTrucks: MioTons = 14.4
+      return co2emissionsCars + co2emissionsTrucks
+    },
+
     get co2emissionsMobility(): MioTons {
       // 1 MioPsgrKm * 1 GramPerPsgrKm = 1 MioGram = 1 Ton
-      // https://www.vdv.de/vdv-statistik-2019.pdfx page 11
-      // https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG"
+      // [1] https://www.vdv.de/vdv-statistik-2019.pdfx page 11
+      // [2] https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
       return (
-        (this.carUsage * (170 as GramPerPsgrKm)) / 1000000 +
-        (this.localTransportCapacity * (65 as GramPerPsgrKm)) / 1000000 +
-        (this.longdistanceTransportCapacity * (32 as GramPerPsgrKm)) / 1000000 +
-        (2.244 as MioTons) + // domestic air traffic
+        this.co2emissionsStreetVehicles +
+        (this.localTransportCapacity * (65 as GramPerPsgrKm)) / 1000000 + // [1]: 65 g/Pkm
+        (this.longdistanceTransportCapacity * (32 as GramPerPsgrKm)) / 1000000 + // [1]: 32 g/Pkm
+        (this.airDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 + // [1]: 230 g/Pkm [2] backward: 222 g/Pkm
         (1.641 as MioTons) // costal and inland water transport
       )
     },

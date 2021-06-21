@@ -21,10 +21,13 @@ export type WritableBaseParams = {
   gdp: MrdEuro
 
   carUsage: MioPsgrKm
+  carRenewablePercentage: Percent
   localTransportUsage: MioPsgrKm
   localTransportCapacity: MioPsgrKm
   longdistanceTransportUsage: MioPsgrKm
   longdistanceTransportCapacity: MioPsgrKm
+  airDomesticUsage: MioPsgrKm
+  airIntlUsage: MioPsgrKm
 
   publicTransportUsage: MioRides
   publicTransportRidesPerCitizen: number
@@ -56,6 +59,8 @@ export type BaseParams = WritableBaseParams & {
   electricityCoal: TWh
   electricityGas: TWh
   co2emissionsEnergy: MioTons
+  passengerTransportUsage: MioPsgrKm
+  co2emissionsStreetVehicles: MioTons
   co2emissionsMobility: MioTons
   co2emissions: MioTons
 }
