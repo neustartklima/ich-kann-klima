@@ -103,6 +103,10 @@ export default defineComponent({
   font-size: 12px;
   background: white;
 
+  table {
+    float: left;
+  }
+
   .calculated {
     font-weight: bold;
   }
