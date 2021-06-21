@@ -74,3 +74,18 @@ export const changeEmissionsBy = changeBy<MioTons>(0, undefined)
  * @returns The value be which to change `val` corrected.
  */
 export const changeTWhBy = changeBy<TWh>(0, undefined)
+
+/**
+ * Linear interpolation returning a percentage to be used in priority-funkctions in laws.
+ * @param zero Value for which to return 0%.
+ * @param hundret Value for which to return 100%.
+ * @param actual The actual value for which to calculate the percentage.
+ * @returns Calculated percentage.
+ */
+export function linear<T extends number>(zero: T, hundret: T, actual: T): Percent {
+  const shifted = actual - zero
+  const shiftedH = hundret - zero
+  if (shiftedH === 0)
+    throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero)
+  return (shifted / shiftedH) * 100
+}

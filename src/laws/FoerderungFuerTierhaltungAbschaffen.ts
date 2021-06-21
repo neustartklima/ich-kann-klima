@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, WritableBaseParams } from "../types"
-import { changeEmissionsBy, changePercentBy } from "../lawTools"
+import { changeEmissionsBy, changePercentBy, linear } from "../lawTools"
 
 export default defineLaw({
   title: "Förderung für Tierhaltung abschaffen",
@@ -21,6 +21,6 @@ export default defineLaw({
   },
 
   priority(game) {
-    return 100 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
+    return linear(10000, 0, game.values.unemployment)
   },
 })

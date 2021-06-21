@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, WritableBaseParams } from "../types"
-import { changeEmissionsBy } from "../lawTools"
+import { changeEmissionsBy, linear } from "../lawTools"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",
@@ -20,7 +20,7 @@ export default defineLaw({
     }
   },
   priority(game) {
-    const buildingsFraction = game.values.co2emissionsBuildings / game.values.co2emissions
-    return 1000 * (buildingsFraction - 0.15)
+    const buildingsPercentage = (game.values.co2emissionsBuildings / game.values.co2emissions) * 100
+    return linear(15, 25, buildingsPercentage)
   },
 })

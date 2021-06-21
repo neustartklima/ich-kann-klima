@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, WritableBaseParams } from "../types"
-import { changeEmissionsBy, changePercentBy } from "../lawTools"
+import { changeEmissionsBy, changePercentBy, linear } from "../lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Ausbauen",
@@ -21,7 +21,7 @@ export default defineLaw({
     }
   },
   priority(game) {
-    const mobilityFraction = game.values.co2emissionsMobility / game.values.co2emissions
-    return 1000 * (mobilityFraction - 0.25)
+    const mobilityPercentage = (game.values.co2emissionsMobility / game.values.co2emissions) * 100
+    return linear(25, 35, mobilityPercentage)
   },
 })

@@ -1,5 +1,6 @@
 import { defineLaw } from "../Factory"
 import { WritableBaseParams, MrdEuro, TsdPeople } from "../types"
+import { linear } from "../lawTools"
 
 export default defineLaw({
   title: "Kohleverstromung einstellen",
@@ -28,6 +29,6 @@ export default defineLaw({
     if (game.values.electricityCoal / game.values.electricityDemand <= 0.1) {
       return 0
     }
-    return 10000 - game.values.unemployment / 100 // Not allowed if unemployment over 10 000 000
+    return linear(10000, 0, game.values.unemployment) // Not allowed if unemployment over 10 000 000
   },
 })

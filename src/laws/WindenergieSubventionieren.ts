@@ -1,5 +1,6 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh, WritableBaseParams } from "../types"
+import { linear } from "../lawTools"
 
 export default defineLaw({
   title: "Windenergie subventionieren",
@@ -19,7 +20,7 @@ export default defineLaw({
       game.values.electricitySolar -
       game.values.electricityWater -
       game.values.electricityBiomass
-    const ratio = electricityNonRenewable / game.values.electricityDemand
-    return 100 * ratio
+    const percentage = (electricityNonRenewable / game.values.electricityDemand) * 100
+    return linear(0, 100, percentage)
   },
 })
