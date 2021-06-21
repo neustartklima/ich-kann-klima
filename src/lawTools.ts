@@ -18,7 +18,7 @@ import { MioPsgrKm, MioTons, Percent, TWh } from "./types"
  * @param max The maximum the changed value has to obey or undefined, if none.
  * @returns Function to be used in laws.
  */
-export function changeBy<T extends number>(min: T | undefined, max: T | undefined): (val: T, by: T) => T {
+export function changeBy<T extends number>(min?: T, max?: T): (val: T, by: T) => T {
   const minF: (val: T, by: T) => T =
     min === undefined ? (_val: T, by: T) => by : (val: T, by: T) => Math.max(by, min - val) as T
   const maxF: (val: T, by: T) => T =
@@ -94,13 +94,13 @@ export const changeMioPsgrKmBy = changeBy<MioPsgrKm>(0, undefined)
 /**
  * Linear interpolation returning a percentage to be used in priority-funkctions in laws.
  * @param zero Value for which to return 0%.
- * @param hundret Value for which to return 100%.
+ * @param hundred Value for which to return 100%.
  * @param actual The actual value for which to calculate the percentage.
  * @returns Calculated percentage.
  */
-export function linear<T extends number>(zero: T, hundret: T, actual: T): Percent {
+export function linear<T extends number>(zero: T, hundred: T, actual: T): Percent {
   const shifted = actual - zero
-  const shiftedH = hundret - zero
+  const shiftedH = hundred - zero
   if (shiftedH === 0)
     throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero)
   return (shifted / shiftedH) * 100
