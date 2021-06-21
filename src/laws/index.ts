@@ -11,9 +11,7 @@ import NahverkehrKostenlos from "./NahverkehrKostenlos"
 import { prepareModuleList } from "../Factory"
 import { Law } from "../types"
 
-export const allLaws: Law[] = []
-
-export const lawsLoaded = prepareModuleList({
+export const allLaws: Law[] = prepareModuleList({
   KohleverstromungEinstellen,
   EnergiemixRegeltDerMarkt,
   KernenergienutzungVerlaengern,
