@@ -1,4 +1,4 @@
-import { MioTons, Percent, TWh } from "./types"
+import { MioPsgrKm, MioTons, Percent, TWh } from "./types"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.
@@ -74,6 +74,22 @@ export const changeEmissionsBy = changeBy<MioTons>(0, undefined)
  * @returns The value be which to change `val` corrected.
  */
 export const changeTWhBy = changeBy<TWh>(0, undefined)
+
+/**
+ * Function to be used in laws to define changes in passenger-kilometer values.
+ *
+ * It can then be used within the return value of a law as follows:
+ * ```
+ * return {
+ *   carUsage: changeMioPsgrKmBy(data.carUsage, -usageIncrease),
+ * }
+ * ```
+ *
+ * @param val The value to be changed.
+ * @param by The value by which to change `val`.
+ * @returns The value be which to change `val` corrected.
+ */
+export const changeMioPsgrKmBy = changeBy<MioPsgrKm>(0, undefined)
 
 /**
  * Linear interpolation returning a percentage to be used in priority-funkctions in laws.

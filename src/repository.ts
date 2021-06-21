@@ -1,4 +1,13 @@
-import { BaseParams, Game, GameDefinition, GameId, WritableBaseParams } from "./types"
+import {
+  BaseParams,
+  Game,
+  GameDefinition,
+  GameId,
+  GramPerPsgrKm,
+  MioPsgrKm,
+  MioTons,
+  WritableBaseParams,
+} from "./types"
 import { v4 as uuid } from "uuid"
 import { startYear } from "./constants"
 
@@ -9,15 +18,19 @@ export const defaultValues: WritableBaseParams = {
   popularity: 50, // 50% of all people accept you as your chancellor
 
   // hidden
-  //co2emissions: 739, // in 2020, source https://www.bmu.de/pressemitteilung/treibhausgasemissionen-sinken-2020-um-87-prozent/
+
   numberOfCitizens: 83157, // Tsd people in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html
   unemployment: 2695, // Tsd people in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
   gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
 
+  carUsage: (632254 * 1.4) as MioPsgrKm, // https://www.kba.de/DE/Statistik/Kraftverkehr/VerkehrKilometer/vk_inlaenderfahrleistung/vk_inlaenderfahrleistung_inhalt.html;jsessionid=1C1067E94F7732D7241CD45D6F39843D.live11292?nn=2351536
+  //                         1,4 passenger / car: https://www.vdv.de/vdv-statistik-2019.pdfx Page 11
+  localTransportUsage: 107500 as MioPsgrKm, // https://www.vdv.de/vdv-statistik-2019.pdfx Page 24
+  localTransportCapacity: 107500 as MioPsgrKm, // Our definition: current situation is 100%
+  longdistanceTransportUsage: 44700 as MioPsgrKm, // https://www.vdv.de/vdv-statistik-2019.pdfx Page 24
+  longdistanceTransportCapacity: 44700 as MioPsgrKm, // Our defionition current situation is 100%
+
   publicTransportUsage: 10400, // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
-  publicTransportTrainPassengerKm: 48900, // Mio passenger km by train in 2019, source https://www.vdv.de/daten-fakten.aspx
-  publicTransportBusPassengerKm: 27900, // Mio passenger km by bus in 2019, source https://www.vdv.de/daten-fakten.aspx
-  publicTransportMetroPassengerKm: 17800, // Mio passenger km by metro in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportRidesPerCitizen: 138, // in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportRevenue: 13.3, // Mrd € from ticket sale in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportSubventions: 9.4, // Mrd € in 2019, source https://www.vdv.de/daten-fakten.aspx
@@ -40,7 +53,6 @@ export const defaultValues: WritableBaseParams = {
   // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
   co2emissionsIndustry: 186,
   co2emissionsBuildings: 118,
-  co2emissionsMobility: 150,
   co2emissionsAgriculture: 70,
   co2emissionsOthers: 9,
 }
@@ -74,14 +86,6 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       )
     },
 
-    get publicTransportPassengerKm() {
-      return (
-        this.publicTransportTrainPassengerKm +
-        this.publicTransportBusPassengerKm +
-        this.publicTransportMetroPassengerKm
-      )
-    },
-
     get co2emissionsEnergy() {
       // should sum up to 220 in 2020
       // factors from https://www.rensmart.com/Calculators/KWH-to-CO2 and @thomas-olszamowski
@@ -94,6 +98,19 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.electricityBrownCoal * 1.137 +
         this.electricityBiomass * 0 + // TODO find correct factor (no source found)
         this.electricityNuclear * 0.005
+      )
+    },
+
+    get co2emissionsMobility(): MioTons {
+      // 1 MioPsgrKm * 1 GramPerPsgrKm = 1 MioGram = 1 Ton
+      // https://www.vdv.de/vdv-statistik-2019.pdfx page 11
+      // https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG"
+      return (
+        (this.carUsage * (170 as GramPerPsgrKm)) / 1000000 +
+        (this.localTransportCapacity * (65 as GramPerPsgrKm)) / 1000000 +
+        (this.longdistanceTransportCapacity * (32 as GramPerPsgrKm)) / 1000000 +
+        (2.244 as MioTons) + // domestic air traffic
+        (1.641 as MioTons) // costal and inland water transport
       )
     },
 
@@ -125,7 +142,7 @@ export function createGame(game: GameDefinition = initialGame): Game {
   return newGame
 }
 
-export default function() {
+export default function () {
   return {
     loadGame(id: GameId): Game {
       const storedItem = localStorage.getItem("game")
