@@ -9,6 +9,9 @@ import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbsc
 import NahverkehrKostenlos from "./NahverkehrKostenlos"
 import AutosInInnenstaedtenVerbieten from "./AutosInInnenstaedtenVerbieten"
 import FernverkehrVerbindungenAusbauen from "./FernverkehrVerbindungenAusbauen"
+import WasserstofftechnologieFoerdern from "./WasserstofftechnologieFoerdern"
+import AbschaffungDerMineraloelsteuer from "./AbschaffungDerMineraloelsteuer"
+import AusbauVonStrassen from "./AusbauVonStrassen"
 
 import { prepareModuleList } from "../Factory"
 import { Law } from "../types"
@@ -25,4 +28,7 @@ export const allLaws: Law[] = prepareModuleList({
   NahverkehrKostenlos,
   AutosInInnenstaedtenVerbieten,
   FernverkehrVerbindungenAusbauen,
+  WasserstofftechnologieFoerdern,
+  AbschaffungDerMineraloelsteuer,
+  AusbauVonStrassen,
 }) as Law[]
