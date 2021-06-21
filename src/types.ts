@@ -8,7 +8,8 @@ export type TWh = number
 export type Percent = number
 
 export type MioRides = number
-export type MioKm = number
+export type MioPsgrKm = number
+export type GramPerPsgrKm = number
 
 export type WritableBaseParams = {
   co2budget: MioTons
@@ -18,11 +19,14 @@ export type WritableBaseParams = {
   numberOfCitizens: TsdPeople
   unemployment: TsdPeople
   gdp: MrdEuro
-  
+
+  carUsage: MioPsgrKm
+  localTransportUsage: MioPsgrKm
+  localTransportCapacity: MioPsgrKm
+  longdistanceTransportUsage: MioPsgrKm
+  longdistanceTransportCapacity: MioPsgrKm
+
   publicTransportUsage: MioRides
-  publicTransportTrainPassengerKm: MioKm
-  publicTransportBusPassengerKm: MioKm
-  publicTransportMetroPassengerKm: MioKm
   publicTransportRidesPerCitizen: number
   publicTransportRevenue: MrdEuro
   publicTransportSubventions: MrdEuro
@@ -43,7 +47,6 @@ export type WritableBaseParams = {
   electricityNuclear: TWh
 
   co2emissionsIndustry: MioTons
-  co2emissionsMobility: MioTons
   co2emissionsBuildings: MioTons
   co2emissionsAgriculture: MioTons
   co2emissionsOthers: MioTons
@@ -52,8 +55,8 @@ export type WritableBaseParams = {
 export type BaseParams = WritableBaseParams & {
   electricityCoal: TWh
   electricityGas: TWh
-  publicTransportPassengerKm: MioKm
   co2emissionsEnergy: MioTons
+  co2emissionsMobility: MioTons
   co2emissions: MioTons
 }
 
