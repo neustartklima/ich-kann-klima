@@ -1,5 +1,6 @@
 import { defineLaw } from "../Factory"
-import { MioTons, MrdEuro, Percent, TsdPeople, WritableBaseParams } from "../types"
+import { MrdEuro, TsdPeople, WritableBaseParams } from "../types"
+import { changeEmissionsBy, changePercentBy } from "../lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Kostenlos",
@@ -10,14 +11,14 @@ export default defineLaw({
       return {
         unemployment: 20 as TsdPeople, // 80 Tsd Beschäftigte im ÖPNV, geschätzt 1/4 für Ticketverkauf, -kontrolle und -abrechnung.
         stateDebt: 10 as MrdEuro, // 13.3 Mrd € Ticketeinnahmen pro Jahr, Einsparung durch Ticketverkauf und Personal
-        popularity: Math.min(100 - data.popularity, 10 as Percent),
-        co2emissionsMobility: Math.max(-data.co2emissionsMobility, -2 as MioTons),
+        popularity: changePercentBy(data.popularity, 10),
+        co2emissionsMobility: changeEmissionsBy(data.co2emissionsMobility, -2),
         //TODO Anzahl Leute, die Nahverkehr nutzen, steigt.
       }
     } else {
       return {
         stateDebt: 10 as MrdEuro, // 13.3 Mrd € Ticketeinnahmen pro Jahr
-        co2emissionsMobility: Math.max(-data.co2emissionsMobility, -2 as MioTons),
+        co2emissionsMobility: changeEmissionsBy(data.co2emissionsMobility, -2),
         //TODO Anzahl Leute, die Nahverkehr nutzen, steigt.
       }
     }
