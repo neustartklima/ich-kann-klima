@@ -7,15 +7,17 @@ import { Store } from "../src/store"
 const game: Game = {
   id: "1",
   values: createBaseValues(defaultValues),
+  events: [],
   acceptedLaws: [],
   proposedLaws: [],
   rejectedLaws: [],
   currentYear: 2021,
-  over: false, 
+  over: false,
 }
 
 function createEvent(title: string, probability: number): Event {
   return {
+    id: title,
     title,
     description: "",
     probability: () => probability,
@@ -23,7 +25,7 @@ function createEvent(title: string, probability: number): Event {
   }
 }
 
-const dispatched = []
+const dispatched: { type: string; data: unknown }[] = []
 
 const store = {
   state: { game },
@@ -35,11 +37,11 @@ const store = {
 function countEvents(allEvents: Event[]): Record<string, number> {
   const eventMachine = EventMachine(store, allEvents)
   dispatched.length = 0
-  const agg = Object.assign({}, ...allEvents.map(event => ({ [event.title]: 0 })))
+  const agg = Object.assign({}, ...allEvents.map((event) => ({ [event.title]: 0 })))
   ;[...Array(100).keys()].forEach(() => eventMachine.initiateEvent())
   dispatched
     .filter((event) => event.type === "applyEvent")
-    .forEach((event) => agg[event.data.event.title]++)
+    .forEach((event) => agg[(event.data as { event: Event }).event.title]++)
   return agg
 }
 
