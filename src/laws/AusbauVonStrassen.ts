@@ -21,8 +21,7 @@ export default defineLaw({
 
   priority(game) {
     const v = game.values
-    const totalUsage = v.localTransportUsage + v.longdistanceTransportUsage + v.carUsage
-    const relCarPercentage: Percent = (v.carUsage / totalUsage) * 100
-    return linear(70, 100, relCarPercentage)
+    const relCarPercentage: Percent = (v.carUsage / v.passengerTransportUsage) * 100
+    return linear(60, 100, relCarPercentage)
   },
 })
