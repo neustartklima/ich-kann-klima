@@ -14,6 +14,9 @@ import AbschaffungDerMineraloelsteuer from "./AbschaffungDerMineraloelsteuer"
 import AusbauVonStrassen from "./AusbauVonStrassen"
 import DieselPrivilegAbgeschaffen from "./DieselPrivilegAbgeschaffen"
 import DienstwagenPrivilegAbgeschaffen from "./DienstwagenPrivilegAbgeschaffen"
+import Tempolimit130AufAutobahnen from "./Tempolimit130AufAutobahnen"
+import Tempolimit120AufAutobahnen from "./Tempolimit120AufAutobahnen"
+import Tempolimit100AufAutobahnen from "./Tempolimit100AufAutobahnen"
 
 import { prepareModuleList } from "../Factory"
 import { Law } from "../types"
@@ -35,4 +38,7 @@ export const allLaws: Law[] = prepareModuleList({
   AusbauVonStrassen,
   DieselPrivilegAbgeschaffen,
   DienstwagenPrivilegAbgeschaffen,
+  Tempolimit130AufAutobahnen,
+  Tempolimit120AufAutobahnen,
+  Tempolimit100AufAutobahnen,
 }) as Law[]

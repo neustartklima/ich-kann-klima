@@ -21,6 +21,7 @@ export type WritableBaseParams = {
   gdp: MrdEuro
 
   carUsage: MioPsgrKm
+  carEmissionFactor: GramPerPsgrKm
   carRenewablePercentage: Percent
   localTransportUsage: MioPsgrKm
   localTransportCapacity: MioPsgrKm
@@ -67,7 +68,7 @@ export type BaseParams = WritableBaseParams & {
 
 export type LawId = string
 
-export type LawLabel = "hidden" | "initial" | "Kernenergie"
+export type LawLabel = "hidden" | "initial" | "Kernenergie" | "TempolimitAutobahn"
 
 export type LawDefinition = {
   title: string
