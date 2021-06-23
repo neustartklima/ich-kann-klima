@@ -14,7 +14,7 @@ function getEventMachine() {
   return eventMachine || (eventMachine = EventMachine(store, allEvents))
 }
 
-const backendURL = localStorage.getItem("backendURL") || "https://api.ich-kann-klima.de"
+const backendURL = "/api"
 const api = API(backendURL, fetch)
 const repository = RepositoryFactory(api)
 

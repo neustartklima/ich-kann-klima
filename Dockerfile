@@ -1,6 +1,6 @@
-FROM node:14-alpine as server-build
+FROM node:14-alpine as build
 WORKDIR /app
-ADD server /app
+ADD . /app
 RUN npm ci && \
     npm run build && \
     rm -rf /app/node_modules && \
@@ -8,23 +8,11 @@ RUN npm ci && \
     mkdir /build && \
     mv /app/node_modules /app/dist/* /build
 
-
-FROM node:14-alpine as frontend-build
-WORKDIR /app
-ADD frontend /app
-RUN npm ci && \
-    npm run build && \
-    rm -rf /app/node-modules && \
-    npm ci --production && \
-    mkdir /build && \
-    mv /app/node_modules /app/dist/* /build
-
-
 FROM node:14-alpine
-COPY --from=frontend-build /build /app/frontend
-COPY --from=server-build /build /app/backend
+COPY --from=build /build /app
 
 WORKDIR /app
 USER node
+ENV NODE_ENV=production
 
-CMD [ "node", "backend/server.js" ]
+CMD [ "node", "server.js" ]
