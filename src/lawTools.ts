@@ -1,4 +1,5 @@
-import { MioPsgrKm, MioTons, Percent, TWh } from "./types"
+import { allLaws } from "./laws"
+import { Game, LawId, MioPsgrKm, MioTons, Percent, TWh } from "./types"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.
@@ -104,4 +105,16 @@ export function linear<T extends number>(zero: T, hundred: T, actual: T): Percen
   if (shiftedH === 0)
     throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero)
   return (shifted / shiftedH) * 100
+}
+
+/**
+ * Check if a law is accepted in a given game.
+ * @param game Game to inspect.
+ * @param lawId Law ID to search.
+ * @returns True if law was accepted, false otherwise
+ * @throws Error if no law with the given ID is defined.
+ */
+export function lawIsAccepted(game: Game, lawId: LawId) {
+  if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
+  return game.acceptedLaws.some((l) => l.lawId === lawId)
 }

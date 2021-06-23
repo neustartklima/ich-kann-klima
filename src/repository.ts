@@ -26,6 +26,7 @@ export const defaultValues: WritableBaseParams = {
 
   // https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile p. 219 column 2019
   carUsage: 917000 as MioPsgrKm,
+  carEmissionFactor: 160 as GramPerPsgrKm,
   carRenewablePercentage: 1 as Percent, // https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)
   localTransportUsage: 112600 as MioPsgrKm,
   localTransportCapacity: 112600 as MioPsgrKm, // Our definition: current situation is 100%
@@ -119,7 +120,7 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
     get co2emissionsStreetVehicles(): MioTons {
       const carNonrenewable: MioPsgrKm = this.carUsage * (1 - this.carRenewablePercentage / 100)
       // https://www.vdv.de/vdv-statistik-2019.pdfx page 11 would lead to about 160 g/Pkm
-      const co2emissionsCars: MioTons = (carNonrenewable * (160 as GramPerPsgrKm)) / 1000000
+      const co2emissionsCars: MioTons = (carNonrenewable * this.carEmissionFactor) / 1000000
       // 47.4 MioTons for 2019 https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr
       // ...but using this to adjust to the correct total emissions
       // TODO: Check, what is correct.
@@ -168,7 +169,7 @@ export function createGame(game: GameDefinition = initialGame): Game {
   return newGame
 }
 
-export default function () {
+export default function() {
   return {
     loadGame(id: GameId): Game {
       const storedItem = localStorage.getItem("game")
