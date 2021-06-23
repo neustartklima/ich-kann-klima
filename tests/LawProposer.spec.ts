@@ -21,7 +21,7 @@ function mockedFetch(info: RequestInfo, init?: RequestInit) {
   return Promise.resolve({
     ok: true,
     headers: { get: (which: string) => "application/json" },
-    json: () => Promise.resolve({ ...JSON.parse(init.body.toString()), id: "12345" }),
+    json: () => Promise.resolve({ ...JSON.parse(init?.body?.toString() || ""), id: "12345" }),
   } as Response)
 }
 
