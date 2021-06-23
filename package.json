@@ -4,8 +4,8 @@
   "description": "## Das Klimawahl Challenge Game",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
-    "test": "cross-env NODE_ENV=test vite",
-    "mochatest": "mocha --require ts-node/register tests/**/*.spec.ts",
+    "test": "mocha --require ts-node/register tests/**/*.spec.ts",
+    "test:vite": "cross-env NODE_ENV=test vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "docker:build": "docker build -t ichkannklima .",
