@@ -12,6 +12,8 @@ import FernverkehrVerbindungenAusbauen from "./FernverkehrVerbindungenAusbauen"
 import WasserstofftechnologieFoerdern from "./WasserstofftechnologieFoerdern"
 import AbschaffungDerMineraloelsteuer from "./AbschaffungDerMineraloelsteuer"
 import AusbauVonStrassen from "./AusbauVonStrassen"
+import DieselPrivilegAbgeschaffen from "./DieselPrivilegAbgeschaffen"
+import DienstwagenPrivilegAbgeschaffen from "./DienstwagenPrivilegAbgeschaffen"
 
 import { prepareModuleList } from "../Factory"
 import { Law } from "../types"
@@ -31,4 +33,6 @@ export const allLaws: Law[] = prepareModuleList({
   WasserstofftechnologieFoerdern,
   AbschaffungDerMineraloelsteuer,
   AusbauVonStrassen,
+  DieselPrivilegAbgeschaffen,
+  DienstwagenPrivilegAbgeschaffen,
 }) as Law[]
