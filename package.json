@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
     "test": "cross-env NODE_ENV=test vite",
+    "mochatest": "mocha --require ts-node/register tests/**/*.spec.ts",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "docker:build": "docker build -t ichkannklima .",
@@ -40,6 +41,7 @@
     "puppeteer": "^9.1.1",
     "sass": "^1.35.1",
     "should": "^13.2.3",
+    "ts-node": "^10.0.0",
     "typescript": "^4.3.4",
     "vite": "^2.3.8",
     "vite-plugin-test": "0.0.5",

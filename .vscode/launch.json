@@ -8,6 +8,8 @@
       "args": [
         "--no-timeout",
         "--colors",
+        "--require", "ts-node/register",
+        "tests/**/*.spec.ts",
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Mocha Tests",

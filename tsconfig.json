@@ -11,10 +11,15 @@
     "lib": ["esnext", "dom"],
     "types": ["vite/client", "mocha"]
   },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+    }
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.vue",
-    "tests/Calculator.spec.ts"
+    "tests/**/*.spec.ts"
   ]
 }
