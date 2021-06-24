@@ -16,7 +16,7 @@ export default defineLaw({
       longdistanceTransportCapacity: 0.01 * data.longdistanceTransportCapacity,
       longdistanceTransportUsage: 0.667 * usageIncrease,
       carUsage: -usageIncrease,
-      localTransportUsage: 0.333 * usageIncrease,
+      shortdistanceTransportUsage: 0.333 * usageIncrease,
       popularity: changePercentBy(data.popularity, 2),
     }
   },

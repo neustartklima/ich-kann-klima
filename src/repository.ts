@@ -28,12 +28,12 @@ export const defaultValues: WritableBaseParams = {
   carUsage: 917000 as MioPsgrKm,
   carEmissionFactor: 160 as GramPerPsgrKm,
   carRenewablePercentage: 1 as Percent, // https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)
-  localTransportUsage: 112600 as MioPsgrKm,
-  localTransportCapacity: 112600 as MioPsgrKm, // Our definition: current situation is 100%
+  shortdistanceTransportUsage: 112600 as MioPsgrKm,
+  shortdistanceTransportCapacity: 112600 as MioPsgrKm, // Our definition: current situation is 100%
   longdistanceTransportUsage: 67300 as MioPsgrKm, // public - local - air = 251700 - 71800 - 112600 = 67300
   longdistanceTransportCapacity: 67300 as MioPsgrKm, // Our defionition current situation is 100%
-  airDomesticUsage: 10100 as MioPsgrKm,
-  airIntlUsage: 61700 as MioPsgrKm,
+  flightsDomesticUsage: 10100 as MioPsgrKm,
+  flightsIntlUsage: 61700 as MioPsgrKm,
 
   publicTransportUsage: 10400, // Mio rides in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportRidesPerCitizen: 138, // in 2019, source https://www.vdv.de/daten-fakten.aspx
@@ -41,8 +41,8 @@ export const defaultValues: WritableBaseParams = {
   publicTransportSubventions: 9.4, // Mrd € in 2019, source https://www.vdv.de/daten-fakten.aspx
   publicTransportInvestmentsPerCitizen: 19.3, // in 2019, source https://www.vdv.de/daten-fakten.aspx
 
-  flightsPassengersDomestic: 23100, // Tsd People in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
-  flightsPassengersNonDomestic: 101300, // Tsd People in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
+  flightsDomesticPassengers: 23100, // Tsd People in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
+  flightsIntlPassengers: 101300, // Tsd People in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
   flightsCargo: 4.7, // Mio tons in 2019, source https://www.destatis.de/DE/Presse/Pressemitteilungen/2020/02/PD20_050_464.html
 
   // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
@@ -110,10 +110,10 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
     get passengerTransportUsage(): MioPsgrKm {
       return (
         this.carUsage +
-        this.localTransportUsage +
+        this.shortdistanceTransportUsage +
         this.longdistanceTransportUsage +
-        this.airDomesticUsage +
-        this.airIntlUsage
+        this.flightsDomesticUsage +
+        this.flightsIntlUsage
       )
     },
 
@@ -134,9 +134,9 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       // [2] https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
       return (
         this.co2emissionsStreetVehicles +
-        (this.localTransportCapacity * (65 as GramPerPsgrKm)) / 1000000 + // [1]: 65 g/Pkm
+        (this.shortdistanceTransportCapacity * (65 as GramPerPsgrKm)) / 1000000 + // [1]: 65 g/Pkm
         (this.longdistanceTransportCapacity * (32 as GramPerPsgrKm)) / 1000000 + // [1]: 32 g/Pkm
-        (this.airDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 + // [1]: 230 g/Pkm [2] backward: 222 g/Pkm
+        (this.flightsDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 + // [1]: 230 g/Pkm [2] backward: 222 g/Pkm
         (1.641 as MioTons) // costal and inland water transport
       )
     },

@@ -12,7 +12,7 @@ export default defineLaw({
       stateDebt: -18 as MrdEuro,
       popularity: startYear === currentYear ? changePercentBy(data.popularity, -1) : 0,
       carUsage: usageChange,
-      localTransportUsage: -usageChange,
+      shortdistanceTransportUsage: -usageChange,
     }
   },
 

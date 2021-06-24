@@ -7,14 +7,14 @@ export default defineLaw({
   description: "Autobahnen und Straßen werden intensiver ausgebaut.",
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const localChange = changeMioPsgrKmBy(data.localTransportUsage, -0.01 * data.localTransportUsage)
+    const localChange = changeMioPsgrKmBy(data.shortdistanceTransportUsage, -0.01 * data.shortdistanceTransportUsage)
     const longChange = changeMioPsgrKmBy(data.longdistanceTransportUsage, -0.01 * data.longdistanceTransportUsage)
 
     return {
       stateDebt: 5 as MrdEuro,
       popularity: changePercentBy(data.popularity, 0.5),
       carUsage: -localChange - longChange,
-      localTransportUsage: localChange,
+      shortdistanceTransportUsage: localChange,
       longdistanceTransportUsage: longChange,
     }
   },
