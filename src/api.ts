@@ -22,6 +22,7 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
     if (response.ok) {
       return result
     }
+    console.error(result)
     throw Error(result.message || result)
   }
 

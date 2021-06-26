@@ -16,7 +16,7 @@ function getEventMachine() {
 
 const backendURL = "/api"
 const api = API(backendURL, fetch)
-const repository = RepositoryFactory(api)
+const repository = RepositoryFactory({ api })
 
 export const actions = {
   async startGame(context: Context) {
