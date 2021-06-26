@@ -3,6 +3,7 @@ import API from "../src/api"
 import repository from "../src/repository"
 import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
 import { Game, Law } from "../src/types"
+import Sinon from "sinon"
 
 function priority(game: Game): number {
   return 1
@@ -25,8 +26,13 @@ function mockedFetch(info: RequestInfo, init?: RequestInit) {
   } as Response)
 }
 
+const storage = ({
+  setItem: Sinon.spy(),
+  getItem: Sinon.spy(),
+} as unknown) as Storage
+
 const mockedApi = API("http://test.localhost", mockedFetch)
-const { createGame } = repository({ api: mockedApi })
+const { createGame } = repository({ api: mockedApi, storage })
 
 describe("LawProposer", () => {
   describe("fillUpLawProposals()", () => {
