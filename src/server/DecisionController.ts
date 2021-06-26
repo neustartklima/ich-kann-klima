@@ -1,9 +1,20 @@
 import { Request } from "express"
+import { allLaws } from "../laws"
+import { Models } from "./models"
+import { Store } from "./models/EventStore"
 
-export default function() {
+export default function({ eventStore, models }: { eventStore: Store; models: Models }) {
   return {
     decided(req: Request) {
-      throw { httpStatus: 501, message: "Function not yet implemented" }
+      const { gameId, lawId, accepted } = req.params
+      const game = models.game.getById(gameId)
+      const law = allLaws.find(l => l.id === lawId)
+
+      if (!law) {
+        throw { httpStatus: 404, message: "Law not found" }
+      }
+
+      eventStore.emit(models.game.events.decisionMade(game, law, accepted === "accepted"))
     },
   }
 }

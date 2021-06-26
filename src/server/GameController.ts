@@ -1,16 +1,28 @@
 import { Request } from "express"
 import { v4 as uuid } from "uuid"
+import { Models } from "./models"
+import { Store } from "./models/EventStore"
 
-export default function() {
+export default function({ eventStore, models }: { eventStore: Store; models: Models }) {
   return {
     loadGame(req: Request) {
-      throw { httpStatus: 501, message: "Function not yet implemented" }
+      const game = models.game.getById(req.params.id)
+      if (game) {
+        return game
+      }
+      throw { httpStatus: 404, message: "Game not found" }
     },
+
     createGame(req: Request) {
-      return { ...req.body, id: uuid() }
+      const game = { ...req.body, id: uuid() }
+      eventStore.emit(models.game.events.gameCreated(game))
+      return game
     },
+
     saveGame(req: Request) {
-      throw { httpStatus: 501, message: "Function not yet implemented" }
+      const game = req.body
+      eventStore.emit(models.game.events.gameSaved(game))
+      return game
     },
   }
 }
