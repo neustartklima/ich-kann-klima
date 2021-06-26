@@ -26,7 +26,7 @@ function mockedFetch(info: RequestInfo, init?: RequestInit) {
 }
 
 const mockedApi = API("http://test.localhost", mockedFetch)
-const { createGame } = repository(mockedApi)
+const { createGame } = repository({ api: mockedApi })
 
 describe("LawProposer", () => {
   describe("fillUpLawProposals()", () => {

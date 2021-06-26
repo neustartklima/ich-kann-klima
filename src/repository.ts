@@ -9,7 +9,6 @@ import {
   Percent,
   WritableBaseParams,
 } from "./types"
-import { v4 as uuid } from "uuid"
 import { startYear } from "./constants"
 import { API } from "./api"
 
@@ -155,9 +154,11 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
   }
 }
 
-export function createGame(game: GameDefinition = initialGame): Game {
-  const newGame = {
-    id: uuid(),
+const unsavedGameId = "00000"
+
+export function initGame(game: GameDefinition = initialGame, id = unsavedGameId): Game {
+  return {
+    id,
     currentYear: game.currentYear,
     acceptedLaws: game.acceptedLaws,
     proposedLaws: game.proposedLaws,
@@ -166,44 +167,70 @@ export function createGame(game: GameDefinition = initialGame): Game {
     events: [],
     over: false,
   }
-
-  return newGame
 }
 
-export default function(api: API) {
+interface Logger {
+  warn: (msg: string, details?: unknown) => void
+}
+
+interface Storage {
+  setItem: (name: string, value: string) => void
+  getItem: (name: string) => string | null
+}
+
+export default function({
+  api,
+  logger = console,
+  storage = localStorage,
+}: {
+  api: API
+  logger?: Logger
+  storage?: Storage
+}) {
   return {
     async createGame(game: GameDefinition = initialGame): Promise<Game> {
-      const newGame: Game = {
-        id: "",
-        currentYear: game.currentYear,
-        acceptedLaws: game.acceptedLaws,
-        proposedLaws: game.proposedLaws,
-        rejectedLaws: game.rejectedLaws,
-        values: createBaseValues(game.values),
-        events: [],
-        over: false
-      }
+      const newGame = initGame(game)
       try {
         return await api.createGame(newGame)
       } catch (error) {
-        console.warn("Cannot save new game - trying again later", error)
-        newGame.id = "00000"
+        logger.warn("Cannot save new game - trying again later", error)
+        newGame.id = unsavedGameId
         return newGame
       }
     },
 
     async loadGame(id: GameId): Promise<Game> {
-      const storedItem = localStorage.getItem("game")
-      if (!storedItem) {
-        throw Error("Game not found")
+      const storedItem = storage.getItem("game")
+      if (storedItem) {
+        const storedGame = JSON.parse(storedItem)
+        if (storedGame.id === unsavedGameId || storedGame.id === id) {
+          return initGame(storedGame, id)
+        }
       }
-      const game = await this.createGame(JSON.parse(storedItem))
-      game.id = id
-      return game
+
+      try {
+        const storedGame = await api.loadGame(id)
+        return initGame(storedGame, id)
+      } catch (error) {
+        logger.warn(
+          "No game found in localStorage, but the id cannot be found on server either... so no chance to load it."
+        )
+      }
+      throw Error("Game not found")
     },
 
-    async saveGame(game: Game) {
-      localStorage.setItem("game", JSON.stringify(game))
+    async saveGame(game: Game): Promise<Game> {
+      storage.setItem("game", JSON.stringify(game))
+      try {
+        const savedGame = await api.saveGame({ ...game, id: game.id === unsavedGameId ? "" : game.id })
+        game.id = savedGame.id
+        storage.setItem("game", JSON.stringify(game)) // store again to keep id
+      } catch (error) {
+        logger.warn(
+          "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time"
+        )
+      }
+      return game
     },
   }
 }

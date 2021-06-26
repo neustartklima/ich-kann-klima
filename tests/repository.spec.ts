@@ -1,6 +1,7 @@
 import "should"
-import { createBaseValues, defaultValues } from "../src/repository"
-import { GramPerPsgrKm } from "../src/types"
+import sinon from "sinon"
+import { API } from "../src/api"
+import Repository, { createBaseValues, defaultValues, initGame } from "../src/repository"
 
 describe("createBaseValues(defaultParams)", () => {
   const iniVals = createBaseValues(defaultValues)
@@ -31,5 +32,88 @@ describe("createBaseValues(defaultParams)", () => {
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019 without LULUCF
   it("should return 809.799 MioTons for co2emissions", () => {
     iniVals.co2emissions.should.be.approximately(711.8, 0.1)
+  })
+})
+
+describe("repository", () => {
+  const storage = ({
+    setItem: sinon.spy(),
+    getItem: sinon.spy(),
+  } as unknown) as Storage
+
+  it("should create a new game with the id provided by the API", async () => {
+    const createGame = sinon.stub().resolves({ id: "12345" })
+    const api = ({ createGame } as unknown) as API
+    const repository = Repository({ api, storage })
+    const result = await repository.createGame()
+    createGame.callCount.should.equal(1)
+    result.id.should.equal("12345")
+  })
+
+  it("should assign an id of '00000' for a new game if the server could not be reached", async () => {
+    const logger = { warn: sinon.spy() }
+    const createGame = sinon.stub().rejects(undefined)
+    const api = ({ createGame } as unknown) as API
+    const repository = Repository({ api, logger, storage })
+    const result = await repository.createGame()
+    result.id.should.equal("00000")
+    logger.warn.callCount.should.equal(1)
+    logger.warn.firstCall.args[0].should.equal("Cannot save new game - trying again later")
+  })
+
+  it("should save a game and assign an id", async () => {
+    const game = initGame()
+    const saveGame = sinon.stub().resolves({ ...game, id: "4711" })
+    const api = ({ saveGame } as unknown) as API
+    const repository = Repository({ api, storage })
+    const result = await repository.saveGame(game)
+    saveGame.callCount.should.equal(1)
+    Object.keys(saveGame.firstCall.args[0]).should.deepEqual(Object.keys(game))
+    result.should.deepEqual({ ...game, id: "4711" })
+  })
+
+  it("should load a previously locally saved game without accessing the server", async () => {
+    const game = initGame()
+    const getItem = sinon.stub()
+    const storage = ({ getItem } as unknown) as Storage
+    getItem.withArgs("game").returns(JSON.stringify({ ...game, id: "0815" }))
+    const loadGame = sinon.spy()
+    const api = ({ loadGame } as unknown) as API
+    const repository = Repository({ api, storage })
+    const result = await repository.loadGame("0815")
+    result.should.deepEqual({ ...game, id: "0815" })
+    loadGame.callCount.should.equal(0)
+  })
+
+  it("should load a previously remotely, but not locally saved game", async () => {
+    const game = initGame()
+    const getItem = sinon.stub()
+    const storage = ({ getItem } as unknown) as Storage
+    getItem.withArgs("0815").returns(null)
+    const loadGame = sinon.stub()
+    loadGame.withArgs("0815").resolves({ ...game, id: "0815" })
+    const api = ({ loadGame } as unknown) as API
+    const repository = Repository({ api, storage })
+    const result = await repository.loadGame("0815")
+    result.should.deepEqual({ ...game, id: "0815" })
+    loadGame.callCount.should.equal(1)
+    loadGame.firstCall.args.should.deepEqual(["0815"])
+  })
+
+  it("should store a game in localstorage if server cannot be reached", async () => {
+    const logger = { warn: sinon.spy() }
+    const game = initGame()
+    const saveGame = sinon.stub()
+    saveGame.rejects()
+    const api = ({ saveGame } as unknown) as API
+    const repository = Repository({ api, storage, logger })
+    const result = await repository.saveGame(game)
+    saveGame.callCount.should.equal(1)
+    Object.keys(saveGame.firstCall.args[0]).should.deepEqual(Object.keys(game))
+    result.should.deepEqual({ ...game, id: "00000" })
+    logger.warn.callCount.should.equal(1)
+    logger.warn.firstCall.args[0].should.equal(
+      "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time"
+    )
   })
 })
