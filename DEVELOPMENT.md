@@ -6,23 +6,26 @@ To run #ich-kann-klima on your local machine, clone the repository, install depe
 git clone https://github.com/neustartklima/ich-kann-klima.git
 cd ich-kann-klima
 
-npm install
-npm run dev
+npm install                 # Install dependencies
+npm run server:start &      # Run server in background
+npm run dev                 # Run frontend
 ```
 
 The frontend runs on port 3000 by default, so `open http://localhost:3000` will open the browser (at least on OSX).
 
 ## Building and running a production version
 
-To build the frontend for production use, just call `npm run build` in the top level folder.
+To build backend and frontend for production use, call `npm run build`.
 
-The built frontend files are located in `dist` and need to be served by a webserver. For testing purposes,
-you can run `npm run serve` which starts a simple one which should not really be used in a production environment.
+The built files are located in `dist` and can be used by starting `npm start`.
 
 ## CI/CD pipeline
 
 This repository uses GitHub Actions to build and deploy the frontend to GitHub Pages. So, every time you push to `main` branch,
 a pipeline is started which runs the test, builds the production version and copies the generated files to `gh-pages` branch.
+
+Additionally, a Docker image is created and pushed to [Docker Hub](https://hub.docker.com/repository/docker/neustartklima/ich-kann-klima).
+
 See `.github/workflows` how this is done.
 
 ## Peek Mode
