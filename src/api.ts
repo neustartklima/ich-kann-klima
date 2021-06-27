@@ -44,7 +44,8 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
     },
 
     eventOccurred(game, event) {
-      return request("post", "/games/" + game.id + "/events/" + event.title.replace(/\w/g, "_"))
+      debugger
+      return request("post", "/games/" + game.id + "/events/" + event.id)
     },
   }
 }

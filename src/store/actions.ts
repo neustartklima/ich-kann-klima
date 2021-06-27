@@ -62,8 +62,8 @@ export const actions = {
     game.acceptedLaws = [...filteredLawRefs, newLawRef]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
-    api.decisionMade(game, newLaw, true)
     context.commit("setGameState", { game })
+    api.decisionMade(game, newLaw, true)
   },
 
   rejectLaw(context: Context, payload: { lawId: LawId }) {
@@ -71,8 +71,8 @@ export const actions = {
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
     replaceLawProposal(game, payload.lawId)
     repository.saveGame(game)
-    api.decisionMade(game, getLaw(payload.lawId), false)
     context.commit("setGameState", { game })
+    api.decisionMade(game, getLaw(payload.lawId), false)
   },
 
   advanceYear(context: Context) {
