@@ -19,6 +19,20 @@ To build backend and frontend for production use, call `npm run build`.
 
 The built files are located in `dist` and can be used by starting `npm start`.
 
+
+## Building and running with Docker
+
+Create a docker image by calling `npm run docker:build` - it will be tagged as `ichkannklima`.
+
+Then, run it in your own docker environment by creating a local folder to store game data and start a docker container:
+
+```zsh
+mkdir docker-data
+npm run docker:start
+```
+
+Then, start a browser and open [http://localhost:3000](http://localhost:3000)
+
 ## CI/CD pipeline
 
 This repository uses GitHub Actions to build and deploy the frontend to GitHub Pages. So, every time you push to `main` branch,
