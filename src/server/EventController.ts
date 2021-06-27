@@ -15,6 +15,7 @@ export default function({ eventStore, models }: { eventStore: Store; models: Mod
       }
 
       eventStore.emit(models.game.events.eventOccured(game, event))
+      return {}
     },
   }
 }

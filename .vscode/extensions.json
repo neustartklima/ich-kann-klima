@@ -9,6 +9,7 @@
     "rvest.vs-code-prettier-eslint",
     "humao.rest-client",
     "hbenl.vscode-test-explorer",
-    "johnsoncodehk.volar"
+    "johnsoncodehk.volar",
+    "buster.ndjson-colorizer"
   ]
 }

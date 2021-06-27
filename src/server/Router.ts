@@ -18,7 +18,7 @@ const { eventOccurred } = EventController({ eventStore, models })
 router.post("/api/games", json(createGame))
 router.put("/api/games/:gameId", json(saveGame))
 router.get("/api/games/:gameId", json(loadGame))
-router.post("/api/games/:gameId/decisions/:decisionId", json(decided))
+router.post("/api/games/:gameId/decisions/:lawId", json(decided))
 router.post("/api/games/:gameId/events/:eventId", json(eventOccurred))
 
 export default router

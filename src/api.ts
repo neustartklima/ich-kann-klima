@@ -36,7 +36,7 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
     },
 
     saveGame(game) {
-      return request("post", "/games/" + game.id, game)
+      return request("put", "/games/" + game.id, game)
     },
 
     decisionMade(game, law, accepted) {

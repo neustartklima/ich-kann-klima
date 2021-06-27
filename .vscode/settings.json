@@ -8,5 +8,8 @@
     "editor.defaultFormatter": "johnsoncodehk.volar"
   },
   "mochaExplorer.files": "tests/**/*.ts",
-  "mochaExplorer.require": "ts-node/register"
+  "mochaExplorer.require": "ts-node/register",
+  "files.associations": {
+    "*.json": "ndjson",
+  },
 }

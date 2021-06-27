@@ -16,6 +16,7 @@ export default function({ eventStore, models }: { eventStore: Store; models: Mod
       }
 
       eventStore.emit(models.game.events.decisionMade(game, law, accepted === "accepted"))
+      return {}
     },
   }
 }
