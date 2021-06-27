@@ -12,7 +12,7 @@
     "server:start": "esbuild --bundle --platform=node --sourcemap src/server.ts | node --inspect",
     "server:build": "esbuild --bundle --platform=node src/server.ts --outfile=dist/server.js",
     "docker:build": "docker build -t ichkannklima .",
-    "docker:start": "docker run -it --rm --name ichkannklima -p 3000:3099 ichkannklima"
+    "docker:start": "docker run -it --rm --name ichkannklima -p 3000:3099 -v $(pwd)/docker-data:/app/data ichkannklima"
   },
   "repository": {
     "type": "git",
