@@ -6,7 +6,7 @@ import { Store } from "./models/EventStore"
 export default function({ eventStore, models }: { eventStore: Store; models: Models }) {
   return {
     loadGame(req: Request) {
-      const game = models.game.getById(req.params.id)
+      const game = models.game.getById(req.params.gameId)
       if (game) {
         return game
       }
