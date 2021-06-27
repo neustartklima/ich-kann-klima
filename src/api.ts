@@ -44,7 +44,6 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
     },
 
     eventOccurred(game, event) {
-      debugger
       return request("post", "/games/" + game.id + "/events/" + event.id)
     },
   }
