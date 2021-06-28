@@ -30,8 +30,8 @@ export const defaultValues: WritableBaseParams = {
   carRenewablePercentage: 1 as Percent, // https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)
   localTransportUsage: 112600 as MioPsgrKm,
   localTransportCapacity: 112600 as MioPsgrKm, // Our definition: current situation is 100%
-  longdistanceTransportUsage: 67300 as MioPsgrKm, // public - local - air = 251700 - 71800 - 112600 = 67300
-  longdistanceTransportCapacity: 67300 as MioPsgrKm, // Our defionition current situation is 100%
+  nationalTransportUsage: 67300 as MioPsgrKm, // public - local - air = 251700 - 71800 - 112600 = 67300
+  nationalTransportCapacity: 67300 as MioPsgrKm, // Our defionition current situation is 100%
   airDomesticUsage: 10100 as MioPsgrKm,
   airIntlUsage: 61700 as MioPsgrKm,
 
@@ -101,7 +101,7 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       return (
         this.carUsage +
         this.localTransportUsage +
-        this.longdistanceTransportUsage +
+        this.nationalTransportUsage +
         this.airDomesticUsage +
         this.airIntlUsage
       )
@@ -125,7 +125,7 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       return (
         this.co2emissionsStreetVehicles +
         (this.localTransportCapacity * (65 as GramPerPsgrKm)) / 1000000 + // [1]: 65 g/Pkm
-        (this.longdistanceTransportCapacity * (32 as GramPerPsgrKm)) / 1000000 + // [1]: 32 g/Pkm
+        (this.nationalTransportCapacity * (32 as GramPerPsgrKm)) / 1000000 + // [1]: 32 g/Pkm
         (this.airDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 + // [1]: 230 g/Pkm [2] backward: 222 g/Pkm
         (1.641 as MioTons) // costal and inland water transport
       )
