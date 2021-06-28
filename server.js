@@ -21497,8 +21497,9 @@ function logAPICalls(logger = console) {
 }
 function cors() {
   return (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", "https://www.ich-kann-klima.de");
     res.header("Access-Control-Allow-Headers", "*");
+    res.header("Access-Control-Allow-Methods", "*");
     next();
   };
 }
