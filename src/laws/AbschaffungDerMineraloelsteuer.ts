@@ -11,15 +11,15 @@ export default defineLaw({
       stateDebt: 41 as MrdEuro,
       popularity: changePercentBy(data.popularity, startYear === currentYear ? 5 : -3),
     }
-    const localChange = changeMioPsgrKmBy(data.localTransportUsage, -0.2 * data.localTransportUsage)
-    const longChange = changeMioPsgrKmBy(data.nationalTransportUsage, -0.2 * data.nationalTransportUsage)
+    const localChange = changeMioPsgrKmBy(data.publicLocalUsage, -0.2 * data.publicLocalUsage)
+    const longChange = changeMioPsgrKmBy(data.publicNationalUsage, -0.2 * data.publicNationalUsage)
 
     if (currentYear === startYear) {
       return {
         ...yearly,
         carUsage: -localChange - longChange,
-        localTransportUsage: localChange,
-        nationalTransportUsage: longChange,
+        publicLocalUsage: localChange,
+        publicNationalUsage: longChange,
       }
     }
     return yearly

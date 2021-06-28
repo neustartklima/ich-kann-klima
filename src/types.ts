@@ -23,10 +23,10 @@ export type WritableBaseParams = {
   carUsage: MioPsgrKm
   carEmissionFactor: GramPerPsgrKm
   carRenewablePercentage: Percent
-  localTransportUsage: MioPsgrKm
-  localTransportCapacity: MioPsgrKm
-  nationalTransportUsage: MioPsgrKm
-  nationalTransportCapacity: MioPsgrKm
+  publicLocalUsage: MioPsgrKm
+  publicLocalCapacity: MioPsgrKm
+  publicNationalUsage: MioPsgrKm
+  publicNationalCapacity: MioPsgrKm
   airDomesticUsage: MioPsgrKm
   airIntlUsage: MioPsgrKm
 
