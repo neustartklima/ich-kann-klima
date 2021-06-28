@@ -6,15 +6,15 @@ export default defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit stärker bezuschusst.",
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const relCapacity = (data.localTransportCapacity / data.localTransportUsage) * 100
-    const potentialUsageIncrease = relCapacity >= 105 ? 0.01 * data.localTransportUsage : 0
+    const relCapacity = (data.publicLocalCapacity / data.publicLocalUsage) * 100
+    const potentialUsageIncrease = relCapacity >= 105 ? 0.01 * data.publicLocalUsage : 0
     // Need to use change...By for carUsage here, to ensure it does not fall below zero:
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
 
     const yearly: Partial<WritableBaseParams> = {
       stateDebt: 3 as MrdEuro,
-      localTransportCapacity: 0.01 * data.localTransportCapacity,
-      localTransportUsage: usageIncrease,
+      publicLocalCapacity: 0.01 * data.publicLocalCapacity,
+      publicLocalUsage: usageIncrease,
       carUsage: -usageIncrease,
     }
 
