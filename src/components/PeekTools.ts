@@ -46,7 +46,7 @@ const peekOptions: PeekOptions = {
   electricityCoal: o("TWh/a", false),
   electricityGas: o("TWh/a", false),
   carEmissionFactor: o("GramPerPsgrKm", true),
-  carUsage: o("MrdPsgrKm", true),
+  carUsage: o("MioPsgrKm", true),
   carRenewablePercentage: o("Percent", true),
   localTransportUsage: o("MioPsgrKm", true),
   localTransportCapacity: o("MioPsgrKm", true),
