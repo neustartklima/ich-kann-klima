@@ -21626,20 +21626,12 @@ var defaultValues = {
   carUsage: 917e3,
   carEmissionFactor: 160,
   carRenewablePercentage: 1,
-  localTransportUsage: 112600,
-  localTransportCapacity: 112600,
-  longdistanceTransportUsage: 67300,
-  longdistanceTransportCapacity: 67300,
+  publicLocalUsage: 112600,
+  publicLocalCapacity: 112600,
+  publicNationalUsage: 67300,
+  publicNationalCapacity: 67300,
   airDomesticUsage: 10100,
   airIntlUsage: 61700,
-  publicTransportUsage: 10400,
-  publicTransportRidesPerCitizen: 138,
-  publicTransportRevenue: 13.3,
-  publicTransportSubventions: 9.4,
-  publicTransportInvestmentsPerCitizen: 19.3,
-  flightsPassengersDomestic: 23100,
-  flightsPassengersNonDomestic: 101300,
-  flightsCargo: 4.7,
   electricityDemand: 480.54,
   electricitySolar: 51.42,
   electricityWind: 131.85,
@@ -21666,7 +21658,7 @@ function createBaseValues(values) {
       return this.electricityGas * 0.399 + this.electricitySolar * 0.058 + this.electricityWind * 5e-3 + this.electricityWater * 0.02 + this.electricityHardCoal * 0.835 + this.electricityBrownCoal * 1.137 + this.electricityBiomass * 0 + this.electricityNuclear * 5e-3;
     },
     get passengerTransportUsage() {
-      return this.carUsage + this.localTransportUsage + this.longdistanceTransportUsage + this.airDomesticUsage + this.airIntlUsage;
+      return this.carUsage + this.publicLocalUsage + this.publicNationalUsage + this.airDomesticUsage + this.airIntlUsage;
     },
     get co2emissionsStreetVehicles() {
       const carNonrenewable = this.carUsage * (1 - this.carRenewablePercentage / 100);
@@ -21675,7 +21667,7 @@ function createBaseValues(values) {
       return co2emissionsCars + co2emissionsTrucks;
     },
     get co2emissionsMobility() {
-      return this.co2emissionsStreetVehicles + this.localTransportCapacity * 65 / 1e6 + this.longdistanceTransportCapacity * 32 / 1e6 + this.airDomesticUsage * 222 / 1e6 + 1.641;
+      return this.co2emissionsStreetVehicles + this.publicLocalCapacity * 65 / 1e6 + this.publicNationalCapacity * 32 / 1e6 + this.airDomesticUsage * 222 / 1e6 + 1.641;
     },
     get co2emissions() {
       return this.co2emissionsEnergy + this.co2emissionsIndustry + this.co2emissionsMobility + this.co2emissionsBuildings + this.co2emissionsAgriculture + this.co2emissionsOthers;
@@ -21786,13 +21778,13 @@ var NahverkehrAusbauen_default = defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit st\xE4rker bezuschusst.",
   effects(data, startYear2, currentYear) {
-    const relCapacity = data.localTransportCapacity / data.localTransportUsage * 100;
-    const potentialUsageIncrease = relCapacity >= 105 ? 0.01 * data.localTransportUsage : 0;
+    const relCapacity = data.publicLocalCapacity / data.publicLocalUsage * 100;
+    const potentialUsageIncrease = relCapacity >= 105 ? 0.01 * data.publicLocalUsage : 0;
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease);
     const yearly = {
       stateDebt: 3,
-      localTransportCapacity: 0.01 * data.localTransportCapacity,
-      localTransportUsage: usageIncrease,
+      publicLocalCapacity: 0.01 * data.publicLocalCapacity,
+      publicLocalUsage: usageIncrease,
       carUsage: -usageIncrease
     };
     const yearsActive = currentYear - startYear2;
@@ -21841,11 +21833,11 @@ var NahverkehrKostenlos_default = defineLaw({
   description: "Die Kosten f\xFCr den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr ben\xF6tigt werden.",
   effects(data, startYear2, currentYear) {
     const percentage = startYear2 === currentYear ? 10 : 1;
-    const potentialUsageIncrease = percentage / 100 * data.localTransportUsage;
+    const potentialUsageIncrease = percentage / 100 * data.publicLocalUsage;
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease);
     const yearly = {
       stateDebt: 10,
-      localTransportUsage: usageIncrease,
+      publicLocalUsage: usageIncrease,
       carUsage: -usageIncrease
     };
     if (startYear2 === currentYear) {
@@ -21870,21 +21862,21 @@ var AutosInInnenstaedtenVerbieten_default = defineLaw({
   description: "Die Innenst\xE4dte der gro\xDFen St\xE4dte werden zu Autofreien Zonen erkl\xE4rt und begr\xFCnt, sowie Fahrrad und Fu\xDFg\xE4ngerzonen eingerichtet.",
   effects(data, startYear2, currentYear) {
     var popularityChange = changePercentBy(data.popularity, -2);
-    if (data.localTransportCapacity > data.localTransportUsage * 1.2) {
+    if (data.publicLocalCapacity > data.publicLocalUsage * 1.2) {
       popularityChange = changePercentBy(data.popularity, -1);
       if (startYear2 + 2 < currentYear)
         popularityChange = changePercentBy(data.popularity, 2);
     }
-    const potentialUsageIncrease = startYear2 === currentYear ? 0.1 * data.localTransportUsage : 0;
+    const potentialUsageIncrease = startYear2 === currentYear ? 0.1 * data.publicLocalUsage : 0;
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease);
     return {
       popularity: popularityChange,
       carUsage: -usageIncrease,
-      localTransportUsage: usageIncrease
+      publicLocalUsage: usageIncrease
     };
   },
   priority(game) {
-    const relCapacity = game.values.localTransportCapacity / game.values.localTransportUsage * 100;
+    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
     return linear(90, 120, relCapacity);
   }
 });
@@ -21894,20 +21886,20 @@ var FernverkehrVerbindungenAusbauen_default = defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",
   description: "Der Ausbau des \xF6ffentlichen Fernverkehrs wird bundesweit st\xE4rker Bezuschusst und Vorangetrieben",
   effects(data, startYear2, currentYear) {
-    const relCapacity = data.longdistanceTransportCapacity / data.longdistanceTransportUsage * 100;
-    const potentialUsageIncrease = relCapacity >= 105 ? 0.015 * data.longdistanceTransportUsage : 0;
+    const relCapacity = data.publicNationalCapacity / data.publicNationalUsage * 100;
+    const potentialUsageIncrease = relCapacity >= 105 ? 0.015 * data.publicNationalUsage : 0;
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease);
     return {
       stateDebt: 6,
-      longdistanceTransportCapacity: 0.01 * data.longdistanceTransportCapacity,
-      longdistanceTransportUsage: 0.667 * usageIncrease,
+      publicNationalCapacity: 0.01 * data.publicNationalCapacity,
+      publicNationalUsage: 0.667 * usageIncrease,
       carUsage: -usageIncrease,
-      localTransportUsage: 0.333 * usageIncrease,
+      publicLocalUsage: 0.333 * usageIncrease,
       popularity: changePercentBy(data.popularity, 2)
     };
   },
   priority(game) {
-    const relCapacity = game.values.longdistanceTransportCapacity / game.values.longdistanceTransportUsage * 100;
+    const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
     return linear(150, 80, relCapacity);
   }
 });
@@ -21940,14 +21932,14 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
       stateDebt: 41,
       popularity: changePercentBy(data.popularity, startYear2 === currentYear ? 5 : -3)
     };
-    const localChange = changeMioPsgrKmBy(data.localTransportUsage, -0.2 * data.localTransportUsage);
-    const longChange = changeMioPsgrKmBy(data.longdistanceTransportUsage, -0.2 * data.longdistanceTransportUsage);
+    const localChange = changeMioPsgrKmBy(data.publicLocalUsage, -0.2 * data.publicLocalUsage);
+    const longChange = changeMioPsgrKmBy(data.publicNationalUsage, -0.2 * data.publicNationalUsage);
     if (currentYear === startYear2) {
       return {
         ...yearly,
         carUsage: -localChange - longChange,
-        localTransportUsage: localChange,
-        longdistanceTransportUsage: longChange
+        publicLocalUsage: localChange,
+        publicNationalUsage: longChange
       };
     }
     return yearly;
@@ -21965,14 +21957,14 @@ var AusbauVonStrassen_default = defineLaw({
   title: "Ausbau von Stra\xDFen",
   description: "Autobahnen und Stra\xDFen werden intensiver ausgebaut.",
   effects(data, startYear2, currentYear) {
-    const localChange = changeMioPsgrKmBy(data.localTransportUsage, -0.01 * data.localTransportUsage);
-    const longChange = changeMioPsgrKmBy(data.longdistanceTransportUsage, -0.01 * data.longdistanceTransportUsage);
+    const localChange = changeMioPsgrKmBy(data.publicLocalUsage, -0.01 * data.publicLocalUsage);
+    const longChange = changeMioPsgrKmBy(data.publicNationalUsage, -0.01 * data.publicNationalUsage);
     return {
       stateDebt: 5,
       popularity: changePercentBy(data.popularity, 0.5),
       carUsage: -localChange - longChange,
-      localTransportUsage: localChange,
-      longdistanceTransportUsage: longChange
+      publicLocalUsage: localChange,
+      publicNationalUsage: longChange
     };
   },
   priority(game) {
@@ -22010,7 +22002,7 @@ var DienstwagenPrivilegAbgeschaffen_default = defineLaw({
       stateDebt: -18,
       popularity: startYear2 === currentYear ? changePercentBy(data.popularity, -1) : 0,
       carUsage: usageChange,
-      localTransportUsage: -usageChange
+      publicLocalUsage: -usageChange
     };
   },
   priority(game) {
