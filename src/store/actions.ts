@@ -14,7 +14,7 @@ function getEventMachine() {
   return eventMachine || (eventMachine = EventMachine(store, allEvents))
 }
 
-const backendURL = "/api"
+const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
 const api = API(backendURL, fetch)
 const repository = RepositoryFactory({ api })
 
