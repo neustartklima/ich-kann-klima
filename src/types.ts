@@ -25,8 +25,8 @@ export type WritableBaseParams = {
   carRenewablePercentage: Percent
   localTransportUsage: MioPsgrKm
   localTransportCapacity: MioPsgrKm
-  longdistanceTransportUsage: MioPsgrKm
-  longdistanceTransportCapacity: MioPsgrKm
+  nationalTransportUsage: MioPsgrKm
+  nationalTransportCapacity: MioPsgrKm
   airDomesticUsage: MioPsgrKm
   airIntlUsage: MioPsgrKm
 

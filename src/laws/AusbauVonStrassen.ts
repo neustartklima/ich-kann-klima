@@ -8,14 +8,14 @@ export default defineLaw({
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     const localChange = changeMioPsgrKmBy(data.localTransportUsage, -0.01 * data.localTransportUsage)
-    const longChange = changeMioPsgrKmBy(data.longdistanceTransportUsage, -0.01 * data.longdistanceTransportUsage)
+    const longChange = changeMioPsgrKmBy(data.nationalTransportUsage, -0.01 * data.nationalTransportUsage)
 
     return {
       stateDebt: 5 as MrdEuro,
       popularity: changePercentBy(data.popularity, 0.5),
       carUsage: -localChange - longChange,
       localTransportUsage: localChange,
-      longdistanceTransportUsage: longChange,
+      nationalTransportUsage: longChange,
     }
   },
 
