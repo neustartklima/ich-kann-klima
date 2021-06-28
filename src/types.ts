@@ -30,16 +30,6 @@ export type WritableBaseParams = {
   airDomesticUsage: MioPsgrKm
   airIntlUsage: MioPsgrKm
 
-  publicTransportUsage: MioRides
-  publicTransportRidesPerCitizen: number
-  publicTransportRevenue: MrdEuro
-  publicTransportSubventions: MrdEuro
-  publicTransportInvestmentsPerCitizen: Euro
-
-  flightsPassengersDomestic: TsdPeople
-  flightsPassengersNonDomestic: TsdPeople
-  flightsCargo: MioTons
-
   electricityDemand: TWh
 
   electricitySolar: TWh
