@@ -12,19 +12,21 @@ export function applyEffects(values: BaseParams, effects: Partial<WritableBasePa
 
 export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): BaseParams {
   const values = createBaseValues(currentValues)
-  laws.forEach((law) => {
-    const effects = law.effects(values, law.effectiveSince, year)
-    applyEffects(values, effects)
-  })
+  laws
+    .sort((a, b) => {
+      if (a.treatAfterLabels?.some((lbl) => b.labels?.includes(lbl))) return 1
+      if (b.treatAfterLabels?.some((lbl) => a.labels?.includes(lbl))) return -1
+      return 0
+    })
+    .forEach((law) => {
+      const effects = law.effects(values, law.effectiveSince, year)
+      applyEffects(values, effects)
+    })
 
   // re-calculate remaining CO2 budget
   values.co2budget -= values.co2emissions
 
   return values
-}
-
-export function lawsForNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): LawReference[] {
-  return [{ lawId: "ASDF", effectiveSince: 0 }]
 }
 
 function clampToPercent(value: number) {

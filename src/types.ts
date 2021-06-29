@@ -70,12 +70,16 @@ export type LawId = string
 
 export type LawLabel = "hidden" | "initial" | "Kernenergie" | "TempolimitAutobahn"
 
+export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Partial<WritableBaseParams>
+export type PriorityFunc = (game: Game) => Percent
+
 export type LawDefinition = {
   title: string
   description: string
   labels?: LawLabel[]
   removeLawsWithLabels?: LawLabel[]
-  effects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams>
+  treatAfterLabels?: LawLabel[]
+  effects: EffectsFunc
 
   /**
    * Current priority of this law.
@@ -86,7 +90,7 @@ export type LawDefinition = {
    * Laws with priority <= 0 will not be shown.
    * @param game The current game.
    */
-  priority(game: Game): number
+  priority: PriorityFunc
 }
 
 export type Law = LawDefinition & {
