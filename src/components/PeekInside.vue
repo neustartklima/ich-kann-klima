@@ -80,7 +80,7 @@ export default defineComponent({
       <tr>
         <th @click="sortLaws('state')">S</th>
         <th @click="sortLaws('id')">ID</th>
-        <th @click="sortLaws('priority')" class="numbercol">Priority</th>
+        <th @click="sortLaws('priority')" class="priocol">Priority</th>
       </tr>
       <tr
         v-for="law in sortedLaws"
@@ -91,7 +91,7 @@ export default defineComponent({
       >
         <td>{{ law.state }}</td>
         <td>{{ law.id }}</td>
-        <td class="numbercol">{{ law.priority }}</td>
+        <td class="priocol">{{ law.priority }}</td>
       </tr>
     </table>
   </details>
@@ -123,13 +123,19 @@ export default defineComponent({
     background: lightgrey;
   }
 
-  .numbercol {
+  .priocol {
     text-align: right;
     min-width: 4em;
   }
 
+  .numbercol {
+    text-align: right;
+    min-width: 6em;
+  }
+
   .effcol {
-    min-width: 4em;
+    min-width: 6em;
+    max-width: 6em;
   }
 
   &[open] {
