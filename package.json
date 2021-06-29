@@ -4,7 +4,7 @@
   "description": "## Das Klimawahl Challenge Game",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
-    "test": "nyc mocha --require ts-node/register tests/**/*.spec.ts",
+    "test": "nyc mocha",
     "build": "vue-tsc --noEmit && vite build && npm run server:build",
     "serve": "vite preview",
     "start": "cross-env NODE_ENV=production node dist/server.js",
@@ -57,7 +57,15 @@
     "vue-router": "^4.0.9",
     "vue-tsc": "^0.1.7"
   },
+  "mocha": {
+    "require": [ "ts-node/register" ],
+    "extension": [ ".ts" ],
+    "exit": true,
+    "spec": [ "tests/**/*.spec.ts" ],
+    "ui": "bdd"
+  },
   "nyc": {
+    "all": true,
     "exclude": [
       "dist",
       "hackathon",
@@ -66,6 +74,7 @@
     "reporter": [
       "html",
       "text-summary"
-    ]
+    ],
+    "reporter-dir": "coverage"
   }
 }
