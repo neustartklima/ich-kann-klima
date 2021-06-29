@@ -17,6 +17,13 @@ import DienstwagenPrivilegAbgeschaffen from "./DienstwagenPrivilegAbgeschaffen"
 import Tempolimit130AufAutobahnen from "./Tempolimit130AufAutobahnen"
 import Tempolimit120AufAutobahnen from "./Tempolimit120AufAutobahnen"
 import Tempolimit100AufAutobahnen from "./Tempolimit100AufAutobahnen"
+import AbstandsregelnFuerWindkraftWieBisher from "./AbstandsregelnFuerWindkraftWieBisher"
+import AbstandsregelnFuerWindkraftLockern from "./AbstandsregelnFuerWindkraftLockern"
+import AbstandsregelnFuerWindkraftAbschaffen from "./AbstandsregelnFuerWindkraftAbschaffen"
+import AusschreibungsverfahrenfuerWindkraftWieBisher from "./AusschreibungsverfahrenfuerWindkraftWieBisher"
+import AusschreibungsverfahrenfuerWindkraftVerdoppeln from "./AusschreibungsverfahrenfuerWindkraftVerdoppeln"
+import AusschreibungsverfahrenfuerWindkraftVervierfachen from "./AusschreibungsverfahrenfuerWindkraftVervierfachen"
+import AusschreibungsverfahrenfuerWindkraftVerachtfachen from "./AusschreibungsverfahrenfuerWindkraftVerachtfachen"
 
 import { prepareModuleList } from "../Factory"
 import { Law } from "../types"
@@ -41,4 +48,11 @@ export const allLaws: Law[] = prepareModuleList({
   Tempolimit130AufAutobahnen,
   Tempolimit120AufAutobahnen,
   Tempolimit100AufAutobahnen,
+  AbstandsregelnFuerWindkraftWieBisher,
+  AbstandsregelnFuerWindkraftLockern,
+  AbstandsregelnFuerWindkraftAbschaffen,
+  AusschreibungsverfahrenfuerWindkraftWieBisher,
+  AusschreibungsverfahrenfuerWindkraftVerdoppeln,
+  AusschreibungsverfahrenfuerWindkraftVervierfachen,
+  AusschreibungsverfahrenfuerWindkraftVerachtfachen,
 }) as Law[]

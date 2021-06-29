@@ -38,6 +38,7 @@ const peekOptions: PeekOptions = {
   electricityDemand: o("TWh/a", true),
   electricitySolar: o("TWh/a", true),
   electricityWind: o("TWh/a", true),
+  electricityWindOnshoreMaxNew: o("TWh/a", true),
   electricityWater: o("TWh/a", true),
   electricityBiomass: o("TWh/a", true),
   electricityNuclear: o("TWh/a", true),

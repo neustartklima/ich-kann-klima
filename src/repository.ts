@@ -7,6 +7,7 @@ import {
   MioPsgrKm,
   MioTons,
   Percent,
+  TWh,
   WritableBaseParams,
 } from "./types"
 import { startYear } from "./constants"
@@ -36,14 +37,15 @@ export const defaultValues: WritableBaseParams = {
   airIntlUsage: 61700 as MioPsgrKm,
 
   // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
-  electricityDemand: 480.54,
-  electricitySolar: 51.42,
-  electricityWind: 131.85,
-  electricityWater: 14.99,
-  electricityHardCoal: 35.46,
-  electricityBrownCoal: 82.13,
-  electricityBiomass: 43.19,
-  electricityNuclear: 60.91,
+  electricityDemand: 480.54 as TWh,
+  electricitySolar: 51.42 as TWh,
+  electricityWind: 131.85 as TWh,
+  electricityWindOnshoreMaxNew: 6.0 as TWh,
+  electricityWater: 14.99 as TWh,
+  electricityHardCoal: 35.46 as TWh,
+  electricityBrownCoal: 82.13 as TWh,
+  electricityBiomass: 43.19 as TWh,
+  electricityNuclear: 60.91 as TWh,
 
   // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
   // https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
