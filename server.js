@@ -21582,7 +21582,7 @@ function linear(zero, hundred, actual) {
 function lawIsAccepted(game, lawId) {
   if (!allLaws.map((l) => l.id).includes(lawId))
     throw new Error("Unknown law ID " + lawId + " used in a law.");
-  return game.acceptedLaws.some((l) => l.lawId === lawId);
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear);
 }
 
 // src/laws/KohleverstromungEinstellen.ts
@@ -21636,6 +21636,7 @@ var defaultValues = {
   electricityDemand: 480.54,
   electricitySolar: 51.42,
   electricityWind: 131.85,
+  electricityWindOnshoreMaxNew: 6,
   electricityWater: 14.99,
   electricityHardCoal: 35.46,
   electricityBrownCoal: 82.13,
@@ -21737,16 +21738,21 @@ var InitialAtomausstieg_default = defineLaw({
 var WindenergieSubventionieren_default = defineLaw({
   title: "Windenergie subventionieren",
   description: "Garantierte Einspeiseverg\xFCtung f\xFCr neue und erneuterte Windanlagen",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
   effects(data, startYear2, currentYear) {
+    const onshoreNew = Math.min(18.8, data.electricityWindOnshoreMaxNew);
+    const offshoreNew = 1.2;
     return {
-      electricityWind: 20,
+      electricityWind: onshoreNew + offshoreNew,
       stateDebt: 1
     };
   },
   priority(game) {
-    const electricityNonRenewable = game.values.electricityDemand - game.values.electricityWind - game.values.electricitySolar - game.values.electricityWater - game.values.electricityBiomass;
-    const percentage = electricityNonRenewable / game.values.electricityDemand * 100;
-    return linear(0, 100, percentage);
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const percentage = electricityRenewable / game.values.electricityDemand * 100;
+    return linear(100, 0, percentage);
   }
 });
 
@@ -22083,6 +22089,158 @@ var Tempolimit100AufAutobahnen_default = defineLaw({
   }
 });
 
+// src/laws/AbstandsregelnFuerWindkraftWieBisher.ts
+var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft wie bisher",
+  description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
+  labels: ["initial", "hidden", "WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    return {
+      electricityWindOnshoreMaxNew: 6 - data.electricityWindOnshoreMaxNew
+    };
+  },
+  priority(game) {
+    const v = game.values;
+    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
+    return linear(30, 100, relWindPercentage);
+  }
+});
+
+// src/laws/AbstandsregelnFuerWindkraftLockern.ts
+var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft lockern",
+  description: "Bundesweite gelockerte Abstandsregeln f\xFCr Windkraftanlagen sowie Bauerlaubniss in W\xE4ldern. Ja auch Bayern wird jetzt gezwungen Windkraftanlagen zuzulassen, sowie andere nicht bauwillige Kommunen.",
+  labels: ["WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    return {
+      popularity: startYear2 === currentYear ? changePercentBy(data.popularity, -3) : 0,
+      electricityWindOnshoreMaxNew: 30 - data.electricityWindOnshoreMaxNew
+    };
+  },
+  priority(game) {
+    const v = game.values;
+    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
+    return linear(70, 30, relWindPercentage);
+  }
+});
+
+// src/laws/AbstandsregelnFuerWindkraftAbschaffen.ts
+var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft abschaffen",
+  description: "Jeder der Land besitzt kann seine Windkraftanlage dahin bauen wo er will.",
+  labels: ["WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    return {
+      popularity: startYear2 === currentYear ? changePercentBy(data.popularity, -40) : 0,
+      electricityWindOnshoreMaxNew: 1e3 - data.electricityWindOnshoreMaxNew
+    };
+  },
+  priority(game) {
+    const v = game.values;
+    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
+    return linear(80, 40, relWindPercentage);
+  }
+});
+
+// src/laws/AusschreibungsverfahrenfuerWindkraftWieBisher.ts
+var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft wie bisher",
+  description: "Windkraft Betreiber k\xF6nnen sich mehrmals im Jahr auf ein eine bestimte Leistung von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstm\xF6glichen Subventionierung umsetzen kann bekommt den Zuschlag. Insgesamt werden 8,1 TWh pro Jahr ausgeschrieben.",
+  labels: ["initial", "hidden", "WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    const onshoreNew = Math.min(6.9, data.electricityWindOnshoreMaxNew);
+    const offshoreNew = 1.2;
+    return {
+      electricityWind: onshoreNew + offshoreNew
+    };
+  },
+  priority(game) {
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const percentage = electricityRenewable / game.values.electricityDemand * 100;
+    return linear(100, 30, percentage);
+  }
+});
+
+// src/laws/AusschreibungsverfahrenfuerWindkraftVerdoppeln.ts
+var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft verdoppeln",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 16,2TWh verdoppelt.",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    const onshoreNew = Math.min(13.8, data.electricityWindOnshoreMaxNew);
+    const offshoreNew = 2.4;
+    return {
+      popularity: startYear2 === currentYear ? changePercentBy(data.popularity, -1) : 0,
+      unemployment: startYear2 === currentYear ? -20 : 0,
+      electricityWind: onshoreNew + offshoreNew
+    };
+  },
+  priority(game) {
+    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher"))
+      return 0;
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const percentage = electricityRenewable / game.values.electricityDemand * 100;
+    return linear(100, 50, percentage);
+  }
+});
+
+// src/laws/AusschreibungsverfahrenfuerWindkraftVervierfachen.ts
+var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft vervierfachen",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 32,4TWh vervierfacht.",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    const onshoreNew = Math.min(27.6, data.electricityWindOnshoreMaxNew);
+    const offshoreNew = 4.8;
+    return {
+      popularity: startYear2 === currentYear ? changePercentBy(data.popularity, -2) : 0,
+      unemployment: startYear2 === currentYear ? -100 : 0,
+      electricityWind: onshoreNew + offshoreNew
+    };
+  },
+  priority(game) {
+    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln"))
+      return 0;
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const percentage = electricityRenewable / game.values.electricityDemand * 100;
+    return linear(100, 40, percentage);
+  }
+});
+
+// src/laws/AusschreibungsverfahrenfuerWindkraftVerachtfachen.ts
+var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft verachtfachen",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 64,8TWh verachtfacht.",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    const onshoreNew = Math.min(55.2, data.electricityWindOnshoreMaxNew);
+    const offshoreNew = 9.6;
+    return {
+      popularity: startYear2 === currentYear ? changePercentBy(data.popularity, -20) : 0,
+      unemployment: startYear2 === currentYear ? -100 : 0,
+      electricityWind: onshoreNew + offshoreNew
+    };
+  },
+  priority(game) {
+    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen"))
+      return 0;
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const percentage = electricityRenewable / game.values.electricityDemand * 100;
+    return linear(100, 0, percentage);
+  }
+});
+
 // src/laws/index.ts
 var allLaws = prepareModuleList({
   KohleverstromungEinstellen: KohleverstromungEinstellen_default,
@@ -22103,7 +22261,14 @@ var allLaws = prepareModuleList({
   DienstwagenPrivilegAbgeschaffen: DienstwagenPrivilegAbgeschaffen_default,
   Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
   Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
-  Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default
+  Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
+  AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
+  AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
+  AbstandsregelnFuerWindkraftAbschaffen: AbstandsregelnFuerWindkraftAbschaffen_default,
+  AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
+  AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
+  AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
+  AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default
 });
 
 // src/server/DecisionController.ts
