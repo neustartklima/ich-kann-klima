@@ -1,24 +1,26 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro, TWh, WritableBaseParams } from "../types"
-import { linear } from "../lawTools"
+import { TsdPeople, TWh, WritableBaseParams } from "../types"
+import { changePercentBy, lawIsAccepted, linear } from "../lawTools"
 
 export default defineLaw({
-  title: "Windenergie subventionieren",
-  description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
+  title: "Ausschreibungsverfahren für Windkraft verachtfachen",
+  description: "Der jährlich ausgeschriebene Windstrom-Zubau wird auf 64,8TWh verachtfacht.",
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const onshoreNew: TWh = Math.min(18.8 as TWh, data.electricityWindOnshoreMaxNew)
-    const offshoreNew: TWh = 1.2
+    const onshoreNew: TWh = Math.min(55.2 as TWh, data.electricityWindOnshoreMaxNew)
+    const offshoreNew: TWh = 9.6
     return {
+      popularity: startYear === currentYear ? changePercentBy(data.popularity, -20) : 0,
+      unemployment: startYear === currentYear ? (-100 as TsdPeople) : 0,
       electricityWind: onshoreNew + offshoreNew,
-      stateDebt: 1 as MrdEuro,
     }
   },
 
   priority(game) {
+    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) return 0
     const electricityRenewable =
       game.values.electricityWind +
       game.values.electricitySolar +

@@ -44,6 +44,7 @@ export type WritableBaseParams = {
 
   electricitySolar: TWh
   electricityWind: TWh
+  electricityWindOnshoreMaxNew: TWh
   electricityWater: TWh
   electricityHardCoal: TWh
   electricityBrownCoal: TWh
@@ -68,7 +69,13 @@ export type BaseParams = WritableBaseParams & {
 
 export type LawId = string
 
-export type LawLabel = "hidden" | "initial" | "Kernenergie" | "TempolimitAutobahn"
+export type LawLabel =
+  | "hidden"
+  | "initial"
+  | "Kernenergie"
+  | "TempolimitAutobahn"
+  | "WindkraftAbstandsregel"
+  | "WindkraftSubvention"
 
 export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Partial<WritableBaseParams>
 export type PriorityFunc = (game: Game) => Percent

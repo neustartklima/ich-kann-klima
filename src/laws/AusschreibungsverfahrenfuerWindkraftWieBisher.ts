@@ -1,20 +1,20 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro, TWh, WritableBaseParams } from "../types"
+import { TWh, WritableBaseParams } from "../types"
 import { linear } from "../lawTools"
 
 export default defineLaw({
-  title: "Windenergie subventionieren",
-  description: "Garantierte Einspeisevergütung für neue und erneuterte Windanlagen",
-  labels: ["WindkraftSubvention"],
+  title: "Ausschreibungsverfahren für Windkraft wie bisher",
+  description:
+    "Windkraft Betreiber können sich mehrmals im Jahr auf ein eine bestimte Leistung von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag. Insgesamt werden 8,1 TWh pro Jahr ausgeschrieben.",
+  labels: ["initial", "hidden", "WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const onshoreNew: TWh = Math.min(18.8 as TWh, data.electricityWindOnshoreMaxNew)
+    const onshoreNew: TWh = Math.min(6.9 as TWh, data.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 1.2
     return {
       electricityWind: onshoreNew + offshoreNew,
-      stateDebt: 1 as MrdEuro,
     }
   },
 
@@ -25,6 +25,6 @@ export default defineLaw({
       game.values.electricityWater +
       game.values.electricityBiomass
     const percentage = (electricityRenewable / game.values.electricityDemand) * 100
-    return linear(100, 0, percentage)
+    return linear(100, 30, percentage)
   },
 })
