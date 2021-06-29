@@ -1,12 +1,12 @@
 import { Store } from "./store"
 import { Event } from "./types"
 
-export default function(store: Store, allEvents: Event[]) {
+export default function(store: Store, allEvents: Event[], random = Math.random) {
   let timer: unknown // to work with both, NodeJS and browser
 
   function getPriorizedEvents(): Event[] {
     return allEvents
-      .map((event) => ({ ...event, priority: event.probability(store) * Math.random() }))
+      .map((event) => ({ ...event, priority: event.probability(store) * random() }))
       .filter((event) => event.priority)
       .sort((a, b) => b.priority - a.priority)
   }
@@ -25,7 +25,7 @@ export default function(store: Store, allEvents: Event[]) {
     start() {
       // Check for events once in a minute
       this.pause()
-      timer = setTimeout(initiateEvent, Math.random() * 60000)
+      timer = setTimeout(initiateEvent, random() * 60000)
     },
 
     pause() {
