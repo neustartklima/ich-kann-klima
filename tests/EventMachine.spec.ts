@@ -34,11 +34,23 @@ const store = {
   },
 } as Store
 
+// Use Fisher/Yates algorithm to create a number of integers in random order
+function shuffledInts(howMay: number): number[] {
+  const a = [...Array(howMay).keys()]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i)
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 function countEvents(allEvents: Event[]): Record<string, number> {
-  const eventMachine = EventMachine(store, allEvents)
+  const numbers = shuffledInts(100)
+  let index = 0
+  const eventMachine = EventMachine(store, allEvents, () => numbers[index++])
   dispatched.length = 0
   const agg = Object.assign({}, ...allEvents.map((event) => ({ [event.title]: 0 })))
-  ;[...Array(100).keys()].forEach(() => eventMachine.initiateEvent())
+  numbers.forEach(() => eventMachine.initiateEvent())
   dispatched
     .filter((event) => event.type === "applyEvent")
     .forEach((event) => agg[(event.data as { event: Event }).event.title]++)
