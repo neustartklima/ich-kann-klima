@@ -116,5 +116,5 @@ export function linear<T extends number>(zero: T, hundred: T, actual: T): Percen
  */
 export function lawIsAccepted(game: Game, lawId: LawId) {
   if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
-  return game.acceptedLaws.some((l) => l.lawId === lawId)
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear)
 }
