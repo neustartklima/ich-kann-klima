@@ -1374,8 +1374,8 @@ var require_node = __commonJS({
           }
           break;
         case "FILE":
-          var fs = require("fs");
-          stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
+          var fs3 = require("fs");
+          stream2 = new fs3.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
         case "PIPE":
@@ -16151,7 +16151,7 @@ var require_view = __commonJS({
     "use strict";
     var debug = require_src()("express:view");
     var path3 = require("path");
-    var fs = require("fs");
+    var fs3 = require("fs");
     var dirname = path3.dirname;
     var basename = path3.basename;
     var extname = path3.extname;
@@ -16217,7 +16217,7 @@ var require_view = __commonJS({
     function tryStat(path4) {
       debug('stat "%s"', path4);
       try {
-        return fs.statSync(path4);
+        return fs3.statSync(path4);
       } catch (e) {
         return void 0;
       }
@@ -16605,7 +16605,7 @@ var require_types = __commonJS({
 var require_mime = __commonJS({
   "node_modules/mime/mime.js"(exports2, module2) {
     var path3 = require("path");
-    var fs = require("fs");
+    var fs3 = require("fs");
     function Mime() {
       this.types = Object.create(null);
       this.extensions = Object.create(null);
@@ -16626,7 +16626,7 @@ var require_mime = __commonJS({
     };
     Mime.prototype.load = function(file) {
       this._loading = file;
-      var map = {}, content = fs.readFileSync(file, "ascii"), lines = content.split(/[\r\n]+/);
+      var map = {}, content = fs3.readFileSync(file, "ascii"), lines = content.split(/[\r\n]+/);
       lines.forEach(function(line) {
         var fields = line.replace(/\s*#.*|^\s*|\s*$/g, "").split(/\s+/);
         map[fields.shift()] = fields;
@@ -16860,7 +16860,7 @@ var require_send = __commonJS({
     var escapeHtml = require_escape_html();
     var etag = require_etag();
     var fresh = require_fresh();
-    var fs = require("fs");
+    var fs3 = require("fs");
     var mime = require_mime();
     var ms = require_ms2();
     var onFinished = require_on_finished();
@@ -17192,7 +17192,7 @@ var require_send = __commonJS({
       var i = 0;
       var self = this;
       debug('stat "%s"', path4);
-      fs.stat(path4, function onstat(err, stat) {
+      fs3.stat(path4, function onstat(err, stat) {
         if (err && err.code === "ENOENT" && !extname(path4) && path4[path4.length - 1] !== sep) {
           return next(err);
         }
@@ -17209,7 +17209,7 @@ var require_send = __commonJS({
         }
         var p = path4 + "." + self._extensions[i++];
         debug('stat "%s"', p);
-        fs.stat(p, function(err2, stat) {
+        fs3.stat(p, function(err2, stat) {
           if (err2)
             return next(err2);
           if (stat.isDirectory())
@@ -17230,7 +17230,7 @@ var require_send = __commonJS({
         }
         var p = join(path4, self._index[i]);
         debug('stat "%s"', p);
-        fs.stat(p, function(err2, stat) {
+        fs3.stat(p, function(err2, stat) {
           if (err2)
             return next(err2);
           if (stat.isDirectory())
@@ -17245,7 +17245,7 @@ var require_send = __commonJS({
       var finished = false;
       var self = this;
       var res = this.res;
-      var stream2 = fs.createReadStream(path4, options);
+      var stream2 = fs3.createReadStream(path4, options);
       this.emit("stream", stream2);
       stream2.pipe(res);
       onFinished(res, function onfinished() {
@@ -21514,6 +21514,7 @@ function errorHandler(logger = console) {
 
 // src/server/Router.ts
 var import_path2 = __toModule(require("path"));
+var import_fs2 = __toModule(require("fs"));
 var import_express = __toModule(require_express2());
 
 // node_modules/uuid/wrapper.mjs
@@ -22431,18 +22432,19 @@ var JsonStringify = class extends import_stream.Transform {
 };
 var EventStore_default = ({
   basePath: basePath3,
-  migrationsPath,
-  logger = console
+  logger = console,
+  fileSystem = import_fs.default
 }) => {
+  const { existsSync, mkdirSync, createReadStream, createWriteStream } = fileSystem;
   const listeners = {};
   const eventFile = (version2) => (0, import_path.resolve)(basePath3, `events-${version2}.json`);
   async function migrate(from, to, migrators) {
     try {
       const eventsFile = eventFile(from);
-      if ((0, import_fs.existsSync)(eventsFile)) {
+      if (existsSync(eventsFile)) {
         await new Promise((fulfil, reject) => {
-          const readStream = (0, import_fs.createReadStream)(eventsFile).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).on("end", fulfil).on("error", reject);
-          migrators.reduce((stream, migrator) => stream.pipe(migrator), readStream).pipe(new JsonStringify()).pipe((0, import_fs.createWriteStream)(eventFile(to)));
+          const readStream = createReadStream(eventsFile).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).on("end", fulfil).on("error", reject);
+          migrators.reduce((stream, migrator) => stream.pipe(migrator), readStream).pipe(new JsonStringify()).pipe(createWriteStream(eventFile(to)));
         });
       }
     } catch (error) {
@@ -22450,27 +22452,8 @@ var EventStore_default = ({
       throw error;
     }
   }
-  async function getMigrations() {
-    if (!migrationsPath) {
-      return [];
-    }
-    const indexName = (0, import_path.resolve)(migrationsPath, "index." + __filename.replace(/^.*\.(\w+)$/, "$1"));
-    const migrationsExist = (0, import_fs.existsSync)(migrationsPath) && (0, import_fs.existsSync)(indexName);
-    return migrationsExist ? (await import(migrationsPath)).default : [];
-  }
   async function doNecessaryMigrations() {
-    const versionFile = (0, import_path.resolve)(basePath3, "state.json");
-    const eventsVersionNo = parseInt((0, import_fs.existsSync)(versionFile) && JSON.parse((0, import_fs.readFileSync)(versionFile).toString()).versionNo) || 0;
-    const allMigrations = await getMigrations();
-    const relevantMigrations = allMigrations.slice(eventsVersionNo);
-    const versionNo = allMigrations.length;
-    if (eventsVersionNo < versionNo) {
-      logger.info(`Migrating data from ${eventsVersionNo} to ${versionNo}`);
-      await migrate(eventsVersionNo, versionNo, relevantMigrations);
-      (0, import_fs.writeFileSync)(versionFile, JSON.stringify({ versionNo }));
-      logger.info("Migration successful");
-    }
-    return (0, import_path.resolve)(basePath3, `events-${versionNo}.json`);
+    return (0, import_path.resolve)(basePath3, `events-0.json`);
   }
   async function dispatch(event) {
     try {
@@ -22481,20 +22464,17 @@ var EventStore_default = ({
       logger.debug(error.stack);
     }
   }
-  if (!(0, import_fs.existsSync)(basePath3)) {
-    (0, import_fs.mkdirSync)(basePath3);
+  if (!existsSync(basePath3)) {
+    mkdirSync(basePath3);
   }
-  const migrationsCompleted = doNecessaryMigrations().then((eventsFileName) => {
-    const changeStream = (0, import_fs.createWriteStream)(eventsFileName, { flags: "a" });
-    changeStream.on("error", logger.error);
-    return { eventsFileName, changeStream };
-  });
+  const eventsFileName = (0, import_path.resolve)(basePath3, `events-0.json`);
+  const changeStream = createWriteStream(eventsFileName, { flags: "a" });
+  changeStream.on("error", logger.error);
   return {
     dispatch,
     async replay() {
       try {
-        const eventsInfo = await migrationsCompleted;
-        const stream = (0, import_fs.createReadStream)(eventsInfo.eventsFileName).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).pipe(import_event_stream.default.mapSync(dispatch));
+        const stream = createReadStream(eventsFileName).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).pipe(import_event_stream.default.mapSync(dispatch));
         await new Promise((resolve2, reject) => {
           stream.on("end", resolve2);
           stream.on("error", reject);
@@ -22510,17 +22490,15 @@ var EventStore_default = ({
     },
     async emit(event) {
       try {
-        const info = await migrationsCompleted;
         const completeEvent = { ts: new Date(), ...event };
-        info.changeStream.write(JSON.stringify(completeEvent) + "\n");
+        changeStream.write(JSON.stringify(completeEvent) + "\n");
         dispatch(completeEvent);
       } catch (error) {
         logger.error(error);
       }
     },
     async end() {
-      const info = await migrationsCompleted;
-      info.changeStream.end();
+      changeStream.end();
     }
   };
 };
@@ -22598,7 +22576,7 @@ function ModelsFactory({ eventStore: eventStore2 }) {
 
 // src/server/Router.ts
 var basePath2 = import_path2.default.resolve(__dirname, "data");
-var eventStore = EventStore_default({ basePath: basePath2 });
+var eventStore = EventStore_default({ basePath: basePath2, fileSystem: import_fs2.default, logger: console });
 var models = ModelsFactory({ eventStore });
 var router = (0, import_express.Router)();
 var { createGame, saveGame, loadGame } = GameController_default({ eventStore, models });
