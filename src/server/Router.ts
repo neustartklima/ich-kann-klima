@@ -1,4 +1,5 @@
 import path from "path"
+import fs from "fs"
 import { Router } from "express"
 import { json } from "./RequestHandler"
 import GameController from "./GameController"
@@ -8,7 +9,7 @@ import EventStore from "./models/EventStore"
 import ModelsFactory from "./models"
 
 const basePath = path.resolve(__dirname, "data")
-const eventStore = EventStore({ basePath })
+const eventStore = EventStore({ basePath, fileSystem: fs, logger: console })
 const models = ModelsFactory({ eventStore })
 const router = Router()
 const { createGame, saveGame, loadGame } = GameController({ eventStore, models })
