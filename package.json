@@ -44,6 +44,7 @@
     "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.1.1",
     "event-stream": "^4.0.1",
+    "memfs": "^3.2.2",
     "mocha": "^8.4.0",
     "nyc": "^15.1.0",
     "puppeteer": "^9.1.1",
@@ -58,10 +59,16 @@
     "vue-tsc": "^0.1.7"
   },
   "mocha": {
-    "require": [ "ts-node/register" ],
-    "extension": [ ".ts" ],
+    "require": [
+      "ts-node/register"
+    ],
+    "extension": [
+      ".ts"
+    ],
     "exit": true,
-    "spec": [ "tests/**/*.spec.ts" ],
+    "spec": [
+      "tests/**/*.spec.ts"
+    ],
     "ui": "bdd"
   },
   "nyc": {

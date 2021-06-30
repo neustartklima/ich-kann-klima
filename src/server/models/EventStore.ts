@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync, createReadStream, createWriteStream } from "fs"
+import fs from "fs"
 import { resolve } from "path"
 import { Transform, TransformOptions } from "stream"
 import es from "event-stream"
@@ -6,6 +6,8 @@ import es from "event-stream"
 export type EventType = { name: string }
 export type Event = Record<string, unknown>
 export type Listener = (event: Event) => void
+
+export type FileSystem = Pick<typeof fs, "existsSync" | "mkdirSync" | "createReadStream" | "createWriteStream">
 
 export type Store = {
   dispatch(event: Event): Promise<void>
@@ -29,13 +31,15 @@ class JsonStringify extends Transform {
 
 export default ({
   basePath,
-  migrationsPath,
   logger = console,
+  fileSystem = fs,
 }: {
   basePath: string
   migrationsPath?: string
-  logger?: Console
+  logger: Console
+  fileSystem: FileSystem
 }): Store => {
+  const { existsSync, mkdirSync, createReadStream, createWriteStream } = fileSystem
   const listeners = {} as Record<string, Listener[]>
   const eventFile = (version: number) => resolve(basePath, `events-${version}.json`)
 
@@ -62,29 +66,8 @@ export default ({
     }
   }
 
-  async function getMigrations() {
-    if (!migrationsPath) {
-      return []
-    }
-    const indexName = resolve(migrationsPath, "index." + __filename.replace(/^.*\.(\w+)$/, "$1"))
-    const migrationsExist = existsSync(migrationsPath) && existsSync(indexName)
-    return (migrationsExist ? (await import(migrationsPath)).default : [])
-  }
-
   async function doNecessaryMigrations(): Promise<string> {
-    const versionFile = resolve(basePath, "state.json")
-    const eventsVersionNo =
-      parseInt(existsSync(versionFile) && JSON.parse(readFileSync(versionFile).toString()).versionNo) || 0
-    const allMigrations = await getMigrations()
-    const relevantMigrations = allMigrations.slice(eventsVersionNo)
-    const versionNo = allMigrations.length
-    if (eventsVersionNo < versionNo) {
-      logger.info(`Migrating data from ${eventsVersionNo} to ${versionNo}`)
-      await migrate(eventsVersionNo, versionNo, relevantMigrations)
-      writeFileSync(versionFile, JSON.stringify({ versionNo }))
-      logger.info("Migration successful")
-    }
-    return resolve(basePath, `events-${versionNo}.json`)
+    return resolve(basePath, `events-0.json`)
   }
 
   async function dispatch(event: Event) {
@@ -100,20 +83,16 @@ export default ({
   if (!existsSync(basePath)) {
     mkdirSync(basePath)
   }
-  const migrationsCompleted = doNecessaryMigrations().then((eventsFileName) => {
-    const changeStream = createWriteStream(eventsFileName, { flags: "a" })
-    changeStream.on("error", logger.error)
-
-    return { eventsFileName, changeStream }
-  })
+  const eventsFileName = resolve(basePath, `events-0.json`)
+  const changeStream = createWriteStream(eventsFileName, { flags: "a" })
+  changeStream.on("error", logger.error)
 
   return {
     dispatch,
 
     async replay(): Promise<void> {
       try {
-        const eventsInfo = await migrationsCompleted
-        const stream = createReadStream(eventsInfo.eventsFileName)
+        const stream = createReadStream(eventsFileName)
           .pipe(es.split())
           .pipe(es.parse())
           .pipe(es.mapSync(dispatch))
@@ -135,9 +114,8 @@ export default ({
 
     async emit(event: Record<string, unknown>): Promise<void> {
       try {
-        const info = await migrationsCompleted
         const completeEvent = { ts: new Date(), ...event }
-        info.changeStream.write(JSON.stringify(completeEvent) + "\n")
+        changeStream.write(JSON.stringify(completeEvent) + "\n")
         dispatch(completeEvent)
       } catch (error) {
         logger.error(error)
@@ -145,8 +123,7 @@ export default ({
     },
 
     async end(): Promise<void> {
-      const info = await migrationsCompleted
-      info.changeStream.end()
+      changeStream.end()
     },
   }
 }
