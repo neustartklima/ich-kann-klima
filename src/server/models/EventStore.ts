@@ -35,40 +35,11 @@ export default ({
   fileSystem = fs,
 }: {
   basePath: string
-  migrationsPath?: string
   logger: Console
   fileSystem: FileSystem
 }): Store => {
   const { existsSync, mkdirSync, createReadStream, createWriteStream } = fileSystem
   const listeners = {} as Record<string, Listener[]>
-  const eventFile = (version: number) => resolve(basePath, `events-${version}.json`)
-
-  async function migrate(from: number, to: number, migrators: WritableStream[]): Promise<void> {
-    try {
-      const eventsFile = eventFile(from)
-      if (existsSync(eventsFile)) {
-        await new Promise((fulfil, reject) => {
-          const readStream = createReadStream(eventsFile)
-            .pipe(es.split())
-            .pipe(es.parse())
-            .on("end", fulfil)
-            .on("error", reject)
-
-          migrators
-            .reduce((stream, migrator) => stream.pipe(migrator), readStream)
-            .pipe(new JsonStringify())
-            .pipe(createWriteStream(eventFile(to)))
-        })
-      }
-    } catch (error) {
-      logger.error(error)
-      throw error
-    }
-  }
-
-  async function doNecessaryMigrations(): Promise<string> {
-    return resolve(basePath, `events-0.json`)
-  }
 
   async function dispatch(event: Event) {
     try {
