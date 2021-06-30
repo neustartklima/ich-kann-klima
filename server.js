@@ -22420,16 +22420,6 @@ var import_fs = __toModule(require("fs"));
 var import_path = __toModule(require("path"));
 var import_stream = __toModule(require("stream"));
 var import_event_stream = __toModule(require_event_stream());
-var JsonStringify = class extends import_stream.Transform {
-  constructor(options = {}) {
-    options.objectMode = true;
-    super(options);
-  }
-  _transform(event, encoding, done) {
-    this.push(JSON.stringify(event) + "\n");
-    done();
-  }
-};
 var EventStore_default = ({
   basePath: basePath3,
   logger = console,
@@ -22437,24 +22427,6 @@ var EventStore_default = ({
 }) => {
   const { existsSync, mkdirSync, createReadStream, createWriteStream } = fileSystem;
   const listeners = {};
-  const eventFile = (version2) => (0, import_path.resolve)(basePath3, `events-${version2}.json`);
-  async function migrate(from, to, migrators) {
-    try {
-      const eventsFile = eventFile(from);
-      if (existsSync(eventsFile)) {
-        await new Promise((fulfil, reject) => {
-          const readStream = createReadStream(eventsFile).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).on("end", fulfil).on("error", reject);
-          migrators.reduce((stream, migrator) => stream.pipe(migrator), readStream).pipe(new JsonStringify()).pipe(createWriteStream(eventFile(to)));
-        });
-      }
-    } catch (error) {
-      logger.error(error);
-      throw error;
-    }
-  }
-  async function doNecessaryMigrations() {
-    return (0, import_path.resolve)(basePath3, `events-0.json`);
-  }
   async function dispatch(event) {
     try {
       const relevantListeners = listeners[event.type] || [];
