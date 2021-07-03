@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { defaultValues } from "../repository"
+import { defaultValues } from "../model"
 import { Store } from "../store"
 
 export default defineEvent({

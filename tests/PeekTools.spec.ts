@@ -1,6 +1,6 @@
 import should from "should"
 import { getSortedValues } from "../src/components/PeekTools"
-import { createBaseValues, defaultValues } from "../src/repository"
+import { createBaseValues, defaultValues } from "../src/model/Repository"
 
 describe("getSortedValues()", () => {
   it("should return values as specified in the options", () => {

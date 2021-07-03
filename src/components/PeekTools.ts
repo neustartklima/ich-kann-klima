@@ -1,5 +1,5 @@
 import { applyEffects } from "../Calculator"
-import { createBaseValues } from "../repository"
+import { createBaseValues } from "../model"
 import { BaseParams, Game, Law, WritableBaseParams } from "../types"
 
 function genCompare(a: number | string, b: number | string) {

@@ -1,7 +1,6 @@
 import "should"
 import { allLaws } from "../src/laws"
-import { createBaseValues, defaultValues } from "../src/repository"
-import { WritableBaseParams } from "../src/types"
+import { createBaseValues, defaultValues } from "../src/model"
 
 const writableKeys = Object.keys(defaultValues)
 

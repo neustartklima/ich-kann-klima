@@ -1,7 +1,7 @@
 import should from "should"
 import EventMachine from "../src/EventMachine"
 import { Event, Game } from "../src/types"
-import { createBaseValues, defaultValues } from "../src/repository"
+import { createBaseValues, defaultValues } from "../src/model"
 import { Store } from "../src/store"
 
 const game: Game = {
