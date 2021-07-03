@@ -1,4 +1,4 @@
-import { Event, Game, GameId, Law } from "./types"
+import { Event, Game, GameId, Law } from "../types"
 
 export interface API {
   loadGame: (id: GameId) => Promise<Game>

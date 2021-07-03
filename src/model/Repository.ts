@@ -1,5 +1,5 @@
 import { Game, GameDefinition, GameId, Law, Event } from "../types"
-import { API } from "../api"
+import { API } from "./api"
 import { createBaseValues, initialGame } from "."
 
 const unsavedGameId = "00000"
