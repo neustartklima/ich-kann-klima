@@ -1,7 +1,7 @@
 import { Context, store } from "."
 import { LawId, GameId, Game, LawReference, Event, AcceptedLaw } from "../types"
 import router from "../router"
-import API from "../api"
+import API from "../model/api"
 import RepositoryFactory from "../model/Repository"
 import * as Calculator from "../Calculator"
 import { fillUpLawProposals, getAcceptedLaw, getLaw, replaceLawProposal } from "../LawProposer"
