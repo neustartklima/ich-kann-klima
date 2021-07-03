@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh, WritableBaseParams } from "../types"
 import { changePercentBy, linear } from "../lawTools"
-import { createBaseValues, defaultValues } from "../repository"
+import { createBaseValues, defaultValues } from "../model"
 
 const electricityGasAtStart: TWh = createBaseValues(defaultValues).electricityGas
 

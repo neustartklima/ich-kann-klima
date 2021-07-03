@@ -1,7 +1,7 @@
 import "should"
 import sinon from "sinon"
 import { API } from "../src/api"
-import Repository, { createBaseValues, defaultValues, initGame } from "../src/repository"
+import Repository, { createBaseValues, defaultValues, initGame } from "../src/model/Repository"
 
 describe("createBaseValues(defaultParams)", () => {
   const iniVals = createBaseValues(defaultValues)

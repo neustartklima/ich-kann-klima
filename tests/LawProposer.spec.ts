@@ -1,6 +1,6 @@
 import "should"
 import API from "../src/api"
-import repository from "../src/repository"
+import repository from "../src/model/Repository"
 import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
 import { Game, Law } from "../src/types"
 import Sinon from "sinon"

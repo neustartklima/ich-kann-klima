@@ -1,6 +1,6 @@
 import { endYear, startYear } from "../constants"
 import { changeTWhBy, linear } from "../lawTools"
-import { defaultValues } from "../repository"
+import { defaultValues } from "../model"
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh, WritableBaseParams } from "../types"
 

@@ -1,5 +1,5 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
-import { createBaseValues, defaultValues } from "../src/repository"
+import { createBaseValues, defaultValues } from "../src/model"
 import { AcceptedLaw, BaseParams, EffectsFunc, Game, LawLabel, MioPsgrKm, WritableBaseParams } from "../src/types"
 import "should"
 
