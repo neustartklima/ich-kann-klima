@@ -1,21 +1,7 @@
 import { Game, GameDefinition, GameId, Law, Event } from "../types"
 import { API } from "./api"
-import { v1 as getUUID } from "uuid"
-import { createBaseValues, initialGame } from "."
+import { initGame, initialGame } from "."
 import { fillUpLawProposals } from "../LawProposer"
-
-export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
-  return {
-    id,
-    currentYear: game.currentYear,
-    acceptedLaws: game.acceptedLaws,
-    proposedLaws: game.proposedLaws,
-    rejectedLaws: game.rejectedLaws,
-    values: createBaseValues(game.values),
-    events: [],
-    over: false,
-  }
-}
 
 interface Logger {
   warn: (msg: string, details?: unknown) => void
