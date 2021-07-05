@@ -20,17 +20,7 @@ const repository = RepositoryFactory({ api })
 
 export const actions = {
   async startGame(context: Context) {
-    const game = await repository.createGame()
-    game.acceptedLaws = context.state.allLaws
-      .filter((law) => law.labels?.includes("initial"))
-      .map<LawReference>((law) => {
-        return {
-          lawId: law.id,
-          effectiveSince: game.currentYear,
-        }
-      })
-    fillUpLawProposals(game)
-    repository.saveGame(game)
+    const game = await repository.createGame(context.state.allLaws)
     getEventMachine().start()
     router.push("/games/" + game.id)
   },
@@ -55,8 +45,7 @@ export const actions = {
     const filteredLawRefs = game.acceptedLaws
       .map(getAcceptedLaw)
       .filter(
-        (lawToCheck: AcceptedLaw) =>
-          !removeLawsWithLabels?.some((labelToRemove) => lawToCheck.labels?.includes(labelToRemove))
+        (lawToCheck) => !removeLawsWithLabels?.some((labelToRemove) => lawToCheck.labels?.includes(labelToRemove))
       )
       .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
     game.acceptedLaws = [...filteredLawRefs, newLawRef]

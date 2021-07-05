@@ -1,6 +1,7 @@
 import { Game, GameDefinition, GameId, Law, Event } from "../types"
 import { API } from "./api"
 import { createBaseValues, initialGame } from "."
+import { fillUpLawProposals } from "../LawProposer"
 
 const unsavedGameId = "00000"
 
@@ -36,10 +37,19 @@ export default function({
   storage?: Storage
 }) {
   return {
-    async createGame(game: GameDefinition = initialGame): Promise<Game> {
-      const newGame = initGame(game)
+    async createGame(allLaws: Law[], initialData: GameDefinition = initialGame): Promise<Game> {
+      const newGame = initGame(initialData)
+      newGame.acceptedLaws = allLaws
+        .filter((law) => law.labels?.includes("initial"))
+        .map((law) => ({
+          lawId: law.id,
+          effectiveSince: newGame.currentYear,
+        }))
+      fillUpLawProposals(newGame, allLaws)
+
       try {
-        return await api.createGame(newGame)
+        const game = await api.createGame(newGame)
+        return game
       } catch (error) {
         logger.warn("Cannot save new game - trying again later", error)
         newGame.id = unsavedGameId
@@ -89,6 +99,6 @@ export default function({
     async eventOccurred(game: Game, event: Event): Promise<void> {
       api.eventOccurred(game.id, event.id)
       this.saveGame(game)
-    }
+    },
   }
 }
