@@ -1,5 +1,7 @@
 import {
   BaseParams,
+  Game,
+  GameDefinition,
   GramPerPsgrKm,
   MioPsgrKm,
   MioTons,
@@ -8,6 +10,7 @@ import {
   WritableBaseParams,
 } from "../types"
 import { startYear } from "../constants"
+import { v1 as getUUID } from "uuid"
 
 export const defaultValues: WritableBaseParams = {
   co2budget: 6700, // https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22
@@ -135,5 +138,18 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         this.co2emissionsOthers
       )
     },
+  }
+}
+
+export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
+  return {
+    id,
+    currentYear: game.currentYear,
+    acceptedLaws: game.acceptedLaws,
+    proposedLaws: game.proposedLaws,
+    rejectedLaws: game.rejectedLaws,
+    values: createBaseValues(game.values),
+    events: [],
+    over: false,
   }
 }
