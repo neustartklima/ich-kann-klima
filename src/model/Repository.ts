@@ -1,11 +1,10 @@
 import { Game, GameDefinition, GameId, Law, Event } from "../types"
 import { API } from "./api"
+import { v1 as getUUID } from "uuid"
 import { createBaseValues, initialGame } from "."
 import { fillUpLawProposals } from "../LawProposer"
 
-const unsavedGameId = "00000"
-
-export function initGame(game: GameDefinition = initialGame, id = unsavedGameId): Game {
+export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
   return {
     id,
     currentYear: game.currentYear,
@@ -52,7 +51,6 @@ export default function({
         return game
       } catch (error) {
         logger.warn("Cannot save new game - trying again later", error)
-        newGame.id = unsavedGameId
         return newGame
       }
     },
@@ -61,7 +59,7 @@ export default function({
       const storedItem = storage.getItem("game")
       if (storedItem) {
         const storedGame = JSON.parse(storedItem)
-        if (storedGame.id === unsavedGameId || storedGame.id === id) {
+        if (storedGame.id === id) {
           return initGame(storedGame, id)
         }
       }
@@ -80,9 +78,7 @@ export default function({
     async saveGame(game: Game): Promise<Game> {
       storage.setItem("game", JSON.stringify(game))
       try {
-        const savedGame = await api.saveGame({ ...game, id: game.id === unsavedGameId ? "" : game.id })
-        game.id = savedGame.id
-        storage.setItem("game", JSON.stringify(game)) // store again to keep id
+        await api.saveGame(game)
       } catch (error) {
         logger.warn(
           "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time"
