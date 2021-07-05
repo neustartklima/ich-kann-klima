@@ -21617,7 +21617,7 @@ var KohleverstromungEinstellen_default = defineLaw({
 var startYear = 2021;
 var endYear = 2050;
 
-// src/repository.ts
+// src/model/index.ts
 var defaultValues = {
   co2budget: 6700,
   stateDebt: 1899,
