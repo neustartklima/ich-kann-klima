@@ -46,7 +46,7 @@ describe("repository", () => {
     const createGame = sinon.stub().resolves({ id: "12345" })
     const api = ({ createGame } as unknown) as API
     const repository = Repository({ api, storage })
-    const result = await repository.createGame()
+    const result = await repository.createGame([])
     createGame.callCount.should.equal(1)
     result.id.should.equal("12345")
   })
@@ -56,7 +56,7 @@ describe("repository", () => {
     const createGame = sinon.stub().rejects(undefined)
     const api = ({ createGame } as unknown) as API
     const repository = Repository({ api, logger, storage })
-    const result = await repository.createGame()
+    const result = await repository.createGame([])
     result.id.should.equal("00000")
     logger.warn.callCount.should.equal(1)
     logger.warn.firstCall.args[0].should.equal("Cannot save new game - trying again later")

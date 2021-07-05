@@ -38,15 +38,13 @@ const { createGame } = repository({ api: mockedApi, storage })
 describe("LawProposer", () => {
   describe("fillUpLawProposals()", () => {
     it("should fill up an empty array", async () => {
-      const game = await createGame()
-      fillUpLawProposals(game, allLaws)
+      const game = await createGame(allLaws)
       game.proposedLaws.length.should.equal(6)
       game.proposedLaws.should.deepEqual(allLaws.map((law) => law.id).slice(0, 6))
     })
 
     it("should add missing laws", async () => {
-      const game = await createGame()
-      fillUpLawProposals(game, allLaws)
+      const game = await createGame(allLaws)
       game.proposedLaws.shift()
       fillUpLawProposals(game, allLaws)
       game.proposedLaws.length.should.equal(6)
@@ -56,20 +54,20 @@ describe("LawProposer", () => {
     })
 
     it("should only fill up if enough laws exist", async () => {
-      const game = await createGame()
+      const game = await createGame([])
       fillUpLawProposals(game, allLaws.slice(0, 3))
       game.proposedLaws.length.should.equal(3)
     })
 
     it("should not fill up already proposed laws", async () => {
-      const game = await createGame()
+      const game = await createGame([])
       fillUpLawProposals(game, allLaws.slice(0, 3))
       fillUpLawProposals(game, allLaws.slice(0, 3))
       game.proposedLaws.length.should.equal(3)
     })
 
     it("should remove an accepted law", async () => {
-      const game = await createGame()
+      const game = await createGame(allLaws)
       fillUpLawProposals(game, allLaws)
       game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
       fillUpLawProposals(game, allLaws)
@@ -77,7 +75,7 @@ describe("LawProposer", () => {
     })
 
     it("should fill up after remove", async () => {
-      const game = await createGame()
+      const game = await createGame(allLaws)
       fillUpLawProposals(game, allLaws)
       game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
       fillUpLawProposals(game, allLaws)
