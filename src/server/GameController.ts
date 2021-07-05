@@ -1,5 +1,4 @@
 import { Request } from "express"
-import { v4 as uuid } from "uuid"
 import { Models } from "./models"
 import { Store } from "./models/EventStore"
 
@@ -14,7 +13,7 @@ export default function({ eventStore, models }: { eventStore: Store; models: Mod
     },
 
     createGame(req: Request) {
-      const game = { ...req.body, id: uuid() }
+      const game = { ...req.body }
       eventStore.emit(models.game.events.gameCreated(game))
       return game
     },
