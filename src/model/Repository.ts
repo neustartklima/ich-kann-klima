@@ -82,12 +82,12 @@ export default function({
     },
 
     async decisionMade(game: Game, law: Law, accepted: boolean): Promise<void> {
-      api.decisionMade(game, law, accepted)
+      api.decisionMade(game.id, law.id, accepted)
       this.saveGame(game)
     },
 
     async eventOccurred(game: Game, event: Event): Promise<void> {
-      api.eventOccurred(game, event)
+      api.eventOccurred(game.id, event.id)
       this.saveGame(game)
     }
   }

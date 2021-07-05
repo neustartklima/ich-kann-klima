@@ -1,11 +1,11 @@
-import { Event, Game, GameId, Law } from "../types"
+import { EventId, Game, GameId, LawId } from "../types"
 
 export interface API {
   loadGame: (id: GameId) => Promise<Game>
   createGame: (game: Game) => Promise<Game>
   saveGame: (game: Game) => Promise<Game>
-  decisionMade: (game: Game, law: Law, accepted: boolean) => Promise<void>
-  eventOccurred: (game: Game, event: Event) => Promise<void>
+  decisionMade: (gameId: GameId, lawId: LawId, accepted: boolean) => Promise<void>
+  eventOccurred: (gameId: GameId, eventId: EventId) => Promise<void>
 }
 
 type FetchFunction = (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>
@@ -15,7 +15,7 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
     const options = { method } as RequestInit
     if (["post", "put", "patch"].includes(method)) {
       options.body = JSON.stringify(data)
-      options.headers = {["content-type"]: "application/json"}
+      options.headers = { ["content-type"]: "application/json" }
     }
     const response = await fetch(baseUrl + path, options)
     const result = response.headers.get("Content-Type")?.match(/json/) ? await response.json() : await response.text()
@@ -39,12 +39,12 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
       return request("put", "/games/" + game.id, game)
     },
 
-    decisionMade(game, law, accepted) {
-      return request("post", "/games/" + game.id + "/decisions/" + law.id, { accepted })
+    decisionMade(gameId, lawId, accepted) {
+      return request("post", "/games/" + gameId + "/decisions/" + lawId, { accepted })
     },
 
-    eventOccurred(game, event) {
-      return request("post", "/games/" + game.id + "/events/" + event.id)
+    eventOccurred(gameId, eventId) {
+      return request("post", "/games/" + gameId + "/events/" + eventId)
     },
   }
 }
