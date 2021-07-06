@@ -1,16 +1,10 @@
 import { EventId, Game, GameId, LawId } from "../types"
 
-export interface API {
-  loadGame: (id: GameId) => Promise<Game>
-  createGame: (game: Game) => Promise<Game>
-  saveGame: (game: Game) => Promise<Game>
-  decisionMade: (gameId: GameId, lawId: LawId, accepted: boolean) => Promise<void>
-  eventOccurred: (gameId: GameId, eventId: EventId) => Promise<void>
-}
+export type API = ReturnType<typeof APIFactory>
 
 type FetchFunction = (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>
 
-export default function(baseUrl: string, fetch: FetchFunction): API {
+export default function APIFactory(baseUrl: string, fetch: FetchFunction) {
   async function request(method: string, path: string, data?: Record<string, unknown>) {
     const options = { method } as RequestInit
     if (["post", "put", "patch"].includes(method)) {
@@ -27,23 +21,23 @@ export default function(baseUrl: string, fetch: FetchFunction): API {
   }
 
   return {
-    createGame(game) {
+    createGame(game: Game): Promise<Game> {
       return request("post", "/games", game)
     },
 
-    loadGame(id) {
+    loadGame(id: GameId): Promise<Game> {
       return request("get", "/games/" + id)
     },
 
-    saveGame(game) {
+    saveGame(game: Game): Promise<Game> {
       return request("put", "/games/" + game.id, game)
     },
 
-    decisionMade(gameId, lawId, accepted) {
+    decisionMade(gameId: GameId, lawId: LawId, accepted: boolean): Promise<void> {
       return request("post", "/games/" + gameId + "/decisions/" + lawId, { accepted })
     },
 
-    eventOccurred(gameId, eventId) {
+    eventOccurred(gameId: GameId, eventId: EventId): Promise<void> {
       return request("post", "/games/" + gameId + "/events/" + eventId)
     },
   }
