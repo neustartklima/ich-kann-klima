@@ -1,18 +1,13 @@
 import { Context, store } from "."
-import { LawId, GameId, Game, LawReference, Event, AcceptedLaw } from "../types"
-import router from "../router"
+import { LawId, GameId, Game, Event } from "../types"
 import API from "../model/api"
 import RepositoryFactory from "../model/Repository"
 import * as Calculator from "../Calculator"
 import { fillUpLawProposals, getAcceptedLaw, getLaw } from "../LawProposer"
 import EventMachine from "../EventMachine"
+import { singleton as getEventMachine } from "../EventMachine"
 import { allEvents } from "../events"
-
-let eventMachine: ReturnType<typeof EventMachine>
-
-function getEventMachine() {
-  return eventMachine || (eventMachine = EventMachine(store, allEvents))
-}
+import router from "../router"
 
 const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
 const api = API(backendURL, fetch)
@@ -21,15 +16,20 @@ const repository = RepositoryFactory({ api })
 export const actions = {
   async startGame(context: Context) {
     const game = await repository.createGame(context.state.allLaws)
-    getEventMachine().start()
+    getEventMachine(store, allEvents).start()
     router.push("/games/" + game.id)
   },
 
   async loadGame(context: Context, payload: { gameId: GameId }) {
-    const game = await repository.loadGame(payload.gameId)
-    repository.saveGame(game)
-    getEventMachine().start()
-    context.commit("setGameState", { game })
+    try {
+      const game = await repository.loadGame(payload.gameId)
+      await repository.saveGame(game)
+      router.push("/games/" + game.id)
+      context.commit("setGameState", { game })
+    } catch (error) {
+      // Game cannot be found locally, and the API doesn't know about that game or could not be reached, game cannot be started
+      context.dispatch("error", { error })
+    }
   },
 
   gameOver(context: Context) {
@@ -37,7 +37,7 @@ export const actions = {
     router.push("/games/" + context.state.game?.id + "/over")
   },
 
-  acceptLaw(context: Context, payload: { lawId: LawId }) {
+  async acceptLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     const newLawRef = { lawId: payload.lawId, effectiveSince: game.currentYear + 1 }
     const newLaw = getAcceptedLaw(newLawRef)
@@ -50,35 +50,39 @@ export const actions = {
       .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
     game.acceptedLaws = [...filteredLawRefs, newLawRef]
     fillUpLawProposals(game)
-    repository.saveGame(game)
+    await repository.saveGame(game)
     context.commit("setGameState", { game })
-    repository.decisionMade(game, newLaw, true)
+    await repository.decisionMade(game, newLaw, true)
   },
 
-  rejectLaw(context: Context, payload: { lawId: LawId }) {
+  async rejectLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
     fillUpLawProposals(game)
-    repository.decisionMade(game, getLaw(payload.lawId), false)
+    await repository.decisionMade(game, getLaw(payload.lawId), false)
     context.commit("setGameState", { game })
   },
 
-  advanceYear(context: Context) {
+  async advanceYear(context: Context) {
     const game = { ...(context.state.game as Game) }
     const laws = game.acceptedLaws.map(getAcceptedLaw)
     game.currentYear++
     game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
     fillUpLawProposals(game)
-    repository.saveGame(game)
+    await repository.saveGame(game)
     context.commit("setGameState", { game })
-    getEventMachine().start()
+    getEventMachine(store, allEvents).start()
   },
 
-  applyEvent(context: Context, payload: { event: Event }) {
+  async applyEvent(context: Context, payload: { event: Event }) {
     payload.event.apply(context)
     const game = { ...(context.state.game as Game) }
     game.events.unshift(payload.event)
-    repository.eventOccurred(game, payload.event)
+    await repository.eventOccurred(game, payload.event)
     context.commit("setGameState", { game })
   },
+
+  async error(context: Context, payload: { error: Error }) {
+    context.commit("error", payload)
+  }
 }

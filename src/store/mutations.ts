@@ -1,4 +1,4 @@
-import { Event, Game } from "../types"
+import { Game } from "../types"
 import { State } from "."
 
 export const mutations = {
@@ -8,5 +8,10 @@ export const mutations = {
 
   gameOver(state: State) {
     state.game = { ...(state.game as Game), over: true }
+  },
+
+  error(state: State, payload: { error: Error }) {
+    console.error(payload.error)
+    alert(payload.error.message)
   },
 }
