@@ -23,22 +23,20 @@ export default function({
 }) {
   return {
     async createGame(allLaws: Law[], initialData: GameDefinition = initialGame): Promise<Game> {
-      const newGame = initGame(initialData)
-      newGame.acceptedLaws = allLaws
+      const game = initGame(initialData)
+      game.acceptedLaws = allLaws
         .filter((law) => law.labels?.includes("initial"))
-        .map((law) => ({
-          lawId: law.id,
-          effectiveSince: newGame.currentYear,
-        }))
-      fillUpLawProposals(newGame, allLaws)
+        .map((law) => ({ lawId: law.id, effectiveSince: game.currentYear }))
+      fillUpLawProposals(game, allLaws)
 
       try {
-        const game = await api.createGame(newGame)
-        return game
+        api.createGame(game) // We don't await here - creating the game on the server is done in the background
       } catch (error) {
+        // If the API finally errors, no message to the users are sent, they can play nevertheless.
         logger.warn("Cannot save new game - trying again later", error)
-        return newGame
       }
+
+      return game
     },
 
     async loadGame(id: GameId): Promise<Game> {
@@ -50,37 +48,29 @@ export default function({
         }
       }
 
-      try {
-        const storedGame = await api.loadGame(id)
-        return initGame(storedGame, id)
-      } catch (error) {
-        logger.warn(
-          "No game found in localStorage, but the id cannot be found on server either... so no chance to load it."
-        )
-      }
-      throw Error("Game not found")
+      const storedGame = await api.loadGame(id)
+      return initGame(storedGame, id)
     },
 
-    async saveGame(game: Game): Promise<Game> {
+    async saveGame(game: Game): Promise<void> {
       storage.setItem("game", JSON.stringify(game))
       try {
-        await api.saveGame(game)
+        api.saveGame(game) // We don't await here, b/c saving could take place in the background and can even be retried later
       } catch (error) {
+        // Errors, however, cannot be shown to the user other than in the log
         logger.warn(
-          "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time"
+          "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time",
+          error
         )
       }
-      return game
     },
 
     async decisionMade(game: Game, law: Law, accepted: boolean): Promise<void> {
       api.decisionMade(game.id, law.id, accepted)
-      this.saveGame(game)
     },
 
     async eventOccurred(game: Game, event: Event): Promise<void> {
       api.eventOccurred(game.id, event.id)
-      this.saveGame(game)
     },
   }
 }

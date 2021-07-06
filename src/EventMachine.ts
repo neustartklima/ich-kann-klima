@@ -1,7 +1,7 @@
 import { Store } from "./store"
 import { Event } from "./types"
 
-export default function(store: Store, allEvents: Event[], random = Math.random) {
+export default function EventMachine(store: Store, allEvents: Event[], random = Math.random) {
   let timer: unknown // to work with both, NodeJS and browser
 
   function getPriorizedEvents(): Event[] {
@@ -35,4 +35,10 @@ export default function(store: Store, allEvents: Event[], random = Math.random) 
 
     initiateEvent,
   }
+}
+
+let instance: ReturnType<typeof EventMachine>
+
+export function singleton(store: Store, allEvents: Event[]): ReturnType<typeof EventMachine> {
+  return instance || (instance = EventMachine(store, allEvents))
 }

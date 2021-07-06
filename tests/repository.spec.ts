@@ -48,30 +48,29 @@ describe("repository", () => {
     const createGame = sinon.stub()
     const api = ({ createGame } as unknown) as API
     const repository = Repository({ api, storage })
-    const result = await repository.createGame([])
+    await repository.createGame([])
     createGame.callCount.should.equal(1)
   })
 
   it("should assign an id for a new game even if the server could not be reached", async () => {
-    const logger = { warn: sinon.spy() }
+    const logger = { warn: (msg: string) => {} }
+    const promise = new Promise((resolve) => (logger.warn = resolve))
     const createGame = sinon.stub().rejects(undefined)
     const api = ({ createGame } as unknown) as API
     const repository = Repository({ api, logger, storage })
     const result = await repository.createGame([])
     result.id.should.match(uuidPattern)
-    logger.warn.callCount.should.equal(1)
-    logger.warn.firstCall.args[0].should.equal("Cannot save new game - trying again later")
+    promise.should.be.resolvedWith("Cannot save new game - trying again later")
   })
 
-  it("should save a game and assign an id", async () => {
+  it("should save a game", async () => {
     const game = initGame()
     const saveGame = sinon.stub().resolves(game)
     const api = ({ saveGame } as unknown) as API
     const repository = Repository({ api, storage })
-    const result = await repository.saveGame(game)
+    await repository.saveGame(game)
     saveGame.callCount.should.equal(1)
     Object.keys(saveGame.firstCall.args[0]).should.deepEqual(Object.keys(game))
-    result.should.deepEqual(game)
   })
 
   it("should load a previously locally saved game without accessing the server", async () => {
@@ -103,17 +102,17 @@ describe("repository", () => {
   })
 
   it("should store a game in localstorage if server cannot be reached", async () => {
-    const logger = { warn: sinon.spy() }
+    const logger = { warn: (msg: string) => {} }
+    const promise = new Promise((resolve) => (logger.warn = resolve))
     const game = initGame()
     const saveGame = sinon.stub()
     saveGame.rejects()
     const api = ({ saveGame } as unknown) as API
     const repository = Repository({ api, storage, logger })
-    const result = await repository.saveGame(game)
+    await repository.saveGame(game)
     saveGame.callCount.should.equal(1)
     Object.keys(saveGame.firstCall.args[0]).should.deepEqual(Object.keys(game))
-    logger.warn.callCount.should.equal(1)
-    logger.warn.firstCall.args[0].should.equal(
+    promise.should.be.resolvedWith(
       "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time"
     )
   })
