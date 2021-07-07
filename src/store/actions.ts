@@ -79,6 +79,7 @@ export const actions = {
     const laws = game.acceptedLaws.map(getAcceptedLaw)
     game.currentYear++
     game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
+    fillUpLawProposals(game)
     repository.saveGame(game)
     context.commit("setGameState", { game })
     getEventMachine().start()
