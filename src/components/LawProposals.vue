@@ -21,7 +21,7 @@ export default defineComponent({
   },
 
   methods: {
-    select(lawId: LawId) {
+    select(lawId: LawId | undefined) {
       this.selectedLaw = lawId
     },
 
@@ -38,8 +38,13 @@ export default defineComponent({
 
 <template>
   <div class="ProposedLaws">
-    <div v-for="(law, index) in proposedLaws" :key="index" class="Law" :class="{ selected: law.id === selectedLaw }">
-      <div @click="select(law.id)">
+    <div
+      v-for="(law, index) in proposedLaws"
+      :key="index"
+      class="Law"
+      :class="{ selected: law.id === selectedLaw }"
+    >
+      <div @click="select(law.id)" @mouseenter="select(law.id)" @mouseleave="select(undefined)">
         <h3>{{ law.title }}</h3>
         <div>{{ law.description }}</div>
 
@@ -69,7 +74,6 @@ export default defineComponent({
 
     @media (max-width: 800px) {
       font-size: 85%;
-    
     }
     @media (max-width: 600px) {
       width: 50%;
@@ -112,7 +116,6 @@ export default defineComponent({
       }
     }
 
-    &:hover,
     &.selected {
       > div {
         background: orange;
