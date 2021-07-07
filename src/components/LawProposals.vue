@@ -17,7 +17,7 @@ export default defineComponent({
     return {
       laws: [] as Law[],
       selectedLaw: undefined as LawId | undefined,
-      fadeingLaw: undefined as LawId | undefined,
+      fadingLaw: undefined as LawId | undefined,
     }
   },
 
@@ -36,12 +36,12 @@ export default defineComponent({
     },
 
     accept(lawId: LawId) {
-      this.fadeingLaw = lawId
+      this.fadingLaw = lawId
       setTimeout(() => this.store.dispatch("acceptLaw", { lawId }), TRANSITION_TIME * 1000)
     },
 
     decline(lawId: LawId) {
-      this.fadeingLaw = lawId
+      this.fadingLaw = lawId
       setTimeout(() => this.store.dispatch("rejectLaw", { lawId }), TRANSITION_TIME * 1000)
     },
   },
@@ -74,7 +74,7 @@ export default defineComponent({
       v-for="(law, index) in laws"
       :key="index"
       class="Law"
-      :class="{ selected: law.id === selectedLaw, fading: law.id === fadeingLaw }"
+      :class="{ selected: law.id === selectedLaw, fading: law.id === fadingLaw }"
     >
       <div @click="select(law.id)" @mouseenter="select(law.id)" @mouseleave="select(undefined)">
         <h3>{{ law.title }}</h3>
