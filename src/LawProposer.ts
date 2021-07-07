@@ -1,3 +1,4 @@
+import { maxProposedLaws } from "./constants"
 import { allLaws } from "./laws"
 import { AcceptedLaw, Game, Law, LawId, LawReference, Percent } from "./types"
 
@@ -39,7 +40,7 @@ function exchangeLawProposals(proposals: LawId[], candidates: LawId[]) {
     proposals[i] = adding.shift() as LawId
     i++
   }
-  proposals.push(...adding.slice(0, 6 - proposals.length))
+  proposals.push(...adding.slice(0, maxProposedLaws - proposals.length))
 }
 
 export function getLaw(lawId: LawId): Law {
