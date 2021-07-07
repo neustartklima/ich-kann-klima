@@ -7,20 +7,39 @@ type LawPriority = {
 }
 
 export function fillUpLawProposals(game: Game, lawList: Law[] = allLaws): void {
-  const proposedIds = game.proposedLaws.filter((pl) => !game.acceptedLaws?.some((al) => al.lawId === pl))
-  const requiredLaws = 6 - proposedIds.length
-  if (requiredLaws > 0) {
-    const newProposals: LawPriority[] = lawList
-      .filter((law) => !proposedIds.includes(law.id))
-      .filter((law) => !game.acceptedLaws?.some((l) => l.lawId === law.id))
-      .filter((law) => !game.rejectedLaws?.includes(law.id))
-      .filter((law) => !law.labels?.includes("hidden"))
-      .map((law) => ({ law: law, priority: law.priority ? law.priority(game) : 1 }))
-      .filter((law) => law.priority > 0)
-      .sort((a, b) => b.priority - a.priority)
-      .slice(0, requiredLaws)
-    game.proposedLaws = proposedIds.concat(newProposals.map((law) => law.law.id))
+  const candidateLaws: LawId[] = lawList
+    .filter((law) => !game.acceptedLaws?.some((l) => l.lawId === law.id))
+    .filter((law) => !game.rejectedLaws?.includes(law.id))
+    .filter((law) => !law.labels?.includes("hidden"))
+    .map((law) => ({ law: law, priority: law.priority ? law.priority(game) : 1 }))
+    .filter((lawPrio) => lawPrio.priority > 0)
+    .sort((a, b) => b.priority - a.priority)
+    .map((lawPrio) => lawPrio.law.id)
+
+  console.log("candidateLaws: " + candidateLaws)
+  const newList: LawId[] = [...game.proposedLaws]
+  exchangeLawProposals(newList, candidateLaws)
+  game.proposedLaws = newList
+}
+
+function exchangeLawProposals(proposals: LawId[], candidates: LawId[]) {
+  const staying = candidates.filter((c) => proposals.includes(c))
+  const adding = candidates.filter((c) => !staying.includes(c))
+  var i = 0
+  while (i < proposals.length) {
+    if (staying.includes(proposals[i])) {
+      i++
+      continue
+    }
+    if (adding.length === 0) {
+      proposals.splice(i, 1)
+      continue
+    }
+
+    proposals[i] = adding.shift() as LawId
+    i++
   }
+  proposals.push(...adding.slice(0, 6 - proposals.length))
 }
 
 export function getLaw(lawId: LawId): Law {
