@@ -16,7 +16,6 @@ export default defineComponent({
   data() {
     return {
       laws: [] as Law[],
-      selectedLaw: undefined as LawId | undefined,
       fadingLaw: undefined as LawId | undefined,
     }
   },
@@ -31,10 +30,6 @@ export default defineComponent({
   },
 
   methods: {
-    select(lawId: LawId | undefined) {
-      this.selectedLaw = lawId
-    },
-
     accept(lawId: LawId) {
       this.fadingLaw = lawId
       setTimeout(() => this.store.dispatch("acceptLaw", { lawId }), TRANSITION_TIME * 1000)
@@ -74,17 +69,20 @@ export default defineComponent({
       v-for="(law, index) in laws"
       :key="index"
       class="Law"
-      :class="{ selected: law.id === selectedLaw, fading: law.id === fadingLaw }"
+      :class="{ fading: law.id === fadingLaw }"
     >
-      <div @click="select(law.id)" @mouseenter="select(law.id)" @mouseleave="select(undefined)">
-        <h3>{{ law.title }}</h3>
-        <div>{{ law.description }}</div>
+      <input type="radio" name="selectedLaw" :id="law.id" />
+      <label :for="law.id">
+        <div>
+          <h3>{{ law.title }}</h3>
+          <div>{{ law.description }}</div>
 
-        <div class="button-bar">
-          <button class="accept" @click="accept(law.id)">✓</button>
-          <button class="decline" @click="decline(law.id)">✗</button>
+          <div class="button-bar">
+            <button class="accept" @click="accept(law.id)">✓</button>
+            <button class="decline" @click="decline(law.id)">✗</button>
+          </div>
         </div>
-      </div>
+      </label>
     </div>
   </div>
 </template>
@@ -110,6 +108,29 @@ export default defineComponent({
       animation: twistOut var(--transitiontime) ease-in 0s 1 normal both;
     }
 
+    input {
+      display: none;
+    }
+    @media screen and (hover) {
+      :hover > div {
+        background: orange;
+
+        button {
+          display: inline;
+        }
+      }
+    }
+
+    @media screen and (hover: none) {
+      :checked + label > div {
+        background: orange;
+
+        button {
+          display: inline;
+        }
+      }
+    }
+
     @media (max-width: 800px) {
       font-size: 85%;
     }
@@ -117,7 +138,7 @@ export default defineComponent({
       width: 50%;
     }
 
-    > div {
+    > label > div {
       border: 1px solid orange;
       border-radius: 20px;
       padding: 0.5rem;
@@ -151,16 +172,6 @@ export default defineComponent({
       .decline {
         font-size: 30px;
         color: red;
-      }
-    }
-
-    &.selected {
-      > div {
-        background: orange;
-
-        button {
-          display: inline;
-        }
       }
     }
   }
