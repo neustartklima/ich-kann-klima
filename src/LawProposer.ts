@@ -6,11 +6,12 @@ type LawPriority = {
   priority: Percent
 }
 
-export function fillUpLawProposals(game: Game, allLaws: Law[]): void {
-  const requiredLaws = 6 - game.proposedLaws.length
+export function fillUpLawProposals(game: Game, lawList: Law[] = allLaws): void {
+  const proposedIds = game.proposedLaws.filter((pl) => !game.acceptedLaws?.some((al) => al.lawId === pl))
+  const requiredLaws = 6 - proposedIds.length
   if (requiredLaws > 0) {
-    const newProposals: LawPriority[] = allLaws
-      .filter((law) => !game.proposedLaws.includes(law.id))
+    const newProposals: LawPriority[] = lawList
+      .filter((law) => !proposedIds.includes(law.id))
       .filter((law) => !game.acceptedLaws?.some((l) => l.lawId === law.id))
       .filter((law) => !game.rejectedLaws?.includes(law.id))
       .filter((law) => !law.labels?.includes("hidden"))
@@ -18,13 +19,8 @@ export function fillUpLawProposals(game: Game, allLaws: Law[]): void {
       .filter((law) => law.priority > 0)
       .sort((a, b) => b.priority - a.priority)
       .slice(0, requiredLaws)
-    game.proposedLaws = game.proposedLaws.concat(newProposals.map((law) => law.law.id))
+    game.proposedLaws = proposedIds.concat(newProposals.map((law) => law.law.id))
   }
-}
-
-export function replaceLawProposal(game: Game, lawId: LawId): void {
-  game.proposedLaws = game.proposedLaws.filter((id) => id !== lawId)
-  fillUpLawProposals(game, allLaws)
 }
 
 export function getLaw(lawId: LawId): Law {

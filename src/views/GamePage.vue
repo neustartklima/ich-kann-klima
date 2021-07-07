@@ -24,10 +24,6 @@ export default defineComponent({
     }
   },
 
-  computed: {
-    ...mapGetters(["proposedLaws"]),
-  },
-
   methods: {
     startGame(gameId: GameId | undefined) {
       if (gameId) {
@@ -50,7 +46,7 @@ export default defineComponent({
 
 <template>
   <GameSetup>
-    <LawProposals :proposed-laws="proposedLaws" />
+    <LawProposals />
 
     <h2>Beschlossene Gesetze</h2>
     <AcceptedLaws />
