@@ -13,7 +13,6 @@ export default defineComponent({
 
   data() {
     return {
-      laws: [] as Law[],
       acceptedIds: [] as LawId[],
       rejectedIds: [] as LawId[],
     }
@@ -49,33 +48,14 @@ export default defineComponent({
     },
 
   },
-
-  watch: {
-    proposedLaws(newLaws: Law[]) {
-      const laws: Law[] = [...this.laws]
-      const addedLaws: Law[] = newLaws.filter(nl => !laws.some(ol => ol.id === nl.id))
-
-      for (var i = 0; i < laws.length; i++) {
-        if (newLaws.some(nl => nl.id === laws[i].id)) {
-          continue
-        }
-        if (addedLaws.length === 0) {
-          laws.splice(i)
-          continue
-        }
-        laws[i] = addedLaws.shift() as Law
-      }
-      laws.push(...addedLaws)
-      this.laws = laws
-    }
-  }
 })
 </script>
 
 <template>
   <div class="ProposedLaws">
     <div
-      v-for="law in laws"
+      v-for="law in proposedLaws"
+      :key="law.id"
       class="Law"
       :class="{ removing: removing(law.id) }"
       @animationend="handle(law.id)"
