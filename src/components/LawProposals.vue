@@ -2,6 +2,9 @@
 import { defineComponent, PropType } from "vue"
 import { Law, LawId } from "../types"
 import { useStore } from "../store"
+import { mapGetters } from "vuex"
+
+const TRANSITION_TIME = 0.7
 
 export default defineComponent({
   setup() {
@@ -12,12 +15,19 @@ export default defineComponent({
 
   data() {
     return {
+      laws: [] as Law[],
       selectedLaw: undefined as LawId | undefined,
+      fadeingLaw: undefined as LawId | undefined,
     }
   },
 
-  props: {
-    proposedLaws: Array as PropType<Law[]>,
+  mounted() {
+    const e = this.$el as HTMLElement
+    e.style.setProperty("--transitiontime", TRANSITION_TIME + "s")
+  },
+
+  computed: {
+    ...mapGetters(["proposedLaws"]),
   },
 
   methods: {
@@ -26,23 +36,45 @@ export default defineComponent({
     },
 
     accept(lawId: LawId) {
-      this.store.dispatch("acceptLaw", { lawId })
+      this.fadeingLaw = lawId
+      setTimeout(() => this.store.dispatch("acceptLaw", { lawId }), TRANSITION_TIME * 1000)
     },
 
     decline(lawId: LawId) {
-      this.store.dispatch("rejectLaw", { lawId })
+      this.fadeingLaw = lawId
+      setTimeout(() => this.store.dispatch("rejectLaw", { lawId }), TRANSITION_TIME * 1000)
     },
   },
+
+  watch: {
+    proposedLaws(newLaws: Law[]) {
+      const laws: Law[] = [...this.laws]
+      const addedLaws: Law[] = newLaws.filter(nl => !laws.some(ol => ol.id === nl.id))
+
+      for (var i = 0; i < laws.length; i++) {
+        if (newLaws.some(nl => nl.id === laws[i].id)) {
+          continue
+        }
+        if (addedLaws.length === 0) {
+          laws.splice(i)
+          continue
+        }
+        laws[i] = addedLaws.shift() as Law
+      }
+      laws.push(...addedLaws)
+      this.laws = laws
+    }
+  }
 })
 </script>
 
 <template>
   <div class="ProposedLaws">
     <div
-      v-for="(law, index) in proposedLaws"
+      v-for="(law, index) in laws"
       :key="index"
       class="Law"
-      :class="{ selected: law.id === selectedLaw }"
+      :class="{ selected: law.id === selectedLaw, fading: law.id === fadeingLaw }"
     >
       <div @click="select(law.id)" @mouseenter="select(law.id)" @mouseleave="select(undefined)">
         <h3>{{ law.title }}</h3>
@@ -71,6 +103,12 @@ export default defineComponent({
     width: 33%;
     padding: 0.5rem;
     box-sizing: border-box;
+    /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
+    animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
+    &.fading {
+      /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
+      animation: twistOut var(--transitiontime) ease-in 0s 1 normal both;
+    }
 
     @media (max-width: 800px) {
       font-size: 85%;
@@ -125,6 +163,17 @@ export default defineComponent({
         }
       }
     }
+  }
+}
+
+@keyframes twistIn {
+  0% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(-90deg);
+  }
+}
+@keyframes twistOut {
+  100% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(90deg);
   }
 }
 </style>

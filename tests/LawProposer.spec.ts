@@ -1,7 +1,7 @@
 import "should"
 import API from "../src/model/api"
 import repository from "../src/model/Repository"
-import { fillUpLawProposals, replaceLawProposal } from "../src/LawProposer"
+import { fillUpLawProposals } from "../src/LawProposer"
 import { Game, Law } from "../src/types"
 import Sinon from "sinon"
 
@@ -16,6 +16,7 @@ const allLaws: Law[] = [
   { id: "law4", title: "law 4", description: "", effects: () => ({}), priority },
   { id: "law5", title: "law 5", description: "", effects: () => ({}), priority },
   { id: "law6", title: "law 6", description: "", effects: () => ({}), priority },
+  { id: "law7", title: "law 7", description: "", effects: () => ({}), priority },
 ]
 
 function mockedFetch(info: RequestInfo, init?: RequestInit) {
@@ -40,7 +41,7 @@ describe("LawProposer", () => {
       const game = await createGame()
       fillUpLawProposals(game, allLaws)
       game.proposedLaws.length.should.equal(6)
-      game.proposedLaws.should.deepEqual(allLaws.map((law) => law.id))
+      game.proposedLaws.should.deepEqual(allLaws.map((law) => law.id).slice(0, 6))
     })
 
     it("should add missing laws", async () => {
@@ -49,7 +50,7 @@ describe("LawProposer", () => {
       game.proposedLaws.shift()
       fillUpLawProposals(game, allLaws)
       game.proposedLaws.length.should.equal(6)
-      const ids = allLaws.map((law) => law.id)
+      const ids = allLaws.map((law) => law.id).slice(0, 6)
       ids.push(ids.shift() as string)
       game.proposedLaws.should.deepEqual(ids)
     })
@@ -66,20 +67,20 @@ describe("LawProposer", () => {
       fillUpLawProposals(game, allLaws.slice(0, 3))
       game.proposedLaws.length.should.equal(3)
     })
-  })
 
-  describe("replaceLawProposal()", () => {
-    it("should remove the given law", async () => {
+    it("should remove an accepted law", async () => {
       const game = await createGame()
       fillUpLawProposals(game, allLaws)
-      replaceLawProposal(game, allLaws[0].id)
+      game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
+      fillUpLawProposals(game, allLaws)
       game.proposedLaws.should.not.containEql(allLaws[0].id)
     })
 
     it("should fill up after remove", async () => {
       const game = await createGame()
       fillUpLawProposals(game, allLaws)
-      replaceLawProposal(game, allLaws[0].id)
+      game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
+      fillUpLawProposals(game, allLaws)
       game.proposedLaws.length.should.equal(6)
     })
   })

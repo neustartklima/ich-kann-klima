@@ -4,7 +4,7 @@ import router from "../router"
 import API from "../model/api"
 import RepositoryFactory from "../model/Repository"
 import * as Calculator from "../Calculator"
-import { fillUpLawProposals, getAcceptedLaw, getLaw, replaceLawProposal } from "../LawProposer"
+import { fillUpLawProposals, getAcceptedLaw, getLaw } from "../LawProposer"
 import EventMachine from "../EventMachine"
 import { allEvents } from "../events"
 
@@ -29,7 +29,7 @@ export const actions = {
           effectiveSince: game.currentYear,
         }
       })
-    fillUpLawProposals(game, context.state.allLaws)
+    fillUpLawProposals(game)
     repository.saveGame(game)
     getEventMachine().start()
     router.push("/games/" + game.id)
@@ -60,7 +60,7 @@ export const actions = {
       )
       .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
     game.acceptedLaws = [...filteredLawRefs, newLawRef]
-    replaceLawProposal(game, payload.lawId)
+    fillUpLawProposals(game)
     repository.saveGame(game)
     context.commit("setGameState", { game })
     repository.decisionMade(game, newLaw, true)
@@ -69,7 +69,7 @@ export const actions = {
   rejectLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
-    replaceLawProposal(game, payload.lawId)
+    fillUpLawProposals(game)
     repository.decisionMade(game, getLaw(payload.lawId), false)
     context.commit("setGameState", { game })
   },
