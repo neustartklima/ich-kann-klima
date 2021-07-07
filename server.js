@@ -22036,7 +22036,7 @@ var Tempolimit130AufAutobahnen_default = defineLaw({
     };
   },
   priority(game) {
-    if (lawIsAccepted(game, "Tempolimit120AufAutobahnen"))
+    if (!lawIsAccepted(game, "Tempolimit100AufAutobahnen"))
       return 0;
     const v = game.values;
     const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
