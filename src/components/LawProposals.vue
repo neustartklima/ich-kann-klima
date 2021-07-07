@@ -1,10 +1,8 @@
 <script lang="ts">
-import { defineComponent, PropType } from "vue"
+import { defineComponent } from "vue"
 import { Law, LawId } from "../types"
-import { useStore } from "../store"
+import { Actions, useStore } from "../store"
 import { mapGetters } from "vuex"
-
-const TRANSITION_TIME = 0.7
 
 export default defineComponent({
   setup() {
@@ -16,29 +14,40 @@ export default defineComponent({
   data() {
     return {
       laws: [] as Law[],
-      fadingLaw: undefined as LawId | undefined,
+      acceptedIds: [] as LawId[],
+      rejectedIds: [] as LawId[],
     }
-  },
-
-  mounted() {
-    const e = this.$el as HTMLElement
-    e.style.setProperty("--transitiontime", TRANSITION_TIME + "s")
   },
 
   computed: {
     ...mapGetters(["proposedLaws"]),
+
+    removing() {
+      return (id: LawId) => this.acceptedIds.includes(id) || this.rejectedIds.includes(id)
+    },
   },
 
   methods: {
     accept(lawId: LawId) {
-      this.fadingLaw = lawId
-      setTimeout(() => this.store.dispatch("acceptLaw", { lawId }), TRANSITION_TIME * 1000)
+      this.acceptedIds.push(lawId)
     },
 
     decline(lawId: LawId) {
-      this.fadingLaw = lawId
-      setTimeout(() => this.store.dispatch("rejectLaw", { lawId }), TRANSITION_TIME * 1000)
+      this.rejectedIds.push(lawId)
     },
+
+    handle(lawId: LawId) {
+      this.removeAndDispatch(lawId, this.acceptedIds, "acceptLaw")
+      this.removeAndDispatch(lawId, this.rejectedIds, "rejectLaw")
+    },
+
+    removeAndDispatch(lawId: LawId, activeIds: LawId[], action: keyof Actions) {
+      const i = activeIds.indexOf(lawId)
+      if (i < 0) return
+      activeIds.splice(i, 1)
+      this.store.dispatch(action, { lawId })
+    },
+
   },
 
   watch: {
@@ -66,10 +75,10 @@ export default defineComponent({
 <template>
   <div class="ProposedLaws">
     <div
-      v-for="(law, index) in laws"
-      :key="index"
+      v-for="law in laws"
       class="Law"
-      :class="{ fading: law.id === fadingLaw }"
+      :class="{ removing: removing(law.id) }"
+      @animationend="handle(law.id)"
     >
       <input type="radio" name="selectedLaw" :id="law.id" />
       <label :for="law.id">
@@ -101,9 +110,11 @@ export default defineComponent({
     width: 33%;
     padding: 0.5rem;
     box-sizing: border-box;
+
+    --transitiontime: 0.5s;
     /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
     animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
-    &.fading {
+    &.removing {
       /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
       animation: twistOut var(--transitiontime) ease-in 0s 1 normal both;
     }
