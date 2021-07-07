@@ -18,7 +18,6 @@ export function fillUpLawProposals(game: Game, lawList: Law[] = allLaws): void {
     .map((lawPrio) => lawPrio.law.id)
     .slice(0, maxProposedLaws)
 
-  console.log("candidateLaws: " + candidateLaws)
   const newList: LawId[] = [...game.proposedLaws]
   exchangeLawProposals(newList, candidateLaws)
   game.proposedLaws = newList
