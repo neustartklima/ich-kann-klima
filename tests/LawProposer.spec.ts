@@ -4,6 +4,7 @@ import repository from "../src/model/Repository"
 import { fillUpLawProposals } from "../src/LawProposer"
 import { Game, Law } from "../src/types"
 import Sinon from "sinon"
+import FetchQueueFactory from "../src/model/FetchQueue"
 
 function priority(game: Game): number {
   return 1
@@ -27,15 +28,30 @@ function mockedFetch(info: RequestInfo, init?: RequestInit) {
   } as Response)
 }
 
+async function mockedFetchFunc(method: string, path: string, data?: Record<string, unknown>): Promise<unknown> {
+  return { ...JSON.parse(data?.toString() || ""), id: "12345" }
+}
+
 const storage = ({
   setItem: Sinon.spy(),
   getItem: Sinon.spy(),
 } as unknown) as Storage
 
-const mockedApi = API("http://test.localhost", mockedFetch)
+const fetchQueue = FetchQueueFactory(mockedFetchFunc)
+const mockedApi = API(fetchQueue)
 const { createGame } = repository({ api: mockedApi, storage })
 
 describe("LawProposer", () => {
+  let clock: Sinon.SinonFakeTimers
+
+  before(() => {
+    clock = Sinon.useFakeTimers()
+  })
+
+  after(() => {
+    clock.restore()
+  })
+
   describe("fillUpLawProposals()", () => {
     it("should fill up an empty array", async () => {
       const game = await createGame(allLaws)

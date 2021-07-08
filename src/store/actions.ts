@@ -8,9 +8,13 @@ import EventMachine from "../EventMachine"
 import { singleton as getEventMachine } from "../EventMachine"
 import { allEvents } from "../events"
 import router from "../router"
+import FetchQueueFactory from "../model/FetchQueue"
+import RequestFactory from "../model/Request"
 
 const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
-const api = API(backendURL, fetch)
+const request = RequestFactory(backendURL, fetch)
+const fetchQueue = FetchQueueFactory(request)
+const api = API(fetchQueue)
 const repository = RepositoryFactory({ api })
 
 export const actions = {
@@ -84,5 +88,5 @@ export const actions = {
 
   async error(context: Context, payload: { error: Error }) {
     context.commit("error", payload)
-  }
+  },
 }

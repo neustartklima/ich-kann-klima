@@ -1,44 +1,29 @@
 import { EventId, Game, GameId, LawId } from "../types"
+import { FetchQueue } from "./FetchQueue"
 
 export type API = ReturnType<typeof APIFactory>
 
-type FetchFunction = (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>
-
-export default function APIFactory(baseUrl: string, fetch: FetchFunction) {
-  async function request(method: string, path: string, data?: Record<string, unknown>) {
-    const options = { method } as RequestInit
-    if (["post", "put", "patch"].includes(method)) {
-      options.body = JSON.stringify(data)
-      options.headers = { ["content-type"]: "application/json" }
-    }
-    const response = await fetch(baseUrl + path, options)
-    const result = response.headers.get("Content-Type")?.match(/json/) ? await response.json() : await response.text()
-    if (response.ok) {
-      return result
-    }
-    console.error(result)
-    throw Error(result.message || result)
-  }
-
+export default function APIFactory(fetchQueue: FetchQueue) {
   return {
     createGame(game: Game): Promise<Game> {
-      return request("post", "/games", game)
+      return fetchQueue.add("post", "/games", game) as Promise<Game>
     },
 
     loadGame(id: GameId): Promise<Game> {
-      return request("get", "/games/" + id)
+      return fetchQueue.add("get", "/games/" + id, undefined, 0) as Promise<Game>
     },
 
     saveGame(game: Game): Promise<Game> {
-      return request("put", "/games/" + game.id, game)
+      fetchQueue.remove("put", "/games/" + game.id)
+      return fetchQueue.add("put", "/games/" + game.id, game) as Promise<Game>
     },
 
     decisionMade(gameId: GameId, lawId: LawId, accepted: boolean): Promise<void> {
-      return request("post", "/games/" + gameId + "/decisions/" + lawId, { accepted })
+      return fetchQueue.add("post", "/games/" + gameId + "/decisions/" + lawId, { accepted }) as Promise<void>
     },
 
     eventOccurred(gameId: GameId, eventId: EventId): Promise<void> {
-      return request("post", "/games/" + gameId + "/events/" + eventId)
+      return fetchQueue.add("post", "/games/" + gameId + "/events/" + eventId) as Promise<void>
     },
   }
 }
