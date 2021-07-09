@@ -37,10 +37,13 @@ export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: Fetech
       } catch (error) {
         if (retry) {
           fetchQueue[0].retry = Math.max(-1, retry - 1)
-          fetchQueueTimer = setTimeout(process, options?.timeout || 10000)
         } else {
+          fetchQueue.shift()
           reject(error)
         }
+      }
+      if (fetchQueue.length) {
+        fetchQueueTimer = setTimeout(process, options?.timeout || 10000)
       }
     }
   }
@@ -49,7 +52,9 @@ export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: Fetech
     add(method: string, path: string, data?: Record<string, unknown>, retry = -1): Promise<unknown> {
       return new Promise((resolve, reject) => {
         fetchQueue.push({ method, path, data, retry, resolve, reject })
-        process()
+        if (!fetchQueueTimer) {
+          process()
+        }
       })
     },
 
@@ -58,5 +63,9 @@ export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: Fetech
         return entry.method.toLowerCase() !== method.toLowerCase() || entry.path !== path
       })
     },
+
+    callsPending(): boolean {
+      return fetchQueue.length > 0
+    }
   }
 }

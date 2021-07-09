@@ -5,13 +5,14 @@ import APIFactory, { API } from "../src/model/api"
 import { Game } from "../src/types"
 
 describe("API", () => {
+  const mockQuque = () => ({ add: Sinon.stub(), remove: Sinon.stub(), callsPending: Sinon.stub() })
   let game: Game
-  let fetchQueue: { add: Sinon.SinonStub<any[], any>, remove: Sinon.SinonStub<any[], any> }
+  let fetchQueue: ReturnType<typeof mockQuque>
   let api: API
 
   beforeEach(() => {
     game = initGame()
-    fetchQueue = { add: Sinon.stub(), remove: Sinon.stub() }
+    fetchQueue = mockQuque()
     api = APIFactory(fetchQueue)
   })
 
