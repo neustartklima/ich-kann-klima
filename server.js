@@ -452,7 +452,7 @@ var require_bytes = __commonJS({
     "use strict";
     module2.exports = bytes;
     module2.exports.format = format;
-    module2.exports.parse = parse2;
+    module2.exports.parse = parse;
     var formatThousandsRegExp = /\B(?=(\d{3})+(?!\d))/g;
     var formatDecimalsRegExp = /(?:\.0*|(\.[^0]+)0+)$/;
     var map = {
@@ -466,7 +466,7 @@ var require_bytes = __commonJS({
     var parseRegExp = /^((-|\+)?(\d+(?:\.\d+)?)) *(kb|mb|gb|tb|pb)$/i;
     function bytes(value, options) {
       if (typeof value === "string") {
-        return parse2(value);
+        return parse(value);
       }
       if (typeof value === "number") {
         return format(value, options);
@@ -508,7 +508,7 @@ var require_bytes = __commonJS({
       }
       return str + unitSeparator + unit;
     }
-    function parse2(val) {
+    function parse(val) {
       if (typeof val === "number" && !isNaN(val)) {
         return val;
       }
@@ -541,7 +541,7 @@ var require_content_type = __commonJS({
     var QUOTE_REGEXP = /([\\"])/g;
     var TYPE_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
     exports2.format = format;
-    exports2.parse = parse2;
+    exports2.parse = parse;
     function format(obj) {
       if (!obj || typeof obj !== "object") {
         throw new TypeError("argument obj is required");
@@ -565,7 +565,7 @@ var require_content_type = __commonJS({
       }
       return string;
     }
-    function parse2(string) {
+    function parse(string) {
       if (!string) {
         throw new TypeError("argument string is required");
       }
@@ -1008,13 +1008,13 @@ var require_ms = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
       throw new Error("val is not a non-empty string or a valid number. val=" + JSON.stringify(val));
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -5158,7 +5158,7 @@ var require_read = __commonJS({
     var onFinished = require_on_finished();
     var zlib = require("zlib");
     module2.exports = read;
-    function read(req, res, next, parse2, debug, options) {
+    function read(req, res, next, parse, debug, options) {
       var length;
       var opts = options;
       var stream;
@@ -5214,7 +5214,7 @@ var require_read = __commonJS({
         try {
           debug("parse body");
           str = typeof body !== "string" && encoding !== null ? iconv.decode(body, encoding) : body;
-          req.body = parse2(str);
+          req.body = parse(str);
         } catch (err) {
           next(createError(400, err, {
             body: str,
@@ -5274,7 +5274,7 @@ var require_media_typer = __commonJS({
     var typeNameRegExp = /^[A-Za-z0-9][A-Za-z0-9!#$&^_-]{0,126}$/;
     var typeRegExp = /^ *([A-Za-z0-9][A-Za-z0-9!#$&^_-]{0,126})\/([A-Za-z0-9][A-Za-z0-9!#$&^_.+-]{0,126}) *$/;
     exports2.format = format;
-    exports2.parse = parse2;
+    exports2.parse = parse;
     function format(obj) {
       if (!obj || typeof obj !== "object") {
         throw new TypeError("argument obj is required");
@@ -5309,7 +5309,7 @@ var require_media_typer = __commonJS({
       }
       return string;
     }
-    function parse2(string) {
+    function parse(string) {
       if (!string) {
         throw new TypeError("argument string is required");
       }
@@ -13998,7 +13998,7 @@ var require_json = __commonJS({
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(body) {
+      function parse(body) {
         if (body.length === 0) {
           return {};
         }
@@ -14046,7 +14046,7 @@ var require_json = __commonJS({
           }));
           return;
         }
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           encoding: charset,
           inflate,
           limit,
@@ -14116,7 +14116,7 @@ var require_raw = __commonJS({
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(buf) {
+      function parse(buf) {
         return buf;
       }
       return function rawParser(req, res, next) {
@@ -14137,7 +14137,7 @@ var require_raw = __commonJS({
           next();
           return;
         }
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           encoding: null,
           inflate,
           limit,
@@ -14174,7 +14174,7 @@ var require_text = __commonJS({
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(buf) {
+      function parse(buf) {
         return buf;
       }
       return function textParser(req, res, next) {
@@ -14196,7 +14196,7 @@ var require_text = __commonJS({
           return;
         }
         var charset = getCharset(req) || defaultCharset;
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           encoding: charset,
           inflate,
           limit,
@@ -14465,7 +14465,7 @@ var require_stringify = __commonJS({
       skipNulls: false,
       strictNullHandling: false
     };
-    var stringify2 = function stringify3(object, prefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset) {
+    var stringify = function stringify2(object, prefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset) {
       var obj = object;
       if (typeof filter === "function") {
         obj = filter(prefix, obj);
@@ -14504,9 +14504,9 @@ var require_stringify = __commonJS({
           continue;
         }
         if (isArray(obj)) {
-          pushToArray(values, stringify3(obj[key], typeof generateArrayPrefix === "function" ? generateArrayPrefix(prefix, key) : prefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset));
+          pushToArray(values, stringify2(obj[key], typeof generateArrayPrefix === "function" ? generateArrayPrefix(prefix, key) : prefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset));
         } else {
-          pushToArray(values, stringify3(obj[key], prefix + (allowDots ? "." + key : "[" + key + "]"), generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset));
+          pushToArray(values, stringify2(obj[key], prefix + (allowDots ? "." + key : "[" + key + "]"), generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset));
         }
       }
       return values;
@@ -14587,7 +14587,7 @@ var require_stringify = __commonJS({
         if (options.skipNulls && obj[key] === null) {
           continue;
         }
-        pushToArray(keys, stringify2(obj[key], key, generateArrayPrefix, options.strictNullHandling, options.skipNulls, options.encode ? options.encoder : null, options.filter, options.sort, options.allowDots, options.serializeDate, options.formatter, options.encodeValuesOnly, options.charset));
+        pushToArray(keys, stringify(obj[key], key, generateArrayPrefix, options.strictNullHandling, options.skipNulls, options.encode ? options.encoder : null, options.filter, options.sort, options.allowDots, options.serializeDate, options.formatter, options.encodeValuesOnly, options.charset));
       }
       var joined = keys.join(options.delimiter);
       var prefix = options.addQueryPrefix === true ? "?" : "";
@@ -14791,13 +14791,13 @@ var require_parse = __commonJS({
 var require_lib2 = __commonJS({
   "node_modules/qs/lib/index.js"(exports2, module2) {
     "use strict";
-    var stringify2 = require_stringify();
-    var parse2 = require_parse();
+    var stringify = require_stringify();
+    var parse = require_parse();
     var formats = require_formats();
     module2.exports = {
       formats,
-      parse: parse2,
-      stringify: stringify2
+      parse,
+      stringify
     };
   }
 });
@@ -14830,7 +14830,7 @@ var require_urlencoded = __commonJS({
       }
       var queryparse = extended ? extendedparser(opts) : simpleparser(opts);
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(body) {
+      function parse(body) {
         return body.length ? queryparse(body) : {};
       }
       return function urlencodedParser(req, res, next) {
@@ -14860,7 +14860,7 @@ var require_urlencoded = __commonJS({
           }));
           return;
         }
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           debug,
           encoding: charset,
           inflate,
@@ -14871,7 +14871,7 @@ var require_urlencoded = __commonJS({
     }
     function extendedparser(options) {
       var parameterLimit = options.parameterLimit !== void 0 ? options.parameterLimit : 1e3;
-      var parse2 = parser("qs");
+      var parse = parser("qs");
       if (isNaN(parameterLimit) || parameterLimit < 1) {
         throw new TypeError("option parameterLimit must be a positive number");
       }
@@ -14888,7 +14888,7 @@ var require_urlencoded = __commonJS({
         }
         var arrayLimit = Math.max(100, paramCount);
         debug("parse extended urlencoding");
-        return parse2(body, {
+        return parse(body, {
           allowPrototypes: true,
           arrayLimit,
           depth: Infinity,
@@ -14933,7 +14933,7 @@ var require_urlencoded = __commonJS({
     }
     function simpleparser(options) {
       var parameterLimit = options.parameterLimit !== void 0 ? options.parameterLimit : 1e3;
-      var parse2 = parser("querystring");
+      var parse = parser("querystring");
       if (isNaN(parameterLimit) || parameterLimit < 1) {
         throw new TypeError("option parameterLimit must be a positive number");
       }
@@ -14949,7 +14949,7 @@ var require_urlencoded = __commonJS({
           });
         }
         debug("parse urlencoding");
-        return parse2(body, void 0, void 0, { maxKeys: parameterLimit });
+        return parse(body, void 0, void 0, { maxKeys: parameterLimit });
       };
     }
     function typeChecker(type) {
@@ -15129,7 +15129,7 @@ var require_parseurl = __commonJS({
   "node_modules/parseurl/index.js"(exports2, module2) {
     "use strict";
     var url = require("url");
-    var parse2 = url.parse;
+    var parse = url.parse;
     var Url = url.Url;
     module2.exports = parseurl;
     module2.exports.original = originalurl;
@@ -15161,7 +15161,7 @@ var require_parseurl = __commonJS({
     }
     function fastparse(str) {
       if (typeof str !== "string" || str.charCodeAt(0) !== 47) {
-        return parse2(str);
+        return parse(str);
       }
       var pathname = str;
       var query = null;
@@ -15183,7 +15183,7 @@ var require_parseurl = __commonJS({
           case 35:
           case 160:
           case 65279:
-            return parse2(str);
+            return parse(str);
         }
       }
       var url2 = Url !== void 0 ? new Url() : {};
@@ -16287,7 +16287,7 @@ var require_content_disposition = __commonJS({
   "node_modules/content-disposition/index.js"(exports2, module2) {
     "use strict";
     module2.exports = contentDisposition;
-    module2.exports.parse = parse2;
+    module2.exports.parse = parse;
     var basename = require("path").basename;
     var Buffer2 = require_safe_buffer().Buffer;
     var ENCODE_URL_ATTR_CHAR_REGEXP = /[\x00-\x20"'()*,/:;<=>?@[\\\]{}\x7f]/g;
@@ -16378,7 +16378,7 @@ var require_content_disposition = __commonJS({
     function getlatin1(val) {
       return String(val).replace(NON_LATIN1_REGEXP, "?");
     }
-    function parse2(string) {
+    function parse(string) {
       if (!string || typeof string !== "string") {
         throw new TypeError("argument string is required");
       }
@@ -16668,13 +16668,13 @@ var require_ms2 = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
       throw new Error("val is not a non-empty string or a valid number. val=" + JSON.stringify(val));
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -17403,7 +17403,7 @@ var require_forwarded = __commonJS({
       if (!req) {
         throw new TypeError("argument req is required");
       }
-      var proxyAddrs = parse2(req.headers["x-forwarded-for"] || "");
+      var proxyAddrs = parse(req.headers["x-forwarded-for"] || "");
       var socketAddr = getSocketAddr(req);
       var addrs = [socketAddr].concat(proxyAddrs);
       return addrs;
@@ -17411,7 +17411,7 @@ var require_forwarded = __commonJS({
     function getSocketAddr(req) {
       return req.socket ? req.socket.remoteAddress : req.connection.remoteAddress;
     }
-    function parse2(header) {
+    function parse(header) {
       var end = header.length;
       var list = [];
       var start = header.length;
@@ -19250,7 +19250,7 @@ var require_request = __commonJS({
     var http = require("http");
     var fresh = require_fresh();
     var parseRange = require_range_parser();
-    var parse2 = require_parseurl();
+    var parse = require_parseurl();
     var proxyaddr = require_proxy_addr();
     var req = Object.create(http.IncomingMessage.prototype);
     module2.exports = req;
@@ -19351,7 +19351,7 @@ var require_request = __commonJS({
       return subdomains2.slice(offset);
     });
     defineGetter(req, "path", function path3() {
-      return parse2(this).pathname;
+      return parse(this).pathname;
     });
     defineGetter(req, "hostname", function hostname() {
       var trust = this.app.get("trust proxy fn");
@@ -19430,13 +19430,13 @@ var require_cookie_signature = __commonJS({
 var require_cookie = __commonJS({
   "node_modules/cookie/index.js"(exports2) {
     "use strict";
-    exports2.parse = parse2;
+    exports2.parse = parse;
     exports2.serialize = serialize;
     var decode = decodeURIComponent;
     var encode = encodeURIComponent;
     var pairSplitRegExp = /; */;
     var fieldContentRegExp = /^[\u0009\u0020-\u007e\u0080-\u00ff]+$/;
-    function parse2(str, options) {
+    function parse(str, options) {
       if (typeof str !== "string") {
         throw new TypeError("argument str must be a string");
       }
@@ -19550,7 +19550,7 @@ var require_vary = __commonJS({
       if (!field) {
         throw new TypeError("field argument is required");
       }
-      var fields = !Array.isArray(field) ? parse2(String(field)) : field;
+      var fields = !Array.isArray(field) ? parse(String(field)) : field;
       for (var j = 0; j < fields.length; j++) {
         if (!FIELD_NAME_REGEXP.test(fields[j])) {
           throw new TypeError("field argument contains an invalid header name");
@@ -19560,7 +19560,7 @@ var require_vary = __commonJS({
         return header;
       }
       var val = header;
-      var vals = parse2(header.toLowerCase());
+      var vals = parse(header.toLowerCase());
       if (fields.indexOf("*") !== -1 || vals.indexOf("*") !== -1) {
         return "*";
       }
@@ -19573,7 +19573,7 @@ var require_vary = __commonJS({
       }
       return val;
     }
-    function parse2(header) {
+    function parse(header) {
       var end = 0;
       var list = [];
       var start = 0;
@@ -19752,7 +19752,7 @@ var require_response = __commonJS({
       var escape2 = app2.get("json escape");
       var replacer = app2.get("json replacer");
       var spaces = app2.get("json spaces");
-      var body = stringify2(val, replacer, spaces, escape2);
+      var body = stringify(val, replacer, spaces, escape2);
       if (!this.get("Content-Type")) {
         this.set("Content-Type", "application/json");
       }
@@ -19774,7 +19774,7 @@ var require_response = __commonJS({
       var escape2 = app2.get("json escape");
       var replacer = app2.get("json replacer");
       var spaces = app2.get("json spaces");
-      var body = stringify2(val, replacer, spaces, escape2);
+      var body = stringify(val, replacer, spaces, escape2);
       var callback = this.req.query[app2.get("jsonp callback name")];
       if (!this.get("Content-Type")) {
         this.set("X-Content-Type-Options", "nosniff");
@@ -20112,7 +20112,7 @@ var require_response = __commonJS({
       }
       file.pipe(res2);
     }
-    function stringify2(value, replacer, spaces, escape2) {
+    function stringify(value, replacer, spaces, escape2) {
       var json2 = replacer || spaces ? JSON.stringify(value, replacer, spaces) : JSON.stringify(value);
       if (escape2) {
         json2 = json2.replace(/[<>&]/g, function(c) {
@@ -20312,497 +20312,6 @@ var require_express2 = __commonJS({
   "node_modules/express/index.js"(exports2, module2) {
     "use strict";
     module2.exports = require_express();
-  }
-});
-
-// node_modules/uuid/dist/rng.js
-var require_rng = __commonJS({
-  "node_modules/uuid/dist/rng.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = rng;
-    var _crypto = _interopRequireDefault(require("crypto"));
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var rnds8Pool = new Uint8Array(256);
-    var poolPtr = rnds8Pool.length;
-    function rng() {
-      if (poolPtr > rnds8Pool.length - 16) {
-        _crypto.default.randomFillSync(rnds8Pool);
-        poolPtr = 0;
-      }
-      return rnds8Pool.slice(poolPtr, poolPtr += 16);
-    }
-  }
-});
-
-// node_modules/uuid/dist/regex.js
-var require_regex = __commonJS({
-  "node_modules/uuid/dist/regex.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/validate.js
-var require_validate = __commonJS({
-  "node_modules/uuid/dist/validate.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _regex = _interopRequireDefault(require_regex());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function validate2(uuid2) {
-      return typeof uuid2 === "string" && _regex.default.test(uuid2);
-    }
-    var _default = validate2;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/stringify.js
-var require_stringify2 = __commonJS({
-  "node_modules/uuid/dist/stringify.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _validate = _interopRequireDefault(require_validate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var byteToHex = [];
-    for (let i = 0; i < 256; ++i) {
-      byteToHex.push((i + 256).toString(16).substr(1));
-    }
-    function stringify2(arr, offset = 0) {
-      const uuid2 = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-      if (!(0, _validate.default)(uuid2)) {
-        throw TypeError("Stringified UUID is invalid");
-      }
-      return uuid2;
-    }
-    var _default = stringify2;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/v1.js
-var require_v1 = __commonJS({
-  "node_modules/uuid/dist/v1.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _rng = _interopRequireDefault(require_rng());
-    var _stringify = _interopRequireDefault(require_stringify2());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var _nodeId;
-    var _clockseq;
-    var _lastMSecs = 0;
-    var _lastNSecs = 0;
-    function v12(options, buf, offset) {
-      let i = buf && offset || 0;
-      const b = buf || new Array(16);
-      options = options || {};
-      let node = options.node || _nodeId;
-      let clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
-      if (node == null || clockseq == null) {
-        const seedBytes = options.random || (options.rng || _rng.default)();
-        if (node == null) {
-          node = _nodeId = [seedBytes[0] | 1, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
-        }
-        if (clockseq == null) {
-          clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 16383;
-        }
-      }
-      let msecs = options.msecs !== void 0 ? options.msecs : Date.now();
-      let nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
-      const dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
-      if (dt < 0 && options.clockseq === void 0) {
-        clockseq = clockseq + 1 & 16383;
-      }
-      if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
-        nsecs = 0;
-      }
-      if (nsecs >= 1e4) {
-        throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
-      }
-      _lastMSecs = msecs;
-      _lastNSecs = nsecs;
-      _clockseq = clockseq;
-      msecs += 122192928e5;
-      const tl = ((msecs & 268435455) * 1e4 + nsecs) % 4294967296;
-      b[i++] = tl >>> 24 & 255;
-      b[i++] = tl >>> 16 & 255;
-      b[i++] = tl >>> 8 & 255;
-      b[i++] = tl & 255;
-      const tmh = msecs / 4294967296 * 1e4 & 268435455;
-      b[i++] = tmh >>> 8 & 255;
-      b[i++] = tmh & 255;
-      b[i++] = tmh >>> 24 & 15 | 16;
-      b[i++] = tmh >>> 16 & 255;
-      b[i++] = clockseq >>> 8 | 128;
-      b[i++] = clockseq & 255;
-      for (let n = 0; n < 6; ++n) {
-        b[i + n] = node[n];
-      }
-      return buf || (0, _stringify.default)(b);
-    }
-    var _default = v12;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/parse.js
-var require_parse2 = __commonJS({
-  "node_modules/uuid/dist/parse.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _validate = _interopRequireDefault(require_validate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function parse2(uuid2) {
-      if (!(0, _validate.default)(uuid2)) {
-        throw TypeError("Invalid UUID");
-      }
-      let v;
-      const arr = new Uint8Array(16);
-      arr[0] = (v = parseInt(uuid2.slice(0, 8), 16)) >>> 24;
-      arr[1] = v >>> 16 & 255;
-      arr[2] = v >>> 8 & 255;
-      arr[3] = v & 255;
-      arr[4] = (v = parseInt(uuid2.slice(9, 13), 16)) >>> 8;
-      arr[5] = v & 255;
-      arr[6] = (v = parseInt(uuid2.slice(14, 18), 16)) >>> 8;
-      arr[7] = v & 255;
-      arr[8] = (v = parseInt(uuid2.slice(19, 23), 16)) >>> 8;
-      arr[9] = v & 255;
-      arr[10] = (v = parseInt(uuid2.slice(24, 36), 16)) / 1099511627776 & 255;
-      arr[11] = v / 4294967296 & 255;
-      arr[12] = v >>> 24 & 255;
-      arr[13] = v >>> 16 & 255;
-      arr[14] = v >>> 8 & 255;
-      arr[15] = v & 255;
-      return arr;
-    }
-    var _default = parse2;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/v35.js
-var require_v35 = __commonJS({
-  "node_modules/uuid/dist/v35.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = _default;
-    exports2.URL = exports2.DNS = void 0;
-    var _stringify = _interopRequireDefault(require_stringify2());
-    var _parse = _interopRequireDefault(require_parse2());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function stringToBytes(str) {
-      str = unescape(encodeURIComponent(str));
-      const bytes = [];
-      for (let i = 0; i < str.length; ++i) {
-        bytes.push(str.charCodeAt(i));
-      }
-      return bytes;
-    }
-    var DNS = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
-    exports2.DNS = DNS;
-    var URL = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
-    exports2.URL = URL;
-    function _default(name, version2, hashfunc) {
-      function generateUUID(value, namespace, buf, offset) {
-        if (typeof value === "string") {
-          value = stringToBytes(value);
-        }
-        if (typeof namespace === "string") {
-          namespace = (0, _parse.default)(namespace);
-        }
-        if (namespace.length !== 16) {
-          throw TypeError("Namespace must be array-like (16 iterable integer values, 0-255)");
-        }
-        let bytes = new Uint8Array(16 + value.length);
-        bytes.set(namespace);
-        bytes.set(value, namespace.length);
-        bytes = hashfunc(bytes);
-        bytes[6] = bytes[6] & 15 | version2;
-        bytes[8] = bytes[8] & 63 | 128;
-        if (buf) {
-          offset = offset || 0;
-          for (let i = 0; i < 16; ++i) {
-            buf[offset + i] = bytes[i];
-          }
-          return buf;
-        }
-        return (0, _stringify.default)(bytes);
-      }
-      try {
-        generateUUID.name = name;
-      } catch (err) {
-      }
-      generateUUID.DNS = DNS;
-      generateUUID.URL = URL;
-      return generateUUID;
-    }
-  }
-});
-
-// node_modules/uuid/dist/md5.js
-var require_md5 = __commonJS({
-  "node_modules/uuid/dist/md5.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _crypto = _interopRequireDefault(require("crypto"));
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function md5(bytes) {
-      if (Array.isArray(bytes)) {
-        bytes = Buffer.from(bytes);
-      } else if (typeof bytes === "string") {
-        bytes = Buffer.from(bytes, "utf8");
-      }
-      return _crypto.default.createHash("md5").update(bytes).digest();
-    }
-    var _default = md5;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/v3.js
-var require_v3 = __commonJS({
-  "node_modules/uuid/dist/v3.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _v = _interopRequireDefault(require_v35());
-    var _md = _interopRequireDefault(require_md5());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var v32 = (0, _v.default)("v3", 48, _md.default);
-    var _default = v32;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/v4.js
-var require_v4 = __commonJS({
-  "node_modules/uuid/dist/v4.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _rng = _interopRequireDefault(require_rng());
-    var _stringify = _interopRequireDefault(require_stringify2());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function v42(options, buf, offset) {
-      options = options || {};
-      const rnds = options.random || (options.rng || _rng.default)();
-      rnds[6] = rnds[6] & 15 | 64;
-      rnds[8] = rnds[8] & 63 | 128;
-      if (buf) {
-        offset = offset || 0;
-        for (let i = 0; i < 16; ++i) {
-          buf[offset + i] = rnds[i];
-        }
-        return buf;
-      }
-      return (0, _stringify.default)(rnds);
-    }
-    var _default = v42;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/sha1.js
-var require_sha1 = __commonJS({
-  "node_modules/uuid/dist/sha1.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _crypto = _interopRequireDefault(require("crypto"));
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function sha1(bytes) {
-      if (Array.isArray(bytes)) {
-        bytes = Buffer.from(bytes);
-      } else if (typeof bytes === "string") {
-        bytes = Buffer.from(bytes, "utf8");
-      }
-      return _crypto.default.createHash("sha1").update(bytes).digest();
-    }
-    var _default = sha1;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/v5.js
-var require_v5 = __commonJS({
-  "node_modules/uuid/dist/v5.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _v = _interopRequireDefault(require_v35());
-    var _sha = _interopRequireDefault(require_sha1());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    var v52 = (0, _v.default)("v5", 80, _sha.default);
-    var _default = v52;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/nil.js
-var require_nil = __commonJS({
-  "node_modules/uuid/dist/nil.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _default = "00000000-0000-0000-0000-000000000000";
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/version.js
-var require_version = __commonJS({
-  "node_modules/uuid/dist/version.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    exports2.default = void 0;
-    var _validate = _interopRequireDefault(require_validate());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
-    function version2(uuid2) {
-      if (!(0, _validate.default)(uuid2)) {
-        throw TypeError("Invalid UUID");
-      }
-      return parseInt(uuid2.substr(14, 1), 16);
-    }
-    var _default = version2;
-    exports2.default = _default;
-  }
-});
-
-// node_modules/uuid/dist/index.js
-var require_dist = __commonJS({
-  "node_modules/uuid/dist/index.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", {
-      value: true
-    });
-    Object.defineProperty(exports2, "v1", {
-      enumerable: true,
-      get: function() {
-        return _v.default;
-      }
-    });
-    Object.defineProperty(exports2, "v3", {
-      enumerable: true,
-      get: function() {
-        return _v2.default;
-      }
-    });
-    Object.defineProperty(exports2, "v4", {
-      enumerable: true,
-      get: function() {
-        return _v3.default;
-      }
-    });
-    Object.defineProperty(exports2, "v5", {
-      enumerable: true,
-      get: function() {
-        return _v4.default;
-      }
-    });
-    Object.defineProperty(exports2, "NIL", {
-      enumerable: true,
-      get: function() {
-        return _nil.default;
-      }
-    });
-    Object.defineProperty(exports2, "version", {
-      enumerable: true,
-      get: function() {
-        return _version.default;
-      }
-    });
-    Object.defineProperty(exports2, "validate", {
-      enumerable: true,
-      get: function() {
-        return _validate.default;
-      }
-    });
-    Object.defineProperty(exports2, "stringify", {
-      enumerable: true,
-      get: function() {
-        return _stringify.default;
-      }
-    });
-    Object.defineProperty(exports2, "parse", {
-      enumerable: true,
-      get: function() {
-        return _parse.default;
-      }
-    });
-    var _v = _interopRequireDefault(require_v1());
-    var _v2 = _interopRequireDefault(require_v3());
-    var _v3 = _interopRequireDefault(require_v4());
-    var _v4 = _interopRequireDefault(require_v5());
-    var _nil = _interopRequireDefault(require_nil());
-    var _version = _interopRequireDefault(require_version());
-    var _validate = _interopRequireDefault(require_validate());
-    var _stringify = _interopRequireDefault(require_stringify2());
-    var _parse = _interopRequireDefault(require_parse2());
-    function _interopRequireDefault(obj) {
-      return obj && obj.__esModule ? obj : { default: obj };
-    }
   }
 });
 
@@ -21517,18 +21026,6 @@ var import_path2 = __toModule(require("path"));
 var import_fs2 = __toModule(require("fs"));
 var import_express = __toModule(require_express2());
 
-// node_modules/uuid/wrapper.mjs
-var import_dist = __toModule(require_dist());
-var v1 = import_dist.default.v1;
-var v3 = import_dist.default.v3;
-var v4 = import_dist.default.v4;
-var v5 = import_dist.default.v5;
-var NIL = import_dist.default.NIL;
-var version = import_dist.default.version;
-var validate = import_dist.default.validate;
-var stringify = import_dist.default.stringify;
-var parse = import_dist.default.parse;
-
 // src/server/GameController.ts
 function GameController_default({ eventStore: eventStore2, models: models2 }) {
   return {
@@ -21540,7 +21037,7 @@ function GameController_default({ eventStore: eventStore2, models: models2 }) {
       throw { httpStatus: 404, message: "Game not found" };
     },
     createGame(req) {
-      const game = { ...req.body, id: v4() };
+      const game = { ...req.body };
       eventStore2.emit(models2.game.events.gameCreated(game));
       return game;
     },
