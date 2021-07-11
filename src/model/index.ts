@@ -46,10 +46,15 @@ export const defaultValues: WritableBaseParams = {
   electricityBiomass: 43.19 as TWh,
   electricityNuclear: 60.91 as TWh,
 
+  buildingsPrivateDemand: 544 as TWh,
+  buildingsIndustryDemand: 226 as TWh,
+  buildingsSourceBio: 130 as TWh,
+  buildingsSourceOil: 219 as TWh,
+  buildingsSourceTele: 58 as TWh,
+
   // 2020, https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele
   // https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
   co2emissionsIndustry: 186.793,
-  co2emissionsBuildings: 123.461,
   co2emissionsAgriculture: 67.936,
   co2emissionsOthers: 9.243,
 }
@@ -126,6 +131,22 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
         (this.airDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 + // [1]: 230 g/Pkm [2] backward: 222 g/Pkm
         (1.641 as MioTons) // costal and inland water transport
       )
+    },
+
+    get buildingsSourceGas(): TWh {
+      return (
+        this.buildingsPrivateDemand +
+        this.buildingsPrivateDemand -
+        (this.buildingsSourceBio + this.buildingsSourceOil + this.buildingsSourceTele)
+      )
+    },
+
+    get co2emissionsBuildings(): MioTons {
+      // Should initially equal 123.461 MioTons (https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019)
+      return this.buildingsSourceBio * 1 +
+        this.buildingsSourceGas * 0.247 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
+        this.buildingsSourceOil * 0.318 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
+        this.buildingsSourceTele * 0.16   // from https://www.klimaneutral-handeln.de/php/kompens-berechnen.php#rechner
     },
 
     get co2emissions(): number {

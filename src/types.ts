@@ -41,8 +41,13 @@ export type WritableBaseParams = {
   electricityBiomass: TWh
   electricityNuclear: TWh
 
+  buildingsPrivateDemand: TWh,
+  buildingsIndustryDemand: TWh,
+  buildingsSourceBio: TWh,
+  buildingsSourceOil: TWh,
+  buildingsSourceTele: TWh,
+
   co2emissionsIndustry: MioTons
-  co2emissionsBuildings: MioTons
   co2emissionsAgriculture: MioTons
   co2emissionsOthers: MioTons
 }
@@ -54,6 +59,8 @@ export type BaseParams = WritableBaseParams & {
   passengerTransportUsage: MioPsgrKm
   co2emissionsStreetVehicles: MioTons
   co2emissionsMobility: MioTons
+  buildingsSourceGas: TWh,
+  co2emissionsBuildings: MioTons
   co2emissions: MioTons
 }
 

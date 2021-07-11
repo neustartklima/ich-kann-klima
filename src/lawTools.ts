@@ -1,5 +1,5 @@
 import { allLaws } from "./laws"
-import { Game, LawId, MioPsgrKm, MioTons, Percent, TWh } from "./types"
+import { Game, LawId, MioPsgrKm, MioTons, Percent, TWh, WritableBaseParams } from "./types"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.
@@ -117,4 +117,34 @@ export function linear<T extends number>(zero: T, hundred: T, actual: T): Percen
 export function lawIsAccepted(game: Game, lawId: LawId) {
   if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
   return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear)
+}
+
+type ChangeValues = {
+  name: keyof WritableBaseParams
+  amount: number
+  condition?: boolean
+  onlyIf: (condition: boolean) => ChangeValues
+}
+
+export function createChange(data: WritableBaseParams) {
+  return (changes: ChangeValues[]): Partial<WritableBaseParams> => {
+    return Object.assign(
+      {},
+      ...changes
+        .filter((change) => change.condition)
+        .map((change) => ({ [change.name]: data[change.name] + change.amount }))
+    )
+  }
+}
+
+export function modify(name: keyof WritableBaseParams, amount: number): ChangeValues {
+  return {
+    name,
+    amount,
+    condition: true as boolean,
+    onlyIf(condition: boolean) {
+      this.condition = condition
+      return this
+    },
+  }
 }
