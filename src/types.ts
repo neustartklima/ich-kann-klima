@@ -108,6 +108,7 @@ export type EventDefinition = {
   apply(context: Context): void
   probability(store: Store): Percent
   acknowledged?: boolean
+  laws?: Law[]
 }
 
 export type Event = EventDefinition & {

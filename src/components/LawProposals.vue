@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue"
-import { Law, LawId } from "../types"
+import { LawId } from "../types"
 import { Actions, useStore } from "../store"
 import { mapGetters } from "vuex"
 
