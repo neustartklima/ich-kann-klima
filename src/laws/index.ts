@@ -2,7 +2,10 @@ import KohleverstromungEinstellen from "./KohleverstromungEinstellen"
 import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
 import KernenergienutzungVerlaengern from "./KernenergienutzungVerlaengern"
 import InitialAtomausstieg from "./InitialAtomausstieg"
-import DaemmungVonWohngebaeudenFoerdern from "./DaemmungVonWohngebaeudenFoerdern"
+import DaemmungAltbau1Percent from "./DaemmungAltbau1Percent"
+import DaemmungAltbau2Percent from "./DaemmungAltbau2Percent"
+import DaemmungAltbau4Percent from "./DaemmungAltbau4Percent"
+import DaemmungAltbauAbschaffen from "./DaemmungAltbauAbschaffen"
 import NahverkehrAusbauen from "./NahverkehrAusbauen"
 import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbschaffen"
 import NahverkehrKostenlos from "./NahverkehrKostenlos"
@@ -47,7 +50,10 @@ export const allLaws: Law[] = prepareModuleList({
   AusschreibungsverfahrenfuerWindkraftVervierfachen,
   AusschreibungsverfahrenfuerWindkraftVerachtfachen,
 
-  DaemmungVonWohngebaeudenFoerdern,
+  DaemmungAltbau1Percent,
+  DaemmungAltbau2Percent,
+  DaemmungAltbau4Percent,
+  DaemmungAltbauAbschaffen,
 
   // Sanierungsquote (1% pro Jahr)
   // Sanierungsquote (2% pro Jahr)

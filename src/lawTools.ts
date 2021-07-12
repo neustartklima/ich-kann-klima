@@ -1,5 +1,5 @@
 import { allLaws } from "./laws"
-import { Game, LawId, MioPsgrKm, MioTons, Percent, TWh, WritableBaseParams } from "./types"
+import { Game, Law, LawId, LawReference, MioPsgrKm, MioTons, Percent, TWh, WritableBaseParams } from "./types"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.
@@ -93,7 +93,7 @@ export const changeTWhBy = changeBy<TWh>(0, undefined)
 export const changeMioPsgrKmBy = changeBy<MioPsgrKm>(0, undefined)
 
 /**
- * Linear interpolation returning a percentage to be used in priority-funkctions in laws.
+ * Linear interpolation returning a percentage to be used in priority-functions in laws.
  * @param zero Value for which to return 0%.
  * @param hundred Value for which to return 100%.
  * @param actual The actual value for which to calculate the percentage.
@@ -114,9 +114,16 @@ export function linear<T extends number>(zero: T, hundred: T, actual: T): Percen
  * @returns True if law was accepted, false otherwise
  * @throws Error if no law with the given ID is defined.
  */
-export function lawIsAccepted(game: Game, lawId: LawId) {
+export function lawIsAccepted(game: Game, lawId: LawId): boolean {
   if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
   return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear)
+}
+
+export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | undefined {
+  const lawRef = lawRefs
+    .sort((law1, law2) => law2.effectiveSince - law1.effectiveSince)
+    .find((law) => matcher.test(law.lawId))
+  return lawRef?.lawId
 }
 
 type ChangeValues = {
