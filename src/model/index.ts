@@ -113,9 +113,8 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       const carNonrenewable: MioPsgrKm = this.carUsage * (1 - this.carRenewablePercentage / 100)
       // https://www.vdv.de/vdv-statistik-2019.pdfx page 11 would lead to about 160 g/Pkm
       const co2emissionsCars: MioTons = (carNonrenewable * this.carEmissionFactor) / 1000000
-      // 47.4 MioTons for 2019 https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr
-      // ...but using this to adjust to the correct total emissions
-      // TODO: Check, what is correct.
+      // TODO: #72 Source claims 47,4 MioTons per year in 2019. We use 14.4 MioTons to adjust to the correct total emissions street sehicles.
+      // Source: https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr
       const co2emissionsTrucks: MioTons = 14.4
       return co2emissionsCars + co2emissionsTrucks
     },
@@ -133,20 +132,22 @@ export function createBaseValues(values: WritableBaseParams): BaseParams {
       )
     },
 
+    get buildingsDemand(): TWh {
+      return this.buildingsPrivateDemand + this.buildingsIndustryDemand
+    },
+
     get buildingsSourceGas(): TWh {
-      return (
-        this.buildingsPrivateDemand +
-        this.buildingsPrivateDemand -
-        (this.buildingsSourceBio + this.buildingsSourceOil + this.buildingsSourceTele)
-      )
+      return this.buildingsDemand - (this.buildingsSourceBio + this.buildingsSourceOil + this.buildingsSourceTele)
     },
 
     get co2emissionsBuildings(): MioTons {
       // Should initially equal 123.461 MioTons (https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019)
-      return this.buildingsSourceBio * 1 +
+      return (
+        this.buildingsSourceBio * 0 +
         this.buildingsSourceGas * 0.247 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
         this.buildingsSourceOil * 0.318 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
-        this.buildingsSourceTele * 0.16   // from https://www.klimaneutral-handeln.de/php/kompens-berechnen.php#rechner
+        this.buildingsSourceTele * 0.16
+      ) // from https://www.klimaneutral-handeln.de/php/kompens-berechnen.php#rechner
     },
 
     get co2emissions(): number {

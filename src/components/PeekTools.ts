@@ -58,6 +58,7 @@ const peekOptions: PeekOptions = {
   passengerTransportUsage: o("MioPsgrKm", false),
   buildingsIndustryDemand: o("TWh/a", true),
   buildingsPrivateDemand: o("TWh/a", true),
+  buildingsDemand: o("TWh/a", false),
   buildingsSourceBio: o("TWh/a", true),
   buildingsSourceOil: o("TWh/a", true),
   buildingsSourceTele: o("TWh/a", true),

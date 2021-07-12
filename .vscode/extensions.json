@@ -10,6 +10,7 @@
     "humao.rest-client",
     "hbenl.vscode-test-explorer",
     "johnsoncodehk.volar",
-    "buster.ndjson-colorizer"
+    "buster.ndjson-colorizer",
+    "github.vscode-pull-request-github"
   ]
 }
