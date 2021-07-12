@@ -28,7 +28,8 @@ export default function({
         .filter((law) => law.labels?.includes("initial"))
         .map((law) => ({ lawId: law.id, effectiveSince: game.currentYear }))
       fillUpLawProposals(game, allLaws)
-
+      storage.setItem("game", JSON.stringify(game))
+      
       try {
         api.createGame(game) // We don't await here - creating the game on the server is done in the background
       } catch (error) {
