@@ -21082,6 +21082,26 @@ function lawIsAccepted(game, lawId) {
     throw new Error("Unknown law ID " + lawId + " used in a law.");
   return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear);
 }
+function getActiveLaw(lawRefs, matcher) {
+  const lawRef = lawRefs.sort((law1, law2) => law2.effectiveSince - law1.effectiveSince).find((law) => matcher.test(law.lawId));
+  return lawRef?.lawId;
+}
+function createChange(data) {
+  return (changes) => {
+    return Object.assign({}, ...changes.filter((change) => change.condition).map((change) => ({ [change.name]: data[change.name] + change.amount })));
+  };
+}
+function modify(name, amount) {
+  return {
+    name,
+    amount,
+    condition: true,
+    onlyIf(condition) {
+      this.condition = condition;
+      return this;
+    }
+  };
+}
 
 // src/laws/KohleverstromungEinstellen.ts
 var KohleverstromungEinstellen_default = defineLaw({
@@ -21140,8 +21160,12 @@ var defaultValues = {
   electricityBrownCoal: 82.13,
   electricityBiomass: 43.19,
   electricityNuclear: 60.91,
+  buildingsPrivateDemand: 544,
+  buildingsIndustryDemand: 226,
+  buildingsSourceBio: 130,
+  buildingsSourceOil: 219,
+  buildingsSourceTele: 58,
   co2emissionsIndustry: 186.793,
-  co2emissionsBuildings: 123.461,
   co2emissionsAgriculture: 67.936,
   co2emissionsOthers: 9.243
 };
@@ -21168,6 +21192,15 @@ function createBaseValues(values) {
     },
     get co2emissionsMobility() {
       return this.co2emissionsStreetVehicles + this.publicLocalCapacity * 65 / 1e6 + this.publicNationalCapacity * 32 / 1e6 + this.airDomesticUsage * 222 / 1e6 + 1.641;
+    },
+    get buildingsDemand() {
+      return this.buildingsPrivateDemand + this.buildingsIndustryDemand;
+    },
+    get buildingsSourceGas() {
+      return this.buildingsDemand - (this.buildingsSourceBio + this.buildingsSourceOil + this.buildingsSourceTele);
+    },
+    get co2emissionsBuildings() {
+      return this.buildingsSourceBio * 0 + this.buildingsSourceGas * 0.247 + this.buildingsSourceOil * 0.318 + this.buildingsSourceTele * 0.16;
     },
     get co2emissions() {
       return this.co2emissionsEnergy + this.co2emissionsIndustry + this.co2emissionsMobility + this.co2emissionsBuildings + this.co2emissionsAgriculture + this.co2emissionsOthers;
@@ -21232,47 +21265,93 @@ var InitialAtomausstieg_default = defineLaw({
   }
 });
 
-// src/laws/WindenergieSubventionieren.ts
-var WindenergieSubventionieren_default = defineLaw({
-  title: "Windenergie subventionieren",
-  description: "Garantierte Einspeiseverg\xFCtung f\xFCr neue und erneuterte Windanlagen",
-  labels: ["WindkraftSubvention"],
-  removeLawsWithLabels: ["WindkraftSubvention"],
-  treatAfterLabels: ["WindkraftAbstandsregel"],
+// src/laws/DaemmungAltbau1Percent.ts
+var DaemmungAltbau1Percent_default = defineLaw({
+  title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
+  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit verg\xFCnstigten Krediten gef\xF6rdert.",
   effects(data, startYear2, currentYear) {
-    const onshoreNew = Math.min(18.8, data.electricityWindOnshoreMaxNew);
-    const offshoreNew = 1.2;
-    return {
-      electricityWind: onshoreNew + offshoreNew,
-      stateDebt: 1
-    };
+    const applyChange = createChange(data);
+    const costsPerYear = 0.5;
+    const yearsActive = currentYear - startYear2;
+    return applyChange([
+      modify("stateDebt", costsPerYear),
+      modify("buildingsSourceBio", -1).onlyIf(yearsActive >= 2),
+      modify("buildingsSourceOil", -1).onlyIf(yearsActive >= 2),
+      modify("buildingsSourceTele", -1).onlyIf(yearsActive >= 2),
+      modify("buildingsPrivateDemand", -1).onlyIf(yearsActive >= 2)
+    ]);
   },
   priority(game) {
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const percentage = electricityRenewable / game.values.electricityDemand * 100;
-    return linear(100, 0, percentage);
+    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
+    return linear(15, 25, buildingsPercentage);
   }
 });
 
-// src/laws/DaemmungVonWohngebaeudenFoerdern.ts
-var DaemmungVonWohngebaeudenFoerdern_default = defineLaw({
+// src/laws/DaemmungAltbau2Percent.ts
+var DaemmungAltbau2Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
-  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit g\xFCnstigen Krediten gef\xF6rdert.",
+  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit einem zinslosen Kredit und einem Zuschuss von 20% der Kosten gef\xF6rdert.",
   effects(data, startYear2, currentYear) {
+    const applyChange = createChange(data);
     const costsPerYear = 1;
     const yearsActive = currentYear - startYear2;
-    if (yearsActive >= 2) {
-      return {
-        stateDebt: costsPerYear,
-        co2emissionsBuildings: changeEmissionsBy(data.co2emissionsBuildings, -2)
-      };
-    } else {
-      return {
-        stateDebt: costsPerYear
-      };
-    }
+    return applyChange([
+      modify("stateDebt", costsPerYear),
+      modify("buildingsSourceBio", -2).onlyIf(yearsActive >= 2),
+      modify("buildingsSourceOil", -2).onlyIf(yearsActive >= 2),
+      modify("buildingsSourceTele", -2).onlyIf(yearsActive >= 2),
+      modify("buildingsPrivateDemand", -2).onlyIf(yearsActive >= 2),
+      modify("popularity", 5).onlyIf(yearsActive >= 2)
+    ]);
   },
   priority(game) {
+    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
+    return linear(15, 25, buildingsPercentage);
+  }
+});
+
+// src/laws/DaemmungAltbau4Percent.ts
+var DaemmungAltbau4Percent_default = defineLaw({
+  title: "D\xE4mmung von Wohngeb\xE4uden sehr stark f\xF6rdern",
+  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungspl\xE4tze im Handwerk geschaffen durch einen Zuschuss von 500\u20AC pro Monat, damit der zu erwartende Bauboom bew\xE4ltigt werden kann.",
+  effects(data, startYear2, currentYear) {
+    const applyChange = createChange(data);
+    const costsPerYear = 3;
+    const yearsActive = currentYear - startYear2;
+    return applyChange([
+      modify("stateDebt", costsPerYear),
+      modify("buildingsSourceBio", -4).onlyIf(yearsActive >= 2),
+      modify("buildingsSourceOil", -4).onlyIf(yearsActive >= 2),
+      modify("buildingsSourceTele", -4).onlyIf(yearsActive >= 2),
+      modify("buildingsPrivateDemand", -4).onlyIf(yearsActive >= 2),
+      modify("popularity", 10).onlyIf(yearsActive === 1),
+      modify("popularity", 15).onlyIf(yearsActive >= 2)
+    ]);
+  },
+  priority(game) {
+    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
+    return linear(15, 25, buildingsPercentage);
+  }
+});
+
+// src/laws/DaemmungAltbauAbschaffen.ts
+var DaemmungAltbauAbschaffen_default = defineLaw({
+  title: "D\xE4mmung von Wohngeb\xE4uden abschaffen",
+  description: "Wir geben den B\xFCrgern die Freiheit zur\xFCck, selbst zu entscheiden, ob sie ihr Haus d\xE4mmen wollen und lassen die F\xF6rderung auslaufen",
+  effects(data, startYear2, currentYear) {
+    const applyChange = createChange(data);
+    return applyChange([
+      modify("stateDebt", -0.5),
+      modify("buildingsSourceBio", -0.5),
+      modify("buildingsSourceOil", -0.5),
+      modify("buildingsSourceTele", -0.5),
+      modify("buildingsPrivateDemand", -0.5)
+    ]);
+  },
+  priority(game) {
+    const currentActiveLawId = getActiveLaw(game.acceptedLaws, /^DaemmungAltbau/);
+    if (!currentActiveLawId || currentActiveLawId === "DaemmmungAltbauAbschaffen")
+      return 0;
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
     return linear(15, 25, buildingsPercentage);
   }
@@ -21587,6 +21666,25 @@ var Tempolimit100AufAutobahnen_default = defineLaw({
   }
 });
 
+// src/laws/TempolimitAufAutobahnenAussitzen.ts
+var TempolimitAufAutobahnenAussitzen_default = defineLaw({
+  title: "Generelles Tempolimit nicht umsetzen",
+  description: "Die EU hat das generelle Tempolkmit zwar beschlossen, wir setzen es aber nicht um. Das k\xF6nnte zwar Strafen oder gar Zwangsma\xDFnahmen bewirken, aber das Risiko der gef\xE4hrdeten Wiederwahl ist zu gro\xDF.",
+  labels: ["TempolimitAutobahn"],
+  removeLawsWithLabels: ["TempolimitAutobahn"],
+  effects(data, startYear2, currentYear) {
+    return {
+      stateDebt: -10,
+      popularity: changePercentBy(data.popularity, -2)
+    };
+  },
+  priority(game) {
+    const v = game.values;
+    const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
+    return linear(10, 60, relCarPercentage);
+  }
+});
+
 // src/laws/AbstandsregelnFuerWindkraftWieBisher.ts
 var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
   title: "Abstandsregeln f\xFCr Windkraft wie bisher",
@@ -21640,6 +21738,25 @@ var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
     const v = game.values;
     const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
     return linear(80, 40, relWindPercentage);
+  }
+});
+
+// src/laws/AbstandsregelnFuerWindkraftVerschaerfen.ts
+var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft versch\xE4rfen",
+  description: "Der Mindestabstand zwischen Wind Energie Anlagen und Wohngeb\xE4uden im Innenbereich muss das Zehnfache der Gesamth\xF6he der Wind Energie Anlagen betragen (10H-Regel)",
+  labels: ["WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effects(data, startYear2, currentYear) {
+    return {
+      popularity: startYear2 === currentYear ? changePercentBy(data.popularity, 5) : 0,
+      electricityWindOnshoreMaxNew: 0.42 - data.electricityWindOnshoreMaxNew
+    };
+  },
+  priority(game) {
+    const v = game.values;
+    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
+    return linear(0, 100, relWindPercentage);
   }
 });
 
@@ -21741,32 +21858,36 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
 
 // src/laws/index.ts
 var allLaws = prepareModuleList({
+  InitialAtomausstieg: InitialAtomausstieg_default,
   KohleverstromungEinstellen: KohleverstromungEinstellen_default,
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
   KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
-  InitialAtomausstieg: InitialAtomausstieg_default,
-  WindenergieSubventionieren: WindenergieSubventionieren_default,
-  DaemmungVonWohngebaeudenFoerdern: DaemmungVonWohngebaeudenFoerdern_default,
-  NahverkehrAusbauen: NahverkehrAusbauen_default,
-  FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default,
-  NahverkehrKostenlos: NahverkehrKostenlos_default,
-  AutosInInnenstaedtenVerbieten: AutosInInnenstaedtenVerbieten_default,
-  FernverkehrVerbindungenAusbauen: FernverkehrVerbindungenAusbauen_default,
-  WasserstofftechnologieFoerdern: WasserstofftechnologieFoerdern_default,
-  AbschaffungDerMineraloelsteuer: AbschaffungDerMineraloelsteuer_default,
-  AusbauVonStrassen: AusbauVonStrassen_default,
-  DieselPrivilegAbgeschaffen: DieselPrivilegAbgeschaffen_default,
-  DienstwagenPrivilegAbgeschaffen: DienstwagenPrivilegAbgeschaffen_default,
-  Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
-  Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
-  Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
+  AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
   AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
   AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
   AbstandsregelnFuerWindkraftAbschaffen: AbstandsregelnFuerWindkraftAbschaffen_default,
   AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
   AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
   AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
-  AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default
+  AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default,
+  DaemmungAltbau1Percent: DaemmungAltbau1Percent_default,
+  DaemmungAltbau2Percent: DaemmungAltbau2Percent_default,
+  DaemmungAltbau4Percent: DaemmungAltbau4Percent_default,
+  DaemmungAltbauAbschaffen: DaemmungAltbauAbschaffen_default,
+  NahverkehrKostenlos: NahverkehrKostenlos_default,
+  AutosInInnenstaedtenVerbieten: AutosInInnenstaedtenVerbieten_default,
+  WasserstofftechnologieFoerdern: WasserstofftechnologieFoerdern_default,
+  NahverkehrAusbauen: NahverkehrAusbauen_default,
+  FernverkehrVerbindungenAusbauen: FernverkehrVerbindungenAusbauen_default,
+  AusbauVonStrassen: AusbauVonStrassen_default,
+  AbschaffungDerMineraloelsteuer: AbschaffungDerMineraloelsteuer_default,
+  DieselPrivilegAbgeschaffen: DieselPrivilegAbgeschaffen_default,
+  DienstwagenPrivilegAbgeschaffen: DienstwagenPrivilegAbgeschaffen_default,
+  Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
+  Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
+  Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
+  TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default,
+  FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default
 });
 
 // src/server/DecisionController.ts
