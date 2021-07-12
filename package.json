@@ -80,7 +80,8 @@
     ],
     "reporter": [
       "html",
-      "text-summary"
+      "text-summary",
+      "lcov"
     ],
     "reporter-dir": "coverage"
   }
