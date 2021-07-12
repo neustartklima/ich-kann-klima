@@ -12,27 +12,44 @@ describe("createBaseValues(defaultParams)", () => {
     iniVals.passengerTransportUsage.should.be.approximately(1168700, 100)
   })
 
+  // Source: https://cryptpad.fr/file/#/3/file/c831e23bd4c44f6c2e0adcf138af4ca2f79ee61bbb81600b/
+  it("should return 770 THh/a for total heat demand for buildings", () => {
+    iniVals.buildingsDemand.should.be.approximately(770, 0.1)
+  })
+
+  // TODO: #72 Source claims 359 TWh per year in 2019. Calculation results in 363 TWh.
+  // Source: https://cryptpad.fr/file/#/3/file/c831e23bd4c44f6c2e0adcf138af4ca2f79ee61bbb81600b/
+  it("should return 359 THh/a for total heat produced with gas", () => {
+    iniVals.buildingsSourceGas.should.be.approximately(363, 0.1)
+  })
+
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
   it("should return 159.696 MioTons for co2emissions due to street vehicles", () => {
     iniVals.co2emissionsStreetVehicles.should.be.approximately(159.696, 0.1)
   })
 
-  // TODO: Source claims 164.322 MioTons per year in 2019. Sums to 173.0 MioTons.
+  // TODO: #72 Source claims 164.322 MioTons per year in 2019. Sums to 173.0 MioTons.
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
   it("should return 164.322 MioTons for co2emissionsMobility", () => {
     iniVals.co2emissionsMobility.should.be.approximately(173.0, 0.1)
   })
 
-  // TODO: Source claims 258.043 MioTons per year in 2019. Sums only to 151.4 MioTons.
+  // TODO: #72 Source claims 258.043 MioTons per year in 2019. Sums only to 151.4 MioTons.
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
   it("should return 258.043 MioTons for co2emissionsEnergy", () => {
     iniVals.co2emissionsEnergy.should.be.approximately(151.4, 0.1)
   })
 
-  // TODO: Source claims 809.799 MioTons per year in 2019. Sums to 711.8 MioTons.
+  // TODO: #72 Source claims 123.461 MioTons per year in 2019. Sums to 168.6 MioTons.
+  // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
+  it("should return 123.461 MioTons for co2emissionsBuildings", () => {
+    iniVals.co2emissionsBuildings.should.be.approximately(168.6, 0.1)
+  })
+
+  // TODO: #72 Source claims 809.799 MioTons per year in 2019. Sums to 757.0 MioTons.
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019 without LULUCF
   it("should return 809.799 MioTons for co2emissions", () => {
-    iniVals.co2emissions.should.be.approximately(711.8, 0.1)
+    iniVals.co2emissions.should.be.approximately(757.0, 0.1)
   })
 })
 
