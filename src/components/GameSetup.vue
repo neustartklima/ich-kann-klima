@@ -15,17 +15,14 @@ export default defineComponent({
 </script>
 
 <template>
+  <h1>#ich-kann-klima</h1>
   <div class="game-setup">
-    <div class="wrapper">
-      <h1>#ich-kann-klima</h1>
-      
-      <EventList />
+    <img src="../assets/background.jpg">
 
-      <slot />
-    </div>
-    <div class="indicators">
+    <slot />
+    <!--div class="indicators">
       <CurrentIndicators />
-    </div>
+    </div-->
   </div>
   <div class="peek">
     <PeekInside v-if="devMode" />
@@ -34,22 +31,16 @@ export default defineComponent({
 
 <style lang="scss">
 .game-setup {
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin: auto;
   justify-content: left;
+  position: relative;
 
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;
   }
-}
-
-.wrapper {
-  max-height: 100%;
-  width: 800px;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 .peek {
