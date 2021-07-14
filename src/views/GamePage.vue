@@ -48,14 +48,14 @@ export default defineComponent({
   <GameSetup>
     <LawProposals />
 
-    <h2>Beschlossene Gesetze</h2>
-    <AcceptedLaws />
+    <!--h2>Beschlossene Gesetze</h2>
+    <AcceptedLaws /-->
 
-    <p>Wenn Du fertig bist, wechsle zum nächsten Jahr und sieh' Dir die Auswirkungen an.</p>
+    <!--p>Wenn Du fertig bist, wechsle zum nächsten Jahr und sieh' Dir die Auswirkungen an.</p>
 
     <div class="button-bar">
       <button @click="advanceYear">Jahr abschließen</button>
-    </div>
+    </div-->
   </GameSetup>
 </template>
 

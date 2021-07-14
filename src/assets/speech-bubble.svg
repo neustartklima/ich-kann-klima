@@ -1,0 +1,16 @@
+<svg fill="#000000" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 400 52">
+<path
+  d="
+  M0 18
+  L7 14 29 14
+  S30 14 30 13
+  L30 2
+  S30 1 29 1
+  L2 1
+  S1 1 1 2
+  L1 13
+  S1 14 2 14
+  L4 14
+  Z"
+  stroke="black" fill="none" stroke-width="0.3" stroke-linejoin="round"  />
+</svg>

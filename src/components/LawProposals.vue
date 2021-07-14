@@ -15,6 +15,7 @@ export default defineComponent({
     return {
       acceptedIds: [] as LawId[],
       rejectedIds: [] as LawId[],
+      poppedUp: false,
     }
   },
 
@@ -47,12 +48,15 @@ export default defineComponent({
       this.store.dispatch(action, { lawId })
     },
 
+    toggleUpDown() {
+      this.poppedUp = !this.poppedUp
+    }
   },
 })
 </script>
 
 <template>
-  <div class="ProposedLaws">
+  <div class="ProposedLaws" :class="{ poppedUp }" @click="toggleUpDown">
     <div
       v-for="law in proposedLaws"
       :key="law.id"
@@ -78,8 +82,18 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .ProposedLaws {
+  position: absolute;
   display: flex;
   flex-wrap: wrap;
+  transform-origin: bottom center;
+  transform: perspective(3000px) rotateX(75deg) scale(0.5);
+  --transitiontime: 0.5s;
+  transition: all var(--transitiontime);
+  margin: 0 2% 11.5% 0;
+
+  &.poppedUp {
+    transform: none;
+  }
 
   h3 {
     margin-top: 0;
@@ -90,8 +104,12 @@ export default defineComponent({
     width: 33%;
     padding: 0.5rem;
     box-sizing: border-box;
+    margin-left: -20%;
 
-    --transitiontime: 0.5s;
+    &:first-of-type {
+      margin-left: 0;
+    }
+
     /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
     animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
     &.removing {
@@ -130,10 +148,13 @@ export default defineComponent({
     }
 
     > label > div {
+      height: 100%;
       border: 1px solid orange;
       border-radius: 20px;
       padding: 0.5rem;
       position: relative;
+      background: white;
+      box-shadow: 5px 5px 10px #cccccc;
 
       .button-bar {
         position: absolute;
