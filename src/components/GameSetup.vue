@@ -41,6 +41,10 @@ export default defineComponent({
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;
   }
+
+  > img {
+    max-height: calc(100vh - 4rem);
+  }
 }
 
 .peek {
