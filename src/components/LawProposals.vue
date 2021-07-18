@@ -1,9 +1,10 @@
 <script lang="ts">
 import { defineComponent } from "vue"
-import { LawId } from "../types"
-import { Actions, useStore } from "../store"
+import { Law, LawId, LawView } from "../types"
 import { mapGetters } from "vuex"
 import LawCard from "./LawCard.vue"
+import { getZIndexes } from "../lib/utils"
+import { useStore } from "../store"
 
 export default defineComponent({
   components: { LawCard },
@@ -15,8 +16,7 @@ export default defineComponent({
 
   data() {
     return {
-      acceptedIds: [] as LawId[],
-      rejectedIds: [] as LawId[],
+      zIndexes: [] as Array<number>,
       poppedUp: false,
     }
   },
@@ -24,9 +24,20 @@ export default defineComponent({
   computed: {
     ...mapGetters(["proposedLaws"]),
 
-    removing() {
-      return (id: LawId) => this.acceptedIds.includes(id) || this.rejectedIds.includes(id)
+    lawsToShow(): LawView[] {
+      if (!this.zIndexes.length) {
+        this.zIndexes = getZIndexes(this.proposedLaws.length, 0)
+      }
+      return this.proposedLaws.map((law: Law, pos: number) => ({
+        ...law,
+        zIndex: this.zIndexes[pos],
+        pos,
+      }))
     },
+
+    transform(): string {
+      return "rotate(3deg)"
+    }
   },
 
   methods: {
@@ -35,10 +46,9 @@ export default defineComponent({
       this.poppedUp = false
     },
 
-    reject(lawId: LawId) {
-      this.store.dispatch("rejectLaw", { lawId })
-      this.poppedUp = false
-    },
+    select(pos: number) {
+      this.zIndexes = getZIndexes(this.proposedLaws.length, pos)
+    }
   },
 })
 </script>
@@ -46,12 +56,13 @@ export default defineComponent({
 <template>
   <div class="ProposedLaws" :class="{ poppedUp }" @click="poppedUp = true">
     <LawCard
-      v-for="law in proposedLaws"
-      :key="law.id"
+      v-for="(law, pos) in lawsToShow"
+      :key="pos"
       :law="law"
       :selectable="poppedUp"
-      @accept="accept"
-      @reject="reject"
+      :numCards="lawsToShow.length"
+      @accepted="() => accept(law.id)"
+      @selected="() => select(pos)"
     />
   </div>
 </template>

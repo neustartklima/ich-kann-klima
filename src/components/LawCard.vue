@@ -1,16 +1,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue"
-import { Law, LawId } from "../types"
-import { Actions, useStore } from "../store"
+import { LawView } from "../types"
+import { useStore } from "../store"
 import { mapGetters } from "vuex"
 
 export default defineComponent({
   props: {
-    law: {
-      type: Object as PropType<Law>,
-      required: true,
-    },
-    selectable: Boolean,
+    law: { type: Object as PropType<LawView>, required: true },
+    selectable: { type: Boolean, required: true },
+    numCards: { type: Number, required: true },
   },
 
   setup() {
@@ -21,55 +19,56 @@ export default defineComponent({
 
   data() {
     return {
-      acceptedIds: [] as LawId[],
-      rejectedIds: [] as LawId[],
-      poppedUp: false,
+      accepted: false,
     }
   },
 
   computed: {
     ...mapGetters(["proposedLaws"]),
 
-    removing() {
-      return (id: LawId) => this.acceptedIds.includes(id) || this.rejectedIds.includes(id)
+    zIndex(): number {
+      return this.law.zIndex
+    },
+
+    transform(): string {
+      const rotation = 2 * (this.law.pos - this.numCards / 2)
+      const y = Math.abs(this.numCards / 2 - this.law.pos) * 10
+      return `rotate(${rotation}deg) translateY(${y}px)`
     },
   },
 
   methods: {
-    accept(lawId: LawId) {
-      this.acceptedIds.push(lawId)
+    select() {
+      this.$emit('selected')
     },
 
-    decline(lawId: LawId) {
-      this.rejectedIds.push(lawId)
+    accept() {
+      this.accepted = true
     },
 
-    handle(lawId: LawId) {
-      this.removeAndDispatch(lawId, this.acceptedIds, "accept")
-      this.removeAndDispatch(lawId, this.rejectedIds, "reject")
-    },
-
-    removeAndDispatch(lawId: LawId, activeIds: LawId[], action: "accept" | "reject") {
-      const i = activeIds.indexOf(lawId)
-      if (i < 0) return
-      activeIds.splice(i, 1)
-      this.$emit(action, { lawId })
+    sendAccept() {
+      this.$emit("accepted", this.law.id)
     },
   },
 })
 </script>
 
 <template>
-  <div class="Law" :class="{ removing: removing(law.id) }" @animationend="handle(law.id)">
-    <label :for="law.id">
-      <input type="radio" name="selectedLaw" :id="law.id" v-if="selectable" />
+  <div
+    class="Law"
+    :class="{ accepted }"
+    :style="{ zIndex, transform }"
+    @click="select"
+    @animationend="sendAccept"
+  >
+    <label>
+      <input type="radio" v-if="selectable" />
       <div>
         <h3>{{ law.title }}</h3>
         <div>{{ law.description }}</div>
 
         <div class="button-bar" v-if="selectable">
-          <button class="accept" @click="accept(law.id)">✓</button>
-          <button class="decline" @click="decline(law.id)">✗</button>
+          <button class="accept" @click="accept">✓</button>
         </div>
       </div>
     </label>
@@ -89,7 +88,7 @@ export default defineComponent({
 
   /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
   animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
-  &.removing {
+  &.accepted {
     animation-name: twistOut;
   }
 
@@ -139,7 +138,7 @@ export default defineComponent({
 
     .button-bar {
       position: absolute;
-      top: 10px;
+      bottom: 10px;
       right: 10px;
     }
 
@@ -160,11 +159,6 @@ export default defineComponent({
     .accept {
       font-size: 28px;
       color: green;
-    }
-
-    .decline {
-      font-size: 30px;
-      color: red;
     }
   }
 }

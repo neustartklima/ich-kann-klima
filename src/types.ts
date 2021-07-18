@@ -108,6 +108,7 @@ export type LawReference = {
 }
 
 export type AcceptedLaw = Law & { effectiveSince: number }
+export type LawView = Law & { pos: number; zIndex: number }
 
 export type EventId = string
 export type EventDefinition = {
