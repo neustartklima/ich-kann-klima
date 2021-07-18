@@ -1,18 +1,30 @@
-import SocialMedia from "./SocialMedia"
+import AbstandsregelnWindkraft from "./AbstandsregelnWindkraft"
+import Altbausanierung from "./Altbausanierung"
 import Bestechung from "./bestechung"
-import WahlVerloren from "./WahlVerloren"
+import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
-import TimesUp from "./TimesUp"
 import Hitzehölle from "./Hitzehölle"
+import NewYear from "./NewYear"
+import SocialMedia from "./SocialMedia"
+import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
+import TimesUp from "./TimesUp"
+import WahlVerloren from "./WahlVerloren"
+import WindkraftAusschreibung from "./WindkraftAusschreibung"
 
 import { prepareModuleList } from "../Factory"
 import { Event } from "../types"
 
 export const allEvents = prepareModuleList({
-  SocialMedia,
+  AbstandsregelnWindkraft,
+  Altbausanierung,
   Bestechung,
-  WahlVerloren,
+  EnergieStrategie,
   FinanzKollaps,
-  TimesUp,
   Hitzehölle,
+  NewYear,
+  SocialMedia,
+  TempolimitAufAutobahnen,
+  TimesUp,
+  WahlVerloren,
+  WindkraftAusschreibung,
 }) as Event[]
