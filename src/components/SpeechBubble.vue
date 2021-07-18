@@ -1,52 +1,9 @@
-<script lang="ts">import { defineComponent, PropType } from "@vue/runtime-core";
-
-const fontSize = 20
-const lineHeight = fontSize * 1.4
-const radius = lineHeight
-const strokeWidth = 5
-
+<script lang="ts">
+import { defineComponent } from "@vue/runtime-core";
 export default defineComponent({
   props: {
     text: String
   },
-
-  data() {
-    return {
-      fontSize,
-      lineHeight,
-      radius,
-      strokeWidth
-    }
-  },
-
-  computed: {
-    width(): number {
-      return 400
-    },
-
-    height(): number {
-      return this.text?.length ? (this.text?.length + 1) * lineHeight : 0
-    },
-
-    path(): string {
-      if (!this.height) {
-        return ""
-      }
-      const radius = 8
-      return `M 0 ${this.height + lineHeight}
-              L ${radius * 4} ${this.height} ${this.width - radius} ${this.height}
-              S ${this.width} ${this.height} ${this.width} ${this.height - radius}
-              L ${this.width} ${radius}
-              S ${this.width} ${strokeWidth / 2} ${this.width - radius} ${strokeWidth / 2}
-              L ${radius} ${strokeWidth / 2}
-              S ${strokeWidth / 2} ${strokeWidth / 2} ${strokeWidth / 2} ${radius}
-              L ${strokeWidth / 2} ${this.height - radius}
-              S ${strokeWidth / 2} ${this.height} ${radius} ${this.height}
-              L ${radius * 2} ${this.height}
-              Z
-      `
-    }
-  }
 })
 </script>
 
@@ -60,14 +17,14 @@ div {
   position: absolute;
   top: 25%;
   left: 10%;
+  transform: translateY(-50%);
   z-index: 999;
   border: 5px solid black;
+  border-radius: 1rem;
   font-weight: bold;
   font-size: 20px;
   padding: 0.7rem 1rem;
   background: white;
-  border-radius: 1rem;
-  transform: translateY(-50%);
 
   &::before,
   &::after {
