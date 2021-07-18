@@ -1,13 +1,11 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
-import { Event } from "../types"
-import EventList from "./EventList.vue"
 import PeekInside from "./PeekInside.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 
 export default defineComponent({
-  components: { CurrentIndicators, EventList, PeekInside, SpeechBubble },
+  components: { CurrentIndicators, PeekInside, SpeechBubble },
   data() {
     return {
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
