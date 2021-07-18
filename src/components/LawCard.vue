@@ -32,7 +32,7 @@ export default defineComponent({
 
     transform(): string {
       const rotation = 2 * (this.law.pos - this.numCards / 2)
-      const y = Math.abs(this.numCards / 2 - this.law.pos) * 10
+      const y = Math.abs(this.numCards / 2 - this.law.pos) * 20
       return `rotate(${rotation}deg) translateY(${y}px)`
     },
   },
@@ -79,6 +79,7 @@ export default defineComponent({
 .Law {
   position: relative;
   width: 33%;
+  max-width: 400px;
   padding: 0.5rem;
   box-sizing: border-box;
 
@@ -129,12 +130,12 @@ export default defineComponent({
 
   > label > div {
     height: 100%;
-    border: 1px solid orange;
+    border: 0.2rem solid orange;
     border-radius: 20px;
     padding: 0.5rem;
     position: relative;
     background: white;
-    box-shadow: 5px 5px 10px #cccccc;
+    box-shadow: 5px 5px 10px rgba(200, 200, 200, 0.5);
 
     .button-bar {
       position: absolute;

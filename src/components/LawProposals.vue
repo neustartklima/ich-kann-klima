@@ -74,13 +74,13 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   transform-origin: bottom center;
-  transform: perspective(3000px) rotateX(75deg) scale(0.5);
+  transform: perspective(3000px) translateX(-50%) rotateX(75deg) scale(0.5);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
-  margin: 0 2% 0 0;
+  margin: 0 auto 0 50%;
 
   &.poppedUp {
-    transform: none;
+    transform: translateX(-50%);
   }
 }
 </style>
