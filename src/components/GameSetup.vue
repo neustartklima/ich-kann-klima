@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
-import PeekInside from "./PeekInside.vue"
 import SpeechBubble from "./SpeechBubble.vue"
+import PeekInside from "./PeekInside.vue"
 
 export default defineComponent({
   components: { CurrentIndicators, PeekInside, SpeechBubble },
