@@ -7,7 +7,7 @@ const strokeWidth = 5
 
 export default defineComponent({
   props: {
-    textLines: Array as PropType<string[]>
+    text: String
   },
 
   data() {
@@ -25,7 +25,7 @@ export default defineComponent({
     },
 
     height(): number {
-      return this.textLines?.length ? (this.textLines?.length + 1) * lineHeight : 0
+      return this.text?.length ? (this.text?.length + 1) * lineHeight : 0
     },
 
     path(): string {
@@ -51,32 +51,46 @@ export default defineComponent({
 </script>
 
 <template>
-  <svg
-    fill="#000000"
-    xmlns="http://www.w3.org/2000/svg"
-    :viewBox="'0 0 ' + (width + 2 * strokeWidth) + ' ' + (height + lineHeight)"
-  >
-    <path :d="path" stroke="#555555" fill="white" stroke-width="5" stroke-linejoin="round" />
-    <text
-      v-for="(line, lineNo) in textLines"
-      :key="lineNo"
-      :x="radius"
-      :y="(lineNo + 1) * lineHeight + fontSize / 2"
-      :style="'font-size: ' + fontSize + 'px'"
-    >{{ line }}</text>
-  </svg>
+  <div v-if="text" v-html="text" />
 </template>
 
 <style lang="scss" scoped>
-svg {
+div {
   max-width: 400px;
   position: absolute;
-  top: 100px;
-  left: 50px;
+  top: 25%;
+  left: 10%;
   z-index: 999;
+  border: 5px solid black;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 0.7rem 1rem;
+  background: white;
+  border-radius: 1rem;
+  transform: translateY(-50%);
 
-  text {
-    font-weight: bold;
+  &::before,
+  &::after {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  &::before {
+    border-width: 10px;
+    border-style: solid;
+    border-color: black transparent transparent black;
+    left: 6px;
+    bottom: -20px;
+  }
+
+  &::after {
+    border-width: 7px;
+    border-style: solid;
+    border-color: #fff transparent transparent #fff;
+    left: 10px;
+    bottom: -11px;
   }
 }
 </style>
