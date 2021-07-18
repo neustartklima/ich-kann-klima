@@ -5,9 +5,6 @@ import TimeIndicator from "../components/TimeIndicator.vue"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 import { Game } from "../types"
-import co2 from "../assets/co2.png"
-import coin from "../assets/euro.svg"
-import hands from "../assets/clapping-hands.png"
 
 function get(game: Game, func: (game: Game) => number): number {
   return game ? Math.round(func(game) / 10) : 0
@@ -18,7 +15,7 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
-    return { store, co2, coin, hands }
+    return { store }
   },
 
   computed: {
@@ -44,9 +41,9 @@ export default defineComponent({
 <template>
   <div class="CurrentIndicators">
     <TimeIndicator />
-    <Indicator :value="co2value" color="#EE8AC1" :img="co2" />
-    <Indicator :value="financeValue" color="#A9D18E" :img="coin" />
-    <Indicator :value="popularityValue" color="#8FAADC" :img="hands" />
+    <input :value="co2value" />
+    <input :value="financeValue" />
+    <input :value="popularityValue" />
   </div>
 </template>
 
