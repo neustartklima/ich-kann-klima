@@ -21059,6 +21059,9 @@ function defineEvent(event) {
 function prepareModuleList(modules) {
   return Object.entries(modules).map(([name, module2]) => ({ ...module2, id: name.replace(/\W/g, "_") }));
 }
+function lawList(modules) {
+  return prepareModuleList(modules);
+}
 
 // src/lawTools.ts
 function changeBy(min, max) {
@@ -21907,21 +21910,52 @@ function DecisionController_default({ eventStore: eventStore2, models: models2 }
   };
 }
 
-// src/events/SocialMedia.ts
-var SocialMedia_default = defineEvent({
-  title: "Social Media Alarm!",
-  description: `Deine Wahlkampfberaterin ruft dich v\xF6llig aufgel\xF6st an. Ob denn an den Geschichten was dran sein, die da im
-    Netz kursieren, dass du vor einigen Jahren bei einer Demo dabei warst, bei der die Gewalt eskaliert ist.
-    Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
-  `,
-  apply(context) {
-    const g = context.state.game;
-    if (g) {
-      g.values.popularity += Math.max(-g.values.popularity, -20);
-    }
+// src/events/AbstandsregelnWindkraft.ts
+var AbstandsregelnWindkraft_default = defineEvent({
+  title: "Abstandsregeln f\xFCr Windkraft erneut im Fokus",
+  description: "Anwohner wollen, dass der Abstand zu Windkraftanlagen erh\xF6ht wird. Das f\xFChrte zu einer Auseinandersetzung des Wirtschaftsministers mit der Umweltministerin.",
+  laws: lawList({
+    AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
+    AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
+    AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
+    AbstandsregelnFuerWindkraftAbschaffen: AbstandsregelnFuerWindkraftAbschaffen_default
+  }),
+  apply() {
   },
   probability() {
     return Math.random();
+  }
+});
+
+// src/laws/AllesBleibtBeimAlten.ts
+var AllesBleibtBeimAlten_default = defineLaw({
+  title: "Alles bleibt wie es ist",
+  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sind sind.",
+  effects() {
+    return {};
+  },
+  priority(game) {
+    return Math.random();
+  }
+});
+
+// src/events/Altbausanierung.ts
+var Altbausanierung_default = defineEvent({
+  title: "Gesetzesinitiative zur Sanierung von Altbauten",
+  description: "Zur Einhaltung der Pariser Klimaschutzvereinbarung halten Experten es f\xFCr unausweichlich, dass in die Sanierung von Altbauten investiert werden muss. Die konkrete Ausgestaltung wird kontrovers diskutiert.",
+  laws: lawList({
+    DaemmungAltbauAbschaffen: DaemmungAltbauAbschaffen_default,
+    AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
+    DaemmungAltbau1Percent: DaemmungAltbau1Percent_default,
+    DaemmungAltbau2Percent: DaemmungAltbau2Percent_default,
+    DaemmungAltbau4Percent: DaemmungAltbau4Percent_default
+  }),
+  apply() {
+  },
+  probability(store) {
+    const game = store.state.game;
+    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
+    return linear(15, 25, buildingsPercentage);
   }
 });
 
@@ -21947,18 +21981,19 @@ var bestechung_default = defineEvent({
   }
 });
 
-// src/events/WahlVerloren.ts
-var WahlVerloren_default = defineEvent({
-  title: "Wahl verloren",
-  description: `Deine Beliebtheit in der Bev\xF6lkerung ist katastrophal, lieber w\xFCrde man Mao Zedong w\xE4hlen als dich.
-    Deine Partei hat daher bei der Wahl gerade mal 1.3% erreicht (weil wohl manche nicht wussten, zu welcher Partei du geh\xF6rst) und ist damit unter
-    die 5% Marke gerutscht. An eine weitere Kanzlerschaft hat schon l\xE4nger kein vern\xFCnftiger Mensch mehr geglaubt.
-  `,
-  apply(context) {
-    context.dispatch("gameOver");
+// src/events/EnergieStrategie.ts
+var EnergieStrategie_default = defineEvent({
+  title: "Grundsatzdebatte zur Stromerzeugung",
+  description: "Der Bundestag debattierte heute \xFCber die Strategie zur Stromerzeugung in Deutschland. Die Meinungen der Parteien gingen dabei stark auseinander.",
+  laws: lawList({
+    KohleverstromungEinstellen: KohleverstromungEinstellen_default,
+    EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
+    KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default
+  }),
+  apply() {
   },
-  probability(store) {
-    return store.state.game && store.state.game.values.popularity <= 0 ? 1 : 0;
+  probability() {
+    return Math.random();
   }
 });
 
@@ -21977,21 +22012,6 @@ var Finanzkollaps_default = defineEvent({
   }
 });
 
-// src/events/TimesUp.ts
-var TimesUp_default = defineEvent({
-  title: "Du hast durchgehalten",
-  description: `Es ist vielleicht nicht alles optimal nach deiner inzwischen sehr langen Amtszeit, aber du hast es geschafft,
-    bis hierhin durchzuhalten! Das ist wunderbar, denn noch immer ist der Planet bewohnbar, deine Ma\xDFnahmen waren zu finanzieren
-    und die Menschen hast du auf diesem Weg auch mitgenommen. Gratulation!
-  `,
-  apply(context) {
-    context.dispatch("gameOver");
-  },
-  probability(store) {
-    return store.state.game && store.state.game.currentYear === 2050 ? 1 : 0;
-  }
-});
-
 // src/events/Hitzehölle.ts
 var Hitzeh_lle_default = defineEvent({
   title: "Hitzeh\xF6lle",
@@ -22007,14 +22027,123 @@ var Hitzeh_lle_default = defineEvent({
   }
 });
 
+// src/events/NewYear.ts
+var NewYear_default = defineEvent({
+  title: "Happy New Year!",
+  description: `Mal wieder geht ein ereignisreiches Jahr zuende. Die Regierung hat eine Bilanz ihrer bisherigen T\xE4tigkeit aufgestellt
+    und kommt zu dem nicht weiter \xFCberraschenden Ergebnis, dass sie sehr wirkungsvolle Gesetze beschlossen hat. Die Opposition -
+    ebenfalls nicht \xFCberraschend - sieht die Sache anders und verurteilt die Regierungserkl\xE4rung als haltlos.
+  `,
+  apply(context) {
+    context.dispatch("advanceYear");
+  },
+  probability(store) {
+    const game = store.state.game;
+    const amountOfLaws = game?.acceptedLaws.filter((law) => law.effectiveSince == game.currentYear).length || 0;
+    if (amountOfLaws < 3) {
+      return 0;
+    }
+    const probability = amountOfLaws * 0.1 + 0.5;
+    return Math.max(Math.random() + probability);
+  }
+});
+
+// src/events/SocialMedia.ts
+var SocialMedia_default = defineEvent({
+  title: "Social Media Alarm!",
+  description: `Deine Wahlkampfberaterin ruft dich v\xF6llig aufgel\xF6st an. Ob denn an den Geschichten was dran sein, die da im
+    Netz kursieren, dass du vor einigen Jahren bei einer Demo dabei warst, bei der die Gewalt eskaliert ist.
+    Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
+  `,
+  apply(context) {
+    const g = context.state.game;
+    if (g) {
+      g.values.popularity += Math.max(-g.values.popularity, -20);
+    }
+  },
+  probability() {
+    return Math.random();
+  }
+});
+
+// src/events/TempolimitAufAutobahnen.ts
+var TempolimitAufAutobahnen_default = defineEvent({
+  title: "Generelles Tempolimit beschlossen",
+  description: "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland m\xFCssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolmit nur noch anpassen.",
+  laws: lawList({
+    Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
+    Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
+    Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
+    TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default
+  }),
+  apply() {
+  },
+  probability() {
+    return Math.random();
+  }
+});
+
+// src/events/TimesUp.ts
+var TimesUp_default = defineEvent({
+  title: "Du hast durchgehalten",
+  description: `Es ist vielleicht nicht alles optimal nach deiner inzwischen sehr langen Amtszeit, aber du hast es geschafft,
+    bis hierhin durchzuhalten! Das ist wunderbar, denn noch immer ist der Planet bewohnbar, deine Ma\xDFnahmen waren zu finanzieren
+    und die Menschen hast du auf diesem Weg auch mitgenommen. Gratulation!
+  `,
+  apply(context) {
+    context.dispatch("gameOver");
+  },
+  probability(store) {
+    return store.state.game && store.state.game.currentYear === 2050 ? 1 : 0;
+  }
+});
+
+// src/events/WahlVerloren.ts
+var WahlVerloren_default = defineEvent({
+  title: "Wahl verloren",
+  description: `Deine Beliebtheit in der Bev\xF6lkerung ist katastrophal, lieber w\xFCrde man Mao Zedong w\xE4hlen als dich.
+    Deine Partei hat daher bei der Wahl gerade mal 1.3% erreicht (weil wohl manche nicht wussten, zu welcher Partei du geh\xF6rst) und ist damit unter
+    die 5% Marke gerutscht. An eine weitere Kanzlerschaft hat schon l\xE4nger kein vern\xFCnftiger Mensch mehr geglaubt.
+  `,
+  apply(context) {
+    context.dispatch("gameOver");
+  },
+  probability(store) {
+    return store.state.game && store.state.game.values.popularity <= 0 ? 1 : 0;
+  }
+});
+
+// src/events/WindkraftAusschreibung.ts
+var WindkraftAusschreibung_default = defineEvent({
+  title: "Abstimmung zur Ausschreibung von Windkraftanlagen",
+  description: "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Kindkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
+  laws: lawList({
+    AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
+    AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
+    AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
+    AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default
+  }),
+  apply() {
+  },
+  probability() {
+    return Math.random();
+  }
+});
+
 // src/events/index.ts
 var allEvents = prepareModuleList({
-  SocialMedia: SocialMedia_default,
+  AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
+  Altbausanierung: Altbausanierung_default,
   Bestechung: bestechung_default,
-  WahlVerloren: WahlVerloren_default,
+  EnergieStrategie: EnergieStrategie_default,
   FinanzKollaps: Finanzkollaps_default,
+  Hitzeh\u00F6lle: Hitzeh_lle_default,
+  NewYear: NewYear_default,
+  SocialMedia: SocialMedia_default,
+  TempolimitAufAutobahnen: TempolimitAufAutobahnen_default,
   TimesUp: TimesUp_default,
-  Hitzeh\u00F6lle: Hitzeh_lle_default
+  WahlVerloren: WahlVerloren_default,
+  WindkraftAusschreibung: WindkraftAusschreibung_default
 });
 
 // src/server/EventController.ts
