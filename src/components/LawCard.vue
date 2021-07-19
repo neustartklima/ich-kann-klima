@@ -46,8 +46,10 @@ export default defineComponent({
       this.accepted = true
     },
 
-    sendAccept() {
-      this.$emit("accepted", this.law.id)
+    sendAccept(event: AnimationEvent) {
+      if (event.animationName.match(/^twistOut-/)) {
+        this.$emit("accepted", this.law.id)
+      }
     },
   },
 })

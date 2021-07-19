@@ -3,6 +3,7 @@ import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import PeekInside from "./PeekInside.vue"
+import { Event } from "../types"
 
 export default defineComponent({
   components: { CurrentIndicators, PeekInside, SpeechBubble },
@@ -13,15 +14,25 @@ export default defineComponent({
   },
 
   computed: {
-    currentNews(): string {
-      const event = this.$store.state.game?.events[0]
-      if (event) {
-        return `<h2>${event.title}</h2><p>${event.description}</p>`
-      } else {
-        return ""
-      }
+    eventTitle(): string {
+      return this.eventToShow()?.title || ""
     },
-  }
+
+    eventText(): string {
+      return this.eventToShow()?.description || ""
+    },
+  },
+
+  methods: {
+    eventToShow(): Event | null {
+      const event: Event = this.$store.state.game?.events[0]
+      return (event && !event.acknowledged) ? event : null
+    },
+
+    acknowledge(): void {
+      this.$store.dispatch("acknowledgeEvent", this.eventToShow())
+    },
+  },
 })
 </script>
 
@@ -31,7 +42,7 @@ export default defineComponent({
     <img src="../assets/background.jpg" />
 
     <slot />
-    <SpeechBubble :text="currentNews" />
+    <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
   <div class="peek">
     <PeekInside v-if="devMode" />

@@ -2,13 +2,23 @@
 import { defineComponent } from "@vue/runtime-core";
 export default defineComponent({
   props: {
+    title: String,
     text: String
+  },
+
+  methods: {
+    acknowledge(): void {
+      this.$emit("acknowledge");
+    },
   },
 })
 </script>
 
 <template>
-  <div v-if="text" v-html="text" />
+  <div v-if="text" @click="acknowledge">
+    <h2 v-if="title">{{ title }}</h2>
+    <p>{{ text }}</p>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -48,6 +58,16 @@ div {
     border-color: #fff transparent transparent #fff;
     left: 10px;
     bottom: -11px;
+  }
+
+  h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 0;
   }
 }
 </style>

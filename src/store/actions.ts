@@ -57,6 +57,7 @@ export const actions = {
     await repository.saveGame(game)
     context.commit("setGameState", { game })
     await repository.decisionMade(game, newLaw, true)
+    getEventMachine(store, allEvents).start()
   },
 
   async rejectLaw(context: Context, payload: { lawId: LawId }) {
@@ -65,6 +66,7 @@ export const actions = {
     fillUpLawProposals(game)
     await repository.decisionMade(game, getLaw(payload.lawId), false)
     context.commit("setGameState", { game })
+    getEventMachine(store, allEvents).start()
   },
 
   async advanceYear(context: Context) {
@@ -75,7 +77,6 @@ export const actions = {
     fillUpLawProposals(game)
     await repository.saveGame(game)
     context.commit("setGameState", { game })
-    getEventMachine(store, allEvents).start()
   },
 
   async applyEvent(context: Context, payload: { event: Event }) {
@@ -83,6 +84,12 @@ export const actions = {
     const game = { ...(context.state.game as Game) }
     game.events.unshift(payload.event)
     await repository.eventOccurred(game, payload.event)
+    context.commit("setGameState", { game })
+  },
+
+  acknowledgeEvent(context: Context, event: Event) {
+    const game = { ...(context.state.game as Game) }
+    game.events.find((e) => e.id === event.id)!.acknowledged = true
     context.commit("setGameState", { game })
   },
 

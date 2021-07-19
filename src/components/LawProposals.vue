@@ -71,16 +71,17 @@ export default defineComponent({
 .ProposedLaws {
   position: absolute;
   bottom: 18%;
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   transform-origin: bottom center;
-  transform: perspective(3000px) translateX(-50%) rotateX(75deg) scale(0.5);
+  transform: perspective(3000px) rotateX(75deg) scale(0.5);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
-  margin: 0 auto 0 50%;
 
   &.poppedUp {
-    transform: translateX(-50%);
+    transform: none;
   }
 }
 </style>

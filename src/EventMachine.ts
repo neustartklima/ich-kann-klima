@@ -23,9 +23,9 @@ export default function EventMachine(store: Store, allEvents: Event[], random = 
 
   return {
     start() {
-      // Check for events once in a minute
+      // Create an event after about 10 seconds
       this.pause()
-      timer = setTimeout(initiateEvent, random() * 60000)
+      timer = setTimeout(initiateEvent, random() * 10000 + 5000)
     },
 
     pause() {
