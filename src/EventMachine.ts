@@ -1,10 +1,12 @@
 import { Store } from "./store"
 import { Event } from "./types"
 
+export type PriorizedEvent = Event & { priority: number }
+
 export default function EventMachine(store: Store, allEvents: Event[], random = Math.random) {
   let timer: unknown // to work with both, NodeJS and browser
 
-  function getPriorizedEvents(): Event[] {
+  function getPriorizedEvents(): PriorizedEvent[] {
     return allEvents
       .map((event) => ({ ...event, priority: event.probability(store) * random() }))
       .filter((event) => event.priority)
@@ -34,6 +36,8 @@ export default function EventMachine(store: Store, allEvents: Event[], random = 
     },
 
     initiateEvent,
+
+    getPriorizedEvents,
   }
 }
 
