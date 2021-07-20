@@ -84,6 +84,9 @@ export const actions = {
     const game = { ...(context.state.game as Game) }
     game.events.unshift(payload.event)
     await repository.eventOccurred(game, payload.event)
+    if (payload.event.laws?.length) {
+      game.proposedLaws = payload.event.laws.map(law => law.id)
+    }
     context.commit("setGameState", { game })
   },
 
