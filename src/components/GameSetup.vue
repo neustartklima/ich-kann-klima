@@ -4,12 +4,17 @@ import CurrentIndicators from "../components/CurrentIndicators.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import PeekInside from "./PeekInside.vue"
 import { Event } from "../types"
+import { useStore } from "../store"
+import { allEvents } from "../events"
+import EventMachine, { PriorizedEvent } from "../EventMachine"
 
 export default defineComponent({
   components: { CurrentIndicators, PeekInside, SpeechBubble },
   data() {
+    const store = useStore()
     return {
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
+      eventMachine: EventMachine(store, allEvents),
     }
   },
 
@@ -20,6 +25,10 @@ export default defineComponent({
 
     eventText(): string {
       return this.eventToShow()?.description || ""
+    },
+
+    priorizedEvents(): PriorizedEvent[] {
+      return this.eventMachine.getPriorizedEvents()
     },
   },
 
@@ -47,6 +56,16 @@ export default defineComponent({
   <div class="peek">
     <PeekInside v-if="devMode" />
   </div>
+
+  <div v-if="devMode" class="probabilities">
+    <b>Probable Events</b>
+    <ul v-if="devMode && $store.state.game">
+      <li v-for="event in priorizedEvents" :key="event.id">
+        <span>{{ event.title }}</span>
+        <span>{{ (event.priority * 100).toFixed(2) }}%</span>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <style lang="scss">
@@ -72,5 +91,35 @@ export default defineComponent({
   position: fixed;
   top: 0;
   right: 0;
+}
+
+.probabilities {
+  position: fixed;
+  top: calc(100% - 1.7rem);
+  background: white;
+  padding: 5px;
+  border: 1px solid #cccccc;
+
+  &:hover {
+    top: auto;
+    bottom: 0;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 12px;
+
+    li {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+
+      span:last-of-type {
+        padding-left: 10px;
+      }
+    }
+  }
 }
 </style>
