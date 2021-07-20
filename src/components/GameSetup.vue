@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 import CurrentIndicators from "../components/CurrentIndicators.vue"
+import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import PeekInside from "./PeekInside.vue"
 import { Event } from "../types"
@@ -9,7 +10,7 @@ import { allEvents } from "../events"
 import EventMachine, { PriorizedEvent } from "../EventMachine"
 
 export default defineComponent({
-  components: { CurrentIndicators, PeekInside, SpeechBubble },
+  components: { CurrentIndicators, PeekInside, LawProposals, SpeechBubble },
   data() {
     const store = useStore()
     return {
@@ -50,7 +51,7 @@ export default defineComponent({
   <div class="game-setup">
     <img src="../assets/background.jpg" />
 
-    <slot />
+    <LawProposals />
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
   <div class="peek">

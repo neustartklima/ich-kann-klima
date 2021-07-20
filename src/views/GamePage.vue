@@ -1,16 +1,13 @@
 <script lang="ts">
-import { computed, defineComponent } from "vue"
+import { defineComponent } from "vue"
 import GameSetup from "../components/GameSetup.vue"
 import AcceptedLaws from "../components/AcceptedLaws.vue"
-import LawProposals from "../components/LawProposals.vue"
 import { useStore } from "../store"
 import { GameId } from "../types"
-import { mapGetters } from "vuex"
 
 export default defineComponent({
   components: {
     GameSetup,
-    LawProposals,
     AcceptedLaws,
   },
 
@@ -19,8 +16,6 @@ export default defineComponent({
 
     return {
       store,
-      allLaws: computed(() => store.state.allLaws),
-      acceptedLaws: computed(() => store.state.game?.acceptedLaws),
     }
   },
 
@@ -32,10 +27,6 @@ export default defineComponent({
         this.store.dispatch("startGame", undefined)
       }
     },
-
-    advanceYear() {
-      this.store.dispatch("advanceYear", undefined)
-    },
   },
 
   beforeRouteEnter(to, from, next) {
@@ -46,16 +37,8 @@ export default defineComponent({
 
 <template>
   <GameSetup>
-    <LawProposals />
-
     <!--h2>Beschlossene Gesetze</h2>
     <AcceptedLaws /-->
-
-    <!--p>Wenn Du fertig bist, wechsle zum nächsten Jahr und sieh' Dir die Auswirkungen an.</p>
-
-    <div class="button-bar">
-      <button @click="advanceYear">Jahr abschließen</button>
-    </div-->
   </GameSetup>
 </template>
 
