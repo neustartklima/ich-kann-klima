@@ -21063,6 +21063,18 @@ function lawList(modules) {
   return prepareModuleList(modules);
 }
 
+// src/laws/AllesBleibtBeimAlten.ts
+var AllesBleibtBeimAlten_default = defineLaw({
+  title: "Alles bleibt wie es ist",
+  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sind sind.",
+  effects() {
+    return {};
+  },
+  priority(game) {
+    return Math.random();
+  }
+});
+
 // src/lawTools.ts
 function changeBy(min, max) {
   const minF = min === void 0 ? (_val, by) => by : (val, by) => Math.max(by, min - val);
@@ -21861,6 +21873,7 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
 
 // src/laws/index.ts
 var allLaws = lawList({
+  AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
   InitialAtomausstieg: InitialAtomausstieg_default,
   KohleverstromungEinstellen: KohleverstromungEinstellen_default,
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
@@ -21923,18 +21936,6 @@ var AbstandsregelnWindkraft_default = defineEvent({
   apply() {
   },
   probability() {
-    return Math.random();
-  }
-});
-
-// src/laws/AllesBleibtBeimAlten.ts
-var AllesBleibtBeimAlten_default = defineLaw({
-  title: "Alles bleibt wie es ist",
-  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sind sind.",
-  effects() {
-    return {};
-  },
-  priority(game) {
     return Math.random();
   }
 });
