@@ -29,10 +29,10 @@ import AusschreibungsverfahrenfuerWindkraftVerdoppeln from "./Ausschreibungsverf
 import AusschreibungsverfahrenfuerWindkraftVervierfachen from "./AusschreibungsverfahrenfuerWindkraftVervierfachen"
 import AusschreibungsverfahrenfuerWindkraftVerachtfachen from "./AusschreibungsverfahrenfuerWindkraftVerachtfachen"
 
-import { prepareModuleList } from "../Factory"
+import { lawList } from "../Factory"
 import { Law } from "../types"
 
-export const allLaws: Law[] = prepareModuleList({
+export const allLaws: Law[] = lawList({
   // Initiale Gesetze
   InitialAtomausstieg,
 
@@ -70,11 +70,11 @@ export const allLaws: Law[] = prepareModuleList({
   NahverkehrKostenlos,
   AutosInInnenstaedtenVerbieten,
   WasserstofftechnologieFoerdern,
-  
+
   NahverkehrAusbauen,
   FernverkehrVerbindungenAusbauen,
   AusbauVonStrassen,
-  
+
   AbschaffungDerMineraloelsteuer,
   DieselPrivilegAbgeschaffen,
 
@@ -86,4 +86,4 @@ export const allLaws: Law[] = prepareModuleList({
   TempolimitAufAutobahnenAussitzen,
 
   FoerderungFuerTierhaltungAbschaffen,
-}) as Law[]
+})
