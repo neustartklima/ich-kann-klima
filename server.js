@@ -21860,7 +21860,7 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
 });
 
 // src/laws/index.ts
-var allLaws = prepareModuleList({
+var allLaws = lawList({
   InitialAtomausstieg: InitialAtomausstieg_default,
   KohleverstromungEinstellen: KohleverstromungEinstellen_default,
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
