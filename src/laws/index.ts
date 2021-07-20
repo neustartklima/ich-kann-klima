@@ -1,3 +1,4 @@
+import AllesBleibtBeimAlten from "./AllesBleibtBeimAlten"
 import KohleverstromungEinstellen from "./KohleverstromungEinstellen"
 import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
 import KernenergienutzungVerlaengern from "./KernenergienutzungVerlaengern"
@@ -33,6 +34,8 @@ import { lawList } from "../Factory"
 import { Law } from "../types"
 
 export const allLaws: Law[] = lawList({
+  AllesBleibtBeimAlten,
+
   // Initiale Gesetze
   InitialAtomausstieg,
 
