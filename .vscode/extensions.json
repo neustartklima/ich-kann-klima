@@ -11,6 +11,7 @@
     "hbenl.vscode-test-explorer",
     "johnsoncodehk.volar",
     "buster.ndjson-colorizer",
-    "github.vscode-pull-request-github"
+    "github.vscode-pull-request-github",
+    "tobermory.es6-string-html",
   ]
 }
