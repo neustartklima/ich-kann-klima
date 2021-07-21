@@ -473,13 +473,25 @@ const paramDefinitions = {
   stateDebt,
 }
 
+export type ParamDefinitions = typeof paramDefinitions
+
+type RemoveNeverField<T> = { 
+  [P in keyof T as T[P] extends never ? never : P]: T[P] 
+}
+type PickByType<T, C> = RemoveNeverField<{ 
+  [Key in keyof T]: T[Key] extends C ? T[Key] : never 
+}>
+
+type WritableParamDefinitions = PickByType<ParamDefinitions, WritableParam>
+type ComputedParamDefinitions = PickByType<ParamDefinitions, ComputedParam>
+
 const writableParamDefinitions = Object.entries(paramDefinitions)
   .filter((e) => e[1] instanceof WritableParam)
   .map((e) => e as [string, WritableParam])
   .reduce((newObj, e) => {
     newObj[e[0]] = e[1]
     return newObj
-  }, {} as Record<string, WritableParam>)
+  }, {} as Record<string, WritableParam>) as WritableParamDefinitions
 
 const computedParamDefinitions = Object.entries(paramDefinitions)
   .filter((e) => e[1] instanceof ComputedParam)
@@ -487,20 +499,17 @@ const computedParamDefinitions = Object.entries(paramDefinitions)
   .reduce((newObj, e) => {
     newObj[e[0]] = e[1]
     return newObj
-  }, {} as Record<string, ComputedParam>)
+  }, {} as Record<string, ComputedParam>) as ComputedParamDefinitions
 
-type WritableParamDefinitions = typeof writableParamDefinitions
 type WritableParamKey = keyof WritableParamDefinitions
 const writableParamKeys = Object.keys(writableParamDefinitions) as WritableParamKey[]
 type WritableParams = Record<WritableParamKey, number>
 export type WritableBaseParams = WritableParams
 
-type ComputedParamDefinitions = typeof computedParamDefinitions
 type ComputedParamKey = keyof ComputedParamDefinitions
 const computedParamKeys = Object.keys(computedParamDefinitions) as ComputedParamKey[]
 type ComputedParams = Record<ComputedParamKey, number>
 
-export type ParamDefinitions = WritableParamDefinitions | ComputedParamDefinitions
 type ParamKey = WritableParamKey | ComputedParamKey
 export const paramKeys = Object.keys(paramDefinitions) as ParamKey[]
 type Params = Record<ParamKey, number>
@@ -517,9 +526,9 @@ interface ParamEntryBase {
 
 class WritableParamEntry extends WritableParam implements ParamEntryBase {
   name: WritableParamKey
-  constructor(param: WritableParam, name: WritableParamKey) {
+  constructor(param: WritableParam, name: string) {
     super(param)
-    this.name = name
+    this.name = name as WritableParamKey
   }
 }
 export const writableParamList: WritableParamEntry[] = Object.entries(writableParamDefinitions).map(
@@ -528,9 +537,9 @@ export const writableParamList: WritableParamEntry[] = Object.entries(writablePa
 
 class ComputedParamEntry extends ComputedParam implements ParamEntryBase {
   name: ComputedParamKey
-  constructor(param: ComputedParam, name: ComputedParamKey) {
+  constructor(param: ComputedParam, name: string) {
     super(param)
-    this.name = name
+    this.name = name as ComputedParamKey
   }
 }
 export const computedParamList: ComputedParamEntry[] = Object.entries(computedParamDefinitions).map(
@@ -539,12 +548,12 @@ export const computedParamList: ComputedParamEntry[] = Object.entries(computedPa
 
 type ParamEntry = WritableParamEntry | ComputedParamEntry
 export const paramList: ParamEntry[] = Object.entries(paramDefinitions).map((e) =>
-  e[1] instanceof WritableParam ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0])
+  e[1] instanceof WritableParam  ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0])
 )
 
 export const defaultValues: WritableParams = writableParamList.reduce(
   (newObj, e) => ({ ...newObj, [e.name]: e.initialValue }),
-  {}
+  {} as WritableParams
 )
 
 export function createBaseValues(values: WritableParams): Params {
