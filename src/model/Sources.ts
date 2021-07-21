@@ -36,9 +36,7 @@ export const uba2020DeutscheTreibhausgasEmissionen = new Source({
   date: "2021-03-15",
   archiveUrl:
     "https://web.archive.org/web/20210712115357/https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
-  internalComment: /*html*/ `
-    In most cases values from sheet "THG" row 2019 are used.
-  `,
+  comment: /*html*/ `If not mentioned otherwise, values from sheet "THG" row 2019 are used.`,
 })
 
 export const vdv2019Statistik = new Source({
@@ -47,7 +45,7 @@ export const vdv2019Statistik = new Source({
   publisher: "VDV",
   date: "2020-10-01",
   archiveUrl: "https://web.archive.org/web/20210714151304/https://www.vdv.de/vdv-statistik-2019.pdfx",
-  internalComment: /*html*/ `Page 11 contains g/Pkm values for several transport types.`,
+  comment: /*html*/ `Page 11 contains g/Pkm values for several transport types.`,
 })
 
 export const ubaEmissionenDesVerkehrs = new Source({
@@ -56,4 +54,14 @@ export const ubaEmissionenDesVerkehrs = new Source({
   publisher: "UBA",
   archiveUrl:
     "https://web.archive.org/web/20210712110744if_/https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr",
+})
+
+export const bmvi2020VerkehrInZahlen = new Source({
+  url: "https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
+  title: "Emissionen des Verkehrs - Straßengüterverkehr",
+  publisher: "BMVI",
+  date: "2021-04-13",
+  archiveUrl:
+    "https://web.archive.org/web/20210520124742/https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
+  comment: /*html*/ `Page 219 contains Pkm values for several transport types. If not mentioned otherwise, column 2019 is used.`,
 })

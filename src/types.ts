@@ -46,7 +46,7 @@ export type Sources = Source[]
 export type Details = Html
 export type Internals = Html
 
-export type Unit = "MioTons" | "TWh" | "MrdEuro" | "TsdPeople" | "Percent"
+export type Unit = "MioTons" | "TWh" | "MrdEuro" | "TsdPeople" | "Percent" | "GramPerPsgrKm" | "MioPsgrKm"
 
 type ParamInput = {
   unit: Unit
@@ -67,6 +67,20 @@ export abstract class ParamDefinition {
     this.details = input.details ? input.details : ""
     this.internals = input.internals ? input.internals : ""
   }
+
+  sourcesDesc(): string {
+    let result: string = ""
+    for (const source of this.sources) {
+      result =
+        result +
+        (source.title ? '"' + source.title + '"' : "(no title)") +
+        (source.publisher ? ", " + source.publisher : "") +
+        ", " +
+        source.url +
+        "; "
+    }
+    return result
+  }
 }
 
 export type ParamsBase = Record<string, number>
@@ -83,9 +97,11 @@ export class WritableParam extends ParamDefinition {
 export class ComputedParam extends ParamDefinition {
   writable = false
   valueGetter: (data: ParamsBase) => number
-  constructor(input: ParamInput & { valueGetter: (data: ParamsBase) => number }) {
+  shouldInitiallyBe?: number
+  constructor(input: ParamInput & { valueGetter: (data: ParamsBase) => number; shouldInitiallyBe?: number }) {
     super(input)
     this.valueGetter = input.valueGetter
+    this.shouldInitiallyBe = input.shouldInitiallyBe
   }
 }
 

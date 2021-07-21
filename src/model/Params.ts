@@ -1,246 +1,560 @@
-import { ComputedParam, GramPerPsgrKm, MioPsgrKm, MioTons, ParamDefinition, ParamsBase, WritableParam } from "../types"
 import {
+  ComputedParam,
+  Details,
+  GramPerPsgrKm,
+  Internals,
+  MioPsgrKm,
+  MioTons,
+  MrdEuro,
+  ParamsBase,
+  Percent,
+  Sources,
+  TsdPeople,
+  TWh,
+  Unit,
+  WritableParam,
+} from "../types"
+import {
+  bmvi2020VerkehrInZahlen,
+  fraunhoferISE2020ElectricityGeneration,
   uba2020DeutscheTreibhausgasEmissionen,
   ubaEmissionenDesVerkehrs,
   umweltrat2020Umweltgutachten,
   vdv2019Statistik,
 } from "./Sources"
 
-//TODO #73: I would like to ensure, this is of type Record<string, Param>.
-// But if I specify this here, Params will be Record<string, Param> and not more specific.
-export const paramDefinitions = {
-  co2budget: new WritableParam({
-    unit: "MioTons",
-    initialValue: 6700,
-    sources: [umweltrat2020Umweltgutachten],
-    details: /*html*/ ``,
-    internals: /*html*/ ``,
-  }),
-  co2emissionsIndustry: new WritableParam({
-    unit: "MioTons",
-    initialValue: 186.793,
-    sources: [uba2020DeutscheTreibhausgasEmissionen],
-  }),
-  co2emissionsStreetVehicles: new ComputedParam({
-    unit: "MioTons",
-    valueGetter(data: ParamsBase): MioTons {
-      const carNonrenewable: MioPsgrKm = data.carUsage * (1 - data.carRenewablePercentage / 100)
-      const co2emissionsCars: MioTons = (carNonrenewable * data.carEmissionFactor) / 1000000
-      const co2emissionsTrucks: MioTons = 14.4
-      return co2emissionsCars + co2emissionsTrucks
-    },
-    sources: [vdv2019Statistik, ubaEmissionenDesVerkehrs],
-    details: /*html*/ ``,
-    internals: /*html*/ `
+const co2budget = new WritableParam({
+  unit: "MioTons",
+  initialValue: 6700,
+  sources: [umweltrat2020Umweltgutachten],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const co2emissionsIndustry = new WritableParam({
+  unit: "MioTons",
+  initialValue: 186.793,
+  sources: [uba2020DeutscheTreibhausgasEmissionen],
+})
+
+const co2emissionsStreetVehicles = new ComputedParam({
+  unit: "MioTons",
+  valueGetter(data: ParamsBase): MioTons {
+    const carNonrenewable: MioPsgrKm = data.carUsage * (1 - data.carRenewablePercentage / 100)
+    const co2emissionsCars: MioTons = (carNonrenewable * data.carEmissionFactor) / 1000000
+    const co2emissionsTrucks: MioTons = 14.4
+    return co2emissionsCars + co2emissionsTrucks
+  },
+  sources: [vdv2019Statistik, ubaEmissionenDesVerkehrs],
+  details: /*html*/ ``,
+  internals: /*html*/ `
     TODO: #72 Source [ubaEmissionenDesVerkehrs] claims 47,4 MioTons emissions by trucks per year in 2019.
     We use 14.4 MioTons to adjust to the correct total emissions street sehicles.`,
-  }),
-  co2emissionsMobility: new ComputedParam({
-    unit: "MioTons",
-    valueGetter(data: ParamsBase): MioTons {
-      return (
-        data.co2emissionsStreetVehicles +
-        (data.publicLocalCapacity * (65 as GramPerPsgrKm)) / 1000000 +
-        (data.publicNationalCapacity * (32 as GramPerPsgrKm)) / 1000000 +
-        (data.airDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 +
-        (1.641 as MioTons)
-      )
-    },
-    sources: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
-    details: /*html*/ ``,
-    internals: /*html*/ `
+})
+
+const co2emissionsMobility = new ComputedParam({
+  unit: "MioTons",
+  valueGetter(data: ParamsBase): MioTons {
+    return (
+      data.co2emissionsStreetVehicles +
+      (data.publicLocalCapacity * (65 as GramPerPsgrKm)) / 1000000 +
+      (data.publicNationalCapacity * (32 as GramPerPsgrKm)) / 1000000 +
+      (data.airDomesticUsage * (222 as GramPerPsgrKm)) / 1000000 +
+      (1.641 as MioTons)
+    )
+  },
+  sources: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
+  details: /*html*/ ``,
+  internals: /*html*/ `
     <p>[vdv2019Statistik] states: 65 g/Pkm for local public transport, 32 g/Pkm for inter-city public transport, 230 g/Pkm for domestic air traffic.</p>
     <p>From [uba2020DeutscheTreibhausgasEmissionen] we calculate backward 222 g/Pkm for domestic air traffic. (currently used)</p>
     <p>[uba2020DeutscheTreibhausgasEmissionen] states 1.641 Mio t CO2e emissions by costal and inland water transport.</p>
     <p>Unit conversion: 1 MioPsgrKm * 1 GramPerPsgrKm = 1 MioGram = 1 Ton. Target unit: MioTons. Devide by 1000000</p>
     `,
-  }),
+})
 
-  /*
-  co2emissionsBuildings: o("MioTons", false),
-  co2emissionsAgriculture: o("MioTons", true),
-  co2emissionsOthers: o("MioTons", true),
-  co2emissionsEnergy: o("MioTons", false),
-  co2emissions: o("MioTons", false),
-  electricityDemand: o("TWh/a", true),
-  electricitySolar: o("TWh/a", true),
-  electricityWind: o("TWh/a", true),
-  electricityWindOnshoreMaxNew: o("TWh/a", true),
-  electricityWater: o("TWh/a", true),
-  electricityBiomass: o("TWh/a", true),
-  electricityNuclear: o("TWh/a", true),*/
-  electricityHardCoal: new WritableParam({
-    unit: "TWh",
-    initialValue: 35.46,
-  }),
-  electricityBrownCoal: new WritableParam({
-    unit: "TWh",
-    initialValue: 82.13,
-  }),
-  electricityCoal: new ComputedParam({
-    unit: "TWh",
-    valueGetter(data: ParamsBase): number {
-      return data.electricityHardCoal + data.electricityBrownCoal
-    },
-  }),
-  /*electricityGas: o("TWh/a", false),
-  carEmissionFactor: o("GramPerPsgrKm", true),
-  carUsage: o("MioPsgrKm", true),
-  carRenewablePercentage: o("Percent", true),
-  publicLocalUsage: o("MioPsgrKm", true),
-  publicLocalCapacity: o("MioPsgrKm", true),
-  publicNationalUsage: o("MioPsgrKm", true),
-  publicNationalCapacity: o("MioPsgrKm", true),
-  airDomesticUsage: o("MioPsgrKm", true),
-  airIntlUsage: o("MioPsgrKm", true),
-  passengerTransportUsage: o("MioPsgrKm", false),
-  buildingsIndustryDemand: o("TWh/a", true),
-  buildingsPrivateDemand: o("TWh/a", true),
-  buildingsDemand: o("TWh/a", false),
-  buildingsSourceBio: o("TWh/a", true),
-  buildingsSourceOil: o("TWh/a", true),
-  buildingsSourceTele: o("TWh/a", true),
-  buildingsSourceGas: o("TWh/a", false),
-  stateDebt: o("MrdEuro", true),
-  popularity: o("Percent", true),
-  numberOfCitizens: o("TsdPeople", true),
-  unemployment: o("TsdPeople", true),
-  gdp: o("MrdEuro", true),
-
-
-
-
-  stateDebt: 1899, // in 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands
-  popularity: 50, // 50% of all people accept you as your chancellor
-
-  // hidden
-
-  numberOfCitizens: 83157, // Tsd people in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html
-  unemployment: 2695, // Tsd people in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre
-  gdp: 3332, // in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr
-
-  // https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile p. 219 column 2019
-  carUsage: 917000 as MioPsgrKm,
-  carEmissionFactor: 160 as GramPerPsgrKm, // [vdv2019Statistik] page 11 would lead to about 160 g/Pkm
-  carRenewablePercentage: 1 as Percent, // https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)
-  publicLocalUsage: 112600 as MioPsgrKm,
-  publicLocalCapacity: 112600 as MioPsgrKm, // Our definition: current situation is 100%
-  publicNationalUsage: 67300 as MioPsgrKm, // public - local - air = 251700 - 71800 - 112600 = 67300
-  publicNationalCapacity: 67300 as MioPsgrKm, // Our defionition current situation is 100%
-  airDomesticUsage: 10100 as MioPsgrKm,
-  airIntlUsage: 61700 as MioPsgrKm,
-
-  // https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020
-  electricityDemand: 480.54 as TWh,
-  electricitySolar: 51.42 as TWh,
-  electricityWind: 131.85 as TWh,
-  electricityWindOnshoreMaxNew: 6.0 as TWh,
-  electricityWater: 14.99 as TWh,
-  electricityHardCoal: 35.46 as TWh,
-  electricityBrownCoal: 82.13 as TWh,
-  electricityBiomass: 43.19 as TWh,
-  electricityNuclear: 60.91 as TWh,
-
-  buildingsPrivateDemand: 544 as TWh,
-  buildingsIndustryDemand: 226 as TWh,
-  buildingsSourceBio: 130 as TWh,
-  buildingsSourceOil: 219 as TWh,
-  buildingsSourceTele: 58 as TWh,
-
-  co2emissionsAgriculture: 67.936, uba2020DeutscheTreibhausgasEmissionen
-  co2emissionsOthers: 9.243,uba2020DeutscheTreibhausgasEmissionen
-
-
-
-  get electricityGas() {
+const co2emissionsBuildings = new ComputedParam({
+  unit: "MioTons",
+  valueGetter(data: ParamsBase): MioTons {
     return (
-      this.electricityDemand -
-      this.electricitySolar -
-      this.electricityWind -
-      this.electricityWater -
-      this.electricityHardCoal -
-      this.electricityBrownCoal -
-      this.electricityBiomass -
-      this.electricityNuclear
-    )
+      data.buildingsSourceBio * 0 +
+      data.buildingsSourceGas * 0.247 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
+      data.buildingsSourceOil * 0.318 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
+      data.buildingsSourceTele * 0.16
+    ) // from https://www.klimaneutral-handeln.de/php/kompens-berechnen.php#rechner
   },
+  // TODO: #72 Source claims 123.461 MioTons per year in 2019. Sums to 168.6 MioTons.
+  //shouldInitiallyBe: 123.461 as MioTons,
+  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  details: /*html*/ ``,
+  internals: /*html*/ `shouldInitiallyBe: 123.461 according to [uba2020DeutscheTreibhausgasEmissionen].`,
+})
 
-  get co2emissionsEnergy() {
+const co2emissionsAgriculture = new WritableParam({
+  unit: "MioTons",
+  initialValue: 67.936,
+  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const co2emissionsOthers = new WritableParam({
+  unit: "MioTons",
+  initialValue: 9.243,
+  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const co2emissionsEnergy = new ComputedParam({
+  unit: "MioTons",
+  valueGetter(data: ParamsBase): MioTons {
     // should sum up to 220 in 2020
     // factors from https://www.rensmart.com/Calculators/KWH-to-CO2 and @thomas-olszamowski
     return (
-      this.electricityGas * 0.399 +
-      this.electricitySolar * 0.058 +
-      this.electricityWind * 0.005 +
-      this.electricityWater * 0.02 +
-      this.electricityHardCoal * 0.835 +
-      this.electricityBrownCoal * 1.137 +
-      this.electricityBiomass * 0 + // TODO find correct factor (no source found)
-      this.electricityNuclear * 0.005
+      data.electricityGas * 0.399 +
+      data.electricitySolar * 0.058 +
+      data.electricityWind * 0.005 +
+      data.electricityWater * 0.02 +
+      data.electricityHardCoal * 0.835 +
+      data.electricityBrownCoal * 1.137 +
+      data.electricityBiomass * 0 + // TODO find correct factor (no source found)
+      data.electricityNuclear * 0.005
     )
   },
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
 
-  get passengerTransportUsage(): MioPsgrKm {
+const co2emissions = new ComputedParam({
+  unit: "MioTons",
+  valueGetter(data: ParamsBase): MioTons {
     return (
-      this.carUsage + this.publicLocalUsage + this.publicNationalUsage + this.airDomesticUsage + this.airIntlUsage
+      data.co2emissionsEnergy +
+      data.co2emissionsIndustry +
+      data.co2emissionsMobility +
+      data.co2emissionsBuildings +
+      data.co2emissionsAgriculture +
+      data.co2emissionsOthers
     )
   },
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
 
+const electricityDemand = new WritableParam({
+  unit: "TWh",
+  initialValue: 480.54,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
 
-  get buildingsDemand(): TWh {
-    return this.buildingsPrivateDemand + this.buildingsIndustryDemand
+const electricitySolar = new WritableParam({
+  unit: "TWh",
+  initialValue: 51.42,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityWind = new WritableParam({
+  unit: "TWh",
+  initialValue: 131.85,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityWindOnshoreMaxNew = new WritableParam({
+  unit: "TWh",
+  initialValue: 6.0,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityWater = new WritableParam({
+  unit: "TWh",
+  initialValue: 14.99,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityBiomass = new WritableParam({
+  unit: "TWh",
+  initialValue: 43.19,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityNuclear = new WritableParam({
+  unit: "TWh",
+  initialValue: 60.91,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityHardCoal = new WritableParam({
+  unit: "TWh",
+  initialValue: 35.46,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityBrownCoal = new WritableParam({
+  unit: "TWh",
+  initialValue: 82.13,
+  sources: [fraunhoferISE2020ElectricityGeneration],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const electricityCoal = new ComputedParam({
+  unit: "TWh",
+  valueGetter(data: ParamsBase): number {
+    return data.electricityHardCoal + data.electricityBrownCoal
   },
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
 
-  get buildingsSourceGas(): TWh {
-    return this.buildingsDemand - (this.buildingsSourceBio + this.buildingsSourceOil + this.buildingsSourceTele)
-  },
-
-  get co2emissionsBuildings(): MioTons {
-    // Should initially equal 123.461 MioTons (https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019)
+const electricityGas = new ComputedParam({
+  unit: "TWh",
+  valueGetter(data: ParamsBase): number {
     return (
-      this.buildingsSourceBio * 0 +
-      this.buildingsSourceGas * 0.247 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
-      this.buildingsSourceOil * 0.318 + // https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085
-      this.buildingsSourceTele * 0.16
-    ) // from https://www.klimaneutral-handeln.de/php/kompens-berechnen.php#rechner
-  },
-
-  get co2emissions(): number {
-    return (
-      this.co2emissionsEnergy +
-      this.co2emissionsIndustry +
-      this.co2emissionsMobility +
-      this.co2emissionsBuildings +
-      this.co2emissionsAgriculture +
-      this.co2emissionsOthers
+      data.electricityDemand -
+      data.electricitySolar -
+      data.electricityWind -
+      data.electricityWater -
+      data.electricityHardCoal -
+      data.electricityBrownCoal -
+      data.electricityBiomass -
+      data.electricityNuclear
     )
   },
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const carEmissionFactor = new WritableParam({
+  unit: "GramPerPsgrKm",
+  initialValue: 160 as GramPerPsgrKm,
+  sources: [vdv2019Statistik],
+  details: /*html*/ ``,
+  internals: /*html*/ `[vdv2019Statistik] page 11 would lead to about 160 g/Pkm`,
+})
+
+const carUsage = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 917000 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const carRenewablePercentage = new WritableParam({
+  unit: "Percent",
+  initialValue: 1 as Percent,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)`,
+})
+
+const publicLocalUsage = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 112600 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const publicLocalCapacity = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 112600 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ `Our definition: current situation is 100%`,
+})
+
+const publicNationalUsage = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 67300 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ `public - local - air = 251700 - 71800 - 112600 = 67300`,
+})
+
+const publicNationalCapacity = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 67300 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ `Our defionition current situation is 100%`,
+})
+
+const airDomesticUsage = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 10100 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const airIntlUsage = new WritableParam({
+  unit: "MioPsgrKm",
+  initialValue: 61700 as MioPsgrKm,
+  sources: [bmvi2020VerkehrInZahlen],
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const passengerTransportUsage = new ComputedParam({
+  unit: "MioPsgrKm",
+  valueGetter(data: ParamsBase): MioPsgrKm {
+    return data.carUsage + data.publicLocalUsage + data.publicNationalUsage + data.airDomesticUsage + data.airIntlUsage
+  },
+  details: /*html*/ ``,
+  internals: /*html*/ ``,
+})
+
+const buildingsIndustryDemand = new WritableParam({
+  unit: "TWh",
+  initialValue: 226 as TWh,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+})
+
+const buildingsPrivateDemand = new WritableParam({
+  unit: "TWh",
+  initialValue: 544 as TWh,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+})
+
+const buildingsDemand = new ComputedParam({
+  unit: "TWh",
+  valueGetter(data: ParamsBase): TWh {
+    return data.buildingsPrivateDemand + data.buildingsIndustryDemand
+  },
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+})
+
+const buildingsSourceBio = new WritableParam({
+  unit: "TWh",
+  initialValue: 130 as TWh,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+})
+
+const buildingsSourceOil = new WritableParam({
+  unit: "TWh",
+  initialValue: 219 as TWh,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+})
+
+const buildingsSourceTele = new WritableParam({
+  unit: "TWh",
+  initialValue: 58 as TWh,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+})
+
+const buildingsSourceGas = new ComputedParam({
+  unit: "TWh",
+  valueGetter(data: ParamsBase): TWh {
+    return data.buildingsDemand - (data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele)
+  },
+  details: /*html*/ ``,
+  internals: /*html*/ `TODO#73: Find value for shouldInitiallyBe.`, //TODO #73
+})
+
+const popularity = new WritableParam({
+  unit: "Percent",
+  initialValue: 50 as Percent,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `50% of all people accept you as their chancellor.`,
+})
+
+const numberOfCitizens = new WritableParam({
+  unit: "TsdPeople",
+  initialValue: 83157 as TsdPeople,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html.`,
+})
+
+const unemployment = new WritableParam({
+  unit: "TsdPeople",
+  initialValue: 2695 as TsdPeople,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre`,
+})
+
+const gdp = new WritableParam({
+  unit: "MrdEuro",
+  initialValue: 3332 as MrdEuro,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr`,
+})
+
+const stateDebt = new WritableParam({
+  unit: "MrdEuro",
+  initialValue: 1899 as MrdEuro,
+  sources: [],
+  details: /*html*/ ``,
+  internals: /*html*/ `In 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands`,
+})
+
+const paramDefinitions = {
+  co2budget,
+  co2emissionsIndustry,
+  co2emissionsStreetVehicles,
+  co2emissionsMobility,
+  co2emissionsAgriculture,
+  co2emissionsBuildings,
+  co2emissionsOthers,
+  co2emissionsEnergy,
+  co2emissions,
+
+  electricityDemand,
+
+  electricitySolar,
+  electricityWind,
+  electricityWindOnshoreMaxNew,
+  electricityWater,
+  electricityBiomass,
+  electricityNuclear,
+  electricityHardCoal,
+  electricityBrownCoal,
+  electricityCoal,
+  electricityGas,
+
+  carEmissionFactor,
+  carUsage,
+  carRenewablePercentage,
+  publicLocalUsage,
+  publicLocalCapacity,
+  publicNationalUsage,
+  publicNationalCapacity,
+  airDomesticUsage,
+  airIntlUsage,
+  passengerTransportUsage,
+
+  buildingsIndustryDemand,
+  buildingsPrivateDemand,
+  buildingsDemand,
+  buildingsSourceBio,
+  buildingsSourceOil,
+  buildingsSourceTele,
+  buildingsSourceGas,
+
+  popularity,
+
+  numberOfCitizens,
+  unemployment,
+
+  gdp,
+  stateDebt,
 }
-*/
+
+const writableParamDefinitions = Object.entries(paramDefinitions)
+  .filter((e) => e[1] instanceof WritableParam)
+  .map((e) => e as [string, WritableParam])
+  .reduce((newObj, e) => {
+    newObj[e[0]] = e[1]
+    return newObj
+  }, {} as Record<string, WritableParam>)
+
+const computedParamDefinitions = Object.entries(paramDefinitions)
+  .filter((e) => e[1] instanceof ComputedParam)
+  .map((e) => e as [string, ComputedParam])
+  .reduce((newObj, e) => {
+    newObj[e[0]] = e[1]
+    return newObj
+  }, {} as Record<string, ComputedParam>)
+
+type WritableParamDefinitions = typeof writableParamDefinitions
+type WritableParamKey = keyof WritableParamDefinitions
+const writableParamKeys = Object.keys(writableParamDefinitions) as WritableParamKey[]
+type WritableParams = Record<WritableParamKey, number>
+export type WritableBaseParams = WritableParams
+
+type ComputedParamDefinitions = typeof computedParamDefinitions
+type ComputedParamKey = keyof ComputedParamDefinitions
+const computedParamKeys = Object.keys(computedParamDefinitions) as ComputedParamKey[]
+type ComputedParams = Record<ComputedParamKey, number>
+
+export type ParamDefinitions = WritableParamDefinitions | ComputedParamDefinitions
+type ParamKey = WritableParamKey | ComputedParamKey
+export const paramKeys = Object.keys(paramDefinitions) as ParamKey[]
+type Params = Record<ParamKey, number>
+export type BaseParams = Params
+
+interface ParamEntryBase {
+  name: ParamKey
+  unit: Unit
+  sources: Sources
+  details: Details
+  internals: Internals
+  writable: boolean
 }
 
-export type ParamDefinitions = typeof paramDefinitions
-export type ParamKey = keyof ParamDefinitions
-
-//TODO #73: This assertion does the trick, but might not be noticed, when changing params. Better here or in unit test?
-const assertion: ParamDefinitions extends Record<string, ParamDefinition> ? true : never = true
-
-export type Params = Record<ParamKey, number>
-
-export function createInitialValues(): Params {
-  const result: Partial<Params> = {}
-  for (const key in paramDefinitions) {
-    const name = key as ParamKey
-    const pd = paramDefinitions[name]
-    if (pd instanceof WritableParam) {
-      result[name] = pd.initialValue
-    } else {
-      Object.defineProperty(result, name, {
-        get: () => {
-          return pd.valueGetter(result)
-        },
-      })
-    }
+class WritableParamEntry extends WritableParam implements ParamEntryBase {
+  name: WritableParamKey
+  constructor(param: WritableParam, name: WritableParamKey) {
+    super(param)
+    this.name = name
   }
+}
+export const writableParamList: WritableParamEntry[] = Object.entries(writableParamDefinitions).map(
+  (e) => new WritableParamEntry(e[1], e[0] as WritableParamKey)
+)
+
+class ComputedParamEntry extends ComputedParam implements ParamEntryBase {
+  name: ComputedParamKey
+  constructor(param: ComputedParam, name: ComputedParamKey) {
+    super(param)
+    this.name = name
+  }
+}
+export const computedParamList: ComputedParamEntry[] = Object.entries(computedParamDefinitions).map(
+  (e) => new ComputedParamEntry(e[1], e[0] as ComputedParamKey)
+)
+
+type ParamEntry = WritableParamEntry | ComputedParamEntry
+export const paramList: ParamEntry[] = Object.entries(paramDefinitions).map((e) =>
+  e[1] instanceof WritableParam ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0])
+)
+
+export const defaultValues: WritableParams = writableParamList.reduce(
+  (newObj, e) => ({ ...newObj, [e.name]: e.initialValue }),
+  {}
+)
+
+export function createBaseValues(values: WritableParams): Params {
+  const result: ParamsBase = { ...values }
+  Object.entries(computedParamDefinitions).forEach((e) =>
+    Object.defineProperty(result, e[0], {
+      get: () => {
+        return e[1].valueGetter(result)
+      },
+    })
+  )
   return result as Params
 }
