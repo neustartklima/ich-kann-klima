@@ -1,6 +1,7 @@
 import { urlencoded } from "express"
 import { defineLaw } from "../Factory"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
+import { welt2018BundKassiertMineraloelsteuer } from "../model/Sources"
 import { MrdEuro, Percent, WritableBaseParams } from "../types"
 
 export default defineLaw({
@@ -32,23 +33,11 @@ export default defineLaw({
     const relCarPercentage: Percent = (carNonRenewableUsage / v.passengerTransportUsage) * 100
     return linear(60, 100, relCarPercentage)
   },
-  sources: [
-    {
-      title: "welt.de: Bund kassiert so viel Mineralölsteuer wie seit Jahren nicht",
-      authors: "Birger Nicolai, Korrespondent, Welt",
-      date: new Date("2018-02-04"),
-      url: new URL(
-        "https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html"
-      ),
-      archiveUrl: new URL(
-        "https://web.archive.org/web/20201113072050/https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html"
-      ),
-    },
-  ],
+  sources: [welt2018BundKassiertMineraloelsteuer],
   details: /*html*/ ``,
   internals: /*html*/ `
   <h1>Folgen</h1>
-    <p>Staatsschulden steigen um 41 Mrd € pro Jahr [1]</p>
+    <p>Staatsschulden steigen um 41 Mrd € pro Jahr [welt2018BundKassiertMineraloelsteuer]</p>
     <p>Im ersten Jahr steigen 20% der Nutzer von öffentlichen Verkehrsmitteln aufs Auto um.</p>
     <p>Popularität steigt im ersten Jahr um 5% und sinkt danach um 3% pro Jahr.</p>
   <h1>Vorbedingungen</h1>
