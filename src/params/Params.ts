@@ -314,7 +314,7 @@ const buildingsIndustryDemand = new WritableParam({
   initialValue: 226 as TWh,
   sources: [],
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
 
 const buildingsPrivateDemand = new WritableParam({
@@ -322,7 +322,7 @@ const buildingsPrivateDemand = new WritableParam({
   initialValue: 544 as TWh,
   sources: [],
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
 
 const buildingsDemand = new ComputedParam({
@@ -331,7 +331,7 @@ const buildingsDemand = new ComputedParam({
     return data.buildingsPrivateDemand + data.buildingsIndustryDemand
   },
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
 
 const buildingsSourceBio = new WritableParam({
@@ -339,7 +339,7 @@ const buildingsSourceBio = new WritableParam({
   initialValue: 130 as TWh,
   sources: [],
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
 
 const buildingsSourceOil = new WritableParam({
@@ -347,7 +347,7 @@ const buildingsSourceOil = new WritableParam({
   initialValue: 219 as TWh,
   sources: [],
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
 
 const buildingsSourceTele = new WritableParam({
@@ -355,7 +355,7 @@ const buildingsSourceTele = new WritableParam({
   initialValue: 58 as TWh,
   sources: [],
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find source of initialValue.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
 
 const buildingsSourceGas = new ComputedParam({
@@ -364,7 +364,7 @@ const buildingsSourceGas = new ComputedParam({
     return data.buildingsDemand - (data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele)
   },
   details: /*html*/ ``,
-  internals: /*html*/ `TODO#73: Find value for shouldInitiallyBe.`, //TODO #73
+  internals: /*html*/ `TODO#78: Find value for shouldInitiallyBe.`, //TODO #78
 })
 
 const popularity = new WritableParam({

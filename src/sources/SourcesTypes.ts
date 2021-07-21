@@ -2,7 +2,7 @@ import { Html, LocalPath } from "../types"
 
 export class Source {
   url: URL
-  title?: string // TODO #73: Make mandatory
+  title?: string // TODO #79: Make mandatory
   publisher?: string
   authors?: string
   date?: Date
