@@ -1,5 +1,7 @@
-import { allLaws } from "./laws"
-import { Game, Law, LawId, LawReference, MioPsgrKm, MioTons, Percent, TWh, WritableBaseParams } from "./types"
+import { allLaws, LawId, LawReference } from "./laws"
+import { Game } from "./game"
+import { MioPsgrKm, MioTons, Percent, TWh } from "./types"
+import { WritableBaseParams } from "./params"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.

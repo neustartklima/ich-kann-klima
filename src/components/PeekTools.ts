@@ -1,6 +1,7 @@
 import { applyEffects } from "../Calculator"
-import { createBaseValues } from "../model"
-import { BaseParams, Game, Law, WritableBaseParams } from "../types"
+import { BaseParams, createBaseValues, paramList, WritableBaseParams } from "../params"
+import { Game } from "../game"
+import { Law } from "../laws"
 
 function genCompare(a: number | string, b: number | string) {
   if (a < b) return -1
@@ -9,66 +10,6 @@ function genCompare(a: number | string, b: number | string) {
 }
 
 export type LawSortCols = "state" | "id" | "priority"
-
-type IsWritable<Param> = Param extends keyof WritableBaseParams ? true : false
-
-type PeekOption<Param extends keyof BaseParams> = {
-  unit: string
-  writable: IsWritable<Param>
-}
-const o = <Param extends keyof BaseParams>(unit: string, writable: IsWritable<Param>): PeekOption<Param> => ({
-  unit,
-  writable,
-})
-
-type PeekOptions = {
-  [Param in keyof BaseParams]: PeekOption<Param>
-}
-
-const peekOptions: PeekOptions = {
-  co2budget: o("MioTons", true),
-  co2emissionsIndustry: o("MioTons", true),
-  co2emissionsStreetVehicles: o("MioTons", false),
-  co2emissionsMobility: o("MioTons", false),
-  co2emissionsBuildings: o("MioTons", false),
-  co2emissionsAgriculture: o("MioTons", true),
-  co2emissionsOthers: o("MioTons", true),
-  co2emissionsEnergy: o("MioTons", false),
-  co2emissions: o("MioTons", false),
-  electricityDemand: o("TWh/a", true),
-  electricitySolar: o("TWh/a", true),
-  electricityWind: o("TWh/a", true),
-  electricityWindOnshoreMaxNew: o("TWh/a", true),
-  electricityWater: o("TWh/a", true),
-  electricityBiomass: o("TWh/a", true),
-  electricityNuclear: o("TWh/a", true),
-  electricityHardCoal: o("TWh/a", true),
-  electricityBrownCoal: o("TWh/a", true),
-  electricityCoal: o("TWh/a", false),
-  electricityGas: o("TWh/a", false),
-  carEmissionFactor: o("GramPerPsgrKm", true),
-  carUsage: o("MioPsgrKm", true),
-  carRenewablePercentage: o("Percent", true),
-  publicLocalUsage: o("MioPsgrKm", true),
-  publicLocalCapacity: o("MioPsgrKm", true),
-  publicNationalUsage: o("MioPsgrKm", true),
-  publicNationalCapacity: o("MioPsgrKm", true),
-  airDomesticUsage: o("MioPsgrKm", true),
-  airIntlUsage: o("MioPsgrKm", true),
-  passengerTransportUsage: o("MioPsgrKm", false),
-  buildingsIndustryDemand: o("TWh/a", true),
-  buildingsPrivateDemand: o("TWh/a", true),
-  buildingsDemand: o("TWh/a", false),
-  buildingsSourceBio: o("TWh/a", true),
-  buildingsSourceOil: o("TWh/a", true),
-  buildingsSourceTele: o("TWh/a", true),
-  buildingsSourceGas: o("TWh/a", false),
-  stateDebt: o("MrdEuro", true),
-  popularity: o("Percent", true),
-  numberOfCitizens: o("TsdPeople", true),
-  unemployment: o("TsdPeople", true),
-  gdp: o("MrdEuro", true),
-}
 
 export type ValueRow = {
   id: keyof BaseParams
@@ -98,13 +39,12 @@ export function getSortedValues(values: BaseParams, effects: Partial<WritableBas
     return ""
   }
 
-  const peekOpts = Object.keys(peekOptions) as (keyof BaseParams)[]
-  const result: ValueRow[] = peekOpts.map((key) => ({
-    id: key,
-    unit: peekOptions[key].unit,
-    value: valueStr(key),
-    effect: effectStr(key),
-    class: peekOptions[key].writable ? "writable" : "calculated",
+  const result: ValueRow[] = paramList.map((pd) => ({
+    id: pd.name,
+    unit: pd.unit,
+    value: valueStr(pd.name),
+    effect: effectStr(pd.name),
+    class: pd.writable ? "writable" : "calculated",
   }))
   return result
 }

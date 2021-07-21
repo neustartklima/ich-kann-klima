@@ -1,5 +1,5 @@
 import { Store } from "./store"
-import { Event } from "./types"
+import { Event } from "./events"
 
 export type PriorizedEvent = Event & { priority: number }
 

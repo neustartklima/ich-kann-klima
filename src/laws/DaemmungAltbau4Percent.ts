@@ -1,12 +1,14 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
 import { createChange, linear, modify } from "../lawTools"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden sehr stark fördern",
-  description: "Die nachträgliche Dämmung von Wohngebäuden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungsplätze im Handwerk geschaffen durch einen Zuschuss von 500€ pro Monat, damit der zu erwartende Bauboom bewältigt werden kann.",
+  description:
+    "Die nachträgliche Dämmung von Wohngebäuden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungsplätze im Handwerk geschaffen durch einen Zuschuss von 500€ pro Monat, damit der zu erwartende Bauboom bewältigt werden kann.",
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     const applyChange = createChange(data)
     const costsPerYear: MrdEuro = 3
     const yearsActive = currentYear - startYear

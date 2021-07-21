@@ -1,6 +1,7 @@
 import { defineLaw } from "../Factory"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
-import { MioPsgrKm, Percent, WritableBaseParams } from "../types"
+import { MioPsgrKm, Percent } from "../types"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Autos in Innenstädten verbieten",

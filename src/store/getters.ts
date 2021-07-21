@@ -1,5 +1,5 @@
-import { Law } from "../types"
 import { State } from "."
+import { Law } from "../laws"
 
 export const getters = {
   proposedLaws(state: State): Law[] {

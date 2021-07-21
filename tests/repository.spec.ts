@@ -1,10 +1,11 @@
 import "should"
 import sinon from "sinon"
-import { createBaseValues, defaultValues, initGame } from "../src/model"
+import { createBaseValues, defaultValues } from "../src/params"
 import { API } from "../src/model/api"
 import Repository from "../src/model/Repository"
+import { initGame } from "../src/model"
 
-describe("createBaseValues(defaultParams)", () => {
+describe("createBaseValues(defaultValues)", () => {
   const iniVals = createBaseValues(defaultValues)
 
   // Source: https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile p. 219

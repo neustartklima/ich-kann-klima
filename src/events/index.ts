@@ -12,7 +12,9 @@ import WahlVerloren from "./WahlVerloren"
 import WindkraftAusschreibung from "./WindkraftAusschreibung"
 
 import { prepareModuleList } from "../Factory"
-import { Event } from "../types"
+import { Event } from "./EventsTypes"
+
+export { Event, EventId } from "./EventsTypes"
 
 export const allEvents = prepareModuleList({
   AbstandsregelnWindkraft,

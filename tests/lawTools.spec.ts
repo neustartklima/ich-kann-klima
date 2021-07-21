@@ -1,6 +1,7 @@
 import should from "should"
 import { changeBy, changePercentBy, getActiveLaw, linear } from "../src/lawTools"
-import { LawReference, Percent } from "../src/types"
+import { LawReference } from "../src/laws"
+import { Percent } from "../src/types"
 
 describe("lawTools", () => {
   describe("changePercentBy()", () => {

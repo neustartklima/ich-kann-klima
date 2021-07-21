@@ -1,4 +1,5 @@
-import { EventDefinition, Law, LawDefinition } from "./types"
+import { EventDefinition } from "./events/EventsTypes"
+import { Law, LawDefinition } from "./laws"
 
 export function defineLaw(law: LawDefinition): LawDefinition {
   return law

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
-import { Law } from "../types"
+import { Law } from "../laws"
 import { useStore } from "../store"
 
 export default defineComponent({
@@ -22,7 +22,7 @@ export default defineComponent({
 
   computed: {
     visibleAccepted(): Law[] {
-      return this.allLaws.filter((law) => 
+      return this.allLaws.filter((law) =>
         this.acceptedLaws?.some((l) => l.lawId === law.id)
         && !(law.labels?.includes("hidden"))
       )

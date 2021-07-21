@@ -1,4 +1,5 @@
-import { Event, Game } from "../types"
+import { Event } from "../events"
+import { Game } from "../game"
 import { allLaws } from "../laws"
 
 export const state = {

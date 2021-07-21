@@ -1,6 +1,6 @@
 import should from "should"
-import { computedParamList, createBaseValues, defaultValues, ParamDefinitions, paramKeys } from "../src/model/Params"
-import { ParamDefinition } from "../src/types"
+import { computedParamList, createBaseValues, defaultValues, ParamDefinitions, paramKeys } from "../src/params"
+import { ParamDefinition } from "../src/params/ParamsTypes"
 
 describe("ParamDefinitions", () => {
   it("should extend Record<string, ParamDefinition>", () => {

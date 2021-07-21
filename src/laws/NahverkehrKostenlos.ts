@@ -1,6 +1,7 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro, TsdPeople, WritableBaseParams } from "../types"
+import { MrdEuro, TsdPeople } from "../types"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Nahverkehr Kostenlos",

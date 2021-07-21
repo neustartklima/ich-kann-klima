@@ -1,6 +1,7 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro, WritableBaseParams } from "../types"
+import { MrdEuro } from "../types"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Nahverkehr Ausbauen",

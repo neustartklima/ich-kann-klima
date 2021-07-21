@@ -1,17 +1,19 @@
 import { defineLaw } from "../Factory"
 import { changePercentBy, linear } from "../lawTools"
-import { Percent, WritableBaseParams } from "../types"
+import { Percent } from "../types"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Generelles Tempolimit nicht umsetzen",
-  description: "Die EU hat das generelle Tempolkmit zwar beschlossen, wir setzen es aber nicht um. Das könnte zwar Strafen oder gar Zwangsmaßnahmen bewirken, aber das Risiko der gefährdeten Wiederwahl ist zu groß.",
+  description:
+    "Die EU hat das generelle Tempolkmit zwar beschlossen, wir setzen es aber nicht um. Das könnte zwar Strafen oder gar Zwangsmaßnahmen bewirken, aber das Risiko der gefährdeten Wiederwahl ist zu groß.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
 
   effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     return {
-      stateDebt: -10,     // Strafen der EU
-      popularity: changePercentBy(data.popularity, -2),   // Befürworter des generellen Tempolimits
+      stateDebt: -10, // Strafen der EU
+      popularity: changePercentBy(data.popularity, -2), // Befürworter des generellen Tempolimits
     }
   },
 

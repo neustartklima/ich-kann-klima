@@ -3,7 +3,7 @@ import { defineComponent } from "vue"
 import GameSetup from "../components/GameSetup.vue"
 import AcceptedLaws from "../components/AcceptedLaws.vue"
 import { useStore } from "../store"
-import { GameId } from "../types"
+import { GameId } from "../game"
 
 export default defineComponent({
   components: {

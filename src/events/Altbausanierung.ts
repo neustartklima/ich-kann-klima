@@ -4,7 +4,7 @@ import AllesBleibtBeimAlten from "../laws/AllesBleibtBeimAlten"
 import DaemmungAltbau1Percent from "../laws/DaemmungAltbau1Percent"
 import DaemmungAltbau2Percent from "../laws/DaemmungAltbau2Percent"
 import DaemmungAltbau4Percent from "../laws/DaemmungAltbau4Percent"
-import { Game } from "../types"
+import { Game } from "../game"
 import { linear } from "../lawTools"
 
 export default defineEvent({

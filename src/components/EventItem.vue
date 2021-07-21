@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from "@vue/runtime-core"
-import { Event } from "../types"
+import { Event } from "../events"
 
 export default defineComponent({
   props: {
@@ -29,9 +29,7 @@ export default defineComponent({
 <template>
   <li :class="{ new: !event.acknowledged, open }">
     <title @click="toggle">{{ event.title }}</title>
-    <p ref="p">
-      {{ event.description }}
-    </p>
+    <p ref="p">{{ event.description }}</p>
   </li>
 </template>
 

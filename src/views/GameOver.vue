@@ -3,7 +3,7 @@ import { defineComponent } from "@vue/runtime-core"
 import { computed } from "vue"
 import GameSetup from "../components/GameSetup.vue"
 import { useStore } from "../store"
-import { GameId } from "../types"
+import { GameId } from "../game"
 
 export default defineComponent({
   components: { GameSetup },
