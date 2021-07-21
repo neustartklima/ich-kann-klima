@@ -3,8 +3,6 @@ import { BaseParams, WritableBaseParams } from "../params"
 import { Sources } from "../sources"
 import { Details, Internals, Percent } from "../types"
 
-export type LawId = string
-
 export type LawLabel =
   | "hidden"
   | "initial"
@@ -29,15 +27,3 @@ export type LawDefinition = {
   details?: Details // TODO #73: Make mandatory
   internals?: Internals // TODO #73: Make mandatory
 }
-
-export type Law = LawDefinition & {
-  id: LawId
-}
-
-export type LawReference = {
-  lawId: LawId
-  effectiveSince: number
-}
-
-export type AcceptedLaw = Law & { effectiveSince: number }
-export type LawView = Law & { pos: number; zIndex: number }

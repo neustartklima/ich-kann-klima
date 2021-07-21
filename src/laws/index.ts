@@ -31,9 +31,21 @@ import AusschreibungsverfahrenfuerWindkraftVervierfachen from "./Ausschreibungsv
 import AusschreibungsverfahrenfuerWindkraftVerachtfachen from "./AusschreibungsverfahrenfuerWindkraftVerachtfachen"
 
 import { lawList } from "../Factory"
-import { Law } from "./LawsTypes"
+import { LawDefinition } from "./LawsTypes"
 
-export { LawId, Law, LawDefinition, LawReference, AcceptedLaw, LawView } from "./LawsTypes"
+export type LawId = string
+
+export type Law = LawDefinition & {
+  id: LawId
+}
+
+export type LawReference = {
+  lawId: LawId
+  effectiveSince: number
+}
+
+export type AcceptedLaw = Law & { effectiveSince: number }
+export type LawView = Law & { pos: number; zIndex: number }
 
 export const allLaws: Law[] = lawList({
   AllesBleibtBeimAlten,

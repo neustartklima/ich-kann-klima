@@ -1,6 +1,6 @@
-import { Source, Sources } from "./SourcesTypes"
+import { Source } from "./SourcesTypes"
 
-export { Sources }
+export type Sources = Source[]
 
 export const umweltrat2020Umweltgutachten = new Source({
   url:
