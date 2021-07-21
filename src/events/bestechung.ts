@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { Law } from "../types"
+import { Law } from "../laws"
 
 // if proposed laws contain at least one with the words 'subvention' and 'abbau', this event might occur
 function getFirstMatchingLaw(proposedLaws: Law[]) {

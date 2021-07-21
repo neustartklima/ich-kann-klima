@@ -1,5 +1,6 @@
-import { BaseParams, AcceptedLaw, Game, LawReference, WritableBaseParams } from "./types"
-import { createBaseValues, defaultValues } from "./model"
+import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from "./params"
+import { Game } from "./game"
+import { AcceptedLaw } from "./laws"
 
 export function applyEffects(values: BaseParams, effects: Partial<WritableBaseParams>) {
   const effectedProperties = Object.keys(effects) as Array<keyof WritableBaseParams>

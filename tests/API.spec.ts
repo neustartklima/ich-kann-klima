@@ -2,7 +2,7 @@ import "should"
 import Sinon from "sinon"
 import { initGame } from "../src/model"
 import APIFactory, { API } from "../src/model/api"
-import { Game } from "../src/types"
+import { Game } from "../src/game"
 
 describe("API", () => {
   const mockQuque = () => ({ add: Sinon.stub(), remove: Sinon.stub(), callsPending: Sinon.stub() })

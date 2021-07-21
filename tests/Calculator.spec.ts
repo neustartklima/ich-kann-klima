@@ -1,6 +1,10 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
-import { createBaseValues, defaultValues } from "../src/model"
-import { AcceptedLaw, BaseParams, EffectsFunc, Game, LawLabel, MioPsgrKm, WritableBaseParams } from "../src/types"
+import { createBaseValues, defaultValues } from "../src/params"
+import { AcceptedLaw } from "../src/laws"
+import { BaseParams, WritableBaseParams } from "../src/params"
+import { Game } from "../src/game"
+import { EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
+import { MioPsgrKm } from "../src/types"
 import "should"
 
 function agriEffects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams> {
@@ -111,7 +115,8 @@ describe("Calculator.co2Rating", () => {
   })
 
   it("should return 0 if budget is used up", () => {
-    const values = { ...initialGame.values, co2budget: 0 }
+    const values = createBaseValues(defaultValues)
+    values.co2budget = 0
     const rating = co2Rating({ ...initialGame, values })
     rating.should.equal(0)
   })
@@ -130,13 +135,15 @@ describe("Calculator.financeRating", () => {
   })
 
   it("should return 0 if debt is doubled", () => {
-    const values = { ...initialGame.values, stateDebt: initialGame.values.stateDebt * 2 }
+    const values = createBaseValues(defaultValues)
+    values.stateDebt = initialGame.values.stateDebt * 2
     const rating = financeRating({ ...initialGame, values })
     rating.should.equal(0)
   })
 
   it("should return 100 if there is no debt any more", () => {
-    const values = { ...initialGame.values, stateDebt: 0 }
+    const values = createBaseValues(defaultValues)
+    values.stateDebt = 0
     const rating = financeRating({ ...initialGame, values })
     rating.should.equal(100)
   })

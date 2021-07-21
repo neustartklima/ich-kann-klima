@@ -4,7 +4,7 @@ import Indicator from "../components/Indicator.vue"
 import TimeIndicator from "../components/TimeIndicator.vue"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
-import { Game } from "../types"
+import { Game } from "../game"
 
 function get(game: Game, func: (game: Game) => number): number {
   return game ? Math.round(func(game) / 10) : 0

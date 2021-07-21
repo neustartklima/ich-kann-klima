@@ -1,12 +1,14 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
-import { createChange, getActiveLaw, lawIsAccepted, linear, modify } from "../lawTools"
+import { createChange, getActiveLaw, linear, modify } from "../lawTools"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden abschaffen",
-  description: "Wir geben den Bürgern die Freiheit zurück, selbst zu entscheiden, ob sie ihr Haus dämmen wollen und lassen die Förderung auslaufen",
+  description:
+    "Wir geben den Bürgern die Freiheit zurück, selbst zu entscheiden, ob sie ihr Haus dämmen wollen und lassen die Förderung auslaufen",
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
     const applyChange = createChange(data)
     return applyChange([
       modify("stateDebt", -0.5 as MrdEuro),

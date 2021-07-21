@@ -1,6 +1,7 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
-import { Percent, TWh, WritableBaseParams } from "../types"
+import { Percent, TWh } from "../types"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft wie bisher",

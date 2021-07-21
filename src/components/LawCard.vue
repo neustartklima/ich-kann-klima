@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue"
-import { LawView } from "../types"
+import { LawView } from "../laws"
 import { useStore } from "../store"
 import { mapGetters } from "vuex"
 

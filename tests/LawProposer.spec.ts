@@ -2,9 +2,10 @@ import "should"
 import API from "../src/model/api"
 import repository from "../src/model/Repository"
 import { fillUpLawProposals } from "../src/LawProposer"
-import { Game, Law } from "../src/types"
+import { Game } from "../src/game"
 import Sinon from "sinon"
 import FetchQueueFactory from "../src/model/FetchQueue"
+import { Law } from "../src/laws"
 
 function priority(game: Game): number {
   return 1

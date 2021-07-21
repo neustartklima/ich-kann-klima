@@ -1,7 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { Game, WritableBaseParams } from "../types"
+import { Game } from "../game"
+import { WritableBaseParams } from "../params"
 import { startYear } from "../constants"
 import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
 

@@ -1,6 +1,7 @@
 import { defineLaw } from "../Factory"
 import { changePercentBy, lawIsAccepted, linear } from "../lawTools"
-import { GramPerPsgrKm, Percent, WritableBaseParams } from "../types"
+import { GramPerPsgrKm, Percent } from "../types"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Tempolimit 130 auf Autobahnen",

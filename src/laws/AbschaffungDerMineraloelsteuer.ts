@@ -1,8 +1,9 @@
 import { urlencoded } from "express"
 import { defineLaw } from "../Factory"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
-import { welt2018BundKassiertMineraloelsteuer } from "../model/Sources"
-import { MrdEuro, Percent, WritableBaseParams } from "../types"
+import { welt2018BundKassiertMineraloelsteuer } from "../sources"
+import { MrdEuro, Percent } from "../types"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Abschaffung der Mineralölsteuer",

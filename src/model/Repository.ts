@@ -1,7 +1,9 @@
-import { Game, GameDefinition, GameId, Law, Event } from "../types"
+import { Game, GameDefinition, GameId } from "../game"
 import { API } from "./api"
 import { initGame, initialGame } from "."
 import { fillUpLawProposals } from "../LawProposer"
+import { Law } from "../laws"
+import { Event } from "../events"
 
 interface Logger {
   warn: (msg: string, details?: unknown) => void
@@ -29,7 +31,7 @@ export default function({
         .map((law) => ({ lawId: law.id, effectiveSince: game.currentYear }))
       fillUpLawProposals(game, allLaws)
       storage.setItem("game", JSON.stringify(game))
-      
+
       try {
         api.createGame(game) // We don't await here - creating the game on the server is done in the background
       } catch (error) {

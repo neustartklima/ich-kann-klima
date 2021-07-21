@@ -1,4 +1,6 @@
-import { Event, Game, GameId, Law } from "../../types"
+import { Event } from "../../events"
+import { Game, GameId } from "../../game"
+import { Law } from "../../laws"
 import { assert, Store } from "./EventStore"
 
 export default function({ eventStore }: { eventStore: Store }) {

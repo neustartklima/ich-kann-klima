@@ -1,4 +1,4 @@
-import { Game } from "../types"
+import { Game } from "../game"
 import { State } from "."
 
 export const mutations = {

@@ -1,6 +1,7 @@
 import { defineLaw } from "../Factory"
-import { TWh, WritableBaseParams } from "../types"
+import { TWh } from "../types"
 import { linear } from "../lawTools"
+import { WritableBaseParams } from "../params"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft wie bisher",

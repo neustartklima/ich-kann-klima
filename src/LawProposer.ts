@@ -1,6 +1,7 @@
+import { Percent } from "./types"
 import { maxProposedLaws } from "./constants"
-import { allLaws } from "./laws"
-import { AcceptedLaw, Game, Law, LawId, LawReference, Percent } from "./types"
+import { allLaws, Law, LawId, LawReference, AcceptedLaw } from "./laws"
+import { Game } from "./game"
 
 type LawPriority = {
   law: Law

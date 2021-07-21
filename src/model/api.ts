@@ -1,4 +1,6 @@
-import { EventId, Game, GameId, LawId } from "../types"
+import { EventId } from "../events"
+import { Game, GameId } from "../game"
+import { LawId } from "../laws"
 import { FetchQueue } from "./FetchQueue"
 
 export type API = ReturnType<typeof APIFactory>
