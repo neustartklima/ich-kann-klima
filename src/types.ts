@@ -1,5 +1,94 @@
 import { Context, Store } from "./store"
 
+export type LocalPath = string
+export type Html = string
+
+export class Source {
+  url: URL
+  title?: string // TODO #73: Make mandatory
+  publisher?: string
+  authors?: string
+  date?: Date
+  comment?: Html
+  internalComment?: Html
+  localCopy?: LocalPath
+  referringUrl?: URL
+  archiveUrl?: URL
+  archiveNotPossible?: boolean
+  constructor(input: {
+    url: string
+    title?: string
+    publisher?: string
+    authors?: string
+    date?: string
+    comment?: Html
+    internalComment?: Html
+    localCopy?: string
+    referringUrl?: string
+    archiveUrl?: string
+    archiveNotPossible?: boolean
+  }) {
+    this.url = new URL(input.url)
+    this.title = input.title
+    this.publisher = input.publisher
+    this.authors = input.authors
+    this.date = input.date ? new Date(input.date) : undefined
+    this.comment = input.comment
+    this.internalComment = input.internalComment
+    this.localCopy = input.localCopy
+    this.referringUrl = input.referringUrl ? new URL(input.referringUrl) : undefined
+    this.archiveUrl = input.archiveUrl ? new URL(input.archiveUrl) : undefined
+    this.archiveNotPossible = input.archiveNotPossible
+  }
+}
+export type Sources = Source[]
+
+export type Details = Html
+export type Internals = Html
+
+export type Unit = "MioTons" | "TWh" | "MrdEuro" | "TsdPeople" | "Percent"
+
+type ParamInput = {
+  unit: Unit
+  sources?: Sources
+  details?: Details
+  internals?: Internals
+}
+
+export abstract class ParamDefinition {
+  unit: Unit
+  sources: Sources
+  details: Details
+  internals: Internals
+  abstract writable: boolean
+  constructor(input: ParamInput) {
+    this.unit = input.unit
+    this.sources = input.sources ? input.sources : []
+    this.details = input.details ? input.details : ""
+    this.internals = input.internals ? input.internals : ""
+  }
+}
+
+export type ParamsBase = Record<string, number>
+
+export class WritableParam extends ParamDefinition {
+  writable = true
+  initialValue: number
+  constructor(input: ParamInput & { initialValue: number }) {
+    super(input)
+    this.initialValue = input.initialValue
+  }
+}
+
+export class ComputedParam extends ParamDefinition {
+  writable = false
+  valueGetter: (data: ParamsBase) => number
+  constructor(input: ParamInput & { valueGetter: (data: ParamsBase) => number }) {
+    super(input)
+    this.valueGetter = input.valueGetter
+  }
+}
+
 export type MioTons = number
 export type Euro = number
 export type MrdEuro = number
@@ -77,24 +166,6 @@ export type LawLabel =
 
 export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Partial<WritableBaseParams>
 export type PriorityFunc = (game: Game) => Percent
-
-export type LocalPath = string
-export type Html = string
-
-export type Source = {
-  title?: string // TODO #73: Make mandatory
-  authors?: string
-  date?: Date
-  comment?: Html
-  internalComment?: Html
-  url: URL
-  localCopy?: LocalPath
-  archiveUrl?: URL
-}
-export type Sources = Source[]
-
-export type Details = Html
-export type Internals = Html
 
 export type LawDefinition = {
   title: string
