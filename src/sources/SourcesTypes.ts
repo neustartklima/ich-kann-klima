@@ -38,4 +38,3 @@ export class Source {
     this.archiveNotPossible = input.archiveNotPossible
   }
 }
-export type Sources = Source[]

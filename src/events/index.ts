@@ -12,9 +12,12 @@ import WahlVerloren from "./WahlVerloren"
 import WindkraftAusschreibung from "./WindkraftAusschreibung"
 
 import { prepareModuleList } from "../Factory"
-import { Event } from "./EventsTypes"
+import { EventDefinition } from "./EventsTypes"
 
-export { Event, EventId } from "./EventsTypes"
+export type EventId = string
+export type Event = EventDefinition & {
+  id: EventId
+}
 
 export const allEvents = prepareModuleList({
   AbstandsregelnWindkraft,

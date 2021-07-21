@@ -3,7 +3,6 @@ import { Sources } from "../sources"
 import { Context, Store } from "../store"
 import { Details, Internals, Percent } from "../types"
 
-export type EventId = string
 export type EventDefinition = {
   title: string
   description: string
@@ -14,8 +13,4 @@ export type EventDefinition = {
   sources?: Sources // TODO #73: Make mandatory
   details?: Details // TODO #73: Make mandatory
   internals?: Internals // TODO #73: Make mandatory
-}
-
-export type Event = EventDefinition & {
-  id: EventId
 }
