@@ -78,6 +78,24 @@ export type LawLabel =
 export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Partial<WritableBaseParams>
 export type PriorityFunc = (game: Game) => Percent
 
+export type LocalPath = string
+export type Html = string
+
+export type Source = {
+  title?: string // TODO #73: Make mandatory
+  authors?: string
+  date?: Date
+  comment?: Html
+  internalComment?: Html
+  url: URL
+  localCopy?: LocalPath
+  archiveUrl?: URL
+}
+export type Sources = Source[]
+
+export type Details = Html
+export type Internals = Html
+
 export type LawDefinition = {
   title: string
   description: string
@@ -85,17 +103,11 @@ export type LawDefinition = {
   removeLawsWithLabels?: LawLabel[]
   treatAfterLabels?: LawLabel[]
   effects: EffectsFunc
-
-  /**
-   * Current priority of this law.
-   *
-   * Will be used to filter and sort the proposed laws.
-   *
-   * The six laws with highest priority will be shown.
-   * Laws with priority <= 0 will not be shown.
-   * @param game The current game.
-   */
+  /** Used to filter and sort the proposed laws. */
   priority: PriorityFunc
+  sources?: Sources // TODO #73: Make mandatory
+  details?: Details // TODO #73: Make mandatory
+  internals?: Internals // TODO #73: Make mandatory
 }
 
 export type Law = LawDefinition & {
@@ -118,6 +130,9 @@ export type EventDefinition = {
   probability(store: Store): Percent
   acknowledged?: boolean
   laws?: Law[]
+  sources?: Sources // TODO #73: Make mandatory
+  details?: Details // TODO #73: Make mandatory
+  internals?: Internals // TODO #73: Make mandatory
 }
 
 export type Event = EventDefinition & {
