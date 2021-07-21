@@ -10,7 +10,7 @@ export type EventDefinition = {
   probability(store: Store): Percent
   acknowledged?: boolean
   laws?: Law[]
-  sources?: Sources // TODO #73: Make mandatory
-  details?: Details // TODO #73: Make mandatory
-  internals?: Internals // TODO #73: Make mandatory
+  sources?: Sources // TODO #79: Make mandatory
+  details?: Details // TODO #79: Make mandatory
+  internals?: Internals // TODO #79: Make mandatory
 }

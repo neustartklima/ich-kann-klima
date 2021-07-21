@@ -23,7 +23,7 @@ export type LawDefinition = {
   effects: EffectsFunc
   /** Used to filter and sort the proposed laws. */
   priority: PriorityFunc
-  sources?: Sources // TODO #73: Make mandatory
-  details?: Details // TODO #73: Make mandatory
-  internals?: Internals // TODO #73: Make mandatory
+  sources?: Sources // TODO #79: Make mandatory
+  details?: Details // TODO #79: Make mandatory
+  internals?: Internals // TODO #79: Make mandatory
 }
