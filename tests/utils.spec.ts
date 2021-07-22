@@ -51,5 +51,12 @@ Some text
             const a = "this is code"
       `.should.equal(`<h1 id="title">title</h1>\n<pre><code>const a = "this is code"\n</code></pre>`)
     })
+
+    it("should handle variables", () => {
+      const name = "Joachim"
+      markdown`
+        # Hello ${name}!
+      `.should.equal(`<h1 id="hellojoachim">Hello Joachim!</h1>`)
+    })
   })
 })
