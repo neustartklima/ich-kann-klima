@@ -44,6 +44,12 @@ Some text
       `.should.equal(`<h1 id="title">title</h1>\n<p>text</p>`)
     })
 
-    it("should work with code snippets inside indented markdown")
+    it("should work with code snippets inside indented markdown", () => {
+      markdown`
+        # title
+        
+            const a = "this is code"
+      `.should.equal(`<h1 id="title">title</h1>\n<pre><code>const a = "this is code"\n</code></pre>`)
+    })
   })
 })
