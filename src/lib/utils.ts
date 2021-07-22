@@ -15,8 +15,8 @@ export function getZIndexes(numPlaces: number, centerPos: number): number[] {
   return [...numSequence(centerPos), Math.max(centerPos, descending), ...numSequence(descending).reverse()]
 }
 
-export function markdown(text: TemplateStringsArray): string {
-  let strings = text[0].split("\n")
+export function markdown(fragments: TemplateStringsArray, ...variables: string[]): string {
+  let strings = fragments.map((fragment, i) => fragment + (variables[i] || "")).join("").split("\n")
   if (strings[0].length === 0) {
     strings.shift()
   }
