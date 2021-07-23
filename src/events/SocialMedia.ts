@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { Game } from "../game"
 import { Percent } from "../types"
 
 export default defineEvent({
@@ -9,9 +10,10 @@ export default defineEvent({
   `,
 
   apply(context) {
-    const g = context.state.game
-    if (g) {
-      g.values.popularity += Math.max(-g.values.popularity, -20 as Percent)
+    const game = { ...context.state.game } as Game
+    if (game) {
+      game.values.popularity += Math.max(-game.values.popularity, -20 as Percent)
+      context.commit("setGameState", { game })
     }
   },
 
