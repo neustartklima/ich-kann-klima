@@ -14,6 +14,7 @@ export default defineComponent({
   data() {
     const store = useStore()
     return {
+      store,
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
       eventMachine: EventMachine(store, allEvents),
     }
@@ -30,6 +31,14 @@ export default defineComponent({
 
     priorizedEvents(): PriorizedEvent[] {
       return this.eventMachine.getPriorizedEvents()
+    },
+
+    probability(): (event: Event) => string {
+      return (event) => (event.probability(this.store) * 100).toFixed(2)
+    },
+
+    currentYear(): number {
+      return this.store.state.game?.currentYear || 2021
     },
   },
 
@@ -51,9 +60,11 @@ export default defineComponent({
   <div class="game-setup">
     <img src="../assets/background.jpg" />
 
+    <div id="year">{{ currentYear }}</div>
     <LawProposals />
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
+
   <div class="peek">
     <PeekInside v-if="devMode" />
   </div>
@@ -63,6 +74,7 @@ export default defineComponent({
     <ul v-if="devMode && $store.state.game">
       <li v-for="event in priorizedEvents" :key="event.id">
         <span>{{ event.title }}</span>
+        <span>{{ probability(event) }}%</span>
         <span>{{ (event.priority * 100).toFixed(2) }}%</span>
       </li>
     </ul>
@@ -84,6 +96,26 @@ export default defineComponent({
 
   > img {
     max-height: calc(100vh - 4rem);
+  }
+
+  #year {
+    position: absolute;
+    top: 42%;
+    left: 47%;
+    font-size: 1.4vw;
+    border: 1px solid black;
+    padding: 2em 0.5em 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      right: 3px;
+      height: 1.7em;
+      border: 1px solid black;
+      box-sizing: border-box;
+    }
   }
 }
 
@@ -117,8 +149,12 @@ export default defineComponent({
       width: 100%;
       justify-content: space-between;
 
-      span:last-of-type {
-        padding-left: 10px;
+      span {
+        padding: 0 5px;
+      }
+
+      span:first-of-type {
+        flex-grow: 1;
       }
     }
   }

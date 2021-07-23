@@ -6,9 +6,14 @@ export type PriorizedEvent = Event & { priority: number }
 export default function EventMachine(store: Store, allEvents: Event[], random = Math.random) {
   let timer: unknown // to work with both, NodeJS and browser
 
+  function getPriority(event: Event): number {
+    const probability = event.probability(store)
+    return probability >= random() ? probability : 0
+  }
+
   function getPriorizedEvents(): PriorizedEvent[] {
     return allEvents
-      .map((event) => ({ ...event, priority: event.probability(store) * random() }))
+      .map((event) => ({ ...event, priority: getPriority(event) }))
       .filter((event) => event.priority)
       .sort((a, b) => b.priority - a.priority)
   }

@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { getAcceptedLaw } from "../LawProposer"
 
 export default defineEvent({
   title: "Happy New Year!",
@@ -13,12 +14,17 @@ export default defineEvent({
 
   probability(store) {
     const game = store.state.game
-    const amountOfLaws = game?.acceptedLaws.filter((law) => law.effectiveSince == game.currentYear).length || 0
-    if (amountOfLaws < 3 ) {
+    const acceptedLaws = game?.acceptedLaws
+      .map(getAcceptedLaw)
+      .filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1)
+
+    const numOfLaws = acceptedLaws && acceptedLaws.length || 0
+    if (numOfLaws < 3) {
       return 0
     }
+
     // After 3 decisions, the year might end, after 5 decisions, the probability is 100%
-    const probability = amountOfLaws * 0.1 + 0.5
-    return Math.max(Math.random() + probability)
+    const probability = Math.round((numOfLaws - 2) * 33.3) / 100
+    return Math.min(1, probability)
   },
 })
