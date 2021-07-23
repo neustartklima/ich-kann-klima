@@ -5,16 +5,8 @@ export default defineComponent({})
 </script>
 
 <template>
+  <h1>#ich-kann-klima</h1>
   <router-view />
-
-  <!--details class="attribution">
-    <summary>Attribution</summary>
-    <ul>
-      <li>CO2 symbol: Tommaso.sansone91, CC0 1.0, via Wikimedia commons</li>
-      <li>Euro coin: Verdy_p, Public domain, via Wikimedia commons</li>
-      <li>Clapping hands: pngimg.com, CC 4.0 BY-NC</li>
-    </ul>
-  </details-->
 </template>
 
 <style lang="scss">
@@ -46,19 +38,6 @@ ul {
 
   button {
     padding: 8px 16px;
-  }
-}
-
-.attribution {
-  position: fixed;
-  bottom: -1px;
-  right: -1px;
-  padding: 0 5px;
-  font-size: 10px;
-  background: white;
-
-  &[open] {
-    border: 1px solid #cccccc;
   }
 }
 </style>
