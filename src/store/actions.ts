@@ -81,7 +81,6 @@ export const actions = {
   },
 
   async applyEvent(context: Context, payload: { event: Event }) {
-    payload.event.apply(context)
     const game = { ...(context.state.game as Game) }
     game.events.unshift(payload.event)
     await repository.eventOccurred(game, payload.event)
@@ -89,6 +88,7 @@ export const actions = {
       game.proposedLaws = payload.event.laws.map(law => law.id)
     }
     context.commit("setGameState", { game })
+    payload.event.apply(context)
   },
 
   acknowledgeEvent(context: Context, event: Event) {
