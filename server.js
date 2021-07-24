@@ -26098,6 +26098,22 @@ var Hitzeh_lle_default = defineEvent({
   }
 });
 
+// src/LawProposer.ts
+function getLaw(lawId) {
+  const law = allLaws.find((law2) => law2.id === lawId);
+  if (law) {
+    return law;
+  }
+  throw Error(`Law #${lawId} not found`);
+}
+function getAcceptedLaw(lawRef) {
+  const law = getLaw(lawRef.lawId);
+  if (law) {
+    return { ...law, effectiveSince: lawRef.effectiveSince };
+  }
+  throw Error(`Law #${lawRef.lawId} not found`);
+}
+
 // src/events/NewYear.ts
 var NewYear_default = defineEvent({
   title: "Happy New Year!",
@@ -26110,12 +26126,13 @@ var NewYear_default = defineEvent({
   },
   probability(store) {
     const game = store.state.game;
-    const amountOfLaws = game?.acceptedLaws.filter((law) => law.effectiveSince == game.currentYear).length || 0;
-    if (amountOfLaws < 3) {
+    const acceptedLaws = game?.acceptedLaws.map(getAcceptedLaw).filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1);
+    const numOfLaws = acceptedLaws && acceptedLaws.length || 0;
+    if (numOfLaws < 3) {
       return 0;
     }
-    const probability = amountOfLaws * 0.1 + 0.5;
-    return Math.max(Math.random() + probability);
+    const probability = Math.round((numOfLaws - 2) * 33.3) / 100;
+    return Math.min(1, probability);
   }
 });
 
@@ -26127,9 +26144,10 @@ var SocialMedia_default = defineEvent({
     Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
   `,
   apply(context) {
-    const g = context.state.game;
-    if (g) {
-      g.values.popularity += Math.max(-g.values.popularity, -20);
+    const game = { ...context.state.game };
+    if (game) {
+      game.values.popularity += Math.max(-game.values.popularity, -20);
+      context.commit("setGameState", { game });
     }
   },
   probability() {
