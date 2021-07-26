@@ -9,9 +9,13 @@ import { Event } from "../events"
 import { useStore } from "../store"
 import { allEvents } from "../events"
 import EventMachine, { PriorizedEvent } from "../EventMachine"
+import Finances from "./Finances.vue"
+import { financeRating } from "../Calculator"
+import { Game } from "../game"
 
 export default defineComponent({
-  components: { Background, CurrentIndicators, PeekInside, LawProposals, SpeechBubble },
+  components: { Background, CurrentIndicators, PeekInside, LawProposals, SpeechBubble, Finances },
+
   data() {
     const store = useStore()
     return {
@@ -41,6 +45,15 @@ export default defineComponent({
     currentYear(): number {
       return this.store.state.game?.currentYear || 2021
     },
+
+    finance(): number {
+      const game = this.store.state.game
+      if (game) {
+        return financeRating(this.store.state.game as Game)
+      } else {
+        return 0;
+      }
+    },
   },
 
   methods: {
@@ -61,6 +74,8 @@ export default defineComponent({
     <Background />
 
     <div id="year">{{ currentYear }}</div>
+    <Finances :value="finance" />
+
     <LawProposals />
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
