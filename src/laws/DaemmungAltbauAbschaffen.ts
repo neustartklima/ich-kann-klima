@@ -11,10 +11,10 @@ export default defineLaw({
   effects(): Change[] {
     return [
       modify("stateDebt").byValue(-0.5 as MrdEuro),
-      modify("buildingsSourceBio").byValue(-0.5),
-      modify("buildingsSourceOil").byValue(-0.5),
-      modify("buildingsSourceTele").byValue(-0.5),
-      modify("buildingsPrivateDemand").byValue(-0.5),
+      modify("buildingsSourceBio").byPercent(-0.5),
+      modify("buildingsSourceOil").byPercent(-0.5),
+      modify("buildingsSourceTele").byPercent(-0.5),
+      modify("buildingsPrivateDemand").byPercent(-0.5),
     ]
   },
 
