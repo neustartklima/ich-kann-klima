@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { TWh } from "../types"
 import { linear } from "../lawTools"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft wie bisher",
@@ -11,12 +11,12 @@ export default defineLaw({
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+  effects(data): Change[] {
     const onshoreNew: TWh = Math.min(6.9 as TWh, data.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 1.2
-    return {
-      electricityWind: onshoreNew + offshoreNew,
-    }
+    return [
+      modify("electricityWind").byValue(onshoreNew + offshoreNew),
+    ]
   },
 
   priority(game) {
