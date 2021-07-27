@@ -17,14 +17,14 @@ export default defineLaw({
       }
     }
 
-    const potentialUsageIncrease = (startYear === currentYear ? 0.1 * data.publicLocalUsage : 0) as MioPsgrKm
-    // Need to use change...By for carUsage here, to ensure it does not fall below zero:
-    const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
+    // Need to use the carModifier with byValue() here, to ensure it does not fall below zero:
+    const carModifier = modify("carUsage").byValue(-0.1 * data.publicLocalUsage).if(startYear === currentYear)
+    const carChange = carModifier.getChange(data)
 
     return [
       modify("popularity").byValue(popularityChange),
-      modify("carUsage").byValue(-usageIncrease),
-      modify("publicLocalUsage").byValue(usageIncrease),
+      carModifier,
+      modify("publicLocalUsage").byValue(-carChange),
     ]
   },
 

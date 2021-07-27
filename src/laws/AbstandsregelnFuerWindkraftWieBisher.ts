@@ -11,7 +11,7 @@ export default defineLaw({
 
   effects(data): Change[] {
     return [
-      modify("electricityWindOnshoreMaxNew").byValue((6.0 as TWh) - data.electricityWindOnshoreMaxNew),
+      modify("electricityWindOnshoreMaxNew").setValue(6.0 as TWh),
     ]
   },
 

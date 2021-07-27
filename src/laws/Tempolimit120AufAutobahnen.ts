@@ -10,11 +10,12 @@ export default defineLaw({
   removeLawsWithLabels: ["TempolimitAutobahn"],
 
   effects(data): Change[] {
-    const newCarEmissionFactor: GramPerPsgrKm = 157.1
-    const popChange = data.carEmissionFactor > newCarEmissionFactor ? 2 : 0
+    const emissionModifier = modify("carEmissionFactor").byValue(157.1 as GramPerPsgrKm)
+    const emissionChange = emissionModifier.getChange(data)
+
     return [
-      modify("popularity").byValue(popChange),
-      modify("carEmissionFactor").byValue(newCarEmissionFactor - data.carEmissionFactor),
+      modify("popularity").byValue(2).if(emissionChange < 0),
+      emissionModifier,
     ]
   },
 

@@ -10,14 +10,15 @@ export default defineLaw({
 
   effects(data, startYear, currentYear): Change[] {
     const percentage = startYear === currentYear ? 10 : 1
-    const potentialUsageIncrease = (percentage / 100) * data.publicLocalUsage
-    // Need to use change...By for carUsage here, to ensure it does not fall below zero:
-    const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
+
+    // Need to use carModifier and byValue() here, to ensure it does not fall below zero:
+    const carModifier = modify("carUsage").byValue(-(percentage / 100) * data.publicLocalUsage)
+    const carChange = carModifier.getChange(data)
 
     return [
       modify("stateDebt").byValue(10 as MrdEuro),
-      modify("publicLocalUsage").byValue(usageIncrease),
-      modify("carUsage").byValue(-usageIncrease),
+      modify("publicLocalUsage").byValue(-carChange),
+      carModifier,
       modify("popularity").byValue(10).if(startYear === currentYear),
       modify("unemployment").byValue(20 as TsdPeople).if(startYear === currentYear), // 80 Tsd Beschäftigte im ÖPNV, geschätzt 1/4 für Ticketverkauf, -kontrolle und -abrechnung.  
     ]

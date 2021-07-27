@@ -12,7 +12,7 @@ export default defineLaw({
 
   effects(data): Change[] {
     return [
-      modify("electricityNuclear").byValue((104.3 as TWh) - data.electricityNuclear),
+      modify("electricityNuclear").setValue(104.3 as TWh),
       modify("stateDebt").byValue(-2.5 as MrdEuro),
       modify("popularity").byValue(-4),
     ]
