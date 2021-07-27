@@ -12,7 +12,7 @@ export default defineLaw({
 
   effects(data, startYear, currentYear): Change[] {
     return [
-      modify("popularity").byPercent(-3).if(startYear === currentYear),
+      modify("popularity").byValue(-3).if(startYear === currentYear),
       modify("electricityWindOnshoreMaxNew").byValue((30 as TWh) - data.electricityWindOnshoreMaxNew),
     ]
   },

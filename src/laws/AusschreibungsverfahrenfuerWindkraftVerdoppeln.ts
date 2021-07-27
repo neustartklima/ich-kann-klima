@@ -14,7 +14,7 @@ export default defineLaw({
     const onshoreNew: TWh = Math.min(13.8 as TWh, data.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 2.4
     return [
-      modify("popularity").byPercent(-1).if(startYear === currentYear),
+      modify("popularity").byValue(-1).if(startYear === currentYear),
       modify("unemployment").byValue(-20 as TsdPeople).if(startYear === currentYear),
       modify("electricityWind").byValue(onshoreNew + offshoreNew),
     ]

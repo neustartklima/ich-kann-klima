@@ -22,7 +22,7 @@ export default defineLaw({
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
 
     return [
-      modify("popularity").byPercent(popularityChange),
+      modify("popularity").byValue(popularityChange),
       modify("carUsage").byValue(-usageIncrease),
       modify("publicLocalUsage").byValue(usageIncrease),
     ]

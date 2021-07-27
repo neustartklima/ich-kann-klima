@@ -11,7 +11,7 @@ export default defineLaw({
     const usageChange = changeMioPsgrKmBy(data.carUsage, -0.0005 * data.carUsage)
     return [
       modify("stateDebt").byValue(-18 as MrdEuro),
-      modify("popularity").byPercent(-1).if(startYear === currentYear),
+      modify("popularity").byValue(-1).if(startYear === currentYear),
       modify("carUsage").byValue(usageChange),
       modify("publicLocalUsage").byValue(-usageChange),
     ]

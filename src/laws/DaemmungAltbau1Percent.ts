@@ -12,10 +12,10 @@ export default defineLaw({
     const inEffect = (currentYear - startYear) > 2
     return [
       modify("stateDebt").byValue(costsPerYear),
-      modify("buildingsSourceBio").byPercent(-1).if(inEffect),
-      modify("buildingsSourceOil").byPercent(-1).if(inEffect),
-      modify("buildingsSourceTele").byPercent(-1).if(inEffect),
-      modify("buildingsPrivateDemand").byPercent(-1).if(inEffect),
+      modify("buildingsSourceBio").byValue(-1).if(inEffect),
+      modify("buildingsSourceOil").byValue(-1).if(inEffect),
+      modify("buildingsSourceTele").byValue(-1).if(inEffect),
+      modify("buildingsPrivateDemand").byValue(-1).if(inEffect),
     ]
   },
 

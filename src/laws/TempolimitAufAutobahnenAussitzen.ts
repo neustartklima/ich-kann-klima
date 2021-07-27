@@ -13,7 +13,7 @@ export default defineLaw({
   effects(): Change[] {
     return [
       modify("stateDebt").byValue(-10), // Strafen der EU
-      modify("popularity").byPercent(-2), // Befürworter des generellen Tempolimits
+      modify("popularity").byValue(-2), // Befürworter des generellen Tempolimits
     ]
   },
 
