@@ -11,7 +11,7 @@ export default defineLaw({
   effects(data, startYear, currentYear): Change[] {
     return [
       modify("stateDebt").byValue(3 as MrdEuro),
-      modify("carRenewablePercentage").byPercent(1).if(startYear + 5 <= currentYear),
+      modify("carRenewablePercentage").byValue(1).if(startYear + 5 <= currentYear),
     ]
   },
 

@@ -14,7 +14,7 @@ export default defineLaw({
     return [
       modify("electricityNuclear").byValue((104.3 as TWh) - data.electricityNuclear),
       modify("stateDebt").byValue(-2.5 as MrdEuro),
-      modify("popularity").byPercent(-4),
+      modify("popularity").byValue(-4),
     ]
   },
 

@@ -15,8 +15,8 @@ export default defineLaw({
 
     return [
       modify("stateDebt").byValue(41 as MrdEuro),
-      modify("popularity").byPercent(5).if(startYear === currentYear),
-      modify("popularity").byPercent(-3).if(startYear < currentYear),
+      modify("popularity").byValue(5).if(startYear === currentYear),
+      modify("popularity").byValue(-3).if(startYear < currentYear),
       modify("carUsage").byValue(-localChange - longChange).if(startYear === currentYear),
       modify("publicLocalUsage").byValue(localChange).if(startYear === currentYear),
       modify("publicNationalUsage").byValue(longChange).if(startYear === currentYear),

@@ -6,7 +6,7 @@ import { Change, modify } from "../params"
 export default defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",
   description: "Der Ausbau des öffentlichen Fernverkehrs wird bundesweit stärker Bezuschusst und Vorangetrieben",
-  
+
   effects(data): Change[] {
     const relCapacity = (data.publicNationalCapacity / data.publicNationalUsage) * 100
     const potentialUsageIncrease = relCapacity >= 105 ? 0.015 * data.publicNationalUsage : 0
@@ -19,7 +19,7 @@ export default defineLaw({
       modify("publicNationalUsage").byValue(0.667 * usageIncrease),
       modify("carUsage").byValue(-usageIncrease),
       modify("publicLocalUsage").byValue(0.333 * usageIncrease),
-      modify("popularity").byPercent(2),
+      modify("popularity").byValue(2),
     ]
   },
 

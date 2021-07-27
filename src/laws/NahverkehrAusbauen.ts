@@ -19,7 +19,7 @@ export default defineLaw({
       modify("publicLocalCapacity").byPercent(1),
       modify("publicLocalUsage").byValue(usageIncrease),
       modify("carUsage").byValue(-usageIncrease),
-      modify("popularity").byPercent(2).if(yearsActive >= 5),
+      modify("popularity").byValue(2).if(yearsActive >= 5),
     ]
   },
 

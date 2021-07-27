@@ -13,7 +13,7 @@ export default defineLaw({
     const newCarEmissionFactor: GramPerPsgrKm = 157.1
     const popChange = data.carEmissionFactor > newCarEmissionFactor ? 2 : 0
     return [
-      modify("popularity").byPercent(popChange),
+      modify("popularity").byValue(popChange),
       modify("carEmissionFactor").byValue(newCarEmissionFactor - data.carEmissionFactor),
     ]
   },

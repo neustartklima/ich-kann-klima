@@ -11,15 +11,15 @@ export default defineLaw({
   effects(data, startYear, currentYear): Change[] {
     const costsPerYear: MrdEuro = 3
     const yearsActive = currentYear - startYear
-    const inEffect = yearsActive > 2
+    const inEffect = yearsActive >= 2
     return [
       modify("stateDebt").byValue(costsPerYear),
-      modify("buildingsSourceBio").byPercent(-4).if(inEffect),
-      modify("buildingsSourceOil").byPercent(-4).if(inEffect),
-      modify("buildingsSourceTele").byPercent(-4).if(inEffect),
-      modify("buildingsPrivateDemand").byPercent(-4).if(inEffect),
-      modify("popularity").byPercent(10).if(yearsActive === 1),
-      modify("popularity").byPercent(5).if(inEffect),
+      modify("buildingsSourceBio").byValue(-4).if(inEffect),
+      modify("buildingsSourceOil").byValue(-4).if(inEffect),
+      modify("buildingsSourceTele").byValue(-4).if(inEffect),
+      modify("buildingsPrivateDemand").byValue(-4).if(inEffect),
+      modify("popularity").byValue(10).if(yearsActive === 1),
+      modify("popularity").byValue(5).if(inEffect),
     ]
   },
 

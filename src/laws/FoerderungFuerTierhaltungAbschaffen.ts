@@ -10,7 +10,7 @@ export default defineLaw({
     return [
       modify("stateDebt").byValue(-10),
       modify("co2emissionsAgriculture").byValue(-10).if(startYear === currentYear),
-      modify("popularity").byPercent(-20).if(startYear === currentYear),
+      modify("popularity").byValue(-20).if(startYear === currentYear),
     ]
   },
 
