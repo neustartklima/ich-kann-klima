@@ -2,7 +2,7 @@ import { endYear, startYear } from "../constants"
 import { changeTWhBy, linear } from "../lawTools"
 import { defineLaw } from "../Factory"
 import { MrdEuro, TWh } from "../types"
-import { Change, defaultValues, modify, WritableBaseParams } from "../params"
+import { Change, defaultValues, modify } from "../params"
 
 export default defineLaw({
   title: "Energiemix regelt der Markt",

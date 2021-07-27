@@ -2,7 +2,7 @@
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
 import { Game } from "../game"
-import { Change, WritableBaseParams } from "../params"
+import { Change } from "../params"
 import { startYear } from "../constants"
 import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
 
@@ -45,11 +45,11 @@ export default defineComponent({
       return startYear
     },
 
-    effectsOfSelected(): Partial<WritableBaseParams> | Change[] {
-      if (!this.lawSelected || !this.game) return {}
+    effectsOfSelected(): Change[] {
+      if (!this.lawSelected || !this.game) return []
       const game: Game = this.game
       const law = this.allLaws.find((law) => law.id === this.lawSelected)
-      if (!law) return {}
+      if (!law) return []
       return law.effects(this.game.values, this.startYearOfSelected, this.game.currentYear)
     },
 

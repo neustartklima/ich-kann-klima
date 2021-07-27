@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
 import { linear } from "../lawTools"
-import { Change, modify, WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden sehr stark fördern",
