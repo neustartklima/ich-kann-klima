@@ -12,9 +12,10 @@ import EventMachine, { PriorizedEvent } from "../EventMachine"
 import Finances from "./Finances.vue"
 import { financeRating } from "../Calculator"
 import { Game } from "../game"
+import PopularityIndicator from "./PopularityIndicator.vue"
 
 export default defineComponent({
-  components: { Background, CurrentIndicators, PeekInside, LawProposals, SpeechBubble, Finances },
+  components: { Background, CurrentIndicators, PeekInside, LawProposals, SpeechBubble, Finances, PopularityIndicator },
 
   data() {
     const store = useStore()
@@ -54,6 +55,10 @@ export default defineComponent({
         return 0;
       }
     },
+
+    popularity(): number {
+      return this.store.state.game?.values.popularity || 100
+    },
   },
 
   methods: {
@@ -75,7 +80,7 @@ export default defineComponent({
 
     <div id="year">{{ currentYear }}</div>
     <Finances :value="finance" />
-
+    <PopularityIndicator :value="popularity" />
     <LawProposals />
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
@@ -107,10 +112,6 @@ export default defineComponent({
 
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;
-  }
-
-  > img {
-    max-height: calc(100vh - 4rem);
   }
 
   #year {
