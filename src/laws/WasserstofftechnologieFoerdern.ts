@@ -1,19 +1,18 @@
 import { defineLaw } from "../Factory"
-import { changePercentBy, linear } from "../lawTools"
+import { linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Wasserstofftechnologie fördern",
   description:
     "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie wird stark gefördert.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const possibleChange = startYear + 5 <= currentYear ? 1 : 0
-    return {
-      stateDebt: 3 as MrdEuro,
-      carRenewablePercentage: changePercentBy(data.carRenewablePercentage, possibleChange),
-    }
+  effects(data, startYear, currentYear): Change[] {
+    return [
+      modify("stateDebt").byValue(3 as MrdEuro),
+      modify("carRenewablePercentage").byPercent(1).if(startYear + 5 <= currentYear),
+    ]
   },
 
   priority(game) {

@@ -1,31 +1,26 @@
 import { defineLaw } from "../Factory"
-import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
+import { changeMioPsgrKmBy, linear } from "../lawTools"
 import { welt2018BundKassiertMineraloelsteuer } from "../sources"
 import { MrdEuro, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 
 export default defineLaw({
   title: "Abschaffung der Mineralölsteuer",
   description: "Die Steuer auf sämtliche erdölbasierten Treibstoffe wird abgeschafft.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const yearly = {
-      stateDebt: 41 as MrdEuro,
-      popularity: changePercentBy(data.popularity, startYear === currentYear ? 5 : -3),
-    }
+  effects(data, startYear, currentYear): Change[] {
     const localChange = changeMioPsgrKmBy(data.publicLocalUsage, -0.2 * data.publicLocalUsage)
     const longChange = changeMioPsgrKmBy(data.publicNationalUsage, -0.2 * data.publicNationalUsage)
 
-    if (currentYear === startYear) {
-      return {
-        ...yearly,
-        carUsage: -localChange - longChange,
-        publicLocalUsage: localChange,
-        publicNationalUsage: longChange,
-      }
-    }
-    return yearly
+    return [
+      modify("stateDebt").byValue(41 as MrdEuro),
+      modify("popularity").byPercent(5).if(startYear === currentYear),
+      modify("popularity").byPercent(-3).if(startYear < currentYear),
+      modify("carUsage").byValue(-localChange - longChange).if(startYear === currentYear),
+      modify("publicLocalUsage").byValue(localChange).if(startYear === currentYear),
+      modify("publicNationalUsage").byValue(longChange).if(startYear === currentYear),
+    ]
   },
 
   priority(game) {

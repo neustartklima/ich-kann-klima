@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
-import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
+import { changeMioPsgrKmBy, linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { Change, modify, WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",

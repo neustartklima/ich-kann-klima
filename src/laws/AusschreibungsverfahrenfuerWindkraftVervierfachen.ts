@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { TsdPeople, TWh } from "../types"
-import { changePercentBy, lawIsAccepted, linear } from "../lawTools"
-import { Change, modify, WritableBaseParams } from "../params"
+import { lawIsAccepted, linear } from "../lawTools"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft vervierfachen",
