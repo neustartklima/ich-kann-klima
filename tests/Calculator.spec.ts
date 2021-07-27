@@ -8,7 +8,7 @@ import { MioPsgrKm } from "../src/types"
 import "should"
 
 function agriEffects(data: BaseParams): Change[] {
-  return [modify("co2emissionsAgriculture").byValue(-42)]
+  return [modify("co2emissionsAgriculture").byValue(-29)]
 }
 
 function priority(game: Game): number {
@@ -53,18 +53,18 @@ describe("Calculator.calculateNextYear", () => {
 
   it("should return modified value if it is modified by a law directly", () => {
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
-    newValues.co2emissionsAgriculture.should.equal(startValues.co2emissionsAgriculture - 42)
+    newValues.co2emissionsAgriculture.should.equal(startValues.co2emissionsAgriculture - 29)
   })
 
   it("should return modified values calculated from other modified values", () => {
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
-    newValues.co2emissions.should.equal(startValues.co2emissions - 42)
+    newValues.co2emissions.should.equal(startValues.co2emissions - 29)
   })
 
   it("should return modifications from two years", () => {
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
     const thirdValues = calculateNextYear(newValues, acceptedLaws, 2023)
-    thirdValues.co2emissions.should.equal(startValues.co2emissions - 84)
+    thirdValues.co2emissions.should.equal(startValues.co2emissions - 58)
   })
 
   it("should calculate remaining co2 budget", () => {
