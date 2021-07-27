@@ -103,6 +103,7 @@ export function modify(name: keyof WritableBaseParams) {
     name,
     value: 0 as number,
     percent: 0 as Percent,
+    absolute: undefined as undefined | number,
     condition: true as boolean,
 
     byPercent(percent: Percent) {
@@ -115,10 +116,42 @@ export function modify(name: keyof WritableBaseParams) {
       return this
     },
 
+    setValue(value: number) {
+      this.absolute = value
+      return this
+    },
+
     if(condition: boolean) {
       this.condition = condition
       return this
     },
+
+    getOldNew(values: BaseParams) {
+      const n = this.name
+      const oldVal = values[n]
+      if (!this.condition) {
+        return {oldVal, newVal: oldVal}
+      }
+      const pd: WritableParam = paramDefinitions[n]
+      const unbounded = this.absolute != undefined ? this.absolute : (oldVal + (this.value || (oldVal * this.percent! / 100)))
+      const newVal = pd.applyBounds(unbounded)
+      return {oldVal, newVal}
+    },
+
+    getChange(values: BaseParams): number {
+      if (!this.condition) {
+        return 0
+      }
+      const {oldVal, newVal} = this.getOldNew(values)
+      return newVal - oldVal
+    },
+
+    getNewVal(values: BaseParams): number {
+      if (!this.condition) {
+        return values[this.name]
+      }
+      return this.getOldNew(values).newVal
+    }
   }
 }
 
@@ -128,7 +161,7 @@ export function applyEffects(values: BaseParams, changes: Change[]): BaseParams 
   changes
     .filter((change) => change.condition)
     .forEach((change) => {
-      values[change.name] += change.value || (values[change.name] * change.percent!) / 100
+      values[change.name] = change.getNewVal(values)
     })
   return values
 }

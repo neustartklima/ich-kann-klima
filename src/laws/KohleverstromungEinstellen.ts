@@ -19,8 +19,8 @@ export default defineLaw({
     const jobs = Math.max((directJobsInvolved + indirectJobsInvolved / 2) * settlingFactor, 0)
 
     return [
-      modify("electricityHardCoal").byValue(-data.electricityHardCoal),
-      modify("electricityBrownCoal").byValue(-data.electricityBrownCoal),
+      modify("electricityHardCoal").setValue(0),
+      modify("electricityBrownCoal").setValue(0),
       modify("stateDebt").byValue(-compensation + subventions),
       modify("unemployment").byValue(jobs),
     ]
