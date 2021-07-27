@@ -8,12 +8,13 @@ export default defineLaw({
   description: "Steuererleichterungen für Dienstwagen werden abgeschafft.",
 
   effects(data, startYear, currentYear): Change[] {
-    const usageChange = changeMioPsgrKmBy(data.carUsage, -0.0005 * data.carUsage)
+    const carModifier = modify("carUsage").byPercent(-0.05)
+    const carChange = carModifier.getChange(data)
     return [
       modify("stateDebt").byValue(-18 as MrdEuro),
       modify("popularity").byValue(-1).if(startYear === currentYear),
-      modify("carUsage").byValue(usageChange),
-      modify("publicLocalUsage").byValue(-usageChange),
+      carModifier,
+      modify("publicLocalUsage").byValue(-carChange),
     ]
   },
 

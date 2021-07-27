@@ -9,16 +9,17 @@ export default defineLaw({
 
   effects(data, startYear, currentYear): Change[] {
     const relCapacity = (data.publicLocalCapacity / data.publicLocalUsage) * 100
-    const potentialUsageIncrease = relCapacity >= 105 ? 0.01 * data.publicLocalUsage : 0
-    // Need to use change...By for carUsage here, to ensure it does not fall below zero:
-    const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
+
+    // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
+    const carModifier = modify("carUsage").byValue(-0.01 * data.publicLocalUsage).if(relCapacity >= 105)
+    const carChange = carModifier.getChange(data)
 
     const yearsActive = currentYear - startYear
     return [
       modify("stateDebt").byValue(3 as MrdEuro),
       modify("publicLocalCapacity").byPercent(1),
-      modify("publicLocalUsage").byValue(usageIncrease),
-      modify("carUsage").byValue(-usageIncrease),
+      modify("publicLocalUsage").byValue(-carChange),
+      carModifier,
       modify("popularity").byValue(2).if(yearsActive >= 5),
     ]
   },

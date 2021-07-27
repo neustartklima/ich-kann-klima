@@ -14,7 +14,7 @@ export default defineLaw({
     }
     const newValue = mapping[currentYear] || 0
     return [
-      modify("electricityNuclear").byValue(newValue - data.electricityNuclear),
+      modify("electricityNuclear").setValue(newValue),
     ]
   },
 

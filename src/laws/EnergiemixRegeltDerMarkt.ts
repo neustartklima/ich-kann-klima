@@ -11,8 +11,8 @@ export default defineLaw({
   effects(data): Change[] {
     return [
       modify("stateDebt").byValue(-37 as MrdEuro),
-      modify("electricityHardCoal").byValue(changeTWhBy(data.electricityHardCoal, -0.1 * defaultValues.electricityHardCoal)),
-      modify("electricityBrownCoal").byValue(changeTWhBy(data.electricityBrownCoal, -0.05 * defaultValues.electricityBrownCoal)),
+      modify("electricityHardCoal").byPercent(-10),
+      modify("electricityBrownCoal").byPercent(-5),
       modify("electricityWind").byValue(5.0 as TWh),
       modify("electricitySolar").byValue(3.0 as TWh),
       modify("electricityWater").byValue(0.5 as TWh),
