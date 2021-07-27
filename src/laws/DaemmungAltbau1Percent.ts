@@ -1,23 +1,22 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
-import { createChange, linear, modify } from "../lawTools"
-import { WritableBaseParams } from "../params"
+import { linear } from "../lawTools"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",
   description: "Die nachträgliche Dämmung von Wohngebäuden wird mit vergünstigten Krediten gefördert.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const applyChange = createChange(data)
+  effects(data, startYear, currentYear): Change[] {
     const costsPerYear: MrdEuro = 0.5
-    const yearsActive = currentYear - startYear
-    return applyChange([
-      modify("stateDebt", costsPerYear),
-      modify("buildingsSourceBio", -1).onlyIf(yearsActive >= 2),
-      modify("buildingsSourceOil", -1).onlyIf(yearsActive >= 2),
-      modify("buildingsSourceTele", -1).onlyIf(yearsActive >= 2),
-      modify("buildingsPrivateDemand", -1).onlyIf(yearsActive >= 2),
-    ])
+    const inEffect = (currentYear - startYear) > 2
+    return [
+      modify("stateDebt").byValue(costsPerYear),
+      modify("buildingsSourceBio").byPercent(-1).if(inEffect),
+      modify("buildingsSourceOil").byPercent(-1).if(inEffect),
+      modify("buildingsSourceTele").byPercent(-1).if(inEffect),
+      modify("buildingsPrivateDemand").byPercent(-1).if(inEffect),
+    ]
   },
 
   priority(game) {

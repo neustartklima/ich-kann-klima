@@ -127,33 +127,3 @@ export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | 
     .find((law) => matcher.test(law.lawId))
   return lawRef?.lawId
 }
-
-type ChangeValues = {
-  name: keyof WritableBaseParams
-  amount: number
-  condition?: boolean
-  onlyIf: (condition: boolean) => ChangeValues
-}
-
-export function createChange(data: WritableBaseParams) {
-  return (changes: ChangeValues[]): Partial<WritableBaseParams> => {
-    return Object.assign(
-      {},
-      ...changes
-        .filter((change) => change.condition)
-        .map((change) => ({ [change.name]: data[change.name] + change.amount }))
-    )
-  }
-}
-
-export function modify(name: keyof WritableBaseParams, amount: number): ChangeValues {
-  return {
-    name,
-    amount,
-    condition: true as boolean,
-    onlyIf(condition: boolean) {
-      this.condition = condition
-      return this
-    },
-  }
-}

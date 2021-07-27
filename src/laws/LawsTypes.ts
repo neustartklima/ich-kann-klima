@@ -1,5 +1,5 @@
 import { Game } from "../game"
-import { BaseParams, WritableBaseParams } from "../params"
+import { BaseParams, Change, WritableBaseParams } from "../params"
 import { Sources } from "../sources"
 import { Details, Internals, Percent } from "../types"
 
@@ -11,7 +11,7 @@ export type LawLabel =
   | "WindkraftAbstandsregel"
   | "WindkraftSubvention"
 
-export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Partial<WritableBaseParams>
+export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Partial<WritableBaseParams> | Change[]
 export type PriorityFunc = (game: Game) => Percent
 
 export type LawDefinition = {
