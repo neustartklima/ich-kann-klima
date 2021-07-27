@@ -12,13 +12,13 @@ function priority(game: Game): number {
 }
 
 const allLaws: Law[] = [
-  { id: "law1", title: "law 1", description: "", effects: () => ({}), priority },
-  { id: "law2", title: "law 2", description: "", effects: () => ({}), priority },
-  { id: "law3", title: "law 3", description: "", effects: () => ({}), priority },
-  { id: "law4", title: "law 4", description: "", effects: () => ({}), priority },
-  { id: "law5", title: "law 5", description: "", effects: () => ({}), priority },
-  { id: "law6", title: "law 6", description: "", effects: () => ({}), priority },
-  { id: "law7", title: "law 7", description: "", effects: () => ({}), priority },
+  { id: "law1", title: "law 1", description: "", effects: () => [], priority },
+  { id: "law2", title: "law 2", description: "", effects: () => [], priority },
+  { id: "law3", title: "law 3", description: "", effects: () => [], priority },
+  { id: "law4", title: "law 4", description: "", effects: () => [], priority },
+  { id: "law5", title: "law 5", description: "", effects: () => [], priority },
+  { id: "law6", title: "law 6", description: "", effects: () => [], priority },
+  { id: "law7", title: "law 7", description: "", effects: () => [], priority },
 ]
 
 function mockedFetch(info: RequestInfo, init?: RequestInit) {

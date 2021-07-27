@@ -1,5 +1,4 @@
-import { applyEffects } from "../Calculator"
-import { BaseParams, Change, createBaseValues, modifyParams, paramList, WritableBaseParams } from "../params"
+import { BaseParams, Change, createBaseValues, modifyParams, paramList } from "../params"
 import { Game } from "../game"
 import { Law } from "../laws"
 
@@ -19,13 +18,9 @@ export type ValueRow = {
   class: "writable" | "calculated"
 }
 
-export function getSortedValues(values: BaseParams, effects: Partial<WritableBaseParams> | Change[]): ValueRow[] {
+export function getSortedValues(values: BaseParams, effects: Change[]): ValueRow[] {
   const nextValues = createBaseValues(values)
-  if (effects instanceof Array) {
-    modifyParams(nextValues, effects)
-  } else {
-    applyEffects(nextValues, effects)
-  }
+  modifyParams(nextValues, effects)
 
   function valueStr(key: keyof BaseParams): string {
     return values[key].toFixed(2)
@@ -35,12 +30,8 @@ export function getSortedValues(values: BaseParams, effects: Partial<WritableBas
   }
 
   function getEffect(key: keyof BaseParams): number {
-    if (effects instanceof Array) {
-      const effect = effects.find(e => e.name === key)
-      return effect ? effect.value : 0
-    } else {
-      return effects[key as keyof WritableBaseParams] || 0
-    }
+    const effect = effects.find(e => e.name === key)
+    return effect ? effect.value : 0
   }
 
   function effectStr(key: keyof BaseParams): string {

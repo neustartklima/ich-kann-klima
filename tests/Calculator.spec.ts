@@ -1,14 +1,14 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
-import { createBaseValues, defaultValues } from "../src/params"
+import { Change, createBaseValues, defaultValues, modify } from "../src/params"
 import { AcceptedLaw } from "../src/laws"
-import { BaseParams, WritableBaseParams } from "../src/params"
+import { BaseParams } from "../src/params"
 import { Game } from "../src/game"
 import { EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
 import { MioPsgrKm } from "../src/types"
 import "should"
 
-function agriEffects(data: BaseParams, startYear: number, currentYear: number): Partial<WritableBaseParams> {
-  return { co2emissionsAgriculture: -42 }
+function agriEffects(data: BaseParams): Change[] {
+  return [modify("co2emissionsAgriculture").byValue(-42)]
 }
 
 function priority(game: Game): number {
@@ -34,7 +34,7 @@ function mockAcceptedLaw(
 }
 
 function mockEffects(num: MioPsgrKm): EffectsFunc {
-  return (d, s, e) => ({ carUsage: num - d.carUsage })
+  return (d, s, e) => [modify("carUsage").byValue(num - d.carUsage)]
 }
 
 const startValues = createBaseValues(defaultValues)
@@ -91,10 +91,6 @@ describe("Calculator.calculateNextYear", () => {
     should.throws(() => calculateNextYear(startValues, sortedLaws, 2022))
   }*/
   )
-})
-
-describe("Calculator.applyEffects()", () => {
-  it("should apply the effects to the game values")
 })
 
 const initialGame: Game = {
