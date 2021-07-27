@@ -7,7 +7,7 @@ import {
   createBaseValues,
   defaultValues,
   modify,
-  modifyParams,
+  applyEffects,
   ParamDefinitions,
   paramKeys,
 } from "../src/params"
@@ -70,21 +70,21 @@ describe("createBaseValues(defaultValues)", () => {
   })
 })
 
-describe("modifyParams", () => {
+describe("applyEffects", () => {
   const initialValues = () => ({ co2budget: 1000 } as unknown as BaseParams)
 
   it("should modify parameters by absolute value", () => {
-    const values = modifyParams(initialValues(), [modify("co2budget").byValue(-123)])
+    const values = applyEffects(initialValues(), [modify("co2budget").byValue(-123)])
     values.should.deepEqual({ co2budget: 877 })
   })
 
   it("should modify parameters by percent", () => {
-    const values = modifyParams(initialValues(), [modify("co2budget").byPercent(-42)])
+    const values = applyEffects(initialValues(), [modify("co2budget").byPercent(-42)])
     values.should.deepEqual({ co2budget: 580 })
   })
 
   it("should only modify if condition is met", () => {
-    const values = modifyParams(initialValues(), [modify("co2budget").byPercent(-42).if(false)])
+    const values = applyEffects(initialValues(), [modify("co2budget").byPercent(-42).if(false)])
     values.should.deepEqual({ co2budget: 1000 })
   })
 })

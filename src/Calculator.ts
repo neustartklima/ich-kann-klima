@@ -1,4 +1,4 @@
-import { BaseParams, createBaseValues, defaultValues, modifyParams } from "./params"
+import { BaseParams, createBaseValues, defaultValues, applyEffects } from "./params"
 import { Game } from "./game"
 import { AcceptedLaw } from "./laws"
 
@@ -12,7 +12,7 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
     })
     .forEach((law) => {
       const effects = law.effects(values, law.effectiveSince, year)
-      modifyParams(values, effects)
+      applyEffects(values, effects)
     })
 
   // re-calculate remaining CO2 budget
