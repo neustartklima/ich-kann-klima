@@ -124,13 +124,11 @@ export function modify(name: keyof WritableBaseParams) {
 
 export type Change = ReturnType<typeof modify>
 
-export function modifyParams(game: Game, changes: Change[]): Game {
-  const values = { ...game.values }
+export function modifyParams(values: BaseParams, changes: Change[]): BaseParams {
   changes
     .filter((change) => change.condition)
     .forEach((change) => {
       values[change.name] += change.value || (values[change.name] * change.percent!) / 100
     })
-  game.values = values
-  return game
+  return values
 }

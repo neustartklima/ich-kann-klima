@@ -2,6 +2,7 @@ import should from "should"
 import Sinon from "sinon"
 import { Game } from "../src/game"
 import {
+  BaseParams,
   computedParamList,
   createBaseValues,
   defaultValues,
@@ -70,20 +71,20 @@ describe("createBaseValues(defaultValues)", () => {
 })
 
 describe("modifyParams", () => {
-  const initialGame = () => ({ values: { co2budget: 1000 } } as unknown as Game)
+  const initialValues = () => ({ co2budget: 1000 } as unknown as BaseParams)
 
   it("should modify parameters by absolute value", () => {
-    const game = modifyParams(initialGame(), [modify("co2budget").byValue(-123)])
-    game.should.deepEqual({ values: { co2budget: 877 } })
+    const values = modifyParams(initialValues(), [modify("co2budget").byValue(-123)])
+    values.should.deepEqual({ co2budget: 877 })
   })
 
   it("should modify parameters by percent", () => {
-    const game = modifyParams(initialGame(), [modify("co2budget").byPercent(-42)])
-    game.should.deepEqual({ values: { co2budget: 580 } })
+    const values = modifyParams(initialValues(), [modify("co2budget").byPercent(-42)])
+    values.should.deepEqual({ co2budget: 580 })
   })
 
   it("should only modify if condition is met", () => {
-    const game = modifyParams(initialGame(), [modify("co2budget").byPercent(-42).if(false)])
-    game.should.deepEqual({ values: { co2budget: 1000 } })
+    const values = modifyParams(initialValues(), [modify("co2budget").byPercent(-42).if(false)])
+    values.should.deepEqual({ co2budget: 1000 })
   })
 })
