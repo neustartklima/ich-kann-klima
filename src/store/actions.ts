@@ -10,7 +10,7 @@ import router from "../router"
 import FetchQueueFactory from "../model/FetchQueue"
 import RequestFactory from "../model/Request"
 import { LawId } from "../laws"
-import { LawLabel } from "../laws/LawsTypes"
+import { Change, modifyParams } from "../params"
 
 const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
 const request = RequestFactory(backendURL, fetch)
@@ -94,6 +94,11 @@ export const actions = {
   acknowledgeEvent(context: Context, event: Event) {
     const game = { ...(context.state.game as Game) }
     game.events.find((e) => e.id === event.id)!.acknowledged = true
+    context.commit("setGameState", { game })
+  },
+
+  modifyParams(context: Context, changes: Change[]) {
+    const game = modifyParams({ ...(context.state.game as Game) }, changes)
     context.commit("setGameState", { game })
   },
 

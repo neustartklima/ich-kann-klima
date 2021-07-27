@@ -1,16 +1,19 @@
 import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import { paramDefinitions } from "./Params"
 import { Sources } from "../sources"
-import { Details, Internals, Unit } from "../types"
+import { Details, Internals, Percent, Unit } from "../types"
+import { Game } from "../game"
 
 export type ParamDefinitions = typeof paramDefinitions
 
-type RemoveNeverField<T> = { 
-  [P in keyof T as T[P] extends never ? never : P]: T[P] 
+type RemoveNeverField<T> = {
+  [P in keyof T as T[P] extends never ? never : P]: T[P]
 }
-type PickByType<T, C> = RemoveNeverField<{ 
-  [Key in keyof T]: T[Key] extends C ? T[Key] : never 
-}>
+type PickByType<T, C> = RemoveNeverField<
+  {
+    [Key in keyof T]: T[Key] extends C ? T[Key] : never
+  }
+>
 
 type WritableParamDefinitions = PickByType<ParamDefinitions, WritableParam>
 type ComputedParamDefinitions = PickByType<ParamDefinitions, ComputedParam>
@@ -32,13 +35,10 @@ const computedParamDefinitions = Object.entries(paramDefinitions)
   }, {} as Record<string, ComputedParam>) as ComputedParamDefinitions
 
 type WritableParamKey = keyof WritableParamDefinitions
-const writableParamKeys = Object.keys(writableParamDefinitions) as WritableParamKey[]
 type WritableParams = Record<WritableParamKey, number>
 export type WritableBaseParams = WritableParams
 
 type ComputedParamKey = keyof ComputedParamDefinitions
-const computedParamKeys = Object.keys(computedParamDefinitions) as ComputedParamKey[]
-type ComputedParams = Record<ComputedParamKey, number>
 
 type ParamKey = WritableParamKey | ComputedParamKey
 export const paramKeys = Object.keys(paramDefinitions) as ParamKey[]
@@ -78,7 +78,7 @@ export const computedParamList: ComputedParamEntry[] = Object.entries(computedPa
 
 type ParamEntry = WritableParamEntry | ComputedParamEntry
 export const paramList: ParamEntry[] = Object.entries(paramDefinitions).map((e) =>
-  e[1] instanceof WritableParam  ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0])
+  e[1] instanceof WritableParam ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0])
 )
 
 export const defaultValues: WritableParams = writableParamList.reduce(
@@ -96,4 +96,41 @@ export function createBaseValues(values: WritableParams): Params {
     })
   )
   return result as Params
+}
+
+export function modify(name: keyof WritableBaseParams) {
+  return {
+    name,
+    value: 0 as number,
+    percent: 0 as Percent,
+    condition: true as boolean,
+
+    byPercent(percent: Percent) {
+      this.percent = percent
+      return this
+    },
+
+    byValue(value: number) {
+      this.value = value
+      return this
+    },
+
+    if(condition: boolean) {
+      this.condition = condition
+      return this
+    },
+  }
+}
+
+export type Change = ReturnType<typeof modify>
+
+export function modifyParams(game: Game, changes: Change[]): Game {
+  const values = { ...game.values }
+  changes
+    .filter((change) => change.condition)
+    .forEach((change) => {
+      values[change.name] += change.value || (values[change.name] * change.percent!) / 100
+    })
+  game.values = values
+  return game
 }
