@@ -1,4 +1,4 @@
-import { Details, Internals, Unit } from "../types"
+import { Details, GramPerPsgrKm, Internals, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh, Unit } from "../types"
 import { Sources } from "../sources"
 
 type ParamInput = {
@@ -40,23 +40,14 @@ export type ParamsBase = Record<string, number>
 
 type ValueMapper = (newVal: number) => number
 
-function getApplyBounds(unit: Unit): ValueMapper {
-  switch (unit) {
-    case "MioTons":
-      return (newVal) => (newVal < 0 ? 0 : newVal)
-    case "TWh":
-      return (newVal) => (newVal < 0 ? 0 : newVal)
-    case "MrdEuro":
-      return (newVal) => newVal
-    case "TsdPeople":
-      return (newVal) => (newVal < 0 ? 0 : newVal)
-    case "Percent":
-      return (newVal) => (newVal > 100 ? 100 : newVal < 0 ? 0 : newVal)
-    case "GramPerPsgrKm":
-      return (newVal) => (newVal < 0 ? 0 : newVal)
-    case "MioPsgrKm":
-      return (newVal) => (newVal < 0 ? 0 : newVal)
-  }
+const mapper = {
+  MioTons: (newVal: MioTons) => (newVal < 0 ? 0 : newVal),
+  TWh: (newVal: TWh) => (newVal < 0 ? 0 : newVal),
+  MrdEuro: (newVal: MrdEuro) => newVal,
+  TsdPeople: (newVal: TsdPeople) => (newVal < 0 ? 0 : newVal),
+  Percent: (newVal: Percent) => (newVal > 100 ? 100 : newVal < 0 ? 0 : newVal),
+  GramPerPsgrKm: (newVal: GramPerPsgrKm) => (newVal < 0 ? 0 : newVal),
+  MioPsgrKm: (newVal: MioPsgrKm) => (newVal < 0 ? 0 : newVal)
 }
 
 export class WritableParam extends ParamDefinition {
@@ -66,7 +57,7 @@ export class WritableParam extends ParamDefinition {
   constructor(input: ParamInput & { initialValue: number }) {
     super(input)
     this.initialValue = input.initialValue
-    this.applyBounds = getApplyBounds(input.unit)
+    this.applyBounds = mapper[input.unit]
   }
 }
 
