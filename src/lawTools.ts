@@ -31,22 +31,6 @@ export function changeBy<T extends number>(min?: T, max?: T): (val: T, by: T) =>
 }
 
 /**
- * Function to be used in laws to define changes in percentages.
- *
- * It can then be used within the return value of a law as follows:
- * ```
- * return {
- *   popularity: changePercentBy(data.popularity, -10),
- * }
- * ```
- *
- * @param val The value to be changed.
- * @param by The value by which to change `val`.
- * @returns The value be which to change `val` corrected.
- */
-export const changePercentBy = changeBy<Percent>(0, 100)
-
-/**
  * Function to be used in laws to define changes in emission values.
  *
  * It can then be used within the return value of a law as follows:

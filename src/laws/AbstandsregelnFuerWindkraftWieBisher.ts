@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { Percent, TWh } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft wie bisher",
@@ -9,10 +9,10 @@ export default defineLaw({
   labels: ["initial", "hidden", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    return {
-      electricityWindOnshoreMaxNew: (6.0 as TWh) - data.electricityWindOnshoreMaxNew,
-    }
+  effects(data): Change[] {
+    return [
+      modify("electricityWindOnshoreMaxNew").byValue((6.0 as TWh) - data.electricityWindOnshoreMaxNew),
+    ]
   },
 
   priority(game) {

@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
-import { changePercentBy, lawIsAccepted, linear } from "../lawTools"
+import { lawIsAccepted, linear } from "../lawTools"
 import { GramPerPsgrKm, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Tempolimit 100 auf Autobahnen",
@@ -9,13 +9,13 @@ export default defineLaw({
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+  effects(data): Change[] {
     const newCarEmissionFactor: GramPerPsgrKm = 154.1
     const popChange = data.carEmissionFactor > newCarEmissionFactor ? -1 : 0
-    return {
-      popularity: changePercentBy(data.popularity, popChange),
-      carEmissionFactor: newCarEmissionFactor - data.carEmissionFactor,
-    }
+    return [
+      modify("popularity").byPercent(popChange),
+      modify("carEmissionFactor").byValue(newCarEmissionFactor - data.carEmissionFactor),
+    ]
   },
 
   priority(game) {

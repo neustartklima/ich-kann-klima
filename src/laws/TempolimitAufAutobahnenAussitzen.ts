@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
-import { changePercentBy, linear } from "../lawTools"
+import { linear } from "../lawTools"
 import { Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Generelles Tempolimit nicht umsetzen",
@@ -10,11 +10,11 @@ export default defineLaw({
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    return {
-      stateDebt: -10, // Strafen der EU
-      popularity: changePercentBy(data.popularity, -2), // Befürworter des generellen Tempolimits
-    }
+  effects(): Change[] {
+    return [
+      modify("stateDebt").byValue(-10), // Strafen der EU
+      modify("popularity").byPercent(-2), // Befürworter des generellen Tempolimits
+    ]
   },
 
   priority(game) {

@@ -1,13 +1,13 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro, TsdPeople } from "../types"
 import { linear } from "../lawTools"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+  effects(data, startYear, currentYear): Change[] {
     const yearsActive = currentYear - startYear
 
     const compensation: MrdEuro = yearsActive < 18 ? 4.3 / 18 : 0
@@ -18,12 +18,12 @@ export default defineLaw({
     const settlingFactor = (10 - yearsActive) / 55 // 10 + 9 + ... + 1 = 55
     const jobs = Math.max((directJobsInvolved + indirectJobsInvolved / 2) * settlingFactor, 0)
 
-    return {
-      electricityHardCoal: -data.electricityHardCoal,
-      electricityBrownCoal: -data.electricityBrownCoal,
-      stateDebt: -compensation + subventions,
-      unemployment: jobs,
-    }
+    return [
+      modify("electricityHardCoal").byValue(-data.electricityHardCoal),
+      modify("electricityBrownCoal").byValue(-data.electricityBrownCoal),
+      modify("stateDebt").byValue(-compensation + subventions),
+      modify("unemployment").byValue(jobs),
+    ]
   },
 
   priority(game) {
