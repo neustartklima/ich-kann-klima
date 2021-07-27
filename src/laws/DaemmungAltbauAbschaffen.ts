@@ -1,22 +1,21 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
-import { createChange, getActiveLaw, linear, modify } from "../lawTools"
-import { WritableBaseParams } from "../params"
+import { getActiveLaw, linear } from "../lawTools"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden abschaffen",
   description:
     "Wir geben den Bürgern die Freiheit zurück, selbst zu entscheiden, ob sie ihr Haus dämmen wollen und lassen die Förderung auslaufen",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const applyChange = createChange(data)
-    return applyChange([
-      modify("stateDebt", -0.5 as MrdEuro),
-      modify("buildingsSourceBio", -0.5),
-      modify("buildingsSourceOil", -0.5),
-      modify("buildingsSourceTele", -0.5),
-      modify("buildingsPrivateDemand", -0.5),
-    ])
+  effects(): Change[] {
+    return [
+      modify("stateDebt").byValue(-0.5 as MrdEuro),
+      modify("buildingsSourceBio").byPercent(-0.5),
+      modify("buildingsSourceOil").byPercent(-0.5),
+      modify("buildingsSourceTele").byPercent(-0.5),
+      modify("buildingsPrivateDemand").byPercent(-0.5),
+    ]
   },
 
   priority(game) {

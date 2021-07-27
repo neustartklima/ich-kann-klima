@@ -1,5 +1,5 @@
 import { applyEffects } from "../Calculator"
-import { BaseParams, createBaseValues, paramList, WritableBaseParams } from "../params"
+import { BaseParams, Change, createBaseValues, modifyParams, paramList, WritableBaseParams } from "../params"
 import { Game } from "../game"
 import { Law } from "../laws"
 
@@ -19,9 +19,13 @@ export type ValueRow = {
   class: "writable" | "calculated"
 }
 
-export function getSortedValues(values: BaseParams, effects: Partial<WritableBaseParams>): ValueRow[] {
+export function getSortedValues(values: BaseParams, effects: Partial<WritableBaseParams> | Change[]): ValueRow[] {
   const nextValues = createBaseValues(values)
-  applyEffects(nextValues, effects)
+  if (effects instanceof Array) {
+    modifyParams(nextValues, effects)
+  } else {
+    applyEffects(nextValues, effects)
+  }
 
   function valueStr(key: keyof BaseParams): string {
     return values[key].toFixed(2)
@@ -30,8 +34,17 @@ export function getSortedValues(values: BaseParams, effects: Partial<WritableBas
     return (effect > 0 ? "+" : "") + effect.toFixed(2)
   }
 
+  function getEffect(key: keyof BaseParams): number {
+    if (effects instanceof Array) {
+      const effect = effects.find(e => e.name === key)
+      return effect ? effect.value : 0
+    } else {
+      return effects[key as keyof WritableBaseParams] || 0
+    }
+  }
+
   function effectStr(key: keyof BaseParams): string {
-    const effect = effects[key as keyof WritableBaseParams]
+    const effect = getEffect(key)
     const valDiff = nextValues[key] - values[key]
     if (effect && Math.abs(effect - valDiff) < 0.001) return formatEffect(effect)
     if (effect) return formatEffect(effect) + " / " + formatEffect(valDiff)
