@@ -10,7 +10,7 @@ import router from "../router"
 import FetchQueueFactory from "../model/FetchQueue"
 import RequestFactory from "../model/Request"
 import { LawId } from "../laws"
-import { BaseParams, Change, modifyParams } from "../params"
+import { BaseParams, Change, applyEffects } from "../params"
 
 const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
 const request = RequestFactory(backendURL, fetch)
@@ -97,8 +97,8 @@ export const actions = {
     context.commit("setGameState", { game })
   },
 
-  modifyParams(context: Context, changes: Change[]) {
-    const values = modifyParams({ ...(context.state.game?.values as BaseParams) }, changes)
+  applyEffects(context: Context, changes: Change[]) {
+    const values = applyEffects({ ...(context.state.game?.values as BaseParams) }, changes)
     const game = { ...context.state.game, values } as Game
     context.commit("setGameState", { game })
   },

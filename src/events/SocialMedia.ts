@@ -9,9 +9,7 @@ export default defineEvent({
   `,
 
   apply(context) {
-    context.dispatch("modifyParams", [
-      modify("popularity").byPercent(-20),
-    ])
+    context.dispatch("applyEffects", [modify("popularity").byPercent(-20)])
   },
 
   probability() {

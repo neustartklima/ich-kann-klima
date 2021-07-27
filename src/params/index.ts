@@ -124,7 +124,7 @@ export function modify(name: keyof WritableBaseParams) {
 
 export type Change = ReturnType<typeof modify>
 
-export function modifyParams(values: BaseParams, changes: Change[]): BaseParams {
+export function applyEffects(values: BaseParams, changes: Change[]): BaseParams {
   changes
     .filter((change) => change.condition)
     .forEach((change) => {

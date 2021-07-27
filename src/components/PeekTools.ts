@@ -1,4 +1,4 @@
-import { BaseParams, Change, createBaseValues, modifyParams, paramList } from "../params"
+import { BaseParams, Change, createBaseValues, applyEffects, paramList } from "../params"
 import { Game } from "../game"
 import { Law } from "../laws"
 
@@ -20,7 +20,7 @@ export type ValueRow = {
 
 export function getSortedValues(values: BaseParams, effects: Change[]): ValueRow[] {
   const nextValues = createBaseValues(values)
-  modifyParams(nextValues, effects)
+  applyEffects(nextValues, effects)
 
   function valueStr(key: keyof BaseParams): string {
     return values[key].toFixed(2)
@@ -30,7 +30,7 @@ export function getSortedValues(values: BaseParams, effects: Change[]): ValueRow
   }
 
   function getEffect(key: keyof BaseParams): number {
-    const effect = effects.find(e => e.name === key)
+    const effect = effects.find((e) => e.name === key)
     return effect ? effect.value : 0
   }
 
