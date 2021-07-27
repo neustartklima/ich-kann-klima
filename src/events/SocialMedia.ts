@@ -1,6 +1,5 @@
 import { defineEvent } from "../Factory"
-import { Game } from "../game"
-import { Percent } from "../types"
+import { modify } from "../params"
 
 export default defineEvent({
   title: "Social Media Alarm!",
@@ -10,11 +9,9 @@ export default defineEvent({
   `,
 
   apply(context) {
-    const game = { ...context.state.game } as Game
-    if (game) {
-      game.values.popularity += Math.max(-game.values.popularity, -20 as Percent)
-      context.commit("setGameState", { game })
-    }
+    context.dispatch("modifyParams", [
+      modify("popularity").byPercent(-20),
+    ])
   },
 
   probability() {
