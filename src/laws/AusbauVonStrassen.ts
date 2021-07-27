@@ -1,23 +1,23 @@
 import { defineLaw } from "../Factory"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { modify } from "../params"
 
 export default defineLaw({
   title: "Ausbau von Straßen",
   description: "Autobahnen und Straßen werden intensiver ausgebaut.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    const localChange = changeMioPsgrKmBy(data.publicLocalUsage, -0.01 * data.publicLocalUsage)
-    const longChange = changeMioPsgrKmBy(data.publicNationalUsage, -0.01 * data.publicNationalUsage)
+  effects(values) {
+    const localChange = changeMioPsgrKmBy(values.publicLocalUsage, -0.01 * values.publicLocalUsage)
+    const longChange = changeMioPsgrKmBy(values.publicNationalUsage, -0.01 * values.publicNationalUsage)
 
-    return {
-      stateDebt: 5 as MrdEuro,
-      popularity: changePercentBy(data.popularity, 0.5),
-      carUsage: -localChange - longChange,
-      publicLocalUsage: localChange,
-      publicNationalUsage: longChange,
-    }
+    return [
+      modify("stateDebt").byValue(5 as MrdEuro),
+      modify("popularity").byPercent(0.5),
+      modify("carUsage").byValue(-localChange - longChange),
+      modify("publicLocalUsage").byValue(localChange),
+      modify("publicNationalUsage").byValue(longChange),
+    ]
   },
 
   priority(game) {
