@@ -1,20 +1,20 @@
 import { defineLaw } from "../Factory"
-import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
+import { changeMioPsgrKmBy, linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Dienstwagen Privileg abgeschaffen",
   description: "Steuererleichterungen für Dienstwagen werden abgeschafft.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+  effects(data, startYear, currentYear): Change[] {
     const usageChange = changeMioPsgrKmBy(data.carUsage, -0.0005 * data.carUsage)
-    return {
-      stateDebt: -18 as MrdEuro,
-      popularity: startYear === currentYear ? changePercentBy(data.popularity, -1) : 0,
-      carUsage: usageChange,
-      publicLocalUsage: -usageChange,
-    }
+    return [
+      modify("stateDebt").byValue(-18 as MrdEuro),
+      modify("popularity").byPercent(-1).if(startYear === currentYear),
+      modify("carUsage").byValue(usageChange),
+      modify("publicLocalUsage").byValue(-usageChange),
+    ]
   },
 
   priority(game) {

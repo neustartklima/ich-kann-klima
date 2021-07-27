@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { TsdPeople, TWh } from "../types"
-import { changePercentBy, lawIsAccepted, linear } from "../lawTools"
-import { WritableBaseParams } from "../params"
+import { lawIsAccepted, linear } from "../lawTools"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft verachtfachen",
@@ -10,14 +10,14 @@ export default defineLaw({
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+  effects(data, startYear, currentYear): Change[] {
     const onshoreNew: TWh = Math.min(55.2 as TWh, data.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 9.6
-    return {
-      popularity: startYear === currentYear ? changePercentBy(data.popularity, -20) : 0,
-      unemployment: startYear === currentYear ? (-100 as TsdPeople) : 0,
-      electricityWind: onshoreNew + offshoreNew,
-    }
+    return [
+      modify("popularity").byPercent(-20).if(startYear === currentYear),
+      modify("unemployment").byValue(-100 as TsdPeople).if(startYear === currentYear),
+      modify("electricityWind").byValue(onshoreNew + offshoreNew),
+    ]
   },
 
   priority(game) {

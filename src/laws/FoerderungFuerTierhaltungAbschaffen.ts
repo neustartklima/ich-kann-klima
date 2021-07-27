@@ -1,24 +1,17 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro } from "../types"
-import { changeEmissionsBy, changePercentBy, linear } from "../lawTools"
-import { WritableBaseParams } from "../params"
+import { linear } from "../lawTools"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Förderung für Tierhaltung abschaffen",
   description: "Subventionen für Tierhaltung werden ersatzlos gestrichen",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    if (startYear === currentYear) {
-      return {
-        co2emissionsAgriculture: changeEmissionsBy(data.co2emissionsAgriculture, -10),
-        stateDebt: -10 as MrdEuro,
-        popularity: changePercentBy(data.popularity, -20),
-      }
-    } else {
-      return {
-        stateDebt: -10 as MrdEuro,
-      }
-    }
+  effects(data, startYear, currentYear): Change[] {
+    return [
+      modify("stateDebt").byValue(-10),
+      modify("co2emissionsAgriculture").byValue(-10).if(startYear === currentYear),
+      modify("popularity").byPercent(-20).if(startYear === currentYear),
+    ]
   },
 
   priority(game) {

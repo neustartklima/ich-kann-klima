@@ -1,17 +1,17 @@
 import { defineLaw } from "../Factory"
-import { changePercentBy, linear } from "../lawTools"
+import { linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Diesel Privileg abgeschaffen",
   description: "Diesel wird jetzt genauso besteuert wie Benzin.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
-    return {
-      stateDebt: -7.35 as MrdEuro,
-      popularity: startYear === currentYear ? changePercentBy(data.popularity, -1) : 0,
-    }
+  effects(data, startYear, currentYear): Change[] {
+    return [
+      modify("stateDebt").byValue(-7.35 as MrdEuro),
+      modify("popularity").byPercent(-1).if(startYear === currentYear),
+    ]
   },
 
   priority(game) {

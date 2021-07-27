@@ -1,14 +1,14 @@
 import { defineLaw } from "../Factory"
 import { changeMioPsgrKmBy, changePercentBy, linear } from "../lawTools"
 import { MioPsgrKm, Percent } from "../types"
-import { WritableBaseParams } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Autos in Innenstädten verbieten",
   description:
     "Die Innenstädte der großen Städte werden zu Autofreien Zonen erklärt und begrünt, sowie Fahrrad und Fußgängerzonen eingerichtet.",
 
-  effects(data, startYear, currentYear): Partial<WritableBaseParams> {
+  effects(data, startYear, currentYear): Change[] {
     var popularityChange = changePercentBy(data.popularity, -2)
     if (data.publicLocalCapacity > data.publicLocalUsage * 1.2) {
       popularityChange = changePercentBy(data.popularity, -1)
@@ -19,11 +19,11 @@ export default defineLaw({
     // Need to use change...By for carUsage here, to ensure it does not fall below zero:
     const usageIncrease = -changeMioPsgrKmBy(data.carUsage, -potentialUsageIncrease)
 
-    return {
-      popularity: popularityChange,
-      carUsage: -usageIncrease,
-      publicLocalUsage: usageIncrease,
-    }
+    return [
+      modify("popularity").byValue(popularityChange),
+      modify("carUsage").byValue(-usageIncrease),
+      modify("publicLocalUsage").byValue(usageIncrease),
+    ]
   },
 
   priority(game) {
