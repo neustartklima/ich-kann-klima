@@ -10,16 +10,18 @@ export default defineLaw({
   description: "Die Steuer auf sämtliche erdölbasierten Treibstoffe wird abgeschafft.",
 
   effects(data, startYear, currentYear): Change[] {
-    const localChange = changeMioPsgrKmBy(data.publicLocalUsage, -0.2 * data.publicLocalUsage)
-    const longChange = changeMioPsgrKmBy(data.publicNationalUsage, -0.2 * data.publicNationalUsage)
+    const localModifier = modify("publicLocalUsage").byPercent(-20).if(startYear === currentYear)
+    const longModifier = modify("publicNationalUsage").byPercent(-20).if(startYear === currentYear)
+    const localChange = localModifier.getChange(data)
+    const longChange = longModifier.getChange(data)
 
     return [
       modify("stateDebt").byValue(41 as MrdEuro),
       modify("popularity").byValue(5).if(startYear === currentYear),
       modify("popularity").byValue(-3).if(startYear < currentYear),
       modify("carUsage").byValue(-localChange - longChange).if(startYear === currentYear),
-      modify("publicLocalUsage").byValue(localChange).if(startYear === currentYear),
-      modify("publicNationalUsage").byValue(longChange).if(startYear === currentYear),
+      localModifier,
+      longModifier,
     ]
   },
 

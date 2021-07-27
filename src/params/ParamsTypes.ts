@@ -38,12 +38,35 @@ export abstract class ParamDefinition {
 
 export type ParamsBase = Record<string, number>
 
+type ValueMapper = (newVal: number) => number
+
+function getApplyBounds(unit: Unit): ValueMapper {
+  switch (unit) {
+    case "MioTons":
+      return (newVal) => (newVal < 0 ? 0 : newVal)
+    case "TWh":
+      return (newVal) => (newVal < 0 ? 0 : newVal)
+    case "MrdEuro":
+      return (newVal) => newVal
+    case "TsdPeople":
+      return (newVal) => (newVal < 0 ? 0 : newVal)
+    case "Percent":
+      return (newVal) => (newVal > 100 ? 100 : newVal < 0 ? 0 : newVal)
+    case "GramPerPsgrKm":
+      return (newVal) => (newVal < 0 ? 0 : newVal)
+    case "MioPsgrKm":
+      return (newVal) => (newVal < 0 ? 0 : newVal)
+  }
+}
+
 export class WritableParam extends ParamDefinition {
   writable = true
   initialValue: number
+  applyBounds: ValueMapper
   constructor(input: ParamInput & { initialValue: number }) {
     super(input)
     this.initialValue = input.initialValue
+    this.applyBounds = getApplyBounds(input.unit)
   }
 }
 
