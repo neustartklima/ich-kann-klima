@@ -138,6 +138,7 @@ export default defineComponent({
 .peek {
   display: flex;
   position: fixed;
+  z-index: 20;
   top: 0;
   right: 0;
 }

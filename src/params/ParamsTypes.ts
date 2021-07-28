@@ -1,5 +1,5 @@
 import { Details, GramPerPsgrKm, Internals, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh, Unit } from "../types"
-import { Citations } from "../citations"
+import { Citations, citationsDescription } from "../citations"
 
 type ParamInput = {
   unit: Unit
@@ -22,17 +22,7 @@ export abstract class ParamDefinition {
   }
 
   citationsDesc(): string {
-    let result: string = ""
-    for (const cit of this.citations) {
-      result =
-        result +
-        (cit.title ? '"' + cit.title + '"' : "(no title)") +
-        (cit.publisher ? ", " + cit.publisher : "") +
-        ", " +
-        cit.url +
-        "; "
-    }
-    return result
+    return citationsDescription(this.citations)
   }
 }
 
@@ -40,7 +30,7 @@ export type ParamsBase = Record<string, number>
 
 type ValueMapper = (newVal: number) => number
 
-const mapper = {
+const applyBoundsPerUnit = {
   MioTons: (newVal: MioTons) => (newVal < 0 ? 0 : newVal),
   TWh: (newVal: TWh) => (newVal < 0 ? 0 : newVal),
   MrdEuro: (newVal: MrdEuro) => newVal,
@@ -57,7 +47,7 @@ export class WritableParam extends ParamDefinition {
   constructor(input: ParamInput & { initialValue: number }) {
     super(input)
     this.initialValue = input.initialValue
-    this.applyBounds = mapper[input.unit]
+    this.applyBounds = applyBoundsPerUnit[input.unit]
   }
 }
 
