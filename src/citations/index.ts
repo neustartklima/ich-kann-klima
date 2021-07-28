@@ -2,6 +2,14 @@ import { Citation } from "./CitationsTypes"
 
 export type Citations = Citation[]
 
+export function cite(cit: Citation): string {
+  const pa = cit.publisher || cit.authors
+  const prefix = pa != undefined ? pa + ": " : ""
+  const title = cit.title || cit.url.toString()
+  const url = cit.url.toString()
+  return `[[${prefix}${title}](${url})]`
+}
+
 export const umweltrat2020Umweltgutachten = new Citation({
   url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",

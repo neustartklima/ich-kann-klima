@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
-import { welt2018BundKassiertMineraloelsteuer } from "../citations"
+import { cite, welt2018BundKassiertMineraloelsteuer } from "../citations"
 import { MrdEuro, Percent } from "../types"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
@@ -36,7 +36,7 @@ export default defineLaw({
   internals: markdown`
     # Folgen
 
-    Staatsschulden steigen um 41 Mrd € pro Jahr [welt2018BundKassiertMineraloelsteuer]
+    Staatsschulden steigen um 41 Mrd € pro Jahr ${cite(welt2018BundKassiertMineraloelsteuer)}
     Im ersten Jahr steigen 20% der Nutzer von öffentlichen Verkehrsmitteln aufs Auto um.
     Popularität steigt im ersten Jahr um 5% und sinkt danach um 3% pro Jahr.
 
@@ -49,5 +49,5 @@ export default defineLaw({
     - 0% bei einem Anteil von nichterneuerbaren PKW von 60%.
     - 100% bei einem Anteil von nichterneuerbaren PKW von 100%. (Zu Beginn: 78%)
     - linear interpoliert
-    `,
+  `,
 })
