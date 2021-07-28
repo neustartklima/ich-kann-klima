@@ -24691,20 +24691,20 @@ function getActiveLaw(lawRefs, matcher) {
 // src/params/ParamsTypes.ts
 var ParamDefinition = class {
   unit;
-  sources;
+  citations;
   details;
   internals;
   writable;
   constructor(input) {
     this.unit = input.unit;
-    this.sources = input.sources ? input.sources : [];
+    this.citations = input.citations ? input.citations : [];
     this.details = input.details ? input.details : "";
     this.internals = input.internals ? input.internals : "";
   }
-  sourcesDesc() {
+  citationsDesc() {
     let result = "";
-    for (const source of this.sources) {
-      result = result + (source.title ? '"' + source.title + '"' : "(no title)") + (source.publisher ? ", " + source.publisher : "") + ", " + source.url + "; ";
+    for (const cit of this.citations) {
+      result = result + (cit.title ? '"' + cit.title + '"' : "(no title)") + (cit.publisher ? ", " + cit.publisher : "") + ", " + cit.url + "; ";
     }
     return result;
   }
@@ -24739,8 +24739,8 @@ var ComputedParam = class extends ParamDefinition {
   }
 };
 
-// src/sources/SourcesTypes.ts
-var Source = class {
+// src/citations/CitationsTypes.ts
+var Citation = class {
   url;
   title;
   publisher;
@@ -24767,20 +24767,20 @@ var Source = class {
   }
 };
 
-// src/sources/index.ts
-var umweltrat2020Umweltgutachten = new Source({
+// src/citations/index.ts
+var umweltrat2020Umweltgutachten = new Citation({
   url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
   publisher: "Umweltrat"
 });
-var fraunhoferISE2020ElectricityGeneration = new Source({
+var fraunhoferISE2020ElectricityGeneration = new Citation({
   url: "https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
   publisher: "Fraunhofer ISE",
   archiveNotPossible: true,
   localCopy: "Bar Charts Electricity Generation Energy-Charts.pdf"
 });
-var welt2018BundKassiertMineraloelsteuer = new Source({
+var welt2018BundKassiertMineraloelsteuer = new Citation({
   url: "https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html",
   title: "Bund kassiert so viel Mineral\xF6lsteuer wie seit Jahren nicht",
   publisher: "welt.de",
@@ -24788,7 +24788,7 @@ var welt2018BundKassiertMineraloelsteuer = new Source({
   date: "2018-02-04",
   archiveUrl: "https://web.archive.org/web/20201113072050/https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html"
 });
-var uba2020DeutscheTreibhausgasEmissionen = new Source({
+var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   referringUrl: "https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele",
   title: "Vorjahresch\xE4tzung der deutschen Treibhausgas-Emissionen f\xFCr das Jahr 2020",
@@ -24797,7 +24797,7 @@ var uba2020DeutscheTreibhausgasEmissionen = new Source({
   archiveUrl: "https://web.archive.org/web/20210712115357/https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   comment: `If not mentioned otherwise, values from sheet "THG" row 2019 are used.`
 });
-var vdv2019Statistik = new Source({
+var vdv2019Statistik = new Citation({
   url: "https://www.vdv.de/vdv-statistik-2019.pdfx",
   title: "2019 Statistik",
   publisher: "VDV",
@@ -24805,13 +24805,13 @@ var vdv2019Statistik = new Source({
   archiveUrl: "https://web.archive.org/web/20210714151304/https://www.vdv.de/vdv-statistik-2019.pdfx",
   comment: `Page 11 contains g/Pkm values for several transport types.`
 });
-var ubaEmissionenDesVerkehrs = new Source({
+var ubaEmissionenDesVerkehrs = new Citation({
   url: "https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr",
   title: "Emissionen des Verkehrs - Stra\xDFeng\xFCterverkehr",
   publisher: "UBA",
   archiveUrl: "https://web.archive.org/web/20210712110744if_/https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr"
 });
-var bmvi2020VerkehrInZahlen = new Source({
+var bmvi2020VerkehrInZahlen = new Citation({
   url: "https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
   title: "Emissionen des Verkehrs - Stra\xDFeng\xFCterverkehr",
   publisher: "BMVI",
@@ -24824,14 +24824,14 @@ var bmvi2020VerkehrInZahlen = new Source({
 var co2budget = new WritableParam({
   unit: "MioTons",
   initialValue: 6700,
-  sources: [umweltrat2020Umweltgutachten],
+  citations: [umweltrat2020Umweltgutachten],
   details: ``,
   internals: ``
 });
 var co2emissionsIndustry = new WritableParam({
   unit: "MioTons",
   initialValue: 186.793,
-  sources: [uba2020DeutscheTreibhausgasEmissionen]
+  citations: [uba2020DeutscheTreibhausgasEmissionen]
 });
 var co2emissionsStreetVehicles = new ComputedParam({
   unit: "MioTons",
@@ -24841,7 +24841,7 @@ var co2emissionsStreetVehicles = new ComputedParam({
     const co2emissionsTrucks = 14.4;
     return co2emissionsCars + co2emissionsTrucks;
   },
-  sources: [vdv2019Statistik, ubaEmissionenDesVerkehrs],
+  citations: [vdv2019Statistik, ubaEmissionenDesVerkehrs],
   details: ``,
   internals: `
     TODO: #72 Source [ubaEmissionenDesVerkehrs] claims 47,4 MioTons emissions by trucks per year in 2019.
@@ -24852,7 +24852,7 @@ var co2emissionsMobility = new ComputedParam({
   valueGetter(data) {
     return data.co2emissionsStreetVehicles + data.publicLocalCapacity * 65 / 1e6 + data.publicNationalCapacity * 32 / 1e6 + data.airDomesticUsage * 222 / 1e6 + 1.641;
   },
-  sources: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
+  citations: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
   details: ``,
   internals: `
     <p>[vdv2019Statistik] states: 65 g/Pkm for local public transport, 32 g/Pkm for inter-city public transport, 230 g/Pkm for domestic air traffic.</p>
@@ -24866,21 +24866,21 @@ var co2emissionsBuildings = new ComputedParam({
   valueGetter(data) {
     return data.buildingsSourceBio * 0 + data.buildingsSourceGas * 0.247 + data.buildingsSourceOil * 0.318 + data.buildingsSourceTele * 0.16;
   },
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
   details: ``,
   internals: `shouldInitiallyBe: 123.461 according to [uba2020DeutscheTreibhausgasEmissionen].`
 });
 var co2emissionsAgriculture = new WritableParam({
   unit: "MioTons",
   initialValue: 67.936,
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
   details: ``,
   internals: ``
 });
 var co2emissionsOthers = new WritableParam({
   unit: "MioTons",
   initialValue: 9.243,
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
   details: ``,
   internals: ``
 });
@@ -24889,7 +24889,7 @@ var co2emissionsEnergy = new ComputedParam({
   valueGetter(data) {
     return data.electricityGas * 0.399 + data.electricitySolar * 0.058 + data.electricityWind * 5e-3 + data.electricityWater * 0.02 + data.electricityHardCoal * 0.835 + data.electricityBrownCoal * 1.137 + data.electricityBiomass * 0 + data.electricityNuclear * 5e-3;
   },
-  sources: [],
+  citations: [],
   details: ``,
   internals: ``
 });
@@ -24904,63 +24904,63 @@ var co2emissions = new ComputedParam({
 var electricityDemand = new WritableParam({
   unit: "TWh",
   initialValue: 480.54,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricitySolar = new WritableParam({
   unit: "TWh",
   initialValue: 51.42,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityWind = new WritableParam({
   unit: "TWh",
   initialValue: 131.85,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityWindOnshoreMaxNew = new WritableParam({
   unit: "TWh",
   initialValue: 6,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityWater = new WritableParam({
   unit: "TWh",
   initialValue: 14.99,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityBiomass = new WritableParam({
   unit: "TWh",
   initialValue: 43.19,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityNuclear = new WritableParam({
   unit: "TWh",
   initialValue: 60.91,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityHardCoal = new WritableParam({
   unit: "TWh",
   initialValue: 35.46,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
 var electricityBrownCoal = new WritableParam({
   unit: "TWh",
   initialValue: 82.13,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: ``,
   internals: ``
 });
@@ -24983,63 +24983,63 @@ var electricityGas = new ComputedParam({
 var carEmissionFactor = new WritableParam({
   unit: "GramPerPsgrKm",
   initialValue: 160,
-  sources: [vdv2019Statistik],
+  citations: [vdv2019Statistik],
   details: ``,
   internals: `[vdv2019Statistik] page 11 would lead to about 160 g/Pkm`
 });
 var carUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 917e3,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: ``
 });
 var carRenewablePercentage = new WritableParam({
   unit: "Percent",
   initialValue: 1,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)`
 });
 var publicLocalUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 112600,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: ``
 });
 var publicLocalCapacity = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 112600,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: `Our definition: current situation is 100%`
 });
 var publicNationalUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 67300,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: `public - local - air = 251700 - 71800 - 112600 = 67300`
 });
 var publicNationalCapacity = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 67300,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: `Our defionition current situation is 100%`
 });
 var airDomesticUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 10100,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: ``
 });
 var airIntlUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 61700,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: ``,
   internals: ``
 });
@@ -25054,14 +25054,14 @@ var passengerTransportUsage = new ComputedParam({
 var buildingsIndustryDemand = new WritableParam({
   unit: "TWh",
   initialValue: 226,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `TODO#78: Find source of initialValue.`
 });
 var buildingsPrivateDemand = new WritableParam({
   unit: "TWh",
   initialValue: 544,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `TODO#78: Find source of initialValue.`
 });
@@ -25076,21 +25076,21 @@ var buildingsDemand = new ComputedParam({
 var buildingsSourceBio = new WritableParam({
   unit: "TWh",
   initialValue: 130,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `TODO#78: Find source of initialValue.`
 });
 var buildingsSourceOil = new WritableParam({
   unit: "TWh",
   initialValue: 219,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `TODO#78: Find source of initialValue.`
 });
 var buildingsSourceTele = new WritableParam({
   unit: "TWh",
   initialValue: 58,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `TODO#78: Find source of initialValue.`
 });
@@ -25105,35 +25105,35 @@ var buildingsSourceGas = new ComputedParam({
 var popularity = new WritableParam({
   unit: "Percent",
   initialValue: 50,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `50% of all people accept you as their chancellor.`
 });
 var numberOfCitizens = new WritableParam({
   unit: "TsdPeople",
   initialValue: 83157,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html.`
 });
 var unemployment = new WritableParam({
   unit: "TsdPeople",
   initialValue: 2695,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre`
 });
 var gdp = new WritableParam({
   unit: "MrdEuro",
   initialValue: 3332,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr`
 });
 var stateDebt = new WritableParam({
   unit: "MrdEuro",
   initialValue: 1899,
-  sources: [],
+  citations: [],
   details: ``,
   internals: `In 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands`
 });
@@ -25613,7 +25613,7 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
     const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
     return linear(60, 100, relCarPercentage);
   },
-  sources: [welt2018BundKassiertMineraloelsteuer],
+  citations: [welt2018BundKassiertMineraloelsteuer],
   details: ``,
   internals: markdown`
     # Folgen
