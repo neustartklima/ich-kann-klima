@@ -24663,14 +24663,6 @@ var AllesBleibtBeimAlten_default = defineLaw({
 });
 
 // src/lawTools.ts
-function changeBy(min, max) {
-  const minF = min === void 0 ? (_val, by) => by : (val, by) => Math.max(by, min - val);
-  const maxF = max === void 0 ? (_val, by) => by : (val, by) => Math.min(by, max - val);
-  return (val, by) => by > 0 ? maxF(val, by) : minF(val, by);
-}
-var changeEmissionsBy = changeBy(0, void 0);
-var changeTWhBy = changeBy(0, void 0);
-var changeMioPsgrKmBy = changeBy(0, void 0);
 function linear(zero, hundred, actual) {
   const shifted = actual - zero;
   const shiftedH = hundred - zero;
