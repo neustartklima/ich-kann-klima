@@ -1,6 +1,6 @@
 import { Html, LocalPath } from "../types"
 
-export class Source {
+export class Citation {
   url: URL
   title?: string // TODO #79: Make mandatory
   publisher?: string

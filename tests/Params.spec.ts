@@ -62,7 +62,7 @@ describe("createBaseValues(defaultValues)", () => {
             " " +
             pd.unit +
             " according to " +
-            pd.sourcesDesc() +
+            pd.citationsDesc() +
             "."
         )
       }

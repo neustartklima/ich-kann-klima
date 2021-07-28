@@ -1,6 +1,6 @@
 import { Game } from "../game"
 import { BaseParams, Change } from "../params"
-import { Sources } from "../sources"
+import { Citations } from "../citations"
 import { Details, Internals, Percent } from "../types"
 
 export type LawLabel =
@@ -23,7 +23,7 @@ export type LawDefinition = {
   effects: EffectsFunc
   /** Used to filter and sort the proposed laws. */
   priority: PriorityFunc
-  sources?: Sources // TODO #79: Make mandatory
+  citations?: Citations // TODO #79: Make mandatory
   details?: Details // TODO #79: Make mandatory
   internals?: Internals // TODO #79: Make mandatory
 }

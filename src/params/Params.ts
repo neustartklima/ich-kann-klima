@@ -6,13 +6,13 @@ import {
   ubaEmissionenDesVerkehrs,
   umweltrat2020Umweltgutachten,
   vdv2019Statistik,
-} from "../sources"
+} from "../citations"
 import { GramPerPsgrKm, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh } from "../types"
 
 const co2budget = new WritableParam({
   unit: "MioTons",
   initialValue: 6700,
-  sources: [umweltrat2020Umweltgutachten],
+  citations: [umweltrat2020Umweltgutachten],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -20,7 +20,7 @@ const co2budget = new WritableParam({
 const co2emissionsIndustry = new WritableParam({
   unit: "MioTons",
   initialValue: 186.793,
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
 })
 
 const co2emissionsStreetVehicles = new ComputedParam({
@@ -31,7 +31,7 @@ const co2emissionsStreetVehicles = new ComputedParam({
     const co2emissionsTrucks: MioTons = 14.4
     return co2emissionsCars + co2emissionsTrucks
   },
-  sources: [vdv2019Statistik, ubaEmissionenDesVerkehrs],
+  citations: [vdv2019Statistik, ubaEmissionenDesVerkehrs],
   details: /*html*/ ``,
   internals: /*html*/ `
     TODO: #72 Source [ubaEmissionenDesVerkehrs] claims 47,4 MioTons emissions by trucks per year in 2019.
@@ -49,7 +49,7 @@ const co2emissionsMobility = new ComputedParam({
       (1.641 as MioTons)
     )
   },
-  sources: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
+  citations: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
   details: /*html*/ ``,
   internals: /*html*/ `
     <p>[vdv2019Statistik] states: 65 g/Pkm for local public transport, 32 g/Pkm for inter-city public transport, 230 g/Pkm for domestic air traffic.</p>
@@ -71,7 +71,7 @@ const co2emissionsBuildings = new ComputedParam({
   },
   // TODO: #72 Source claims 123.461 MioTons per year in 2019. Sums to 168.6 MioTons.
   //shouldInitiallyBe: 123.461 as MioTons,
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
   details: /*html*/ ``,
   internals: /*html*/ `shouldInitiallyBe: 123.461 according to [uba2020DeutscheTreibhausgasEmissionen].`,
 })
@@ -79,7 +79,7 @@ const co2emissionsBuildings = new ComputedParam({
 const co2emissionsAgriculture = new WritableParam({
   unit: "MioTons",
   initialValue: 67.936,
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -87,7 +87,7 @@ const co2emissionsAgriculture = new WritableParam({
 const co2emissionsOthers = new WritableParam({
   unit: "MioTons",
   initialValue: 9.243,
-  sources: [uba2020DeutscheTreibhausgasEmissionen],
+  citations: [uba2020DeutscheTreibhausgasEmissionen],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -108,7 +108,7 @@ const co2emissionsEnergy = new ComputedParam({
       data.electricityNuclear * 0.005
     )
   },
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -132,7 +132,7 @@ const co2emissions = new ComputedParam({
 const electricityDemand = new WritableParam({
   unit: "TWh",
   initialValue: 480.54,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -140,7 +140,7 @@ const electricityDemand = new WritableParam({
 const electricitySolar = new WritableParam({
   unit: "TWh",
   initialValue: 51.42,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -148,7 +148,7 @@ const electricitySolar = new WritableParam({
 const electricityWind = new WritableParam({
   unit: "TWh",
   initialValue: 131.85,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -156,7 +156,7 @@ const electricityWind = new WritableParam({
 const electricityWindOnshoreMaxNew = new WritableParam({
   unit: "TWh",
   initialValue: 6.0,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -164,7 +164,7 @@ const electricityWindOnshoreMaxNew = new WritableParam({
 const electricityWater = new WritableParam({
   unit: "TWh",
   initialValue: 14.99,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -172,7 +172,7 @@ const electricityWater = new WritableParam({
 const electricityBiomass = new WritableParam({
   unit: "TWh",
   initialValue: 43.19,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -180,7 +180,7 @@ const electricityBiomass = new WritableParam({
 const electricityNuclear = new WritableParam({
   unit: "TWh",
   initialValue: 60.91,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -188,7 +188,7 @@ const electricityNuclear = new WritableParam({
 const electricityHardCoal = new WritableParam({
   unit: "TWh",
   initialValue: 35.46,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -196,7 +196,7 @@ const electricityHardCoal = new WritableParam({
 const electricityBrownCoal = new WritableParam({
   unit: "TWh",
   initialValue: 82.13,
-  sources: [fraunhoferISE2020ElectricityGeneration],
+  citations: [fraunhoferISE2020ElectricityGeneration],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -231,7 +231,7 @@ const electricityGas = new ComputedParam({
 const carEmissionFactor = new WritableParam({
   unit: "GramPerPsgrKm",
   initialValue: 160 as GramPerPsgrKm,
-  sources: [vdv2019Statistik],
+  citations: [vdv2019Statistik],
   details: /*html*/ ``,
   internals: /*html*/ `[vdv2019Statistik] page 11 would lead to about 160 g/Pkm`,
 })
@@ -239,7 +239,7 @@ const carEmissionFactor = new WritableParam({
 const carUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 917000 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -247,7 +247,7 @@ const carUsage = new WritableParam({
 const carRenewablePercentage = new WritableParam({
   unit: "Percent",
   initialValue: 1 as Percent,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `https://de.motor1.com/news/401639/autos-in-deutschland-zahlen-und-fakten/ (very rough estimate)`,
 })
@@ -255,7 +255,7 @@ const carRenewablePercentage = new WritableParam({
 const publicLocalUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 112600 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -263,7 +263,7 @@ const publicLocalUsage = new WritableParam({
 const publicLocalCapacity = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 112600 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ `Our definition: current situation is 100%`,
 })
@@ -271,7 +271,7 @@ const publicLocalCapacity = new WritableParam({
 const publicNationalUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 67300 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ `public - local - air = 251700 - 71800 - 112600 = 67300`,
 })
@@ -279,7 +279,7 @@ const publicNationalUsage = new WritableParam({
 const publicNationalCapacity = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 67300 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ `Our defionition current situation is 100%`,
 })
@@ -287,7 +287,7 @@ const publicNationalCapacity = new WritableParam({
 const airDomesticUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 10100 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -295,7 +295,7 @@ const airDomesticUsage = new WritableParam({
 const airIntlUsage = new WritableParam({
   unit: "MioPsgrKm",
   initialValue: 61700 as MioPsgrKm,
-  sources: [bmvi2020VerkehrInZahlen],
+  citations: [bmvi2020VerkehrInZahlen],
   details: /*html*/ ``,
   internals: /*html*/ ``,
 })
@@ -312,7 +312,7 @@ const passengerTransportUsage = new ComputedParam({
 const buildingsIndustryDemand = new WritableParam({
   unit: "TWh",
   initialValue: 226 as TWh,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
@@ -320,7 +320,7 @@ const buildingsIndustryDemand = new WritableParam({
 const buildingsPrivateDemand = new WritableParam({
   unit: "TWh",
   initialValue: 544 as TWh,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
@@ -337,7 +337,7 @@ const buildingsDemand = new ComputedParam({
 const buildingsSourceBio = new WritableParam({
   unit: "TWh",
   initialValue: 130 as TWh,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
@@ -345,7 +345,7 @@ const buildingsSourceBio = new WritableParam({
 const buildingsSourceOil = new WritableParam({
   unit: "TWh",
   initialValue: 219 as TWh,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
@@ -353,7 +353,7 @@ const buildingsSourceOil = new WritableParam({
 const buildingsSourceTele = new WritableParam({
   unit: "TWh",
   initialValue: 58 as TWh,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `TODO#78: Find source of initialValue.`, //TODO #78
 })
@@ -370,7 +370,7 @@ const buildingsSourceGas = new ComputedParam({
 const popularity = new WritableParam({
   unit: "Percent",
   initialValue: 50 as Percent,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `50% of all people accept you as their chancellor.`,
 })
@@ -378,7 +378,7 @@ const popularity = new WritableParam({
 const numberOfCitizens = new WritableParam({
   unit: "TsdPeople",
   initialValue: 83157 as TsdPeople,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `in 2020, source https://www.destatis.de/DE/Themen/Gesellschaft-Umwelt/Bevoelkerung/Bevoelkerungsstand/Tabellen/zensus-geschlecht-staatsangehoerigkeit-2020.html.`,
 })
@@ -386,7 +386,7 @@ const numberOfCitizens = new WritableParam({
 const unemployment = new WritableParam({
   unit: "TsdPeople",
   initialValue: 2695 as TsdPeople,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `in 2020, source https://www.arbeitsagentur.de/news/arbeitsmarkt-vorjahre`,
 })
@@ -394,7 +394,7 @@ const unemployment = new WritableParam({
 const gdp = new WritableParam({
   unit: "MrdEuro",
   initialValue: 3332 as MrdEuro,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `in 2020, source http://www.statistikportal.de/de/bruttoinlandsprodukt-vgr`,
 })
@@ -402,7 +402,7 @@ const gdp = new WritableParam({
 const stateDebt = new WritableParam({
   unit: "MrdEuro",
   initialValue: 1899 as MrdEuro,
-  sources: [],
+  citations: [],
   details: /*html*/ ``,
   internals: /*html*/ `In 2019, source https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands`,
 })

@@ -1,35 +1,35 @@
 import { Details, GramPerPsgrKm, Internals, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh, Unit } from "../types"
-import { Sources } from "../sources"
+import { Citations } from "../citations"
 
 type ParamInput = {
   unit: Unit
-  sources?: Sources
+  citations?: Citations
   details?: Details
   internals?: Internals
 }
 
 export abstract class ParamDefinition {
   unit: Unit
-  sources: Sources
+  citations: Citations
   details: Details
   internals: Internals
   abstract writable: boolean
   constructor(input: ParamInput) {
     this.unit = input.unit
-    this.sources = input.sources ? input.sources : []
+    this.citations = input.citations ? input.citations : []
     this.details = input.details ? input.details : ""
     this.internals = input.internals ? input.internals : ""
   }
 
-  sourcesDesc(): string {
+  citationsDesc(): string {
     let result: string = ""
-    for (const source of this.sources) {
+    for (const cit of this.citations) {
       result =
         result +
-        (source.title ? '"' + source.title + '"' : "(no title)") +
-        (source.publisher ? ", " + source.publisher : "") +
+        (cit.title ? '"' + cit.title + '"' : "(no title)") +
+        (cit.publisher ? ", " + cit.publisher : "") +
         ", " +
-        source.url +
+        cit.url +
         "; "
     }
     return result
@@ -47,7 +47,7 @@ const mapper = {
   TsdPeople: (newVal: TsdPeople) => (newVal < 0 ? 0 : newVal),
   Percent: (newVal: Percent) => (newVal > 100 ? 100 : newVal < 0 ? 0 : newVal),
   GramPerPsgrKm: (newVal: GramPerPsgrKm) => (newVal < 0 ? 0 : newVal),
-  MioPsgrKm: (newVal: MioPsgrKm) => (newVal < 0 ? 0 : newVal)
+  MioPsgrKm: (newVal: MioPsgrKm) => (newVal < 0 ? 0 : newVal),
 }
 
 export class WritableParam extends ParamDefinition {

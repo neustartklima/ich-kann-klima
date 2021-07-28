@@ -1,6 +1,6 @@
 import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import { paramDefinitions } from "./Params"
-import { Sources } from "../sources"
+import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
 import { Game } from "../game"
 
@@ -48,7 +48,7 @@ export type BaseParams = Params
 interface ParamEntryBase {
   name: ParamKey
   unit: Unit
-  sources: Sources
+  citations: Citations
   details: Details
   internals: Internals
   writable: boolean

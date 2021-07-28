@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { changeMioPsgrKmBy, linear } from "../lawTools"
-import { welt2018BundKassiertMineraloelsteuer } from "../sources"
+import { welt2018BundKassiertMineraloelsteuer } from "../citations"
 import { MrdEuro, Percent } from "../types"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
@@ -31,7 +31,7 @@ export default defineLaw({
     const relCarPercentage: Percent = (carNonRenewableUsage / v.passengerTransportUsage) * 100
     return linear(60, 100, relCarPercentage)
   },
-  sources: [welt2018BundKassiertMineraloelsteuer],
+  citations: [welt2018BundKassiertMineraloelsteuer],
   details: /*html*/ ``,
   internals: markdown`
     # Folgen
