@@ -1,6 +1,15 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
-import { cite, welt2018BundKassiertMineraloelsteuer } from "../citations"
+import {
+  bmvi2020VerkehrInZahlen,
+  cite,
+  fraunhoferISE2020ElectricityGeneration,
+  uba2020DeutscheTreibhausgasEmissionen,
+  ubaEmissionenDesVerkehrs,
+  umweltrat2020Umweltgutachten,
+  vdv2019Statistik,
+  welt2018BundKassiertMineraloelsteuer,
+} from "../citations"
 import { MrdEuro, Percent } from "../types"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
@@ -10,16 +19,26 @@ export default defineLaw({
   description: "Die Steuer auf sämtliche erdölbasierten Treibstoffe wird abgeschafft.",
 
   effects(data, startYear, currentYear): Change[] {
-    const localModifier = modify("publicLocalUsage").byPercent(-20).if(startYear === currentYear)
-    const longModifier = modify("publicNationalUsage").byPercent(-20).if(startYear === currentYear)
+    const localModifier = modify("publicLocalUsage")
+      .byPercent(-20)
+      .if(startYear === currentYear)
+    const longModifier = modify("publicNationalUsage")
+      .byPercent(-20)
+      .if(startYear === currentYear)
     const localChange = localModifier.getChange(data)
     const longChange = longModifier.getChange(data)
 
     return [
       modify("stateDebt").byValue(41 as MrdEuro),
-      modify("popularity").byValue(5).if(startYear === currentYear),
-      modify("popularity").byValue(-3).if(startYear < currentYear),
-      modify("carUsage").byValue(-localChange - longChange).if(startYear === currentYear),
+      modify("popularity")
+        .byValue(5)
+        .if(startYear === currentYear),
+      modify("popularity")
+        .byValue(-3)
+        .if(startYear < currentYear),
+      modify("carUsage")
+        .byValue(-localChange - longChange)
+        .if(startYear === currentYear),
       localModifier,
       longModifier,
     ]
@@ -31,7 +50,15 @@ export default defineLaw({
     const relCarPercentage: Percent = (carNonRenewableUsage / v.passengerTransportUsage) * 100
     return linear(60, 100, relCarPercentage)
   },
-  citations: [welt2018BundKassiertMineraloelsteuer],
+  citations: [
+    welt2018BundKassiertMineraloelsteuer,
+    umweltrat2020Umweltgutachten,
+    fraunhoferISE2020ElectricityGeneration,
+    uba2020DeutscheTreibhausgasEmissionen,
+    vdv2019Statistik,
+    ubaEmissionenDesVerkehrs,
+    bmvi2020VerkehrInZahlen,
+  ],
   details: /*html*/ ``,
   internals: markdown`
     # Folgen

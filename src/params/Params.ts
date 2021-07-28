@@ -35,7 +35,7 @@ const co2emissionsStreetVehicles = new ComputedParam({
   details: /*html*/ ``,
   internals: /*html*/ `
     TODO: #72 Source [ubaEmissionenDesVerkehrs] claims 47,4 MioTons emissions by trucks per year in 2019.
-    We use 14.4 MioTons to adjust to the correct total emissions street sehicles.`,
+    We use 14.4 MioTons to adjust to the correct total emissions street sehicles.`, //TODO: #72
 })
 
 const co2emissionsMobility = new ComputedParam({

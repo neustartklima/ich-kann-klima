@@ -5,8 +5,15 @@ import { Game } from "../game"
 import { Change } from "../params"
 import { startYear } from "../constants"
 import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
+import { Law } from "../laws"
+import Citation from "./Citation.vue"
+import { Citations } from "../citations"
 
 export default defineComponent({
+  components: {
+    Citation,
+  },
+
   setup() {
     const store = useStore()
 
@@ -45,10 +52,22 @@ export default defineComponent({
       return startYear
     },
 
+    selectedLaw(): Law | undefined {
+      return this.allLaws.find((law) => law.id === this.lawSelected)
+    },
+
+    citationsOfLaw(): Citations {
+      if (this.selectedLaw && this.selectedLaw.citations) {
+        return this.selectedLaw.citations
+      } else {
+        return []
+      }
+    },
+
     effectsOfSelected(): Change[] {
       if (!this.lawSelected || !this.game) return []
       const game: Game = this.game
-      const law = this.allLaws.find((law) => law.id === this.lawSelected)
+      const law = this.selectedLaw
       if (!law) return []
       return law.effects(this.game.values, this.startYearOfSelected, this.game.currentYear)
     },
@@ -69,6 +88,21 @@ export default defineComponent({
 <template>
   <details class="peekData">
     <summary>Peek</summary>
+    <div class="LawDetails">
+      <div v-if="selectedLaw">
+        <div class="Title">{{ selectedLaw.title }}</div>
+        <div class="Description">{{ selectedLaw.description }}</div>
+        <div class="SectionHead">Details:</div>
+        <div class="Section" v-html="selectedLaw.details" />
+        <div class="SectionHead">Internes:</div>
+        <div class="Section" v-html="selectedLaw.internals" />
+        <div class="SectionHead">Referenzen:</div>
+        <Citation v-for="(citation, pos) in citationsOfLaw" :key="pos" :citation="citation" />
+      </div>
+      <div v-else>
+        <div class="Title">Hover over parameter or law to see details.</div>
+      </div>
+    </div>
     <table>
       <tr v-for="row in sortedValues" :key="row.id" :class="row.class">
         <td>{{ row.id }}</td>
@@ -88,8 +122,8 @@ export default defineComponent({
         :key="law.id"
         :class="law.state"
         @mouseenter="selectLaw(law.id)"
-        @mouseleave="selectLaw(undefined)"
       >
+        <!-- @mouseleave="selectLaw(undefined)"-->
         <td>{{ law.state }}</td>
         <td>{{ law.id }}</td>
         <td class="priocol">{{ law.priority }}</td>
@@ -104,8 +138,35 @@ export default defineComponent({
   font-size: 12px;
   background: white;
 
+  > div,
   table {
     float: left;
+  }
+
+  .LawDetails {
+    width: 30em;
+    > div {
+      > * {
+        margin: 0.67em 0 0.67em 0;
+      }
+
+      .Title {
+        font-weight: bold;
+        font-size: 1.4em;
+      }
+
+      .SectionHead {
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+
+      .Section::v-deep {
+        color: cadetblue;
+        h1 {
+          font-size: 1.4em;
+        }
+      }
+    }
   }
 
   .calculated {
