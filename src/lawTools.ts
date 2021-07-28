@@ -30,54 +30,6 @@ export function changeBy<T extends number>(min?: T, max?: T): (val: T, by: T) =>
 }
 
 /**
- * Function to be used in laws to define changes in emission values.
- *
- * It can then be used within the return value of a law as follows:
- * ```
- * return {
- *   co2emissionsBuildings: changeEmissionsBy(data.co2emissionsBuildings, -2),
- * }
- * ```
- *
- * @param val The value to be changed.
- * @param by The value by which to change `val`.
- * @returns The value be which to change `val` corrected.
- */
-export const changeEmissionsBy = changeBy<MioTons>(0, undefined)
-
-/**
- * Function to be used in laws to define changes in electricity production values.
- *
- * It can then be used within the return value of a law as follows:
- * ```
- * return {
- *   electricityHardCoal: changeTWhBy(data.electricityHardCoal, -0.1 * defaultValues.electricityHardCoal),
- * }
- * ```
- *
- * @param val The value to be changed.
- * @param by The value by which to change `val`.
- * @returns The value be which to change `val` corrected.
- */
-export const changeTWhBy = changeBy<TWh>(0, undefined)
-
-/**
- * Function to be used in laws to define changes in passenger-kilometer values.
- *
- * It can then be used within the return value of a law as follows:
- * ```
- * return {
- *   carUsage: changeMioPsgrKmBy(data.carUsage, -usageIncrease),
- * }
- * ```
- *
- * @param val The value to be changed.
- * @param by The value by which to change `val`.
- * @returns The value be which to change `val` corrected.
- */
-export const changeMioPsgrKmBy = changeBy<MioPsgrKm>(0, undefined)
-
-/**
  * Linear interpolation returning a percentage to be used in priority-functions in laws.
  * @param zero Value for which to return 0%.
  * @param hundred Value for which to return 100%.

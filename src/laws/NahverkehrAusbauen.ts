@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
-import { changeMioPsgrKmBy, linear } from "../lawTools"
+import { linear } from "../lawTools"
 import { Change, modify } from "../params"
 
 export default defineLaw({

@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { changeMioPsgrKmBy, linear } from "../lawTools"
+import { linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
 import { modify } from "../params"
 

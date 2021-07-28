@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
-import { changeMioPsgrKmBy, linear } from "../lawTools"
-import { MioPsgrKm, Percent } from "../types"
+import { linear } from "../lawTools"
+import { Percent } from "../types"
 import { Change, modify } from "../params"
 
 export default defineLaw({

@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { changeMioPsgrKmBy, linear } from "../lawTools"
+import { linear } from "../lawTools"
 import { welt2018BundKassiertMineraloelsteuer } from "../citations"
 import { MrdEuro, Percent } from "../types"
 import { Change, modify } from "../params"
