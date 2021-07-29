@@ -39,6 +39,8 @@ export default defineLaw({
     Staatsschulden steigen um 41 Mrd € pro Jahr [welt2018BundKassiertMineraloelsteuer]
     Im ersten Jahr steigen 20% der Nutzer von öffentlichen Verkehrsmitteln aufs Auto um.
     Popularität steigt im ersten Jahr um 5% und sinkt danach um 3% pro Jahr.
+    
+    Das ist ein test-Vorschlag für eine Änderung.
 
     # Vorbedingungen
 
