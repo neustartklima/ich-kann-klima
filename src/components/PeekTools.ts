@@ -31,7 +31,7 @@ export function getSortedValues(values: BaseParams, effects: Change[]): ValueRow
 
   function getEffect(key: keyof BaseParams): number {
     const effect = effects.find((e) => e.name === key)
-    return effect ? effect.value : 0
+    return effect && effect.condition ? effect.value : 0
   }
 
   function effectStr(key: keyof BaseParams): string {
