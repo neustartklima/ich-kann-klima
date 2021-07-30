@@ -1,21 +1,23 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 import Background from "./Background.vue"
-import CurrentIndicators from "../components/CurrentIndicators.vue"
 import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import PeekInside from "./PeekInside.vue"
+import EventMachine, { PriorizedEvent } from "../EventMachine"
+import FinanceIndicator from "./FinanceIndicator.vue"
+import PopularityIndicator from "./PopularityIndicator.vue"
+import ClimateIndicator from "./ClimateIndicator.vue"
+import Calendar from "./Calendar.vue"
+import Heater from "./Heater.vue"
+import Table from "./Table.vue"
 import { Event } from "../events"
 import { useStore } from "../store"
 import { allEvents } from "../events"
-import EventMachine, { PriorizedEvent } from "../EventMachine"
-import Finances from "./Finances.vue"
-import { financeRating } from "../Calculator"
-import { Game } from "../game"
-import PopularityIndicator from "./PopularityIndicator.vue"
+import { co2Rating, financeRating } from "../Calculator"
 
 export default defineComponent({
-  components: { Background, CurrentIndicators, PeekInside, LawProposals, SpeechBubble, Finances, PopularityIndicator },
+  components: { Background, Calendar, ClimateIndicator, Heater, PeekInside, LawProposals, SpeechBubble, FinanceIndicator, PopularityIndicator, Table },
 
   data() {
     const store = useStore()
@@ -49,15 +51,16 @@ export default defineComponent({
 
     finance(): number {
       const game = this.store.state.game
-      if (game) {
-        return financeRating(this.store.state.game as Game)
-      } else {
-        return 0;
-      }
+      return game ? financeRating(game) : 0
     },
 
     popularity(): number {
       return this.store.state.game?.values.popularity || 100
+    },
+
+    climate(): number {
+      const game = this.store.state.game
+      return game ? co2Rating(game) : 0
     },
   },
 
@@ -77,10 +80,14 @@ export default defineComponent({
 <template>
   <div class="game-setup">
     <Background />
+    <Calendar :year="currentYear" />
+    <Heater />
+    <Table />
 
-    <div id="year">{{ currentYear }}</div>
-    <Finances :value="finance" />
+    <FinanceIndicator :value="finance" />
     <PopularityIndicator :value="popularity" />
+    <ClimateIndicator :value="climate" />
+
     <LawProposals />
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
@@ -112,26 +119,6 @@ export default defineComponent({
 
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;
-  }
-
-  #year {
-    position: absolute;
-    top: 42%;
-    left: 47%;
-    font-size: 1.4vw;
-    border: 1px solid black;
-    padding: 2em 0.5em 0;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      right: 3px;
-      height: 1.7em;
-      border: 1px solid black;
-      box-sizing: border-box;
-    }
   }
 }
 

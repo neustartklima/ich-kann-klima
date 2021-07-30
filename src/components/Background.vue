@@ -3,7 +3,7 @@ export default {}
 </script>
 
 <template>
-  <img id="background-image" src="../assets/background.jpg" />
+  <img id="background-image" src="../assets/background.png" />
 </template>
 
 <style lang="scss" scoped>
