@@ -28,9 +28,9 @@ export default defineComponent({
 <style lang="scss">
 #poularity {
   position: absolute;
-  left: 24.8%;
-  top: 58%;
-  width: 49.3%;
+  left: 31.5%;
+  top: 40%;
+  width: 35%;
 
   img {
     position: absolute;

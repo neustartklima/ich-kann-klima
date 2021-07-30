@@ -25,16 +25,17 @@ export default defineComponent({
 div {
   max-width: 400px;
   position: absolute;
-  top: 25%;
-  left: 10%;
+  top: 20%;
+  left: 15%;
   transform: translateY(-50%);
   z-index: 999;
-  border: 5px solid black;
-  border-radius: 1rem;
+  border: 1px solid black;
+  border-radius: 2rem;
   font-weight: bold;
   font-size: 20px;
-  padding: 0.7rem 1rem;
+  padding: 1rem;
   background: white;
+  box-shadow: 0 0 8px rgba(100,100,100,.5);
 
   &::before,
   &::after {
@@ -48,16 +49,16 @@ div {
     border-width: 10px;
     border-style: solid;
     border-color: black transparent transparent black;
-    left: 6px;
+    left: 27px;
     bottom: -20px;
   }
 
   &::after {
-    border-width: 7px;
+    border-width: 9px;
     border-style: solid;
     border-color: #fff transparent transparent #fff;
-    left: 10px;
-    bottom: -11px;
+    left: 30px;
+    bottom: -14px;
   }
 
   h2 {

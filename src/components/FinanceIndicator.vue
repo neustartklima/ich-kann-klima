@@ -27,7 +27,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div id="finance">
+  <div>
     <img v-if="isShort" src="../assets/money-short.png" id="short" />
     <img v-if="isLess" src="../assets/money-less.png" id="less" />
     <img v-if="isMore" src="../assets/money-more.png" id="more" />
@@ -36,11 +36,11 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-#finance {
+div {
   position: absolute;
-  left: 80%;
-  top: 75%;
-  width: 15%;
+  left: 75%;
+  top: 80%;
+  width: 20%;
   height: 25%;
 
   img {

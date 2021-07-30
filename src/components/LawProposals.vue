@@ -70,13 +70,14 @@ export default defineComponent({
 <style lang="scss" scoped>
 .ProposedLaws {
   position: absolute;
-  bottom: 18%;
-  width: 100%;
+  bottom: 38%;
+  left: 25%;
+  width: 50%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   transform-origin: bottom center;
-  transform: perspective(3000px) rotateX(75deg) scale(0.5);
+  transform: perspective(3000px) rotateX(80deg);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
