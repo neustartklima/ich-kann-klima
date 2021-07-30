@@ -34,10 +34,6 @@ export default defineComponent({
         pos,
       }))
     },
-
-    transform(): string {
-      return "rotate(3deg)"
-    }
   },
 
   methods: {
@@ -70,11 +66,11 @@ export default defineComponent({
 <style lang="scss" scoped>
 .ProposedLaws {
   position: absolute;
-  bottom: 38%;
+  bottom: 33%;
   left: 25%;
   width: 50%;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;
   transform-origin: bottom center;
   transform: perspective(3000px) rotateX(80deg);
@@ -82,7 +78,7 @@ export default defineComponent({
   transition: all var(--transitiontime);
 
   &.poppedUp {
-    transform: none;
+    transform: translateY(150px);
   }
 }
 </style>

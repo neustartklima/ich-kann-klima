@@ -32,8 +32,8 @@ export default defineComponent({
 
     transform(): string {
       const rotation = 2 * (this.law.pos - this.numCards / 2)
-      const y = Math.abs(this.numCards / 2 - this.law.pos) * 20
-      return `rotate(${rotation}deg) translateY(${y}px)`
+      const x = Math.abs(this.numCards / 2 - this.law.pos) * 20
+      return `rotate(${rotation}deg) translate(${x}px, -50%)`
     },
   },
 
@@ -59,7 +59,7 @@ export default defineComponent({
   <div
     class="Law"
     :class="{ accepted }"
-    :style="{ zIndex, transform }"
+    :style="{ zIndex }"
     @click="select"
     @animationend="sendAccept"
   >
@@ -80,13 +80,19 @@ export default defineComponent({
 <style lang="scss" scoped>
 .Law {
   position: relative;
-  width: 33%;
-  max-width: 400px;
+  width: 250px;
+  height: 300px;
   padding: 0.5rem;
   box-sizing: border-box;
+  margin: 0 auto;
+  transform: rotate(3deg);
 
   &:not(:first-of-type) {
-    margin-left: -20%;
+    margin-top: -250px;
+  }
+
+  &:nth-of-type(odd) {
+    transform: rotate(-3deg);
   }
 
   /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
@@ -122,9 +128,6 @@ export default defineComponent({
   @media (max-width: 800px) {
     font-size: 85%;
   }
-  @media (max-width: 600px) {
-    width: 50%;
-  }
 
   h3 {
     margin-top: 0;
@@ -132,31 +135,26 @@ export default defineComponent({
 
   > label > div {
     height: 100%;
-    border: 0.2rem solid orange;
-    border-radius: 20px;
+    border: 1px solid #aaaaaa;
     padding: 0.5rem;
     position: relative;
     background: white;
-    box-shadow: 5px 5px 10px rgba(200, 200, 200, 0.5);
+    box-shadow: 2px 2px 10px rgba(150, 150, 150, 0.5);
 
     .button-bar {
       position: absolute;
-      bottom: 10px;
-      right: 10px;
+      bottom: 5px;
+      right: 5px;
     }
 
     button {
       display: none;
-      border: 1px solid #2c3e50;
-      border-radius: 4px;
+      border: none;
       width: 32px;
       margin-left: 5px;
       padding: 0;
-      background: white;
-    }
-
-    button:hover {
-      background: #eeeeee;
+      background: transparent;
+      cursor: pointer;
     }
 
     .accept {
