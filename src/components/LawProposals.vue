@@ -66,19 +66,20 @@ export default defineComponent({
 <style lang="scss" scoped>
 .ProposedLaws {
   position: absolute;
-  bottom: 33%;
-  left: 25%;
+  top: 0;
+  height: 85%;
+  left: 15%;
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   transform-origin: bottom center;
-  transform: perspective(3000px) rotateX(80deg);
+  transform: perspective(2000px) rotateX(70deg);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
   &.poppedUp {
-    transform: translateY(150px);
+    transform: scale(1.5) translateY(150px);
   }
 }
 </style>

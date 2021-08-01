@@ -14,10 +14,11 @@ export default defineComponent({
 <style lang="scss" scoped>
 #table {
   position: absolute;
-  top: 55%;
+  top: 75%;
   left: 25%;
   right: 25%;
-
+  transform: scale(1.6);
+  
   img {
     width: 100%;
   }
