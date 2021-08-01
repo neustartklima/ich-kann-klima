@@ -95,6 +95,16 @@ export default defineComponent({
     transform: rotate(-3deg);
   }
 
+  @media (max-width: 800px) {
+    width: 50%;
+    height: 80%;
+    font-size: 1.3vw;
+
+    &:not(:first-of-type) {
+      margin-top: -150px;
+    }
+  }
+
   /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
   animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
   &.accepted {
@@ -108,25 +118,13 @@ export default defineComponent({
   @media screen and (hover) {
     :hover > div {
       background: orange;
-
-      button {
-        display: inline;
-      }
     }
   }
 
   @media screen and (hover: none) {
     :checked + label > div {
       background: orange;
-
-      button {
-        display: inline;
-      }
     }
-  }
-
-  @media (max-width: 800px) {
-    font-size: 85%;
   }
 
   h3 {
@@ -148,19 +146,31 @@ export default defineComponent({
     }
 
     button {
-      display: none;
       border: none;
       width: 32px;
       margin-left: 5px;
       padding: 0;
       background: transparent;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     .accept {
       font-size: 28px;
       color: green;
+
+      &:hover {
+        transform: scale(1.5);
+      }
     }
+  }
+}
+
+.ProposedLaws.poppedUp .Law {
+  @media (max-width: 800px) and (orientation: portrait) {
+    font-size: 3vw;
+    width: 100%;
+    margin-top: -110px;
   }
 }
 

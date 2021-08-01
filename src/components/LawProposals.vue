@@ -79,7 +79,11 @@ export default defineComponent({
   transition: all var(--transitiontime);
 
   &.poppedUp {
-    transform: scale(1.5) translateY(150px);
+    transform: none;
+
+    @media (max-width: 800px) and (orientation: portrait) {
+      margin-top: 100px;
+    }
   }
 }
 </style>
