@@ -38,11 +38,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 div {
   position: absolute;
-  left: 75%;
-  top: 80%;
-  width: 20%;
+  position: absolute;
+  left: 63%;
+  top: 57%;
+  width: 15%;
   height: 25%;
-
+  
   img {
     position: absolute;
     left: 0;
