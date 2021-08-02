@@ -1,14 +1,14 @@
 import { BaseParams, Change, createBaseValues, applyEffects, paramList } from "../params"
 import { Game } from "../game"
 import { Law } from "../laws"
+import { Event } from "../events"
+import { Store } from "../store"
 
 function genCompare(a: number | string, b: number | string) {
   if (a < b) return -1
   if (a > b) return 1
   return 0
 }
-
-export type LawSortCols = "state" | "id" | "priority"
 
 export type ValueRow = {
   id: keyof BaseParams
@@ -53,6 +53,8 @@ export function getSortedValues(values: BaseParams, effects: Change[]): ValueRow
   return result
 }
 
+export type LawSortCols = "state" | "id" | "priority"
+
 export type LawRow = {
   id: string
   priority: string
@@ -77,4 +79,18 @@ export function getSortedLaws(game: Game, sortCol: LawSortCols, sortDir: number,
     }))
     .sort((a, b) => genCompare(a[sortCol], b[sortCol]) * sortDir)
     .map((law) => ({ ...law, priority: law.priority.toFixed(2) }))
+}
+
+export type EventCol = "id" | "probability"
+
+export type EventRow = {
+  id: string
+  probability: string
+}
+
+export function getSortedEvents(store: Store, sortCol: EventCol, sortDir: number, allEvents: Event[]): EventRow[] {
+  return allEvents
+    .map((event) => ({ id: event.id, probability: event.probability(store) }))
+    .sort((a, b) => genCompare(a[sortCol], b[sortCol]) * sortDir)
+    .map((row) => ({ ...row, probability: (row.probability * 100).toFixed(2) }))
 }
