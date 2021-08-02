@@ -53,12 +53,12 @@ describe("createBaseValues(defaultValues)", () => {
           pd.shouldInitiallyBe * 0.01,
           "Computed initial value for " +
             pd.name +
-            " should be " +
-            pd.shouldInitiallyBe +
+            " is " +
+            initVals[pd.name] +
             " " +
             pd.unit +
-            " but is " +
-            initVals[pd.name] +
+            " but should be " +
+            pd.shouldInitiallyBe +
             " " +
             pd.unit +
             " according to " +
