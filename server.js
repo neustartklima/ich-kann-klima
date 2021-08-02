@@ -24132,7 +24132,7 @@ var require_duplexer = __commonJS({
 var require_map_stream = __commonJS({
   "node_modules/map-stream/index.js"(exports2, module2) {
     var Stream = require("stream").Stream;
-    module2.exports = function(mapper2, opts) {
+    module2.exports = function(mapper, opts) {
       var stream = new Stream(), inputs = 0, outputs = 0, ended = false, paused = false, destroyed = false, lastWritten = 0, inNext = false;
       opts = opts || {};
       var errorEventName = opts.failures ? "failure" : "error";
@@ -24176,7 +24176,7 @@ var require_map_stream = __commonJS({
         inNext = false;
       }
       function wrappedMapper(input, number, callback) {
-        return mapper2.call(null, input, function(err, data) {
+        return mapper.call(null, input, function(err, data) {
           callback(err, data, number);
         });
       }
@@ -24241,19 +24241,19 @@ var require_split = __commonJS({
     var through = require_through();
     var Decoder = require("string_decoder").StringDecoder;
     module2.exports = split;
-    function split(matcher, mapper2, options) {
+    function split(matcher, mapper, options) {
       var decoder = new Decoder();
       var soFar = "";
       var maxLength = options && options.maxLength;
       var trailing = options && options.trailing === false ? false : true;
       if (typeof matcher === "function")
-        mapper2 = matcher, matcher = null;
+        mapper = matcher, matcher = null;
       if (!matcher)
         matcher = /\r?\n/;
       function emit(stream, piece) {
-        if (mapper2) {
+        if (mapper) {
           try {
-            piece = mapper2(piece);
+            piece = mapper(piece);
           } catch (err) {
             return stream.emit("error", err);
           }
@@ -24493,11 +24493,11 @@ var require_event_stream = __commonJS({
         }
       });
     };
-    es2.flatmapSync = function(mapper2) {
+    es2.flatmapSync = function(mapper) {
       return es2.through(function(data) {
         var s = this;
         data.forEach(function(e) {
-          s.queue(mapper2(e));
+          s.queue(mapper(e));
         });
       });
     };
@@ -24680,57 +24680,6 @@ function getActiveLaw(lawRefs, matcher) {
   return lawRef?.lawId;
 }
 
-// src/params/ParamsTypes.ts
-var ParamDefinition = class {
-  unit;
-  citations;
-  details;
-  internals;
-  writable;
-  constructor(input) {
-    this.unit = input.unit;
-    this.citations = input.citations ? input.citations : [];
-    this.details = input.details ? input.details : "";
-    this.internals = input.internals ? input.internals : "";
-  }
-  citationsDesc() {
-    let result = "";
-    for (const cit of this.citations) {
-      result = result + (cit.title ? '"' + cit.title + '"' : "(no title)") + (cit.publisher ? ", " + cit.publisher : "") + ", " + cit.url + "; ";
-    }
-    return result;
-  }
-};
-var mapper = {
-  MioTons: (newVal) => newVal < 0 ? 0 : newVal,
-  TWh: (newVal) => newVal < 0 ? 0 : newVal,
-  MrdEuro: (newVal) => newVal,
-  TsdPeople: (newVal) => newVal < 0 ? 0 : newVal,
-  Percent: (newVal) => newVal > 100 ? 100 : newVal < 0 ? 0 : newVal,
-  GramPerPsgrKm: (newVal) => newVal < 0 ? 0 : newVal,
-  MioPsgrKm: (newVal) => newVal < 0 ? 0 : newVal
-};
-var WritableParam = class extends ParamDefinition {
-  writable = true;
-  initialValue;
-  applyBounds;
-  constructor(input) {
-    super(input);
-    this.initialValue = input.initialValue;
-    this.applyBounds = mapper[input.unit];
-  }
-};
-var ComputedParam = class extends ParamDefinition {
-  writable = false;
-  valueGetter;
-  shouldInitiallyBe;
-  constructor(input) {
-    super(input);
-    this.valueGetter = input.valueGetter;
-    this.shouldInitiallyBe = input.shouldInitiallyBe;
-  }
-};
-
 // src/citations/CitationsTypes.ts
 var Citation = class {
   url;
@@ -24760,6 +24709,20 @@ var Citation = class {
 };
 
 // src/citations/index.ts
+function cite(cit) {
+  const pa = cit.publisher || cit.authors;
+  const prefix = pa != void 0 ? pa + ": " : "";
+  const title = cit.title || cit.url.toString();
+  const url = cit.url.toString();
+  return `[[${prefix}${title}](${url})]`;
+}
+function citationsDescription(citations) {
+  let result = "";
+  for (const cit of citations) {
+    result = result + (cit.title ? '"' + cit.title + '"' : "(no title)") + (cit.publisher ? ", " + cit.publisher : "") + ", " + cit.url + "; ";
+  }
+  return result;
+}
 var umweltrat2020Umweltgutachten = new Citation({
   url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
@@ -24767,7 +24730,7 @@ var umweltrat2020Umweltgutachten = new Citation({
 });
 var fraunhoferISE2020ElectricityGeneration = new Citation({
   url: "https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020",
-  title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
+  title: "Energy-Charts: Annual electricity generation in Germany in 2020",
   publisher: "Fraunhofer ISE",
   archiveNotPossible: true,
   localCopy: "Bar Charts Electricity Generation Energy-Charts.pdf"
@@ -24776,7 +24739,7 @@ var welt2018BundKassiertMineraloelsteuer = new Citation({
   url: "https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html",
   title: "Bund kassiert so viel Mineral\xF6lsteuer wie seit Jahren nicht",
   publisher: "welt.de",
-  authors: "Birger Nicolai, Korrespondent, Welt",
+  authors: "Birger Nicolai",
   date: "2018-02-04",
   archiveUrl: "https://web.archive.org/web/20201113072050/https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html"
 });
@@ -24787,7 +24750,7 @@ var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   publisher: "Umweltbundesamt",
   date: "2021-03-15",
   archiveUrl: "https://web.archive.org/web/20210712115357/https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
-  comment: `If not mentioned otherwise, values from sheet "THG" row 2019 are used.`
+  comment: `If not mentioned otherwise, values from sheet "THG" row 2019 are used`
 });
 var vdv2019Statistik = new Citation({
   url: "https://www.vdv.de/vdv-statistik-2019.pdfx",
@@ -24795,7 +24758,7 @@ var vdv2019Statistik = new Citation({
   publisher: "VDV",
   date: "2020-10-01",
   archiveUrl: "https://web.archive.org/web/20210714151304/https://www.vdv.de/vdv-statistik-2019.pdfx",
-  comment: `Page 11 contains g/Pkm values for several transport types.`
+  comment: `Page 11 contains g/Pkm values for several transport types`
 });
 var ubaEmissionenDesVerkehrs = new Citation({
   url: "https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr",
@@ -24809,8 +24772,55 @@ var bmvi2020VerkehrInZahlen = new Citation({
   publisher: "BMVI",
   date: "2021-04-13",
   archiveUrl: "https://web.archive.org/web/20210520124742/https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
-  comment: `Page 219 contains Pkm values for several transport types. If not mentioned otherwise, column 2019 is used.`
+  comment: `Page 219 contains Pkm values for several transport types. If not mentioned otherwise, column 2019 is used`
 });
+
+// src/params/ParamsTypes.ts
+var ParamDefinition = class {
+  unit;
+  citations;
+  details;
+  internals;
+  writable;
+  constructor(input) {
+    this.unit = input.unit;
+    this.citations = input.citations ? input.citations : [];
+    this.details = input.details ? input.details : "";
+    this.internals = input.internals ? input.internals : "";
+  }
+  citationsDesc() {
+    return citationsDescription(this.citations);
+  }
+};
+var applyBoundsPerUnit = {
+  MioTons: (newVal) => newVal < 0 ? 0 : newVal,
+  TWh: (newVal) => newVal < 0 ? 0 : newVal,
+  MrdEuro: (newVal) => newVal,
+  TsdPeople: (newVal) => newVal < 0 ? 0 : newVal,
+  Percent: (newVal) => newVal > 100 ? 100 : newVal < 0 ? 0 : newVal,
+  GramPerPsgrKm: (newVal) => newVal < 0 ? 0 : newVal,
+  MioPsgrKm: (newVal) => newVal < 0 ? 0 : newVal
+};
+var WritableParam = class extends ParamDefinition {
+  writable = true;
+  initialValue;
+  applyBounds;
+  constructor(input) {
+    super(input);
+    this.initialValue = input.initialValue;
+    this.applyBounds = applyBoundsPerUnit[input.unit];
+  }
+};
+var ComputedParam = class extends ParamDefinition {
+  writable = false;
+  valueGetter;
+  shouldInitiallyBe;
+  constructor(input) {
+    super(input);
+    this.valueGetter = input.valueGetter;
+    this.shouldInitiallyBe = input.shouldInitiallyBe;
+  }
+};
 
 // src/params/Params.ts
 var co2budget = new WritableParam({
@@ -25605,12 +25615,20 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
     const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
     return linear(60, 100, relCarPercentage);
   },
-  citations: [welt2018BundKassiertMineraloelsteuer],
+  citations: [
+    welt2018BundKassiertMineraloelsteuer,
+    umweltrat2020Umweltgutachten,
+    fraunhoferISE2020ElectricityGeneration,
+    uba2020DeutscheTreibhausgasEmissionen,
+    vdv2019Statistik,
+    ubaEmissionenDesVerkehrs,
+    bmvi2020VerkehrInZahlen
+  ],
   details: ``,
   internals: markdown`
     # Folgen
 
-    Staatsschulden steigen um 41 Mrd € pro Jahr [welt2018BundKassiertMineraloelsteuer]
+    Staatsschulden steigen um 41 Mrd € pro Jahr ${cite(welt2018BundKassiertMineraloelsteuer)}
     Im ersten Jahr steigen 20% der Nutzer von öffentlichen Verkehrsmitteln aufs Auto um.
     Popularität steigt im ersten Jahr um 5% und sinkt danach um 3% pro Jahr.
 
@@ -25623,7 +25641,7 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
     - 0% bei einem Anteil von nichterneuerbaren PKW von 60%.
     - 100% bei einem Anteil von nichterneuerbaren PKW von 100%. (Zu Beginn: 78%)
     - linear interpoliert
-    `
+  `
 });
 
 // src/laws/AusbauVonStrassen.ts
