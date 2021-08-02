@@ -14,9 +14,7 @@ export default defineLaw({
   effects(data): Change[] {
     const onshoreNew: TWh = Math.min(6.9 as TWh, data.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 1.2
-    return [
-      modify("electricityWind").byValue(onshoreNew + offshoreNew),
-    ]
+    return [modify("electricityWind").byValue(onshoreNew + offshoreNew)]
   },
 
   priority(game) {

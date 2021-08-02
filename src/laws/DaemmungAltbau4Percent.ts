@@ -18,7 +18,9 @@ export default defineLaw({
       modify("buildingsSourceOil").byPercent(-4).if(inEffect),
       modify("buildingsSourceTele").byPercent(-4).if(inEffect),
       modify("buildingsPrivateDemand").byPercent(-4).if(inEffect),
-      modify("popularity").byValue(10).if(yearsActive === 1),
+      modify("popularity")
+        .byValue(10)
+        .if(yearsActive === 1),
       modify("popularity").byValue(5).if(inEffect),
     ]
   },

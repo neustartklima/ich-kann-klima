@@ -11,7 +11,9 @@ export default defineLaw({
     const relCapacity = (data.publicLocalCapacity / data.publicLocalUsage) * 100
 
     // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage").byValue(-0.01 * data.publicLocalUsage).if(relCapacity >= 105)
+    const carModifier = modify("carUsage")
+      .byValue(-0.01 * data.publicLocalUsage)
+      .if(relCapacity >= 105)
     const carChange = carModifier.getChange(data)
 
     const yearsActive = currentYear - startYear
@@ -20,7 +22,9 @@ export default defineLaw({
       modify("publicLocalCapacity").byPercent(1),
       modify("publicLocalUsage").byValue(-carChange),
       carModifier,
-      modify("popularity").byValue(2).if(yearsActive >= 5),
+      modify("popularity")
+        .byValue(2)
+        .if(yearsActive >= 5),
     ]
   },
 
