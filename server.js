@@ -24653,7 +24653,7 @@ function lawList(modules) {
 // src/laws/AllesBleibtBeimAlten.ts
 var AllesBleibtBeimAlten_default = defineLaw({
   title: "Alles bleibt wie es ist",
-  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sind sind.",
+  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sie sind.",
   effects() {
     return [];
   },
