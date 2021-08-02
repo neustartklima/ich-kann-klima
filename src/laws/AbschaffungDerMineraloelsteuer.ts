@@ -1,15 +1,6 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
-import {
-  bmvi2020VerkehrInZahlen,
-  cite,
-  fraunhoferISE2020ElectricityGeneration,
-  uba2020DeutscheTreibhausgasEmissionen,
-  ubaEmissionenDesVerkehrs,
-  umweltrat2020Umweltgutachten,
-  vdv2019Statistik,
-  welt2018BundKassiertMineraloelsteuer,
-} from "../citations"
+import { cite, welt2018BundKassiertMineraloelsteuer } from "../citations"
 import { MrdEuro, Percent } from "../types"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
@@ -50,15 +41,7 @@ export default defineLaw({
     const relCarPercentage: Percent = (carNonRenewableUsage / v.passengerTransportUsage) * 100
     return linear(60, 100, relCarPercentage)
   },
-  citations: [
-    welt2018BundKassiertMineraloelsteuer,
-    umweltrat2020Umweltgutachten,
-    fraunhoferISE2020ElectricityGeneration,
-    uba2020DeutscheTreibhausgasEmissionen,
-    vdv2019Statistik,
-    ubaEmissionenDesVerkehrs,
-    bmvi2020VerkehrInZahlen,
-  ],
+  citations: [welt2018BundKassiertMineraloelsteuer],
   details: /*html*/ ``,
   internals: markdown`
     # Folgen
