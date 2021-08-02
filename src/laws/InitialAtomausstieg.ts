@@ -13,9 +13,7 @@ export default defineLaw({
       2022: 30.21 as TWh,
     }
     const newValue = mapping[currentYear] || 0
-    return [
-      modify("electricityNuclear").setValue(newValue),
-    ]
+    return [modify("electricityNuclear").setValue(newValue)]
   },
 
   priority(game) {

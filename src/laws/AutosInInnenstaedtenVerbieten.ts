@@ -18,14 +18,12 @@ export default defineLaw({
     }
 
     // Need to use the carModifier with byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage").byValue(-0.1 * data.publicLocalUsage).if(startYear === currentYear)
+    const carModifier = modify("carUsage")
+      .byValue(-0.1 * data.publicLocalUsage)
+      .if(startYear === currentYear)
     const carChange = carModifier.getChange(data)
 
-    return [
-      modify("popularity").byValue(popularityChange),
-      carModifier,
-      modify("publicLocalUsage").byValue(-carChange),
-    ]
+    return [modify("popularity").byValue(popularityChange), carModifier, modify("publicLocalUsage").byValue(-carChange)]
   },
 
   priority(game) {

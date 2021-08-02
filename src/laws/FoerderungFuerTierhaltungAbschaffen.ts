@@ -9,8 +9,12 @@ export default defineLaw({
   effects(data, startYear, currentYear): Change[] {
     return [
       modify("stateDebt").byValue(-10),
-      modify("co2emissionsAgriculture").byValue(-10).if(startYear === currentYear),
-      modify("popularity").byValue(-20).if(startYear === currentYear),
+      modify("co2emissionsAgriculture")
+        .byValue(-10)
+        .if(startYear === currentYear),
+      modify("popularity")
+        .byValue(-20)
+        .if(startYear === currentYear),
     ]
   },
 

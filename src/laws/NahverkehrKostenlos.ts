@@ -19,8 +19,12 @@ export default defineLaw({
       modify("stateDebt").byValue(10 as MrdEuro),
       modify("publicLocalUsage").byValue(-carChange),
       carModifier,
-      modify("popularity").byValue(10).if(startYear === currentYear),
-      modify("unemployment").byValue(20 as TsdPeople).if(startYear === currentYear), // 80 Tsd Beschäftigte im ÖPNV, geschätzt 1/4 für Ticketverkauf, -kontrolle und -abrechnung.  
+      modify("popularity")
+        .byValue(10)
+        .if(startYear === currentYear),
+      modify("unemployment")
+        .byValue(20 as TsdPeople)
+        .if(startYear === currentYear), // 80 Tsd Beschäftigte im ÖPNV, geschätzt 1/4 für Ticketverkauf, -kontrolle und -abrechnung.
     ]
   },
 

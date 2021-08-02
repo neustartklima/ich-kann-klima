@@ -10,7 +10,7 @@ export default defineLaw({
 
   effects(data, startYear, currentYear): Change[] {
     const costsPerYear: MrdEuro = 1
-    const inEffect = (currentYear - startYear) > 2
+    const inEffect = currentYear - startYear > 2
     return [
       modify("stateDebt").byValue(costsPerYear),
       modify("buildingsSourceBio").byPercent(-2).if(inEffect),

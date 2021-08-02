@@ -11,7 +11,9 @@ export default defineLaw({
     const relCapacity = (data.publicNationalCapacity / data.publicNationalUsage) * 100
 
     // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage").byValue(0.015 * data.publicNationalUsage).if(relCapacity >= 105)
+    const carModifier = modify("carUsage")
+      .byValue(0.015 * data.publicNationalUsage)
+      .if(relCapacity >= 105)
     const carChange = carModifier.getChange(data)
 
     return [

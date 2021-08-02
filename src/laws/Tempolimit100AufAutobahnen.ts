@@ -14,7 +14,9 @@ export default defineLaw({
     const emissionChange = emissionModifier.getChange(data)
 
     return [
-      modify("popularity").byValue(-1).if(emissionChange < 0),
+      modify("popularity")
+        .byValue(-1)
+        .if(emissionChange < 0),
       emissionModifier,
     ]
   },

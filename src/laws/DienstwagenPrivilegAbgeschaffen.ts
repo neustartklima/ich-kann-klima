@@ -12,7 +12,9 @@ export default defineLaw({
     const carChange = carModifier.getChange(data)
     return [
       modify("stateDebt").byValue(-18 as MrdEuro),
-      modify("popularity").byValue(-1).if(startYear === currentYear),
+      modify("popularity")
+        .byValue(-1)
+        .if(startYear === currentYear),
       carModifier,
       modify("publicLocalUsage").byValue(-carChange),
     ]

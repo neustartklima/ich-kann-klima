@@ -10,9 +10,7 @@ export default defineLaw({
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
 
   effects(data): Change[] {
-    return [
-      modify("electricityWindOnshoreMaxNew").setValue(6.0 as TWh),
-    ]
+    return [modify("electricityWindOnshoreMaxNew").setValue(6.0 as TWh)]
   },
 
   priority(game) {

@@ -10,7 +10,9 @@ export default defineLaw({
   effects(data, startYear, currentYear): Change[] {
     return [
       modify("stateDebt").byValue(-7.35 as MrdEuro),
-      modify("popularity").byValue(-1).if(startYear === currentYear),
+      modify("popularity")
+        .byValue(-1)
+        .if(startYear === currentYear),
     ]
   },
 
