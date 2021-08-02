@@ -2,7 +2,7 @@
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
 import { Game } from "../game"
-import { Change } from "../params"
+import { BaseParams, Change, ParamKey } from "../params"
 import { startYear } from "../constants"
 import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from "./PeekTools"
 import { Law } from "../laws"
@@ -29,6 +29,7 @@ export default defineComponent({
       lawsSortCol: "state" as LawSortCols,
       lawsSortDir: 1,
       lawSelected: undefined as string | undefined,
+      paramSelected: undefined as ParamKey | undefined,
     }
   },
   methods: {
@@ -40,6 +41,9 @@ export default defineComponent({
     },
     selectLaw(id: string | undefined) {
       this.lawSelected = id
+    },
+    selectParam(id: ParamKey | undefined) {
+      this.paramSelected = id
     },
   },
 
@@ -104,7 +108,7 @@ export default defineComponent({
       </div>
     </div>
     <table>
-      <tr v-for="row in sortedValues" :key="row.id" :class="row.class">
+      <tr v-for="row in sortedValues" :key="row.id" :class="row.class" @click="selectParam(row.id)">
         <td>{{ row.id }}</td>
         <td>{{ row.unit }}</td>
         <td class="numbercol">{{ row.value }}</td>
@@ -117,13 +121,7 @@ export default defineComponent({
         <th @click="sortLaws('id')">ID</th>
         <th @click="sortLaws('priority')" class="priocol">Priority</th>
       </tr>
-      <tr
-        v-for="law in sortedLaws"
-        :key="law.id"
-        :class="law.state"
-        @mouseenter="selectLaw(law.id)"
-      >
-        <!-- @mouseleave="selectLaw(undefined)"-->
+      <tr v-for="law in sortedLaws" :key="law.id" :class="law.state" @click="selectLaw(law.id)">
         <td>{{ law.state }}</td>
         <td>{{ law.id }}</td>
         <td class="priocol">{{ law.priority }}</td>
