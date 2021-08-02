@@ -40,7 +40,7 @@ export type WritableBaseParams = WritableParams
 
 type ComputedParamKey = keyof ComputedParamDefinitions
 
-type ParamKey = WritableParamKey | ComputedParamKey
+export type ParamKey = WritableParamKey | ComputedParamKey
 export const paramKeys = Object.keys(paramDefinitions) as ParamKey[]
 type Params = Record<ParamKey, number>
 export type BaseParams = Params
@@ -130,19 +130,20 @@ export function modify(name: keyof WritableBaseParams) {
       const n = this.name
       const oldVal = values[n]
       if (!this.condition) {
-        return {oldVal, newVal: oldVal}
+        return { oldVal, newVal: oldVal }
       }
       const pd: WritableParam = paramDefinitions[n]
-      const unbounded = this.absolute != undefined ? this.absolute : (oldVal + (this.value || (oldVal * this.percent! / 100)))
+      const unbounded =
+        this.absolute != undefined ? this.absolute : oldVal + (this.value || (oldVal * this.percent!) / 100)
       const newVal = pd.applyBounds(unbounded)
-      return {oldVal, newVal}
+      return { oldVal, newVal }
     },
 
     getChange(values: BaseParams): number {
       if (!this.condition) {
         return 0
       }
-      const {oldVal, newVal} = this.getOldNew(values)
+      const { oldVal, newVal } = this.getOldNew(values)
       return newVal - oldVal
     },
 
@@ -151,7 +152,7 @@ export function modify(name: keyof WritableBaseParams) {
         return values[this.name]
       }
       return this.getOldNew(values).newVal
-    }
+    },
   }
 }
 
