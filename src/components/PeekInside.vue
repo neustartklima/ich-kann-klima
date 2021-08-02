@@ -8,6 +8,8 @@ import { LawSortCols, getSortedLaws, getSortedValues, LawRow, ValueRow } from ".
 import { Law } from "../laws"
 import Citation from "./Citation.vue"
 import { Citations } from "../citations"
+import { ParamDefinition } from "../params/ParamsTypes"
+import { paramDefinitions } from "../params/Params"
 
 export default defineComponent({
   components: {
@@ -45,6 +47,10 @@ export default defineComponent({
     selectParam(id: ParamKey | undefined) {
       this.paramSelected = id
     },
+    unselect() {
+      this.lawSelected = undefined
+      this.paramSelected = undefined
+    }
   },
 
   computed: {
@@ -58,6 +64,10 @@ export default defineComponent({
 
     selectedLaw(): Law | undefined {
       return this.allLaws.find((law) => law.id === this.lawSelected)
+    },
+
+    selectedParam(): ParamDefinition | undefined {
+      return this.paramSelected ? paramDefinitions[this.paramSelected] : undefined
     },
 
     citationsOfLaw(): Citations {
@@ -91,21 +101,30 @@ export default defineComponent({
 
 <template>
   <details class="peekData">
-    <summary>Peek</summary>
-    <div class="LawDetails">
-      <div v-if="selectedLaw">
-        <div class="Title">{{ selectedLaw.title }}</div>
-        <div class="Description">{{ selectedLaw.description }}</div>
-        <div class="SectionHead">Details:</div>
-        <div class="Section" v-html="selectedLaw.details" />
-        <div class="SectionHead">Internes:</div>
-        <div class="Section" v-html="selectedLaw.internals" />
-        <div class="SectionHead">Referenzen:</div>
-        <Citation v-for="(citation, pos) in citationsOfLaw" :key="pos" :citation="citation" />
-      </div>
-      <div v-else>
-        <div class="Title">Hover over parameter or law to see details.</div>
-      </div>
+    <summary @click="unselect()">Peek</summary>
+    <div v-if="selectedLaw" class="Details">
+      <div class="Title">{{ selectedLaw.title }}</div>
+      <div class="Description">{{ selectedLaw.description }}</div>
+      <div class="SectionHead">Details:</div>
+      <div class="Section" v-html="selectedLaw.details" />
+      <div class="SectionHead">Internes:</div>
+      <div class="Section" v-html="selectedLaw.internals" />
+      <div class="SectionHead">Referenzen:</div>
+      <Citation v-for="(citation, pos) in citationsOfLaw" :key="pos" :citation="citation" />
+    </div>
+    <div v-if="selectedParam" class="Details">
+      <div class="Title">{{ paramSelected }} [{{ selectedParam.unit }}]</div>
+      <div class="SectionHead">Details:</div>
+      <div class="Section" v-html="selectedParam.details" />
+      <div class="SectionHead">Internes:</div>
+      <div class="Section" v-html="selectedParam.internals" />
+      <div class="SectionHead">Referenzen:</div>
+      <Citation
+        class="Section"
+        v-for="(citation, pos) in selectedParam.citations"
+        :key="pos"
+        :citation="citation"
+      />
     </div>
     <table>
       <tr v-for="row in sortedValues" :key="row.id" :class="row.class" @click="selectParam(row.id)">
@@ -141,28 +160,26 @@ export default defineComponent({
     float: left;
   }
 
-  .LawDetails {
+  .Details {
     width: 30em;
-    > div {
-      > * {
-        margin: 0.67em 0 0.67em 0;
-      }
+    > * {
+      margin: 0.67em 0 0.67em 0;
+    }
 
-      .Title {
-        font-weight: bold;
+    .Title {
+      font-weight: bold;
+      font-size: 1.4em;
+    }
+
+    .SectionHead {
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .Section::v-deep {
+      background-color: cornsilk;
+      h1 {
         font-size: 1.4em;
-      }
-
-      .SectionHead {
-        font-weight: bold;
-        font-size: 1.2em;
-      }
-
-      .Section::v-deep {
-        color: cadetblue;
-        h1 {
-          font-size: 1.4em;
-        }
       }
     }
   }
