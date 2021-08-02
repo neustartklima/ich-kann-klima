@@ -47,7 +47,7 @@ export const uba2020DeutscheTreibhausgasEmissionen = new Citation({
   date: "2021-03-15",
   archiveUrl:
     "https://web.archive.org/web/20210712115357/https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
-  comment: /*html*/ `If not mentioned otherwise, values from sheet "THG" row 2019 are used`,
+  comment: /*html*/ `Soweit nicht anders angegeben, werden die Werte aus Blatt "THG" Spalte 2019 verwendet`,
 })
 
 export const vdv2019Statistik = new Citation({
@@ -56,7 +56,7 @@ export const vdv2019Statistik = new Citation({
   publisher: "VDV",
   date: "2020-10-01",
   archiveUrl: "https://web.archive.org/web/20210714151304/https://www.vdv.de/vdv-statistik-2019.pdfx",
-  comment: /*html*/ `Page 11 contains g/Pkm values for several transport types`,
+  comment: /*html*/ `Seite 11 enthält CO2e-Emissions-Werte pro Personenkilometer [g/Pkm] für mehrere Verkehrsmittel`,
 })
 
 export const ubaEmissionenDesVerkehrs = new Citation({
@@ -74,5 +74,5 @@ export const bmvi2020VerkehrInZahlen = new Citation({
   date: "2021-04-13",
   archiveUrl:
     "https://web.archive.org/web/20210520124742/https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
-  comment: /*html*/ `Page 219 contains Pkm values for several transport types. If not mentioned otherwise, column 2019 is used`,
+  comment: /*html*/ `Seite 219 enthält Personenkilometer-Jahreswerte für mehrere Verkehrsmittel. Soweit nicht anders angegeben, werden die Werte aus Spalte 2019 verwendet`,
 })
