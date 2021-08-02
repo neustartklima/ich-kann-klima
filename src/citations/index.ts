@@ -11,19 +11,8 @@ export function cite(cit: Citation): string {
   return `[[${prefix}${title}](${url})]`
 }
 
-export function citationsDescription(citations: Citations): string {
-  let result: string = ""
-  for (const cit of citations) {
-    result =
-      result +
-      (cit.title ? '"' + cit.title + '"' : "(no title)") +
-      (cit.publisher ? ", " + cit.publisher : "") +
-      ", " +
-      cit.url +
-      "; "
-  }
-  return result
-}
+export const citationsDescription = (citations: Citations) =>
+  citations.map((citation) => citation.toString()).join("; ")
 
 export const umweltrat2020Umweltgutachten = new Citation({
   url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",

@@ -1,5 +1,7 @@
 import { Html, LocalPath } from "../types"
 
+const dateFormatter = new Intl.DateTimeFormat("de-DE")
+
 export class Citation {
   url: URL
   title?: string // TODO #79: Make mandatory
@@ -36,5 +38,16 @@ export class Citation {
     this.referringUrl = input.referringUrl ? new URL(input.referringUrl) : undefined
     this.archiveUrl = input.archiveUrl ? new URL(input.archiveUrl) : undefined
     this.archiveNotPossible = input.archiveNotPossible
+  }
+
+  dateString(): string {
+    const d = this.date
+    return d ? " (" + dateFormatter.format(d) + ")" : ""
+  }
+
+  toString(): string {
+    const authDate = this.authors ? this.authors + this.dateString() : undefined
+    const title = this.title ? '"' + this.title + '"' : undefined
+    return [authDate, title, this.url, this.publisher].filter((a) => a).join(", ")
   }
 }
