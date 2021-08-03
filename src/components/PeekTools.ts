@@ -53,15 +53,15 @@ export function getSortedValues(values: BaseParams, effects: Change[]): ValueRow
   return result
 }
 
-export type LawSortCols = "state" | "id" | "priority"
-
 export type LawRow = {
   id: string
   priority: string
   state: string
 }
 
-export function getSortedLaws(game: Game, sortCol: LawSortCols, sortDir: number, allLaws: Law[]): LawRow[] {
+export type LawCol = keyof LawRow
+
+export function getSortedLaws(game: Game, sortCol: LawCol, sortDir: number, allLaws: Law[]): LawRow[] {
   const proposed = game.proposedLaws
   const accepted = game.acceptedLaws.map((lawRef) => lawRef.lawId)
   const rejected = game.rejectedLaws
@@ -81,12 +81,12 @@ export function getSortedLaws(game: Game, sortCol: LawSortCols, sortDir: number,
     .map((law) => ({ ...law, priority: law.priority.toFixed(2) }))
 }
 
-export type EventCol = "id" | "probability"
-
 export type EventRow = {
   id: string
   probability: string
 }
+
+export type EventCol = keyof EventRow
 
 export function getSortedEvents(store: Store, sortCol: EventCol, sortDir: number, allEvents: Event[]): EventRow[] {
   return allEvents

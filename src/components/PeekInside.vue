@@ -5,7 +5,7 @@ import { Game } from "../game"
 import { Change, ParamKey } from "../params"
 import { startYear } from "../constants"
 import {
-  LawSortCols,
+  LawCol,
   getSortedLaws,
   getSortedValues,
   LawRow,
@@ -42,7 +42,7 @@ export default defineComponent({
   data() {
     return {
       selectedTable: "laws" as "laws" | "events",
-      lawsSortCol: "state" as LawSortCols,
+      lawsSortCol: "state" as LawCol,
       lawsSortDir: 1,
       eventsSortCol: "probability" as EventCol,
       eventsSortDir: -1,
@@ -52,7 +52,7 @@ export default defineComponent({
     }
   },
   methods: {
-    sortLaws(column: LawSortCols) {
+    sortLaws(column: LawCol) {
       if (column === this.lawsSortCol) {
         this.lawsSortDir = this.lawsSortDir > 0 ? -1 : 1
       } else {
