@@ -17,7 +17,7 @@ import {
 import { Law } from "../laws"
 import Citation from "./Citation.vue"
 import { Citations } from "../citations"
-import { ParamDefinition } from "../params/ParamsTypes"
+import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
 import EventMachine from "../EventMachine"
 import { Event, allEvents } from "../events"
@@ -108,6 +108,16 @@ export default defineComponent({
       return this.paramSelected ? paramDefinitions[this.paramSelected] : undefined
     },
 
+    wParam(): WritableParam | undefined {
+      const p = this.selectedParam
+      return p instanceof WritableParam ? p : undefined
+    },
+
+    cParam(): ComputedParam | undefined {
+      const p = this.selectedParam
+      return p instanceof ComputedParam ? p : undefined
+    },
+
     citationsOfLaw(): Citations {
       if (this.selectedLaw && this.selectedLaw.citations) {
         return this.selectedLaw.citations
@@ -167,6 +177,14 @@ export default defineComponent({
     </div>
     <div v-if="selectedParam" class="Details">
       <div class="Title">{{ paramSelected }} [{{ selectedParam.unit }}]</div>
+      <div v-if="wParam">Initial value: {{ wParam.initialValue }} {{ wParam.unit }}</div>
+      <div v-if="cParam && cParam.shouldInitiallyBe">
+        Should initially be: {{ cParam.shouldInitiallyBe }} {{ cParam.unit }}
+      </div>
+      <div v-if="cParam">
+        Calculation:
+        {{ cParam.valueGetter }}
+      </div>
       <div class="SectionHead">Details:</div>
       <div class="Section" v-html="selectedParam.details" />
       <div class="SectionHead">Internes:</div>
@@ -263,7 +281,7 @@ $lightBackground: #ffffff;
   }
 
   .Details {
-    width: 30em;
+    width: 35em;
     background-color: $shadedBackground;
     > * {
       margin: 0.67em 0 0.67em 0;
