@@ -8,9 +8,6 @@ export default defineComponent({
     showInternals: { type: Boolean, default: false },
   },
   computed: {
-    sep(): string {
-      return ". "
-    },
     href(): string {
       return this.citation.url.toString()
     },
@@ -24,18 +21,14 @@ export default defineComponent({
 
 <template>
   <p>
-    <span v-if="citation.authors">{{ citation.authors + citation.dateString() }}{{ sep }}</span>
-    <span
-      ><a :href="href">"{{ title }}"</a>{{ sep }}</span
-    >
-    <span v-if="citation.publisher">{{ citation.publisher }}{{ sep }}</span>
-    <span v-if="citation.comment">Bemerkung: <span v-html="citation.comment" />{{ sep }}</span>
-    <span v-if="showInternals && citation.internalComment"
-      >Internes: <span v-html="citation.internalComment" />{{ sep }}</span
-    >
-    <span v-if="citation.referringUrl"><a :href="citation.referringUrl.toString()">Found here</a>{{ sep }}</span>
-    <span v-if="citation.archiveUrl"><a :href="citation.archiveUrl.toString()">Archive link</a>{{ sep }}</span>
-    <span v-if="citation.localCopy"><a :href="'/assets/sources/' + citation.localCopy">Local copy</a>{{ sep }}</span>
+    <span v-if="citation.authors">{{ citation.authors + citation.dateString() }}. </span>
+    <a :href="href">"{{ title }}"</a>.
+    <span v-if="citation.publisher">{{ citation.publisher }}. </span>
+    <span v-if="citation.comment">Bemerkung: <span v-html="citation.comment" />. </span>
+    <span v-if="showInternals && citation.internalComment">Internes: <span v-html="citation.internalComment" />. </span>
+    <span v-if="citation.referringUrl"><a :href="citation.referringUrl.toString()">Hier gefunden</a>. </span>
+    <span v-if="citation.archiveUrl"><a :href="citation.archiveUrl.toString()">Web Archiv Kopie</a>. </span>
+    <span v-if="citation.localCopy"><a :href="'/assets/sources/' + citation.localCopy">Kopie</a>. </span>
   </p>
 </template>
 
