@@ -67,14 +67,14 @@ export default defineComponent({
 .ProposedLaws {
   position: absolute;
   top: 0;
-  height: 85%;
+  height: 80%;
   left: 15%;
   width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   transform-origin: bottom center;
-  transform: perspective(2000px) rotateX(70deg);
+  transform: rotateX(90deg);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
