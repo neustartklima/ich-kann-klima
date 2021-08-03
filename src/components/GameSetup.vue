@@ -116,6 +116,7 @@ export default defineComponent({
   margin: auto;
   justify-content: left;
   position: relative;
+  perspective: 1000px;
 
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;
