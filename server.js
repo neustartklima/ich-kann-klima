@@ -24681,6 +24681,7 @@ function getActiveLaw(lawRefs, matcher) {
 }
 
 // src/citations/CitationsTypes.ts
+var dateFormatter = new Intl.DateTimeFormat("de-DE");
 var Citation = class {
   url;
   title;
@@ -24706,6 +24707,15 @@ var Citation = class {
     this.archiveUrl = input.archiveUrl ? new URL(input.archiveUrl) : void 0;
     this.archiveNotPossible = input.archiveNotPossible;
   }
+  dateString() {
+    const d = this.date;
+    return d ? " (" + dateFormatter.format(d) + ")" : "";
+  }
+  toString() {
+    const authDate = this.authors ? this.authors + this.dateString() : void 0;
+    const title = this.title ? '"' + this.title + '"' : void 0;
+    return [authDate, title, this.url, this.publisher].filter((a) => a).join(", ");
+  }
 };
 
 // src/citations/index.ts
@@ -24716,13 +24726,7 @@ function cite(cit) {
   const url = cit.url.toString();
   return `[[${prefix}${title}](${url})]`;
 }
-function citationsDescription(citations) {
-  let result = "";
-  for (const cit of citations) {
-    result = result + (cit.title ? '"' + cit.title + '"' : "(no title)") + (cit.publisher ? ", " + cit.publisher : "") + ", " + cit.url + "; ";
-  }
-  return result;
-}
+var citationsDescription = (citations) => citations.map((citation) => citation.toString()).join("; ");
 var umweltrat2020Umweltgutachten = new Citation({
   url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
@@ -24750,7 +24754,7 @@ var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   publisher: "Umweltbundesamt",
   date: "2021-03-15",
   archiveUrl: "https://web.archive.org/web/20210712115357/https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
-  comment: `If not mentioned otherwise, values from sheet "THG" row 2019 are used`
+  comment: `Soweit nicht anders angegeben, werden die Werte aus Blatt "THG" Spalte 2019 verwendet`
 });
 var vdv2019Statistik = new Citation({
   url: "https://www.vdv.de/vdv-statistik-2019.pdfx",
@@ -24758,7 +24762,7 @@ var vdv2019Statistik = new Citation({
   publisher: "VDV",
   date: "2020-10-01",
   archiveUrl: "https://web.archive.org/web/20210714151304/https://www.vdv.de/vdv-statistik-2019.pdfx",
-  comment: `Page 11 contains g/Pkm values for several transport types`
+  comment: `Seite 11 enth\xE4lt CO2e-Emissions-Werte pro Personenkilometer [g/Pkm] f\xFCr mehrere Verkehrsmittel`
 });
 var ubaEmissionenDesVerkehrs = new Citation({
   url: "https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr",
@@ -24772,7 +24776,7 @@ var bmvi2020VerkehrInZahlen = new Citation({
   publisher: "BMVI",
   date: "2021-04-13",
   archiveUrl: "https://web.archive.org/web/20210520124742/https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
-  comment: `Page 219 contains Pkm values for several transport types. If not mentioned otherwise, column 2019 is used`
+  comment: `Seite 219 enth\xE4lt Personenkilometer-Jahreswerte f\xFCr mehrere Verkehrsmittel. Soweit nicht anders angegeben, werden die Werte aus Spalte 2019 verwendet`
 });
 
 // src/params/ParamsTypes.ts
@@ -25350,9 +25354,7 @@ var InitialAtomausstieg_default = defineLaw({
       2022: 30.21
     };
     const newValue = mapping[currentYear] || 0;
-    return [
-      modify("electricityNuclear").setValue(newValue)
-    ];
+    return [modify("electricityNuclear").setValue(newValue)];
   },
   priority(game) {
     return 0;
@@ -25523,11 +25525,7 @@ var AutosInInnenstaedtenVerbieten_default = defineLaw({
     }
     const carModifier = modify("carUsage").byValue(-0.1 * data.publicLocalUsage).if(startYear2 === currentYear);
     const carChange = carModifier.getChange(data);
-    return [
-      modify("popularity").byValue(popularityChange),
-      carModifier,
-      modify("publicLocalUsage").byValue(-carChange)
-    ];
+    return [modify("popularity").byValue(popularityChange), carModifier, modify("publicLocalUsage").byValue(-carChange)];
   },
   priority(game) {
     const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
@@ -25615,15 +25613,7 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
     const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
     return linear(60, 100, relCarPercentage);
   },
-  citations: [
-    welt2018BundKassiertMineraloelsteuer,
-    umweltrat2020Umweltgutachten,
-    fraunhoferISE2020ElectricityGeneration,
-    uba2020DeutscheTreibhausgasEmissionen,
-    vdv2019Statistik,
-    ubaEmissionenDesVerkehrs,
-    bmvi2020VerkehrInZahlen
-  ],
+  citations: [welt2018BundKassiertMineraloelsteuer],
   details: ``,
   internals: markdown`
     # Folgen
@@ -25803,9 +25793,7 @@ var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
   labels: ["initial", "hidden", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
   effects(data) {
-    return [
-      modify("electricityWindOnshoreMaxNew").setValue(6)
-    ];
+    return [modify("electricityWindOnshoreMaxNew").setValue(6)];
   },
   priority(game) {
     const v = game.values;
@@ -25881,9 +25869,7 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
   effects(data) {
     const onshoreNew = Math.min(6.9, data.electricityWindOnshoreMaxNew);
     const offshoreNew = 1.2;
-    return [
-      modify("electricityWind").byValue(onshoreNew + offshoreNew)
-    ];
+    return [modify("electricityWind").byValue(onshoreNew + offshoreNew)];
   },
   priority(game) {
     const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
@@ -26238,7 +26224,25 @@ var WindkraftAusschreibung_default = defineEvent({
   },
   probability() {
     return Math.random();
-  }
+  },
+  citations: [],
+  details: markdown`
+    # Bauarbeiten
+
+    Leider gibt es hier noch keine genaueren Informationen.
+
+    # Mitarbeit gewünscht!
+
+    Gerne kannst Du selber etwas beitragen. Was fehlt hier? Kennst Du Quellen, die Hintergrund liefern oder Aussagen belegen?
+
+    In unserem git repo unter [\`src/events/\`](https://github.com/neustartklima/ich-kann-klima/tree/main/src/events) findest Du die zugehörige Datei.
+  `,
+  internals: markdown`
+    # Platz für interne Kommentare
+
+    Dies wird der Spieler nie sehen. **Zitate** können so eingefügt werden: \${cite(uba2020DeutscheTreibhausgasEmissionen)}.
+    Einfach den _backslash_ entfernen, und die richtige Quelle verwenden natürlich... ;-)
+  `
 });
 
 // src/events/index.ts
