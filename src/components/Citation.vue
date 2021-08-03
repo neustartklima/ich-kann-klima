@@ -16,7 +16,7 @@ export default defineComponent({
     },
     title(): string {
       const title = this.citation.title
-      return title ? title : this.citation.url.toString()
+      return title || this.citation.url.toString()
     },
   },
 })
