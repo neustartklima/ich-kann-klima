@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent } from "vue"
 
 export default defineComponent({
   props: {
@@ -8,25 +8,25 @@ export default defineComponent({
 
   computed: {
     areHappy(): boolean {
-      return this.value >= 50;
+      return this.value >= 50
     },
 
     areAngry(): boolean {
-      return this.value < 50;
+      return this.value < 50
     },
   },
 })
 </script>
 
 <template>
-  <div id="poularity">
+  <div id="popularity">
     <img v-if="areHappy" src="../assets/people-happy.png" id="happy" />
     <img v-if="areAngry" src="../assets/people-angry.png" id="angry" />
   </div>
 </template>
 
-<style lang="scss">
-#poularity {
+<style lang="scss" scoped>
+#popularity {
   position: absolute;
   left: 31.5%;
   top: 40%;

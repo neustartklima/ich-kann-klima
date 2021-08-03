@@ -27,7 +27,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
+  <div id="finances">
     <img v-if="isShort" src="../assets/money-short.png" id="short" />
     <img v-if="isLess" src="../assets/money-less.png" id="less" />
     <img v-if="isMore" src="../assets/money-more.png" id="more" />

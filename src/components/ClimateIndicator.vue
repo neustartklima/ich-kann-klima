@@ -34,7 +34,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>
+  <div id="climate">
     <img :src="imgSrc" :id="status" />
   </div>
 </template>
