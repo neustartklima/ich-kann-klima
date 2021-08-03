@@ -24,10 +24,10 @@ describe("createBaseValues(defaultValues)", () => {
     iniVals.buildingsSourceGas.should.be.approximately(363, 0.1)
   })
 
-  // TODO: #72 Source claims 164.322 MioTons per year in 2019. Sums to 173.0 MioTons.
+  // TODO: #72 Source claims 164.322 MioTons per year in 2019. Sums to 173.7 MioTons.
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
   it("should return 164.322 MioTons for co2emissionsMobility", () => {
-    iniVals.co2emissionsMobility.should.be.approximately(173.0, 0.1)
+    iniVals.co2emissionsMobility.should.be.approximately(173.7, 0.1)
   })
 
   // TODO: #72 Source claims 123.461 MioTons per year in 2019. Sums to 168.6 MioTons.
@@ -36,24 +36,24 @@ describe("createBaseValues(defaultValues)", () => {
     iniVals.co2emissionsBuildings.should.be.approximately(168.6, 0.1)
   })
 
-  // TODO: #72 Source claims 809.799 MioTons per year in 2019. Sums to 757.0 MioTons.
+  // TODO: #72 Source claims 809.799 MioTons per year in 2019. Sums to 759.0 MioTons.
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019 without LULUCF
   it("should return 809.799 MioTons for co2emissions", () => {
-    iniVals.co2emissions.should.be.approximately(757.0, 0.1)
+    iniVals.co2emissions.should.be.approximately(759.0, 0.1)
   })
 })
 
 describe("repository", () => {
-  const storage = ({
+  const storage = {
     setItem: sinon.spy(),
     getItem: sinon.spy(),
-  } as unknown) as Storage
+  } as unknown as Storage
 
   const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
   it("should create a new game", async () => {
     const createGame = sinon.stub()
-    const api = ({ createGame } as unknown) as API
+    const api = { createGame } as unknown as API
     const repository = Repository({ api, storage })
     await repository.createGame([])
     createGame.callCount.should.equal(1)
@@ -63,7 +63,7 @@ describe("repository", () => {
     const logger = { warn: (msg: string) => {} }
     const promise = new Promise((resolve) => (logger.warn = resolve))
     const createGame = sinon.stub().rejects(undefined)
-    const api = ({ createGame } as unknown) as API
+    const api = { createGame } as unknown as API
     const repository = Repository({ api, logger, storage })
     const result = await repository.createGame([])
     result.id.should.match(uuidPattern)
@@ -73,7 +73,7 @@ describe("repository", () => {
   it("should save a game", async () => {
     const game = initGame()
     const saveGame = sinon.stub().resolves(game)
-    const api = ({ saveGame } as unknown) as API
+    const api = { saveGame } as unknown as API
     const repository = Repository({ api, storage })
     await repository.saveGame(game)
     saveGame.callCount.should.equal(1)
@@ -83,10 +83,10 @@ describe("repository", () => {
   it("should load a previously locally saved game without accessing the server", async () => {
     const game = initGame()
     const getItem = sinon.stub()
-    const storage = ({ getItem } as unknown) as Storage
+    const storage = { getItem } as unknown as Storage
     getItem.withArgs("game").returns(JSON.stringify({ ...game, id: "0815" }))
     const loadGame = sinon.spy()
-    const api = ({ loadGame } as unknown) as API
+    const api = { loadGame } as unknown as API
     const repository = Repository({ api, storage })
     const result = await repository.loadGame("0815")
     result.should.deepEqual({ ...game, id: "0815" })
@@ -96,11 +96,11 @@ describe("repository", () => {
   it("should load a previously remotely, but not locally saved game", async () => {
     const game = initGame()
     const getItem = sinon.stub()
-    const storage = ({ getItem } as unknown) as Storage
+    const storage = { getItem } as unknown as Storage
     getItem.withArgs("0815").returns(null)
     const loadGame = sinon.stub()
     loadGame.withArgs("0815").resolves({ ...game, id: "0815" })
-    const api = ({ loadGame } as unknown) as API
+    const api = { loadGame } as unknown as API
     const repository = Repository({ api, storage })
     const result = await repository.loadGame("0815")
     result.should.deepEqual({ ...game, id: "0815" })
@@ -114,7 +114,7 @@ describe("repository", () => {
     const game = initGame()
     const saveGame = sinon.stub()
     saveGame.rejects()
-    const api = ({ saveGame } as unknown) as API
+    const api = { saveGame } as unknown as API
     const repository = Repository({ api, storage, logger })
     await repository.saveGame(game)
     saveGame.callCount.should.equal(1)

@@ -168,7 +168,7 @@ const co2emissionsEnergy = new ComputedParam({
       data.electricityNuclear * 0.005
     )
   },
-  shouldInitiallyBe: 258.043 as MioTons,
+  //shouldInitiallyBe: 258.043 as MioTons,
   citations: [rensmart2021kWhToCO2, uba2020DeutscheTreibhausgasEmissionen],
   details: markdown`
 
@@ -192,7 +192,7 @@ const co2emissionsEnergy = new ComputedParam({
 
     ${cite(uba2020DeutscheTreibhausgasEmissionen)}: 258.043 as MioTons in 2019.
 
-    TODO: #72 Tatsächliche Summe ist derzeit 151.4 MioTons. Sollte laut Quelle oben 258.043 MioTons sein.
+    TODO: #72 Tatsächliche Summe ist derzeit 152.7 MioTons. Sollte laut Quelle oben 258.043 MioTons sein.
   `,
 })
 
