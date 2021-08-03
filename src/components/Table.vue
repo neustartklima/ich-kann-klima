@@ -41,10 +41,12 @@ export default defineComponent({
 
   #table-front {
     transform: translate3d(0px, 0px, 80px);
+    width: 455px;
   }
 
   #table-back {
     transform: rotateY(180deg) translate3d(0px, 0, 80px);
+    width: 455px;
   }
 
   #table-left-side {
@@ -62,7 +64,7 @@ export default defineComponent({
 
 @keyframes spin {
   to {
-    transform: rotate3d(0, 1, 0.2, 360deg);
+    transform: rotate3d(0, 1, 0, 360deg);
   }
 }
 </style>
