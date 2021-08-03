@@ -111,6 +111,7 @@ export default defineComponent({
 <style lang="scss">
 .game-setup {
   width: 100%;
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
   margin: auto;
