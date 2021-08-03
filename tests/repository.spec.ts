@@ -24,21 +24,10 @@ describe("createBaseValues(defaultValues)", () => {
     iniVals.buildingsSourceGas.should.be.approximately(363, 0.1)
   })
 
-  // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
-  it("should return 159.696 MioTons for co2emissions due to street vehicles", () => {
-    iniVals.co2emissionsStreetVehicles.should.be.approximately(159.696, 0.1)
-  })
-
   // TODO: #72 Source claims 164.322 MioTons per year in 2019. Sums to 173.0 MioTons.
   // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
   it("should return 164.322 MioTons for co2emissionsMobility", () => {
     iniVals.co2emissionsMobility.should.be.approximately(173.0, 0.1)
-  })
-
-  // TODO: #72 Source claims 258.043 MioTons per year in 2019. Sums only to 151.4 MioTons.
-  // Source: https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx sheet "THG" row 2019
-  it("should return 258.043 MioTons for co2emissionsEnergy", () => {
-    iniVals.co2emissionsEnergy.should.be.approximately(151.4, 0.1)
   })
 
   // TODO: #72 Source claims 123.461 MioTons per year in 2019. Sums to 168.6 MioTons.
