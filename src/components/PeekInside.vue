@@ -297,9 +297,10 @@ $lightBackground: #ffffff;
       font-size: 1.2em;
     }
 
-    .Section::v-deep {
+    .Section {
       background: $sectionBackground;
-      h1 {
+
+      :deep(h1) {
         font-size: 1.4em;
       }
     }
