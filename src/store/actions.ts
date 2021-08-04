@@ -20,7 +20,7 @@ const repository = RepositoryFactory({ api })
 
 export const actions = {
   async startGame(context: Context) {
-    const game = await repository.createGame(context.state.allLaws)
+    const game = await repository.createGame()
     getEventMachine(store, allEvents).start()
     router.push("/games/" + game.id)
   },
@@ -85,7 +85,7 @@ export const actions = {
     game.events.unshift(payload.event)
     await repository.eventOccurred(game, payload.event)
     if (payload.event.laws?.length) {
-      game.proposedLaws = payload.event.laws.map(law => law.id)
+      game.proposedLaws = payload.event.laws.map((law) => law.id)
     }
     context.commit("setGameState", { game })
     payload.event.apply(context)

@@ -1,5 +1,5 @@
 import { State } from "."
-import { Law } from "../laws"
+import { allLaws, Law } from "../laws"
 
 export const getters = {
   proposedLaws(state: State): Law[] {
@@ -8,7 +8,7 @@ export const getters = {
     }
     return state.game.proposedLaws
       .map((lawId) => {
-        const law = state.allLaws.find((law) => law.id === lawId)
+        const law = allLaws.find((law) => law.id === lawId)
         if (!law) {
           console.error(`Inconsistency: Proposed law #${lawId} not found`)
         }
