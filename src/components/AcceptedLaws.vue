@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
-import { Law } from "../laws"
+import { allLaws, Law } from "../laws"
 import { useStore } from "../store"
 
 export default defineComponent({
@@ -9,7 +9,6 @@ export default defineComponent({
 
     return {
       store,
-      allLaws: computed(() => store.state.allLaws),
       acceptedLaws: computed(() => store.state.game?.acceptedLaws),
     }
   },
@@ -22,7 +21,7 @@ export default defineComponent({
 
   computed: {
     visibleAccepted(): Law[] {
-      return this.allLaws.filter((law) =>
+      return allLaws.filter((law) =>
         this.acceptedLaws?.some((l) => l.lawId === law.id)
         && !(law.labels?.includes("hidden"))
       )

@@ -14,7 +14,7 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import { Law } from "../laws"
+import { allLaws, Law } from "../laws"
 import Citation from "./Citation.vue"
 import { Citations } from "../citations"
 import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
@@ -32,9 +32,7 @@ export default defineComponent({
 
     return {
       store,
-      allLaws: store.state.allLaws,
       game: computed(() => store.state.game),
-      allEvents: allEvents,
       eventMachine: EventMachine(store, allEvents),
     }
   },
@@ -97,11 +95,11 @@ export default defineComponent({
     },
 
     selectedLaw(): Law | undefined {
-      return this.allLaws.find((law) => law.id === this.lawSelected)
+      return allLaws.find((law) => law.id === this.lawSelected)
     },
 
     selectedEvent(): Event | undefined {
-      return this.allEvents.find((event) => event.id === this.eventSelected)
+      return allEvents.find((event) => event.id === this.eventSelected)
     },
 
     selectedParam(): ParamDefinition | undefined {
@@ -141,12 +139,12 @@ export default defineComponent({
 
     sortedLaws(): LawRow[] {
       if (!this.game) return []
-      return getSortedLaws(this.game, this.lawsSortCol, this.lawsSortDir, this.allLaws)
+      return getSortedLaws(this.game, this.lawsSortCol, this.lawsSortDir, allLaws)
     },
 
     sortedEvents(): EventRow[] {
       if (!this.game) return []
-      return getSortedEvents(this.store, this.eventsSortCol, this.eventsSortDir, this.allEvents)
+      return getSortedEvents(this.store, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
   },
 })

@@ -2,7 +2,7 @@ import { Game, GameDefinition, GameId } from "../game"
 import { API } from "./api"
 import { initGame, initialGame } from "."
 import { fillUpLawProposals } from "../LawProposer"
-import { Law } from "../laws"
+import { allLaws, Law } from "../laws"
 import { Event } from "../events"
 
 interface Logger {
@@ -14,7 +14,7 @@ interface Storage {
   getItem: (name: string) => string | null
 }
 
-export default function({
+export default function ({
   api,
   logger = console,
   storage = localStorage,
@@ -24,12 +24,12 @@ export default function({
   storage?: Storage
 }) {
   return {
-    async createGame(allLaws: Law[], initialData: GameDefinition = initialGame): Promise<Game> {
+    async createGame(laws: Law[] = allLaws, initialData: GameDefinition = initialGame): Promise<Game> {
       const game = initGame(initialData)
-      game.acceptedLaws = allLaws
+      game.acceptedLaws = laws
         .filter((law) => law.labels?.includes("initial"))
         .map((law) => ({ lawId: law.id, effectiveSince: game.currentYear }))
-      fillUpLawProposals(game, allLaws)
+      fillUpLawProposals(game, laws)
       storage.setItem("game", JSON.stringify(game))
 
       try {
