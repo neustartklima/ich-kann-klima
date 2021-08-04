@@ -22,13 +22,19 @@ export default defineComponent({
 <template>
   <p>
     <span v-if="citation.authors">{{ citation.authors + citation.dateString() }}. </span>
-    <a :href="href">"{{ title }}"</a>.
+    <a target="_blank" rel="noreferrer noopener" :href="href">"{{ title }}"</a>.
     <span v-if="citation.publisher">{{ citation.publisher }}. </span>
     <span v-if="citation.comment">Bemerkung: <span v-html="citation.comment" />. </span>
     <span v-if="showInternals && citation.internalComment">Internes: <span v-html="citation.internalComment" />. </span>
-    <span v-if="citation.referringUrl"><a :href="citation.referringUrl.toString()">Hier gefunden</a>. </span>
-    <span v-if="citation.archiveUrl"><a :href="citation.archiveUrl.toString()">Web Archiv Kopie</a>. </span>
-    <span v-if="citation.localCopy"><a :href="'/assets/sources/' + citation.localCopy">Kopie</a>. </span>
+    <span v-if="citation.referringUrl"
+      ><a target="_blank" rel="noreferrer noopener" :href="citation.referringUrl.toString()">Hier gefunden</a>.
+    </span>
+    <span v-if="citation.archiveUrl"
+      ><a target="_blank" rel="noreferrer noopener" :href="citation.archiveUrl.toString()">Web Archiv Kopie</a>.
+    </span>
+    <span v-if="citation.localCopy"
+      ><a target="_blank" rel="noreferrer noopener" :href="'/sources/' + citation.localCopy">Kopie</a>.
+    </span>
   </p>
 </template>
 
