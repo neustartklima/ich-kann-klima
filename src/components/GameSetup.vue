@@ -11,13 +11,26 @@ import ClimateIndicator from "./ClimateIndicator.vue"
 import Calendar from "./Calendar.vue"
 import Heater from "./Heater.vue"
 import Table from "./Table.vue"
+import TVSet from "./TVSet.vue"
 import { Event } from "../events"
 import { useStore } from "../store"
 import { allEvents } from "../events"
 import { co2Rating, financeRating } from "../Calculator"
 
 export default defineComponent({
-  components: { Background, Calendar, ClimateIndicator, Heater, PeekInside, LawProposals, SpeechBubble, FinanceIndicator, PopularityIndicator, Table },
+  components: {
+    Background,
+    Calendar,
+    ClimateIndicator,
+    Heater,
+    PeekInside,
+    LawProposals,
+    SpeechBubble,
+    FinanceIndicator,
+    PopularityIndicator,
+    Table,
+    TVSet,
+  },
 
   data() {
     const store = useStore()
@@ -67,7 +80,7 @@ export default defineComponent({
   methods: {
     eventToShow(): Event | null {
       const event: Event = this.$store.state.game?.events[0]
-      return (event && !event.acknowledged) ? event : null
+      return event && !event.acknowledged ? event : null
     },
 
     acknowledge(): void {
@@ -79,9 +92,16 @@ export default defineComponent({
 
 <template>
   <div class="game-setup">
-    <Background />
+    <!-- <Background /> -->
+    <div id="walls">
+      <div id="wall-back" />
+      <div id="wall-left" />
+      <div id="wall-right" />
+    </div>
+
     <Calendar :year="currentYear" />
     <Heater />
+    <TVSet />
     <Table />
 
     <FinanceIndicator :value="finance" />
@@ -115,13 +135,33 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   margin: auto;
-  justify-content: left;
   position: relative;
   perspective: 1000px;
+  height: 500px;
 
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;
   }
+}
+
+#walls div {
+  position: absolute;
+  background: white;
+  width: 1000px;
+  height: 500px;
+  border: 2px solid;
+}
+
+#wall-back {
+  transform: translateZ(-500px);
+}
+
+#wall-left {
+  transform: translateX(-500px) rotateY(-90deg);
+}
+
+#wall-right {
+  transform: translateX(500px) rotateY(90deg);
 }
 
 .peek {

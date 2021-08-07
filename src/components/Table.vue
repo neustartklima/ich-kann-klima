@@ -18,13 +18,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 #table {
   position: absolute;
-  top: 75%;
-  left: 25%;
-  right: 25%;
   transform-style: preserve-3d;
-  transform-origin: 50%;
   // animation: spin 20s linear infinite;
-  transform: scale(1.4) rotateX(-15deg);
+  transform: scale(1.2) translate(170px, 400px);
 
   img {
     width: 100%;

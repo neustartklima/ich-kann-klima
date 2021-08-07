@@ -14,9 +14,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 #heater {
   position: absolute;
-  top: 40%;
-  left: 31.2%;
-  right: 33%;
+  width: 520px;
+  height: 100px;
+  transform: translate3d(200px, 392px, -500px);
 
   img {
     width: 100%;

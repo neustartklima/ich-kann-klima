@@ -34,23 +34,19 @@ export default defineComponent({
 </script>
 
 <template>
-  <div id="climate">
+  <div id="plant">
     <img :src="imgSrc" :id="status" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-div {
+#plant {
   position: absolute;
-  left: 65%;
-  top: 37%;
-  width: 26%;
-  height: 25%;
+  width: 260px;
+  transform: translate3d(750px, 310px, -400px);
 
   img {
     position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
   }
 }
