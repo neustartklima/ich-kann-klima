@@ -36,18 +36,14 @@ export default defineComponent({
 </template>
 
 <style lang="scss" scoped>
-div {
+#finances {
   position: absolute;
   position: absolute;
-  left: 63%;
-  top: 57%;
-  width: 15%;
-  height: 25%;
+  width: 150px;
+  transform: translate3d(640px, 420px, -200px);
   
   img {
     position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
   }
 

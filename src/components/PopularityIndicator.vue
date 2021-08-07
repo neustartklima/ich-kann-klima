@@ -28,14 +28,11 @@ export default defineComponent({
 <style lang="scss" scoped>
 #popularity {
   position: absolute;
-  left: 31.5%;
-  top: 40%;
-  width: 35%;
+  width: 520px;
+  transform: translate3d(200px, 80px, -500px);
 
   img {
     position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
   }
 }

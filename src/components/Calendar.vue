@@ -15,12 +15,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 #calendar {
   position: absolute;
-  top: 20%;
-  left: 90%;
   font-size: 1.4vw;
   border: 1px solid #555555;
   padding: 3em 0.5em 0;
-  transform: perspective(500px) rotateY(-55deg) rotateZ(5deg) scale(2);
+  transform: translate3d(1000px, 170px, -350px) rotateY(-90deg) scale(2);
 
   &::before {
     content: "";

@@ -66,20 +66,17 @@ export default defineComponent({
 <style lang="scss" scoped>
 .ProposedLaws {
   position: absolute;
-  top: 0;
-  height: 80%;
-  left: 15%;
-  width: 50%;
+  width: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   transform-origin: bottom center;
-  transform: rotateX(90deg);
+  transform: rotateX(90deg) translate3d(200px, -1400px, -300px);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
   &.poppedUp {
-    transform: none;
+    transform: translateX(350px);
 
     @media (max-width: 800px) and (orientation: portrait) {
       margin-top: 100px;
