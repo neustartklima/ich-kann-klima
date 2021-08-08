@@ -71,7 +71,7 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   transform-origin: bottom center;
-  transform: rotateX(90deg) translate3d(200px, -1400px, -300px);
+  transform: rotateX(90deg) translate3d(200px, -1000px, -300px);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
