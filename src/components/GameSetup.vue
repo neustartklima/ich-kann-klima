@@ -101,13 +101,11 @@ export default defineComponent({
 
     <Calendar :year="currentYear" />
     <Heater />
-    <TVSet />
-    <Table />
-
-    <FinanceIndicator :value="finance" />
     <PopularityIndicator :value="popularity" />
+    <TVSet />
     <ClimateIndicator :value="climate" />
-
+    <Table />
+    <FinanceIndicator :value="finance" />
     <LawProposals />
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
   </div>
@@ -137,7 +135,7 @@ export default defineComponent({
   margin: auto;
   position: relative;
   perspective: 1000px;
-  height: 500px;
+  height: 400px;
 
   @media all and (orientation: portrait) {
     flex-direction: column-reverse;

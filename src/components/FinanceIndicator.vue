@@ -40,7 +40,7 @@ export default defineComponent({
   position: absolute;
   position: absolute;
   width: 150px;
-  transform: translate3d(640px, 420px, -200px);
+  transform: translate3d(640px, 470px, -200px);
   
   img {
     position: absolute;

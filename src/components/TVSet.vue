@@ -26,57 +26,58 @@ export default defineComponent({})
 #tvset {
   position: absolute;
   transform-style: preserve-3d;
-  transform: translate3d(-2100px, 800px, -6000px) rotateY(40deg);
+  transform: translate3d(-1000px, 400px, -2100px) rotateY(50deg) scale(0.4);
 }
 
 img {
   position: absolute;
 }
 
-#board img {
-  background: white;
-}
-
-#board-left {
-  transform: translate3d(-246px, 0, -250px) rotateY(90deg);
-}
-
-#board-right {
-  transform: scaleX(-1) translate3d(-1059px, 0, -250px) rotateY(-90deg);
-}
-
-#board-top {
-  background: white;
-  width: 1290px;
-  height: 501px;
-  border-width: 10px;
-  border-color: black;
-  border-style: solid solid none none;
-  transform: translate3d(15px, -250px, -250px) rotate3d(1, 0, 0, 90deg);
+#board {
+  transform-style: preserve-3d;
+  transform: scale3d(1, 1, 0.3);
+  
+  img {
+    background: white;
+  }
+  
+  #board-left {
+    transform: translate3d(-246px, 0, -250px) rotateY(90deg);
+  }
+  
+  #board-right {
+    transform: scaleX(-1) translate3d(-1059px, 0, -250px) rotateY(-90deg);
+  }
+  
+  #board-top {
+    background: white;
+    width: 1290px;
+    height: 501px;
+    border-width: 10px;
+    border-color: black;
+    border-style: solid solid none none;
+    transform: translate3d(15px, -250px, -250px) rotate3d(1, 0, 0, 90deg);
+  }
 }
 
 #tv {
-  transform: translate3d(120px, -1240px, -220px);
-}
-
-#tv-front {
-  background: transparent;
-}
-
-#tv-right {
-  transform: scaleX(-1);
+  transform: translate3d(120px, -1240px, -100px);
+  
+  #tv-front {
+    background: transparent;
+  }
 }
 
 #legs {
-  transform: translate3d(0, 0, -100px);
+  transform: translate3d(0, 0, -40px) scale3d(1, 1, 0.3);
   transform-style: preserve-3d;
-}
-
-#legs-front {
-  transform: rotateX(10deg);
-}
-
-#legs-back {
-  transform: translate3d(0, 0, -320px) rotateX(-10deg);
+  
+  #legs-front {
+    transform: rotateX(10deg);
+  }
+  
+  #legs-back {
+    transform: translate3d(0, 0, -320px) rotateX(-10deg);
+  }
 }
 </style>

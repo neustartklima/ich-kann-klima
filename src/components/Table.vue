@@ -20,7 +20,7 @@ export default defineComponent({
   position: absolute;
   transform-style: preserve-3d;
   // animation: spin 20s linear infinite;
-  transform: scale(1.2) translate(170px, 400px);
+  transform: translate3d(320px, 374px, 400px) scale(0.8);
 
   img {
     width: 100%;
