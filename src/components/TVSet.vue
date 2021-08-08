@@ -26,7 +26,7 @@ export default defineComponent({})
 #tvset {
   position: absolute;
   transform-style: preserve-3d;
-  transform: translate3d(30px, 333px, -370px) rotateY(50deg);
+  transform: translate3d(30px, 340px, -340px) rotateY(50deg);
 }
 
 img {
@@ -60,7 +60,7 @@ img {
     background: white;
     width: 250px;
     height: 95px;
-    border-width: 10px;
+    border-width: 3px;
     border-color: black;
     border-style: solid solid none none;
     transform: translate3d(0px, -50px, -50px) rotateX(90deg);
@@ -68,7 +68,7 @@ img {
 }
 
 #tv {
-  transform: translate3d(60px, -230px, -100px);
+  transform: translate3d(20px, -233px, -50px);
   
   #tv-front {
     background: transparent;

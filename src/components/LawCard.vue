@@ -88,7 +88,7 @@ export default defineComponent({
   transform: rotate(3deg);
 
   &:not(:first-of-type) {
-    margin-top: -250px;
+    margin-top: -300px;
   }
 
   &:nth-of-type(odd) {
@@ -167,6 +167,10 @@ export default defineComponent({
 }
 
 .ProposedLaws.poppedUp .Law {
+  &:not(:first-of-type) {
+    margin-top: -250px;
+  }
+  
   @media (max-width: 800px) and (orientation: portrait) {
     font-size: 3vw;
     width: 100%;
