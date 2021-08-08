@@ -15,7 +15,6 @@ export default defineComponent({
 #heater {
   position: absolute;
   width: 520px;
-  height: 100px;
   transform: translate3d(200px, 392px, -500px);
 
   img {
