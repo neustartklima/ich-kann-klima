@@ -26,7 +26,7 @@ export default defineComponent({})
 #tvset {
   position: absolute;
   transform-style: preserve-3d;
-  transform: translate3d(-1000px, 400px, -2100px) rotateY(50deg) scale(0.4);
+  transform: translate3d(30px, 333px, -370px) rotateY(50deg);
 }
 
 img {
@@ -35,49 +35,59 @@ img {
 
 #board {
   transform-style: preserve-3d;
-  transform: scale3d(1, 1, 0.3);
   
   img {
     background: white;
   }
+
+  #board-front {
+    width: 250px;
+  }
   
+  #board-left, #board-right {
+    height: 106px; 
+  }
+
   #board-left {
-    transform: translate3d(-246px, 0, -250px) rotateY(90deg);
+    transform: translate3d(-50px, 0, -48px) rotateY(90deg);
   }
   
   #board-right {
-    transform: scaleX(-1) translate3d(-1059px, 0, -250px) rotateY(-90deg);
+    transform: translate3d(200px, 0, -48px) rotateY(90deg);
   }
   
   #board-top {
     background: white;
-    width: 1290px;
-    height: 501px;
+    width: 250px;
+    height: 95px;
     border-width: 10px;
     border-color: black;
     border-style: solid solid none none;
-    transform: translate3d(15px, -250px, -250px) rotate3d(1, 0, 0, 90deg);
+    transform: translate3d(0px, -50px, -50px) rotateX(90deg);
   }
 }
 
 #tv {
-  transform: translate3d(120px, -1240px, -100px);
+  transform: translate3d(60px, -230px, -100px);
   
   #tv-front {
     background: transparent;
+    width: 200px;
   }
 }
 
 #legs {
-  transform: translate3d(0, 0, -40px) scale3d(1, 1, 0.3);
+  transform: translate3d(0, 0, -10px);
   transform-style: preserve-3d;
   
   #legs-front {
+    width: 230px;
     transform: rotateX(10deg);
   }
   
   #legs-back {
-    transform: translate3d(0, 0, -320px) rotateX(-10deg);
+    width: 230px;
+    transform: translate3d(0, 0, -90px) rotateX(-10deg);
   }
 }
 </style>
