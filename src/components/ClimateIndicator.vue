@@ -43,7 +43,7 @@ export default defineComponent({
 #plant {
   position: absolute;
   width: 260px;
-  transform: translate3d(750px, 310px, -400px);
+  transform: translate3d(750px, 300px, -400px);
 
   img {
     position: absolute;

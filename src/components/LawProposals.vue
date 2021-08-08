@@ -70,8 +70,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transform-origin: bottom center;
-  transform: rotateX(90deg) translate3d(200px, -1000px, -300px);
+  transform: translate3d(390px, 220px, 400px) scale(0.6) rotateX(90deg) scale(0.4);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
