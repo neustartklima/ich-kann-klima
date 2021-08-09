@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
+import Background from "./Background.vue"
 import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import PeekInside from "./PeekInside.vue"
@@ -18,6 +19,7 @@ import { co2Rating, financeRating } from "../Calculator"
 
 export default defineComponent({
   components: {
+    Background,
     Calendar,
     ClimateIndicator,
     Heater,
@@ -90,6 +92,7 @@ export default defineComponent({
 
 <template>
   <div class="game-setup">
+    <!-- <Background /> -->
     <div id="walls">
       <div id="wall-back" />
       <div id="wall-left" />
