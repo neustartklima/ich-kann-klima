@@ -39,7 +39,7 @@ export default defineComponent({
 
   methods: {
     select() {
-      this.$emit('selected')
+      this.$emit("selected")
     },
 
     accept() {
@@ -56,13 +56,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div
-    class="Law"
-    :class="{ accepted }"
-    :style="{ zIndex }"
-    @click="select"
-    @animationend="sendAccept"
-  >
+  <div class="Law" :class="{ accepted }" :style="{ zIndex }" @click="select" @animationend="sendAccept">
     <label>
       <input type="radio" v-if="selectable" />
       <div>
@@ -81,29 +75,42 @@ export default defineComponent({
 .Law {
   position: relative;
   width: 250px;
-  height: 300px;
-  padding: 0.5rem;
+  height: 350px;
+  padding: 1rem;
   box-sizing: border-box;
   margin: 0 auto;
   transform: rotate(3deg);
+  background-image: url(/src/assets/paper.png);
+  background-size: cover;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 51px;
+    height: 58px;
+    background-image: url(/src/assets/dog-ear.png);
+    background-size: cover;
+  }
 
   &:not(:first-of-type) {
-    margin-top: -300px;
+    margin-top: -350px;
   }
 
   &:nth-of-type(odd) {
     transform: rotate(-3deg);
   }
 
-  @media (max-width: 800px) {
-    width: 50%;
-    height: 80%;
-    font-size: 1.3vw;
+  // @media (max-width: 800px) {
+  //   width: 50%;
+  //   height: 80%;
+  //   font-size: 1.3vw;
 
-    &:not(:first-of-type) {
-      margin-top: -150px;
-    }
-  }
+  //   &:not(:first-of-type) {
+  //     margin-top: -150px;
+  //   }
+  // }
 
   /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
   animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
@@ -115,34 +122,18 @@ export default defineComponent({
     display: none;
   }
 
-  @media screen and (hover) {
-    :hover > div {
-      background: orange;
-    }
-  }
-
-  @media screen and (hover: none) {
-    :checked + label > div {
-      background: orange;
-    }
-  }
-
   h3 {
     margin-top: 0;
   }
 
   > label > div {
     height: 100%;
-    border: 1px solid #aaaaaa;
-    padding: 0.5rem;
     position: relative;
-    background: white;
-    box-shadow: 2px 2px 10px rgba(150, 150, 150, 0.5);
 
     .button-bar {
       position: absolute;
-      bottom: 5px;
-      right: 5px;
+      bottom: -5px;
+      right: -5px;
     }
 
     button {
@@ -168,14 +159,14 @@ export default defineComponent({
 
 .ProposedLaws.poppedUp .Law {
   &:not(:first-of-type) {
-    margin-top: -250px;
+    margin-top: -300px;
   }
-  
-  @media (max-width: 800px) and (orientation: portrait) {
-    font-size: 3vw;
-    width: 100%;
-    margin-top: -110px;
-  }
+
+  // @media (max-width: 800px) and (orientation: portrait) {
+  //   font-size: 3vw;
+  //   width: 100%;
+  //   margin-top: -110px;
+  // }
 }
 
 @keyframes twistIn {
