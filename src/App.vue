@@ -32,12 +32,8 @@ ul {
   list-style-type: "... ";
 }
 
-.button-bar {
-  max-width: 800px;
-  margin: 0 auto;
-
-  button {
-    padding: 8px 16px;
-  }
+/* filter breaks preserve3d, so apply highlight filter to child elements */
+.highlighted * {
+  filter: drop-shadow(2px 4px 6px red);
 }
 </style>

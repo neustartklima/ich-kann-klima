@@ -11,6 +11,7 @@ import FetchQueueFactory from "../model/FetchQueue"
 import RequestFactory from "../model/Request"
 import { LawId } from "../laws"
 import { BaseParams, Change, applyEffects } from "../params"
+import { steps } from "../tourSteps"
 
 const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
 const request = RequestFactory(backendURL, fetch)
@@ -21,7 +22,6 @@ const repository = RepositoryFactory({ api })
 export const actions = {
   async startGame(context: Context) {
     const game = await repository.createGame()
-    getEventMachine(store, allEvents).start()
     router.push("/games/" + game.id)
   },
 
@@ -101,6 +101,33 @@ export const actions = {
     const values = applyEffects({ ...(context.state.game?.values as BaseParams) }, changes)
     const game = { ...context.state.game, values } as Game
     context.commit("setGameState", { game })
+  },
+
+  setupTour(context: Context) {
+    const tourState = localStorage.getItem("tour") || steps[0].id
+    const step = steps.find((step) => tourState === step.id)
+    if (step) {
+      context.commit("setTour", { step: step.id, active: true })
+    } else {
+      actions.stopTour(context)
+    }
+  },
+
+  nextTourStep(context: Context) {
+    const index = steps.findIndex((step) => context.state.tour.step === step.id)
+    if (index < 0 || index == steps.length - 1) {
+      actions.stopTour(context)
+    } else {
+      const step = steps[index + 1]
+      context.commit("setTour", { step: step.id, active: true })
+      localStorage.setItem("tour", step.id)
+    }
+  },
+
+  stopTour(context: Context) {
+    context.commit("setTour", { step: "", active: false })
+    localStorage.setItem("tour", "completed")
+    getEventMachine(store, allEvents).start()
   },
 
   async error(context: Context, payload: { error: Error }) {

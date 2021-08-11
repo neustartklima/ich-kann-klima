@@ -11,6 +11,7 @@ import Calendar from "./Calendar.vue"
 import Heater from "./Heater.vue"
 import Table from "./Table.vue"
 import TVSet from "./TVSet.vue"
+import Tour from "./Tour.vue"
 import { Event } from "../events"
 import { useStore } from "../store"
 import { allEvents } from "../events"
@@ -27,6 +28,7 @@ export default defineComponent({
     FinanceIndicator,
     PopularityIndicator,
     Table,
+    Tour,
     TVSet,
   },
 
@@ -104,7 +106,9 @@ export default defineComponent({
     <Table />
     <FinanceIndicator :value="finance" />
     <LawProposals />
+
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
+    <Tour />
   </div>
 
   <div class="peek">
