@@ -19,7 +19,6 @@ export default defineComponent({
 #table {
   position: absolute;
   transform-style: preserve-3d;
-  // animation: spin 20s linear infinite;
   transform: translate3d(320px, 374px, 400px) scale(0.8);
 
   img {
@@ -55,12 +54,6 @@ export default defineComponent({
     transform: rotateY(-90deg) translate3d(0px, 0, 80px);
     height: 162px;
     width: 162px;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate3d(0, 1, 0, 360deg);
   }
 }
 </style>
