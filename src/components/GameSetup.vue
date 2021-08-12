@@ -136,11 +136,8 @@ export default defineComponent({
   margin: auto;
   position: relative;
   perspective: 1000px;
+  perspective-origin: 500px 200px;
   height: 400px;
-
-  @media all and (orientation: portrait) {
-    flex-direction: column-reverse;
-  }
 }
 
 #walls div {
