@@ -7,7 +7,7 @@ import TempolimitAufAutobahnenAussitzen from "../laws/TempolimitAufAutobahnenAus
 export default defineEvent({
   title: "Generelles Tempolimit beschlossen",
   description:
-    "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland müssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolmit nur noch anpassen.",
+    "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland müssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolimit nur noch anpassen.",
   laws: lawList({
     Tempolimit130AufAutobahnen,
     Tempolimit120AufAutobahnen,

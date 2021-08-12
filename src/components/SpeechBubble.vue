@@ -1,14 +1,14 @@
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent } from "@vue/runtime-core"
 export default defineComponent({
   props: {
     title: String,
-    text: String
+    text: String,
   },
 
   methods: {
     acknowledge(): void {
-      this.$emit("acknowledge");
+      this.$emit("acknowledge")
     },
   },
 })
@@ -26,7 +26,7 @@ div {
   max-width: 400px;
   position: absolute;
   top: 20%;
-  left: 15%;
+  left: 25%;
   transform: translateY(-50%);
   z-index: 999;
   border: 1px solid black;
@@ -35,7 +35,7 @@ div {
   font-size: 20px;
   padding: 1rem;
   background: white;
-  box-shadow: 0 0 8px rgba(100,100,100,.5);
+  box-shadow: 0 0 8px rgba(100, 100, 100, 0.5);
 
   &::before,
   &::after {
@@ -49,8 +49,8 @@ div {
     border-width: 10px;
     border-style: solid;
     border-color: black transparent transparent black;
-    left: 27px;
-    bottom: -20px;
+    left: 29px;
+    bottom: -21px;
   }
 
   &::after {
@@ -58,7 +58,7 @@ div {
     border-style: solid;
     border-color: #fff transparent transparent #fff;
     left: 30px;
-    bottom: -14px;
+    bottom: -18px;
   }
 
   h2 {

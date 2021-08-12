@@ -1,7 +1,11 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
 
-export default defineComponent({})
+export default defineComponent({
+  props: {
+    withNews: Boolean,
+  },
+})
 </script>
 
 <template>
@@ -14,6 +18,7 @@ export default defineComponent({})
     </div>
     <div id="tv">
       <img id="tv-front" src="../assets/tv-front.png" />
+      <img id="news" src="../assets/news.png" v-if="withNews" />
     </div>
     <div id="legs">
       <img id="legs-front" src="../assets/tvset-legs.png" />
@@ -35,7 +40,7 @@ img {
 
 #board {
   transform-style: preserve-3d;
-  
+
   img {
     background: white;
   }
@@ -43,19 +48,20 @@ img {
   #board-front {
     width: 250px;
   }
-  
-  #board-left, #board-right {
-    height: 106px; 
+
+  #board-left,
+  #board-right {
+    height: 106px;
   }
 
   #board-left {
     transform: translate3d(-50px, 0, -48px) rotateY(90deg);
   }
-  
+
   #board-right {
     transform: translate3d(200px, 0, -48px) rotateY(90deg);
   }
-  
+
   #board-top {
     background: white;
     width: 250px;
@@ -69,22 +75,27 @@ img {
 
 #tv {
   transform: translate3d(20px, -233px, -50px);
-  
+
   #tv-front {
     background: transparent;
     width: 200px;
+  }
+
+  #news {
+    width: 193px;
+    margin-top: 7px;
   }
 }
 
 #legs {
   transform: translate3d(0, 0, -10px);
   transform-style: preserve-3d;
-  
+
   #legs-front {
     width: 230px;
     transform: rotateX(10deg);
   }
-  
+
   #legs-back {
     width: 230px;
     transform: translate3d(0, 0, -90px) rotateX(-10deg);

@@ -101,7 +101,7 @@ export default defineComponent({
     <Calendar :year="currentYear" />
     <Heater />
     <PopularityIndicator :value="popularity" />
-    <TVSet />
+    <TVSet :with-news="!!eventText" />
     <ClimateIndicator :value="climate" />
     <Table />
     <FinanceIndicator :value="finance" />
