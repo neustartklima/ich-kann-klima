@@ -130,14 +130,12 @@ export default defineComponent({
 <style lang="scss">
 .game-setup {
   width: 100%;
-  max-width: 1000px;
-  display: flex;
-  flex-direction: column;
+  // max-width: 1000px;
+  height: 100%;
   margin: auto;
   position: relative;
   perspective: 1000px;
   perspective-origin: 500px 200px;
-  height: 400px;
 }
 
 #walls div {
@@ -149,7 +147,7 @@ export default defineComponent({
 }
 
 #wall-back {
-  transform: translateZ(-500px);
+  transform: translateZ(-505px);
 }
 
 #wall-left {
