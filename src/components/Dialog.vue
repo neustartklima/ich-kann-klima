@@ -21,7 +21,8 @@ export default {
   left: 0;
   right: 0;
   margin: 0 auto;
-  max-width: 60vw;
+  width: 600px;
+  max-width: 90vw;
   background: white;
   border: 1px solid black;
   border-radius: 2rem;
