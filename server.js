@@ -26489,7 +26489,7 @@ var SocialMedia_default = defineEvent({
 // src/events/TempolimitAufAutobahnen.ts
 var TempolimitAufAutobahnen_default = defineEvent({
   title: "Generelles Tempolimit beschlossen",
-  description: "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland m\xFCssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolmit nur noch anpassen.",
+  description: "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland m\xFCssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolimit nur noch anpassen.",
   laws: lawList({
     Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
     Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
