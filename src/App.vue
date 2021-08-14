@@ -1,11 +1,23 @@
 <script lang="ts">
 import { defineComponent } from "vue"
 
-export default defineComponent({})
+export default defineComponent({
+  methods: {
+    updateStyle(): void {
+      document.documentElement.style.setProperty("--scale", "1")
+      const scale = window.innerWidth / window.devicePixelRatio / 500
+      document.documentElement.style.setProperty("--scale", `${scale}`)
+    },
+  },
+
+  mounted() {
+    setTimeout(this.updateStyle, 0)
+    window.addEventListener("resize", this.updateStyle)
+  },
+})
 </script>
 
 <template>
-  <h1>#ich-kann-klima</h1>
   <router-view />
 </template>
 
@@ -16,6 +28,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 #app {

@@ -92,6 +92,7 @@ export default defineComponent({
 
 <template>
   <div class="game-setup">
+    <h1>#ich-kann-klima</h1>
     <div id="walls">
       <div id="wall-back" />
       <div id="wall-left" />
@@ -129,13 +130,12 @@ export default defineComponent({
 
 <style lang="scss">
 .game-setup {
-  width: 100%;
-  // max-width: 1000px;
-  height: 100%;
-  margin: auto;
-  position: relative;
+  width: 1000px;
+  height: 800px;
   perspective: 1000px;
   perspective-origin: 500px 200px;
+  transform-origin: 0 0;
+  transform: scale(var(--scale));
 }
 
 #walls div {
