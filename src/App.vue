@@ -5,8 +5,13 @@ export default defineComponent({
   methods: {
     updateStyle(): void {
       document.documentElement.style.setProperty("--scale", "1")
-      const scale = window.innerWidth / window.devicePixelRatio / 500
-      document.documentElement.style.setProperty("--scale", `${scale}`)
+      const height = window.innerHeight
+      const width = window.innerWidth
+      if (height / width < .8) {
+        document.documentElement.style.setProperty("--scale", `${height / 800}`)
+      } else {
+        document.documentElement.style.setProperty("--scale", `${width / 1000}`)
+      }
     },
   },
 
