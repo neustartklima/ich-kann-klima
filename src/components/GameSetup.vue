@@ -137,12 +137,17 @@ export default defineComponent({
   transform: translate(500px, 200px) scale(var(--scale));
 }
 
-#walls div {
-  position: absolute;
-  background: white;
-  width: 1000px;
-  height: 500px;
-  border: 2px solid;
+#walls {
+  transform: translateZ(0px);
+  transform-style: preserve-3d;
+
+  div {
+    position: absolute;
+    background: white;
+    width: 1000px;
+    height: 500px;
+    border: 2px solid;
+  }
 }
 
 #wall-back {
