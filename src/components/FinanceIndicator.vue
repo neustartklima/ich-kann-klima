@@ -39,11 +39,12 @@ export default defineComponent({
 #finances {
   position: absolute;
   width: 60px;
-  transform: translate3d(550px, 320px, 500px);
+  transform: translate3d(550px, 300px, 500px);
   
   img {
     position: absolute;
     width: 100%;
+    transform: scale3d(1.2, 1.2, 1);
   }
 
   #short {

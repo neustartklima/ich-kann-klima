@@ -134,8 +134,7 @@ export default defineComponent({
   height: 800px;
   perspective: 1000px;
   perspective-origin: 500px 200px;
-  transform-origin: 0 0;
-  transform: scale(var(--scale));
+  transform: translate(500px, 200px) scale(var(--scale));
 }
 
 #walls div {

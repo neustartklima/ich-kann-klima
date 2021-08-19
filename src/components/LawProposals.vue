@@ -69,7 +69,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transform: translate3d(320px, 200px, 400px) scale(0.6) rotateX(90deg) scale(0.4);
+  transform: translate3d(320px, 199px, 400px) scale(0.6) rotateX(90deg) scale(0.4);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
 
