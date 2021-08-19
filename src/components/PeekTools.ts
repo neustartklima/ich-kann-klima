@@ -1,8 +1,7 @@
 import { BaseParams, Change, createBaseValues, applyEffects, paramList } from "../params"
 import { Game } from "../game"
-import { Law } from "../laws"
+import { Law, LawId } from "../laws"
 import { Event } from "../events"
-import { Store } from "../store"
 
 function genCompare(a: number | string, b: number | string) {
   if (a < b) return -1
@@ -65,7 +64,7 @@ export function getSortedLaws(game: Game, sortCol: LawCol, sortDir: number, allL
   const proposed = game.proposedLaws
   const accepted = game.acceptedLaws.map((lawRef) => lawRef.lawId)
   const rejected = game.rejectedLaws
-  function findState(lawId: string) {
+  function findState(lawId: LawId) {
     if (accepted.includes(lawId)) return "a"
     if (proposed.includes(lawId)) return "p"
     if (rejected.includes(lawId)) return "r"
@@ -88,9 +87,9 @@ export type EventRow = {
 
 export type EventCol = keyof EventRow
 
-export function getSortedEvents(store: Store, sortCol: EventCol, sortDir: number, allEvents: Event[]): EventRow[] {
+export function getSortedEvents(game: Game, sortCol: EventCol, sortDir: number, allEvents: Event[]): EventRow[] {
   return allEvents
-    .map((event) => ({ id: event.id, probability: event.probability(store) }))
+    .map((event) => ({ id: event.id, probability: event.probability(game) }))
     .sort((a, b) => genCompare(a[sortCol], b[sortCol]) * sortDir)
     .map((row) => ({ ...row, probability: (row.probability * 100).toFixed(2) }))
 }

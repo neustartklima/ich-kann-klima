@@ -1,6 +1,6 @@
 import { defineEvent } from "../Factory"
+import { Game } from "../game"
 import { defaultValues } from "../params"
-import { Store } from "../store"
 
 export default defineEvent({
   title: "Zusammenbruch des Finanzsystems",
@@ -13,7 +13,7 @@ export default defineEvent({
     context.dispatch("gameOver")
   },
 
-  probability(store: Store) {
-    return store.state.game && store.state.game.values.stateDebt > defaultValues.stateDebt * 2 ? 1 : 0
+  probability(game) {
+    return game.values.stateDebt > defaultValues.stateDebt * 2 ? 1 : 0
   },
 })

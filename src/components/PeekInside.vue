@@ -19,7 +19,6 @@ import Citation from "./Citation.vue"
 import { Citations } from "../citations"
 import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
-import EventMachine from "../EventMachine"
 import { Event, allEvents } from "../events"
 
 export default defineComponent({
@@ -33,7 +32,6 @@ export default defineComponent({
     return {
       store,
       game: computed(() => store.state.game),
-      eventMachine: EventMachine(store, allEvents),
     }
   },
 
@@ -144,7 +142,7 @@ export default defineComponent({
 
     sortedEvents(): EventRow[] {
       if (!this.game) return []
-      return getSortedEvents(this.store, this.eventsSortCol, this.eventsSortDir, allEvents)
+      return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
   },
 })

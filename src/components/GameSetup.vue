@@ -3,7 +3,6 @@ import { defineComponent } from "@vue/runtime-core"
 import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import PeekInside from "./PeekInside.vue"
-import EventMachine, { PriorizedEvent } from "../EventMachine"
 import FinanceIndicator from "./FinanceIndicator.vue"
 import PopularityIndicator from "./PopularityIndicator.vue"
 import ClimateIndicator from "./ClimateIndicator.vue"
@@ -14,8 +13,8 @@ import TVSet from "./TVSet.vue"
 import Tour from "./Tour.vue"
 import { Event } from "../events"
 import { useStore } from "../store"
-import { allEvents } from "../events"
 import { co2Rating, financeRating } from "../Calculator"
+import { Game } from "../game"
 
 export default defineComponent({
   components: {
@@ -37,7 +36,6 @@ export default defineComponent({
     return {
       store,
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
-      eventMachine: EventMachine(store, allEvents),
     }
   },
 
@@ -50,12 +48,8 @@ export default defineComponent({
       return this.eventToShow()?.description || ""
     },
 
-    priorizedEvents(): PriorizedEvent[] {
-      return this.eventMachine.getPriorizedEvents()
-    },
-
-    probability(): (event: Event) => string {
-      return (event) => (event.probability(this.store) * 100).toFixed(2)
+    probability(): (game: Game, event: Event) => string {
+      return (game, event) => (event.probability(game) * 100).toFixed(2)
     },
 
     currentYear(): number {
@@ -114,17 +108,6 @@ export default defineComponent({
 
   <div class="peek">
     <PeekInside v-if="devMode" />
-  </div>
-
-  <div v-if="devMode" class="probabilities">
-    <b>Probable Events</b>
-    <ul v-if="devMode && $store.state.game">
-      <li v-for="event in priorizedEvents" :key="event.id">
-        <span>{{ event.title }}</span>
-        <span>{{ probability(event) }}%</span>
-        <span>{{ (event.priority * 100).toFixed(2) }}%</span>
-      </li>
-    </ul>
   </div>
 </template>
 

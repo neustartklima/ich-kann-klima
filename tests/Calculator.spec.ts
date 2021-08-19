@@ -1,6 +1,6 @@
 import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
 import { Change, createBaseValues, defaultValues, modify } from "../src/params"
-import { AcceptedLaw } from "../src/laws"
+import { AcceptedLaw, LawId } from "../src/laws"
 import { BaseParams } from "../src/params"
 import { Game } from "../src/game"
 import { EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
@@ -16,7 +16,7 @@ function priority(game: Game): number {
 }
 
 function mockAcceptedLaw(
-  id: string,
+  id: LawId,
   effects: EffectsFunc,
   labels: LawLabel[] = [],
   treatAfterLabels: LawLabel[] = []
@@ -49,7 +49,7 @@ describe("Calculator.calculateNextYear", () => {
     })
   })
 
-  const acceptedLaws = [mockAcceptedLaw("test", agriEffects)]
+  const acceptedLaws = [mockAcceptedLaw("NahverkehrAusbauen", agriEffects)]
 
   it("should return modified value if it is modified by a law directly", () => {
     const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
@@ -74,8 +74,8 @@ describe("Calculator.calculateNextYear", () => {
 
   it("should treat a law (A) with treatAfterLabels set after a law (B) with the corresponding label", () => {
     const sortedLaws: AcceptedLaw[] = [
-      mockAcceptedLaw("A", mockEffects(1), [], ["WindkraftAbstandsregel"]),
-      mockAcceptedLaw("B", mockEffects(0), ["WindkraftAbstandsregel"], []),
+      mockAcceptedLaw("NahverkehrAusbauen", mockEffects(1), [], ["WindkraftAbstandsregel"]),
+      mockAcceptedLaw("AusbauVonStrassen", mockEffects(0), ["WindkraftAbstandsregel"], []),
     ]
     const newValues = calculateNextYear(startValues, sortedLaws, 2022)
     newValues.carUsage.should.equal(1)
@@ -84,9 +84,9 @@ describe("Calculator.calculateNextYear", () => {
   it(
     "should throw an error if treatAfterLabels is not satsifiable" /*, () => {
     const sortedLaws: AcceptedLaw[] = [
-      mockAcceptedLaw("A", mockEffects(1), ["Kernenergie"], ["WindkraftAbstandsregel"]),
-      mockAcceptedLaw("B", mockEffects(2), ["WindkraftAbstandsregel"], ["TempolimitAutobahn"]),
-      mockAcceptedLaw("C", mockEffects(3), ["TempolimitAutobahn"], ["Kernenergie"]),
+      mockAcceptedLaw("NahverkehrAusbauen", mockEffects(1), ["Kernenergie"], ["WindkraftAbstandsregel"]),
+      mockAcceptedLaw("NahverkehrKostenlos", mockEffects(2), ["WindkraftAbstandsregel"], ["TempolimitAutobahn"]),
+      mockAcceptedLaw("CAusbauVonStrassen, mockEffects(3), ["TempolimitAutobahn"], ["Kernenergie"]),
     ]
     should.throws(() => calculateNextYear(startValues, sortedLaws, 2022))
   }*/
