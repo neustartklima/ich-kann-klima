@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { getAcceptedLaw } from "../LawProposer"
+import { getAcceptedLaw } from "../laws"
 
 export default defineEvent({
   title: "Happy New Year!",
@@ -12,13 +12,12 @@ export default defineEvent({
     context.dispatch("advanceYear")
   },
 
-  probability(store) {
-    const game = store.state.game
+  probability(game) {
     const acceptedLaws = game?.acceptedLaws
       .map(getAcceptedLaw)
       .filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1)
 
-    const numOfLaws = acceptedLaws && acceptedLaws.length || 0
+    const numOfLaws = (acceptedLaws && acceptedLaws.length) || 0
     if (numOfLaws < 3) {
       return 0
     }

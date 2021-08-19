@@ -33,21 +33,7 @@ import AusschreibungsverfahrenfuerWindkraftVerachtfachen from "./Ausschreibungsv
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
 
-export type LawId = string
-
-export type Law = LawDefinition & {
-  id: LawId
-}
-
-export type LawReference = {
-  lawId: LawId
-  effectiveSince: number
-}
-
-export type AcceptedLaw = Law & { effectiveSince: number }
-export type LawView = Law & { pos: number; zIndex: number }
-
-export const allLaws: Law[] = lawList({
+const allLawsObj = {
   AllesBleibtBeimAlten,
 
   // Initiale Gesetze
@@ -103,4 +89,48 @@ export const allLaws: Law[] = lawList({
   TempolimitAufAutobahnenAussitzen,
 
   FoerderungFuerTierhaltungAbschaffen,
-})
+}
+
+export type LawId = keyof typeof allLawsObj
+
+export type Law = LawDefinition & {
+  id: LawId
+}
+
+export type LawReference = {
+  lawId: LawId
+  effectiveSince: number
+}
+
+export type AcceptedLaw = Law & { effectiveSince: number }
+export type LawView = Law & { pos: number; zIndex: number }
+
+export const allLaws: Law[] = lawList(allLawsObj)
+
+export function getLaw(lawId: LawId): Law {
+  const law = allLaws.find((law) => law.id === lawId)
+  if (law) {
+    return law
+  }
+  throw Error(`Law #${lawId} not found`)
+}
+
+export function getAcceptedLaw(lawRef: LawReference): AcceptedLaw {
+  const law = getLaw(lawRef.lawId)
+  if (law) {
+    return { ...law, effectiveSince: lawRef.effectiveSince }
+  }
+  throw Error(`Law #${lawRef.lawId} not found`)
+}
+
+export function idsToLaws(lawIds: LawId[]): Law[] {
+  return lawIds
+    .map((lawId) => {
+      const law = allLaws.find((law) => law.id === lawId)
+      if (!law) {
+        console.error(`Inconsistency: Proposed law #${lawId} not found`)
+      }
+      return law as Law
+    })
+    .filter((a) => a)
+}

@@ -33,7 +33,7 @@ export default defineComponent({
     return {
       store,
       game: computed(() => store.state.game),
-      eventMachine: EventMachine(store, allEvents),
+      eventMachine: EventMachine(undefined, allEvents),
     }
   },
 
@@ -144,7 +144,7 @@ export default defineComponent({
 
     sortedEvents(): EventRow[] {
       if (!this.game) return []
-      return getSortedEvents(this.store, this.eventsSortCol, this.eventsSortDir, allEvents)
+      return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
   },
 })

@@ -3,7 +3,7 @@ import EventMachine from "../src/EventMachine"
 import { Event } from "../src/events"
 import { Game } from "../src/game"
 import { createBaseValues, defaultValues } from "../src/params"
-import { Store } from "../src/store"
+import { Context, Store } from "../src/store"
 
 const game: Game = {
   id: "1",
@@ -28,12 +28,12 @@ function createEvent(title: string, probability: number): Event {
 
 const dispatched: { type: string; data: unknown }[] = []
 
-const store = {
+const context = {
   state: { game },
   dispatch(type: string, data: unknown) {
     dispatched.push({ type, data })
   },
-} as Store
+} as Context
 
 // Use Fisher/Yates algorithm to create a number of integers in random order
 function shuffledInts(howMay: number): number[] {
@@ -48,7 +48,7 @@ function shuffledInts(howMay: number): number[] {
 function countEvents(allEvents: Event[]): Record<string, number> {
   const numbers = shuffledInts(100)
   let index = 0
-  const eventMachine = EventMachine(store, allEvents, () => numbers[index++])
+  const eventMachine = EventMachine(context, allEvents, () => numbers[index++])
   dispatched.length = 0
   const agg = Object.assign({}, ...allEvents.map((event) => ({ [event.title]: 0 })))
   numbers.forEach(() => eventMachine.initiateEvent())

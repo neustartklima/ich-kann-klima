@@ -1,24 +1,29 @@
 import "should"
 import API from "../src/model/api"
 import repository from "../src/model/Repository"
-import { fillUpLawProposals } from "../src/LawProposer"
-import { Game } from "../src/game"
+import { Game, newGame, prepareNextStep } from "../src/game"
 import Sinon from "sinon"
 import FetchQueueFactory from "../src/model/FetchQueue"
-import { Law } from "../src/laws"
+import { Law, LawId } from "../src/laws"
 
 function priority(game: Game): number {
   return 1
 }
 
 const allLaws: Law[] = [
-  { id: "law1", title: "law 1", description: "", effects: () => [], priority },
-  { id: "law2", title: "law 2", description: "", effects: () => [], priority },
-  { id: "law3", title: "law 3", description: "", effects: () => [], priority },
-  { id: "law4", title: "law 4", description: "", effects: () => [], priority },
-  { id: "law5", title: "law 5", description: "", effects: () => [], priority },
-  { id: "law6", title: "law 6", description: "", effects: () => [], priority },
-  { id: "law7", title: "law 7", description: "", effects: () => [], priority },
+  { id: "AbschaffungDerMineraloelsteuer", title: "law 1", description: "", effects: () => [], priority },
+  { id: "AbstandsregelnFuerWindkraftAbschaffen", title: "law 2", description: "", effects: () => [], priority },
+  { id: "AbstandsregelnFuerWindkraftLockern", title: "law 3", description: "", effects: () => [], priority },
+  { id: "AbstandsregelnFuerWindkraftVerschaerfen", title: "law 4", description: "", effects: () => [], priority },
+  { id: "AllesBleibtBeimAlten", title: "law 5", description: "", effects: () => [], priority },
+  { id: "AusbauVonStrassen", title: "law 6", description: "", effects: () => [], priority },
+  {
+    id: "AusschreibungsverfahrenfuerWindkraftVerachtfachen",
+    title: "law 7",
+    description: "",
+    effects: () => [],
+    priority,
+  },
 ]
 
 function mockedFetch(info: RequestInfo, init?: RequestInit) {
@@ -33,10 +38,10 @@ async function mockedFetchFunc(method: string, path: string, data?: Record<strin
   return { ...JSON.parse(data?.toString() || ""), id: "12345" }
 }
 
-const storage = ({
+const storage = {
   setItem: Sinon.spy(),
   getItem: Sinon.spy(),
-} as unknown) as Storage
+} as unknown as Storage
 
 const fetchQueue = FetchQueueFactory(mockedFetchFunc)
 const mockedApi = API(fetchQueue)
@@ -53,49 +58,51 @@ describe("LawProposer", () => {
     clock.restore()
   })
 
-  describe("fillUpLawProposals()", () => {
+  describe("prepareNextStep()", () => {
     it("should fill up an empty array", async () => {
-      const game = await createGame(allLaws)
+      const game = newGame(allLaws)
+      prepareNextStep(game, allLaws, [])
       game.proposedLaws.length.should.equal(6)
       game.proposedLaws.should.deepEqual(allLaws.map((law) => law.id).slice(0, 6))
     })
 
     it("should add missing laws", async () => {
-      const game = await createGame(allLaws)
+      const game = newGame(allLaws)
+      prepareNextStep(game, allLaws, [])
       game.proposedLaws.shift()
-      fillUpLawProposals(game, allLaws)
+      prepareNextStep(game, allLaws, [])
       game.proposedLaws.length.should.equal(6)
       const ids = allLaws.map((law) => law.id).slice(0, 6)
-      ids.push(ids.shift() as string)
+      ids.push(ids.shift() as LawId)
       game.proposedLaws.should.deepEqual(ids)
     })
 
     it("should only fill up if enough laws exist", async () => {
-      const game = await createGame([])
-      fillUpLawProposals(game, allLaws.slice(0, 3))
+      const game = newGame(allLaws)
+      prepareNextStep(game, allLaws.slice(0, 3), [])
       game.proposedLaws.length.should.equal(3)
     })
 
     it("should not fill up already proposed laws", async () => {
-      const game = await createGame([])
-      fillUpLawProposals(game, allLaws.slice(0, 3))
-      fillUpLawProposals(game, allLaws.slice(0, 3))
+      const game = newGame(allLaws)
+      prepareNextStep(game, allLaws.slice(0, 3), [])
+      prepareNextStep(game, allLaws.slice(0, 3), [])
       game.proposedLaws.length.should.equal(3)
     })
 
     it("should remove an accepted law", async () => {
-      const game = await createGame(allLaws)
-      fillUpLawProposals(game, allLaws)
+      const game = newGame(allLaws)
+      prepareNextStep(game, allLaws, [])
       game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
-      fillUpLawProposals(game, allLaws)
+      prepareNextStep(game, allLaws, [])
       game.proposedLaws.should.not.containEql(allLaws[0].id)
     })
 
     it("should fill up after remove", async () => {
-      const game = await createGame(allLaws)
-      fillUpLawProposals(game, allLaws)
+      const game = newGame(allLaws)
+      prepareNextStep(game, allLaws, [])
       game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
-      fillUpLawProposals(game, allLaws)
+      prepareNextStep(game, allLaws, [])
       game.proposedLaws.length.should.equal(6)
     })
   })

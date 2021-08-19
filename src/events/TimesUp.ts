@@ -1,5 +1,4 @@
 import { defineEvent } from "../Factory"
-import { Store } from "../store"
 
 export default defineEvent({
   title: "Du hast durchgehalten",
@@ -12,7 +11,7 @@ export default defineEvent({
     context.dispatch("gameOver")
   },
 
-  probability(store: Store) {
-    return store.state.game && store.state.game.currentYear === 2050 ? 1 : 0
+  probability(game) {
+    return game.currentYear === 2050 ? 1 : 0
   },
 })

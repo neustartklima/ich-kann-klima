@@ -12,7 +12,7 @@ export default defineEvent({
     context.dispatch("gameOver")
   },
 
-  probability(store: Store) {
-    return store.state.game && store.state.game.values.popularity <= 0 ? 1 : 0
+  probability(game) {
+    return game.values.popularity <= 0 ? 1 : 0
   },
 })
