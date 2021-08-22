@@ -2,8 +2,6 @@
 import { defineComponent } from "@vue/runtime-core"
 import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
-import PeekInside from "./PeekInside.vue"
-import EventMachine, { PriorizedEvent } from "../EventMachine"
 import FinanceIndicator from "./FinanceIndicator.vue"
 import PopularityIndicator from "./PopularityIndicator.vue"
 import ClimateIndicator from "./ClimateIndicator.vue"
@@ -14,7 +12,6 @@ import TVSet from "./TVSet.vue"
 import Tour from "./Tour.vue"
 import { Event } from "../events"
 import { useStore } from "../store"
-import { allEvents } from "../events"
 import { co2Rating, financeRating } from "../Calculator"
 
 export default defineComponent({
@@ -22,7 +19,6 @@ export default defineComponent({
     Calendar,
     ClimateIndicator,
     Heater,
-    PeekInside,
     LawProposals,
     SpeechBubble,
     FinanceIndicator,
@@ -36,8 +32,6 @@ export default defineComponent({
     const store = useStore()
     return {
       store,
-      devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
-      eventMachine: EventMachine(store, allEvents),
     }
   },
 
@@ -48,14 +42,6 @@ export default defineComponent({
 
     eventText(): string {
       return this.eventToShow()?.description || ""
-    },
-
-    priorizedEvents(): PriorizedEvent[] {
-      return this.eventMachine.getPriorizedEvents()
-    },
-
-    probability(): (event: Event) => string {
-      return (event) => (event.probability(this.store) * 100).toFixed(2)
     },
 
     currentYear(): number {
@@ -111,21 +97,6 @@ export default defineComponent({
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
     <Tour />
   </div>
-
-  <div class="peek">
-    <PeekInside v-if="devMode" />
-  </div>
-
-  <div v-if="devMode" class="probabilities">
-    <b>Probable Events</b>
-    <ul v-if="devMode && $store.state.game">
-      <li v-for="event in priorizedEvents" :key="event.id">
-        <span>{{ event.title }}</span>
-        <span>{{ probability(event) }}%</span>
-        <span>{{ (event.priority * 100).toFixed(2) }}%</span>
-      </li>
-    </ul>
-  </div>
 </template>
 
 <style lang="scss">
@@ -134,7 +105,6 @@ export default defineComponent({
   height: 800px;
   perspective: 1000px;
   perspective-origin: 500px 200px;
-  transform: translate(500px, 200px) scale(var(--scale));
 }
 
 #walls {
@@ -160,47 +130,5 @@ export default defineComponent({
 
 #wall-right {
   transform: translateX(500px) rotateY(90deg);
-}
-
-.peek {
-  display: flex;
-  position: fixed;
-  z-index: 20;
-  top: 0;
-  right: 0;
-}
-
-.probabilities {
-  position: fixed;
-  top: calc(100% - 1.7rem);
-  background: white;
-  padding: 5px;
-  border: 1px solid #cccccc;
-
-  &:hover {
-    top: auto;
-    bottom: 0;
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-size: 12px;
-
-    li {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-
-      span {
-        padding: 0 5px;
-      }
-
-      span:first-of-type {
-        flex-grow: 1;
-      }
-    }
-  }
 }
 </style>
