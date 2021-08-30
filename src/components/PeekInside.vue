@@ -19,7 +19,6 @@ import Citation from "./Citation.vue"
 import { Citations } from "../citations"
 import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
-import EventMachine from "../EventMachine"
 import { Event, allEvents } from "../events"
 
 export default defineComponent({
@@ -33,7 +32,6 @@ export default defineComponent({
     return {
       store,
       game: computed(() => store.state.game),
-      eventMachine: EventMachine(undefined, allEvents),
     }
   },
 

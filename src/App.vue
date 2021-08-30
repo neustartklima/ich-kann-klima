@@ -1,9 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue"
 import PeekInside from "./components/PeekInside.vue"
-import EventMachine, { PriorizedEvent } from "./EventMachine"
-import { allEvents, Event } from "./events"
-import { Game } from "./game"
 import { useStore } from "./store"
 
 export default defineComponent({
@@ -15,7 +12,6 @@ export default defineComponent({
     return {
       store,
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
-      eventMachine: EventMachine(undefined, allEvents),
     }
   },
 
@@ -34,17 +30,6 @@ export default defineComponent({
     setTimeout(this.updateStyle, 0)
     window.addEventListener("resize", this.updateStyle)
   },
-
-  computed: {
-    priorizedEvents(): PriorizedEvent[] {
-      const game = this.store.state.game
-      return game ? this.eventMachine.getPriorizedEvents(game) : []
-    },
-
-    probability(): (game: Game, event: Event) => string {
-      return (game, event) => (event.probability(game) * 100).toFixed(2)
-    },
-  },
 })
 </script>
 
@@ -55,17 +40,6 @@ export default defineComponent({
 
   <div class="peek">
     <PeekInside v-if="devMode" />
-  </div>
-
-  <div v-if="devMode" class="probabilities">
-    <b>Probable Events</b>
-    <ul v-if="devMode && store.state.game">
-      <li v-for="event in priorizedEvents" :key="event.id">
-        <span>{{ event.title }}</span>
-        <span>{{ probability(store.state.game, event) }}%</span>
-        <span>{{ (event.priority * 100).toFixed(2) }}%</span>
-      </li>
-    </ul>
   </div>
 </template>
 
@@ -112,39 +86,5 @@ ul {
   z-index: 20;
   top: 0;
   right: 0;
-}
-
-.probabilities {
-  position: fixed;
-  top: calc(100% - 1.7rem);
-  background: white;
-  padding: 5px;
-  border: 1px solid #cccccc;
-
-  &:hover {
-    top: auto;
-    bottom: 0;
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-size: 12px;
-
-    li {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-
-      span {
-        padding: 0 5px;
-      }
-
-      span:first-of-type {
-        flex-grow: 1;
-      }
-    }
-  }
 }
 </style>
