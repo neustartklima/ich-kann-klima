@@ -12,6 +12,7 @@
     "johnsoncodehk.volar",
     "buster.ndjson-colorizer",
     "github.vscode-pull-request-github",
-    "tobermory.es6-string-html"
+    "tobermory.es6-string-html",
+    "hediet.vscode-drawio"
   ]
 }
