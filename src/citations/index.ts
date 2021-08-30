@@ -49,6 +49,18 @@ export const uba2020DeutscheTreibhausgasEmissionen = new Citation({
   comment: `Soweit nicht anders angegeben, werden die Werte aus Blatt "THG" Spalte 2019 verwendet`,
 })
 
+export const uba2021crfTabellen = new Citation({
+  url: "https://cdr.eionet.europa.eu/de/eu/mmr/art07_inventory/ghg_inventory/envx7gqa/DEU_2021_2019_14012021_224203_started.xlsx/manage_document",
+  referringUrl:
+    "https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland?listpart=1#nationale-und-europaische-klimaziele",
+  title: "Detaillierte Berichtstabellen CRF 2021 der deutschen Treibhausgas-Emissionen für das Jahr 2019",
+  publisher: "Umweltbundesamt",
+  date: "2021-01-15",
+  archiveUrl:
+    "https://web.archive.org/web/20210830100630/https://cdr.eionet.europa.eu/de/eu/mmr/art07_inventory/ghg_inventory/envx7gqa/DEU_2021_2019_14012021_224203_started.xlsx",
+  comment: ``,
+})
+
 export const vdv2019Statistik = new Citation({
   url: "https://www.vdv.de/vdv-statistik-2019.pdfx",
   title: "2019 Statistik",

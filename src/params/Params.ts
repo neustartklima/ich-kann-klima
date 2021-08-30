@@ -11,6 +11,7 @@ import {
   sb2020Bevoelkerung,
   statAemter2021BIP,
   uba2020DeutscheTreibhausgasEmissionen,
+  uba2021crfTabellen,
   ubaEmissionenDesVerkehrs,
   ukgov2018kWhToCO2,
   umweltrat2020Umweltgutachten,
@@ -211,9 +212,9 @@ const co2emissions = new ComputedParam({
   details: markdown`
 
   `,
-  internals: markdown`
+  internals: markdown`Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.`,
 
-  `,
+  citations: [uba2021crfTabellen],
 })
 
 const electricityDemand = new WritableParam({
