@@ -24759,6 +24759,15 @@ var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   archiveUrl: "https://web.archive.org/web/20210712115357/https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   comment: `Soweit nicht anders angegeben, werden die Werte aus Blatt "THG" Spalte 2019 verwendet`
 });
+var uba2021crfTabellen = new Citation({
+  url: "https://cdr.eionet.europa.eu/de/eu/mmr/art07_inventory/ghg_inventory/envx7gqa/DEU_2021_2019_14012021_224203_started.xlsx/manage_document",
+  referringUrl: "https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland?listpart=1#nationale-und-europaische-klimaziele",
+  title: "Detaillierte Berichtstabellen CRF 2021 der deutschen Treibhausgas-Emissionen f\xFCr das Jahr 2019",
+  publisher: "Umweltbundesamt",
+  date: "2021-01-15",
+  archiveUrl: "https://web.archive.org/web/20210830100630/https://cdr.eionet.europa.eu/de/eu/mmr/art07_inventory/ghg_inventory/envx7gqa/DEU_2021_2019_14012021_224203_started.xlsx",
+  comment: ``
+});
 var vdv2019Statistik = new Citation({
   url: "https://www.vdv.de/vdv-statistik-2019.pdfx",
   title: "2019 Statistik",
@@ -25092,9 +25101,8 @@ var co2emissions = new ComputedParam({
   details: markdown`
 
   `,
-  internals: markdown`
-
-  `
+  internals: markdown`Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.`,
+  citations: [uba2021crfTabellen]
 });
 var electricityDemand = new WritableParam({
   unit: "TWh",
