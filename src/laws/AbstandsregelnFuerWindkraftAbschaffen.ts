@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { Percent, TWh } from "../types"
-import { modify } from "../params"
+import { Change, modify } from "../params"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft abschaffen",
@@ -9,7 +9,7 @@ export default defineLaw({
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
 
-  effects(data, startYear, currentYear) {
+  effects(data, startYear, currentYear): Change[] {
     return [
       modify("popularity")
         .byValue(-40)

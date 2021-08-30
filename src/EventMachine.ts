@@ -1,29 +1,30 @@
-import { Store } from "./store"
+import { Context } from "./store"
 import { Event } from "./events"
+import { Game } from "./game"
 
 export type PriorizedEvent = Event & { priority: number }
 
-export default function EventMachine(store: Store, allEvents: Event[], random = Math.random) {
+export default function EventMachine(context: Context | undefined, allEvents: Event[], random = Math.random) {
   let timer: unknown // to work with both, NodeJS and browser
 
-  function getPriority(event: Event): number {
-    const probability = event.probability(store)
+  function getPriority(event: Event, game: Game): number {
+    const probability = event.probability(game)
     return probability >= random() ? probability : 0
   }
 
-  function getPriorizedEvents(): PriorizedEvent[] {
+  function getPriorizedEvents(game: Game): PriorizedEvent[] {
     return allEvents
-      .map((event) => ({ ...event, priority: getPriority(event) }))
+      .map((event) => ({ ...event, priority: getPriority(event, game) }))
       .filter((event) => event.priority)
       .sort((a, b) => b.priority - a.priority)
   }
 
   function initiateEvent() {
-    const game = store.state.game
+    const game = context?.state.game
     if (game) {
-      const events = getPriorizedEvents()
+      const events = getPriorizedEvents(game)
       if (events.length) {
-        store.dispatch("applyEvent", { event: events[0] })
+        context?.dispatch("applyEvent", { event: events[0] })
       }
     }
   }
@@ -48,6 +49,6 @@ export default function EventMachine(store: Store, allEvents: Event[], random = 
 
 let instance: ReturnType<typeof EventMachine>
 
-export function singleton(store: Store, allEvents: Event[]): ReturnType<typeof EventMachine> {
-  return instance || (instance = EventMachine(store, allEvents))
+export function singleton(context: Context, allEvents: Event[]): ReturnType<typeof EventMachine> {
+  return instance || (instance = EventMachine(context, allEvents))
 }

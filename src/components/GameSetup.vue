@@ -13,6 +13,7 @@ import Tour from "./Tour.vue"
 import { Event } from "../events"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
+import { Game } from "../game"
 
 export default defineComponent({
   components: {
