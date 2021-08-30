@@ -25789,7 +25789,7 @@ var DaemmungAltbauAbschaffen_default = defineLaw({
   },
   priority(game) {
     const currentActiveLawId = getActiveLaw(game.acceptedLaws, /^DaemmungAltbau/);
-    if (!currentActiveLawId || currentActiveLawId === "DaemmmungAltbauAbschaffen")
+    if (!currentActiveLawId || currentActiveLawId === "DaemmungAltbauAbschaffen")
       return 0;
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
     return linear(15, 25, buildingsPercentage);
@@ -26285,7 +26285,7 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
 });
 
 // src/laws/index.ts
-var allLaws = lawList({
+var allLawsObj = {
   AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
   InitialAtomausstieg: InitialAtomausstieg_default,
   KohleverstromungEinstellen: KohleverstromungEinstellen_default,
@@ -26317,7 +26317,31 @@ var allLaws = lawList({
   Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
   TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default,
   FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default
-});
+};
+var allLaws = lawList(allLawsObj);
+function getLaw(lawId) {
+  const law = allLaws.find((law2) => law2.id === lawId);
+  if (law) {
+    return law;
+  }
+  throw Error(`Law #${lawId} not found`);
+}
+function getAcceptedLaw(lawRef) {
+  const law = getLaw(lawRef.lawId);
+  if (law) {
+    return { ...law, effectiveSince: lawRef.effectiveSince };
+  }
+  throw Error(`Law #${lawRef.lawId} not found`);
+}
+function idsToLaws(lawIds) {
+  return lawIds.map((lawId) => {
+    const law = allLaws.find((law2) => law2.id === lawId);
+    if (!law) {
+      console.error(`Inconsistency: Proposed law #${lawId} not found`);
+    }
+    return law;
+  }).filter((a) => a);
+}
 
 // src/server/DecisionController.ts
 function DecisionController_default({ eventStore: eventStore2, models: models2 }) {
@@ -26340,12 +26364,12 @@ function DecisionController_default({ eventStore: eventStore2, models: models2 }
 var AbstandsregelnWindkraft_default = defineEvent({
   title: "Abstandsregeln f\xFCr Windkraft erneut im Fokus",
   description: "Anwohner wollen, dass der Abstand zu Windkraftanlagen erh\xF6ht wird. Das f\xFChrte zu einer Auseinandersetzung des Wirtschaftsministers mit der Umweltministerin.",
-  laws: lawList({
-    AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
-    AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
-    AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
-    AbstandsregelnFuerWindkraftAbschaffen: AbstandsregelnFuerWindkraftAbschaffen_default
-  }),
+  laws: [
+    "AbstandsregelnFuerWindkraftVerschaerfen",
+    "AbstandsregelnFuerWindkraftWieBisher",
+    "AbstandsregelnFuerWindkraftLockern",
+    "AbstandsregelnFuerWindkraftAbschaffen"
+  ],
   apply() {
   },
   probability() {
@@ -26357,17 +26381,16 @@ var AbstandsregelnWindkraft_default = defineEvent({
 var Altbausanierung_default = defineEvent({
   title: "Gesetzesinitiative zur Sanierung von Altbauten",
   description: "Zur Einhaltung der Pariser Klimaschutzvereinbarung halten Experten es f\xFCr unausweichlich, dass in die Sanierung von Altbauten investiert werden muss. Die konkrete Ausgestaltung wird kontrovers diskutiert.",
-  laws: lawList({
-    DaemmungAltbauAbschaffen: DaemmungAltbauAbschaffen_default,
-    AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
-    DaemmungAltbau1Percent: DaemmungAltbau1Percent_default,
-    DaemmungAltbau2Percent: DaemmungAltbau2Percent_default,
-    DaemmungAltbau4Percent: DaemmungAltbau4Percent_default
-  }),
+  laws: [
+    "DaemmungAltbauAbschaffen",
+    "AllesBleibtBeimAlten",
+    "DaemmungAltbau1Percent",
+    "DaemmungAltbau2Percent",
+    "DaemmungAltbau4Percent"
+  ],
   apply() {
   },
-  probability(store) {
-    const game = store.state.game;
+  probability(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
     return linear(15, 25, buildingsPercentage) / 100;
   }
@@ -26384,13 +26407,17 @@ var bestechung_default = defineEvent({
     nicht zustimmen wirst.
   `,
   apply(context) {
-    const law = getFirstMatchingLaw(context.getters.proposedLaws);
+    const game = context.state.game;
+    if (!game) {
+      return;
+    }
+    const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
     if (law) {
       context.dispatch("rejectLaw", { lawId: law.id });
     }
   },
-  probability(store) {
-    const law = getFirstMatchingLaw(store.getters.proposedLaws);
+  probability(game) {
+    const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
     return law ? Math.random() : 0;
   }
 });
@@ -26399,11 +26426,7 @@ var bestechung_default = defineEvent({
 var EnergieStrategie_default = defineEvent({
   title: "Grundsatzdebatte zur Stromerzeugung",
   description: "Der Bundestag debattierte heute \xFCber die Strategie zur Stromerzeugung in Deutschland. Die Meinungen der Parteien gingen dabei stark auseinander.",
-  laws: lawList({
-    KohleverstromungEinstellen: KohleverstromungEinstellen_default,
-    EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
-    KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default
-  }),
+  laws: ["KohleverstromungEinstellen", "EnergiemixRegeltDerMarkt", "KernenergienutzungVerlaengern"],
   apply() {
   },
   probability() {
@@ -26421,8 +26444,8 @@ var Finanzkollaps_default = defineEvent({
   apply(context) {
     context.dispatch("gameOver");
   },
-  probability(store) {
-    return store.state.game && store.state.game.values.stateDebt > defaultValues.stateDebt * 2 ? 1 : 0;
+  probability(game) {
+    return game.values.stateDebt > defaultValues.stateDebt * 2 ? 1 : 0;
   }
 });
 
@@ -26436,26 +26459,10 @@ var Hitzeh_lle_default = defineEvent({
   apply(context) {
     context.dispatch("gameOver");
   },
-  probability(store) {
-    return store.state.game && store.state.game.values.co2budget <= 0 ? 1 : 0;
+  probability(game) {
+    return game.values.co2budget <= 0 ? 1 : 0;
   }
 });
-
-// src/LawProposer.ts
-function getLaw(lawId) {
-  const law = allLaws.find((law2) => law2.id === lawId);
-  if (law) {
-    return law;
-  }
-  throw Error(`Law #${lawId} not found`);
-}
-function getAcceptedLaw(lawRef) {
-  const law = getLaw(lawRef.lawId);
-  if (law) {
-    return { ...law, effectiveSince: lawRef.effectiveSince };
-  }
-  throw Error(`Law #${lawRef.lawId} not found`);
-}
 
 // src/events/NewYear.ts
 var NewYear_default = defineEvent({
@@ -26467,8 +26474,7 @@ var NewYear_default = defineEvent({
   apply(context) {
     context.dispatch("advanceYear");
   },
-  probability(store) {
-    const game = store.state.game;
+  probability(game) {
     const acceptedLaws = game?.acceptedLaws.map(getAcceptedLaw).filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1);
     const numOfLaws = acceptedLaws && acceptedLaws.length || 0;
     if (numOfLaws < 3) {
@@ -26498,12 +26504,12 @@ var SocialMedia_default = defineEvent({
 var TempolimitAufAutobahnen_default = defineEvent({
   title: "Generelles Tempolimit beschlossen",
   description: "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland m\xFCssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolimit nur noch anpassen.",
-  laws: lawList({
-    Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
-    Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
-    Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
-    TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default
-  }),
+  laws: [
+    "Tempolimit130AufAutobahnen",
+    "Tempolimit120AufAutobahnen",
+    "Tempolimit100AufAutobahnen",
+    "TempolimitAufAutobahnenAussitzen"
+  ],
   apply() {
   },
   probability() {
@@ -26521,8 +26527,8 @@ var TimesUp_default = defineEvent({
   apply(context) {
     context.dispatch("gameOver");
   },
-  probability(store) {
-    return store.state.game && store.state.game.currentYear === 2050 ? 1 : 0;
+  probability(game) {
+    return game.currentYear === 2050 ? 1 : 0;
   }
 });
 
@@ -26536,8 +26542,8 @@ var WahlVerloren_default = defineEvent({
   apply(context) {
     context.dispatch("gameOver");
   },
-  probability(store) {
-    return store.state.game && store.state.game.values.popularity <= 0 ? 1 : 0;
+  probability(game) {
+    return game.values.popularity <= 0 ? 1 : 0;
   }
 });
 
@@ -26545,12 +26551,12 @@ var WahlVerloren_default = defineEvent({
 var WindkraftAusschreibung_default = defineEvent({
   title: "Abstimmung zur Ausschreibung von Windkraftanlagen",
   description: "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Kindkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
-  laws: lawList({
-    AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
-    AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
-    AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
-    AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default
-  }),
+  laws: [
+    "AusschreibungsverfahrenfuerWindkraftWieBisher",
+    "AusschreibungsverfahrenfuerWindkraftVerdoppeln",
+    "AusschreibungsverfahrenfuerWindkraftVervierfachen",
+    "AusschreibungsverfahrenfuerWindkraftVerachtfachen"
+  ],
   apply() {
   },
   probability() {
