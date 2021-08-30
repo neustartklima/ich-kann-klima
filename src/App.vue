@@ -3,6 +3,7 @@ import { defineComponent } from "vue"
 import PeekInside from "./components/PeekInside.vue"
 import EventMachine, { PriorizedEvent } from "./EventMachine"
 import { allEvents, Event } from "./events"
+import { Game } from "./game"
 import { useStore } from "./store"
 
 export default defineComponent({
@@ -14,7 +15,7 @@ export default defineComponent({
     return {
       store,
       devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
-      eventMachine: EventMachine(store, allEvents),
+      eventMachine: EventMachine(undefined, allEvents),
     }
   },
 
@@ -36,11 +37,12 @@ export default defineComponent({
 
   computed: {
     priorizedEvents(): PriorizedEvent[] {
-      return this.eventMachine.getPriorizedEvents()
+      const game = this.store.state.game
+      return game ? this.eventMachine.getPriorizedEvents(game) : []
     },
 
-    probability(): (event: Event) => string {
-      return (event) => (event.probability(this.store) * 100).toFixed(2)
+    probability(): (game: Game, event: Event) => string {
+      return (game, event) => (event.probability(game) * 100).toFixed(2)
     },
   },
 })
@@ -57,10 +59,10 @@ export default defineComponent({
 
   <div v-if="devMode" class="probabilities">
     <b>Probable Events</b>
-    <ul v-if="devMode && $store.state.game">
+    <ul v-if="devMode && store.state.game">
       <li v-for="event in priorizedEvents" :key="event.id">
         <span>{{ event.title }}</span>
-        <span>{{ probability(event) }}%</span>
+        <span>{{ probability(store.state.game, event) }}%</span>
         <span>{{ (event.priority * 100).toFixed(2) }}%</span>
       </li>
     </ul>

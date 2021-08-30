@@ -1,11 +1,10 @@
-import { Context, store } from "."
-import { GameId, Game } from "../game"
+import { Context } from "."
+import { GameId, Game, prepareNextStep, newGame } from "../game"
 import API from "../model/api"
 import RepositoryFactory from "../model/Repository"
 import * as Calculator from "../Calculator"
-import { fillUpLawProposals, getAcceptedLaw, getLaw } from "../LawProposer"
-import { singleton as getEventMachine } from "../EventMachine"
-import { allEvents, Event } from "../events"
+import { getAcceptedLaw, getLaw } from "../laws"
+import { Event } from "../events"
 import router from "../router"
 import FetchQueueFactory from "../model/FetchQueue"
 import RequestFactory from "../model/Request"
@@ -21,7 +20,11 @@ const repository = RepositoryFactory({ api })
 
 export const actions = {
   async startGame(context: Context) {
-    const game = await repository.createGame()
+    const game = newGame()
+    const event = prepareNextStep(game)
+    await repository.createGame(game)
+    context.commit("setGameState", { game })
+    context.dispatch("applyEvent", { event })
     router.push("/games/" + game.id)
   },
 
@@ -54,20 +57,19 @@ export const actions = {
       )
       .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
     game.acceptedLaws = [...filteredLawRefs, newLawRef]
-    fillUpLawProposals(game)
+    const event = prepareNextStep(game)
     await repository.saveGame(game)
     context.commit("setGameState", { game })
+    context.dispatch("applyEvent", { event })
     await repository.decisionMade(game, newLaw, true)
-    getEventMachine(store, allEvents).start()
   },
 
   async rejectLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
-    fillUpLawProposals(game)
     await repository.decisionMade(game, getLaw(payload.lawId), false)
+    await repository.saveGame(game)
     context.commit("setGameState", { game })
-    getEventMachine(store, allEvents).start()
   },
 
   async advanceYear(context: Context) {
@@ -75,31 +77,28 @@ export const actions = {
     const laws = game.acceptedLaws.map(getAcceptedLaw)
     game.currentYear++
     game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
-    fillUpLawProposals(game)
     await repository.saveGame(game)
     context.commit("setGameState", { game })
   },
 
-  async applyEvent(context: Context, payload: { event: Event }) {
+  async applyEvent(context: Context, payload: { event: Event | undefined }) {
+    if (!payload.event) return
     const game = { ...(context.state.game as Game) }
-    game.events.unshift(payload.event)
     await repository.eventOccurred(game, payload.event)
-    if (payload.event.laws?.length) {
-      game.proposedLaws = payload.event.laws.map((law) => law.id)
-    }
-    context.commit("setGameState", { game })
     payload.event.apply(context)
   },
 
   acknowledgeEvent(context: Context, event: Event) {
     const game = { ...(context.state.game as Game) }
     game.events.find((e) => e.id === event.id)!.acknowledged = true
+    repository.saveGame(game)
     context.commit("setGameState", { game })
   },
 
   applyEffects(context: Context, changes: Change[]) {
     const values = applyEffects({ ...(context.state.game?.values as BaseParams) }, changes)
     const game = { ...context.state.game, values } as Game
+    repository.saveGame(game)
     context.commit("setGameState", { game })
   },
 
@@ -127,7 +126,6 @@ export const actions = {
   stopTour(context: Context) {
     context.commit("setTour", { step: "", active: false })
     localStorage.setItem("tour", "completed")
-    getEventMachine(store, allEvents).start()
   },
 
   async error(context: Context, payload: { error: Error }) {

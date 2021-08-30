@@ -3,7 +3,7 @@ import sinon from "sinon"
 import { createBaseValues, defaultValues } from "../src/params"
 import { API } from "../src/model/api"
 import Repository from "../src/model/Repository"
-import { initGame } from "../src/model"
+import { initGame, newGame } from "../src/game"
 
 describe("createBaseValues(defaultValues)", () => {
   const iniVals = createBaseValues(defaultValues)
@@ -55,7 +55,7 @@ describe("repository", () => {
     const createGame = sinon.stub()
     const api = { createGame } as unknown as API
     const repository = Repository({ api, storage })
-    await repository.createGame([])
+    await repository.createGame(initGame())
     createGame.callCount.should.equal(1)
   })
 
@@ -65,7 +65,7 @@ describe("repository", () => {
     const createGame = sinon.stub().rejects(undefined)
     const api = { createGame } as unknown as API
     const repository = Repository({ api, logger, storage })
-    const result = await repository.createGame([])
+    const result = await repository.createGame(initGame())
     result.id.should.match(uuidPattern)
     promise.should.be.resolvedWith("Cannot save new game - trying again later")
   })

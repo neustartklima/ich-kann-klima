@@ -1,8 +1,7 @@
 import "should"
 import Sinon from "sinon"
-import { initGame } from "../src/model"
 import APIFactory, { API } from "../src/model/api"
-import { Game } from "../src/game"
+import { Game, initGame } from "../src/game"
 
 describe("API", () => {
   const mockQuque = () => ({ add: Sinon.stub(), remove: Sinon.stub(), callsPending: Sinon.stub() })
@@ -68,8 +67,10 @@ describe("API", () => {
 
   describe("decisionMade", () => {
     it("should add a call to the fetch queue", async () => {
-      await api.decisionMade("4711", "0815", true)
-      fetchQueue.add.calledOnceWith("post", "/games/4711/decisions/0815", { accepted: true }).should.be.true()
+      await api.decisionMade("4711", "NahverkehrAusbauen", true)
+      fetchQueue.add
+        .calledOnceWith("post", "/games/4711/decisions/NahverkehrAusbauen", { accepted: true })
+        .should.be.true()
       fetchQueue.remove.getCalls().length.should.equal(0)
     })
   })

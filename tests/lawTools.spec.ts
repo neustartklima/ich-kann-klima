@@ -60,16 +60,16 @@ describe("lawTools", () => {
   describe("getActiveLaw", () => {
     it("find the most current active law matching the pattern", () => {
       const refs: LawReference[] = [
-        { lawId: "test-1", effectiveSince: 2020 },
-        { lawId: "other", effectiveSince: 2020 },
-        { lawId: "test-3", effectiveSince: 2021 },
-        { lawId: "test-2", effectiveSince: 2023 },
-        { lawId: "test-4", effectiveSince: 2022 },
+        { lawId: "DaemmungAltbau1Percent", effectiveSince: 2020 },
+        { lawId: "NahverkehrAusbauen", effectiveSince: 2024 },
+        { lawId: "DaemmungAltbau2Percent", effectiveSince: 2021 },
+        { lawId: "DaemmungAltbau4Percent", effectiveSince: 2023 },
+        { lawId: "DaemmungAltbauAbschaffen", effectiveSince: 2022 },
       ]
 
-      const result = getActiveLaw(refs, /^test/)
+      const result = getActiveLaw(refs, /^Daemmung/)
       should(result).not.be.undefined()
-      result?.should.equal("test-2")
+      result?.should.equal("DaemmungAltbau4Percent")
     })
   })
 })
