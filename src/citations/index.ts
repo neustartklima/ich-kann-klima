@@ -37,6 +37,18 @@ export const welt2018BundKassiertMineraloelsteuer = new Citation({
     "https://web.archive.org/web/20201113072050/https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html",
 })
 
+export const welt2016SteuervorteileKosten18Mrd = new Citation({
+  url: "https://www.welt.de/wirtschaft/article156562013/Steuervorteile-fuer-wenige-kosten-18-Milliarden-Euro.html",
+  title: "Steuervorteile für wenige kosten 18 Milliarden Euro",
+  publisher: "welt.de",
+  authors: "Martin Greive",
+  date: "2016-06-26",
+  archiveUrl:
+    "https://web.archive.org/web/20201201122658/https://www.welt.de/wirtschaft/article156562013/Steuervorteile-fuer-wenige-kosten-18-Milliarden-Euro.html",
+  comment: ``,
+  internalComment: ``,
+})
+
 export const uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   referringUrl:
@@ -70,6 +82,16 @@ export const vdv2019Statistik = new Citation({
   comment: `Seite 11 enthält CO2e-Emissions-Werte pro Personenkilometer [g/Pkm] für mehrere Verkehrsmittel`,
 })
 
+export const vdvDatenFakten = new Citation({
+  url: "https://www.vdv.de/daten-fakten.aspx",
+  title: "2019 Statistik",
+  publisher: "VDV",
+  date: "2021-01-01",
+  archiveUrl: "https://web.archive.org/web/20210526133828/https://www.vdv.de/daten-fakten.aspx",
+  comment: ``,
+  internalComment: ``,
+})
+
 export const ubaEmissionenDesVerkehrs = new Citation({
   url: "https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr",
   title: "Emissionen des Verkehrs - Straßengüterverkehr",
@@ -87,6 +109,17 @@ export const bmvi2020VerkehrInZahlen = new Citation({
     "https://web.archive.org/web/20210520124742/https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
   comment: `Seite 219 enthält Personenkilometer-Jahreswerte für mehrere Verkehrsmittel. Soweit nicht anders angegeben, werden die Werte aus Spalte 2019 verwendet`,
 })
+
+export const bmvi2020OePNVFoerderungDesBundes = new Citation({
+  url: "https://bmvi.de/SharedDocs/DE/Dossier/OEPNV/oepnv-foerderung-des-bundes.html",
+  title: "Finanzierung ÖPNV",
+  publisher: "BMVI",
+  date: "2020-12-09",
+  archiveUrl:
+    "https://web.archive.org/web/20210605120822/https://www.bmvi.de/SharedDocs/DE/Dossier/OEPNV/oepnv-foerderung-des-bundes.html",
+  comment: ``,
+})
+
 
 export const polarstern2021CO2nachBrennstoff = new Citation({
   url: "https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085",
@@ -195,6 +228,18 @@ export const wp2021Staatsverschuldung = new Citation({
   date: "2021-06-30",
   archiveUrl:
     "https://web.archive.org/web/20210630204805/https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands",
+  comment: ``,
+  internalComment: ``,
+})
+
+export const duh2020Dienstwagenprivileg = new Citation({
+  url: "https://www.duh.de/presse/pressemitteilungen/pressemitteilung/in-zeiten-des-klimawandels-sind-subventionsformen-wie-das-dienstwagenprivileg-einfach-nicht-mehr-ze/",
+  title:
+    "In Zeiten des Klimawandels sind Subventionsformen wie das Dienstwagenprivileg einfach nicht mehr zeitgemäß - Interview mit Prof. Stefan Gössling",
+  publisher: "Deutsche Umwelthilfe",
+  date: "2020-08-24",
+  archiveUrl:
+    "https://web.archive.org/web/20210410185937/https://www.duh.de/presse/pressemitteilungen/pressemitteilung/in-zeiten-des-klimawandels-sind-subventionsformen-wie-das-dienstwagenprivileg-einfach-nicht-mehr-ze/",
   comment: ``,
   internalComment: ``,
 })
