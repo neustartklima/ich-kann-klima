@@ -2,6 +2,7 @@ import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { Percent, TWh } from "../types"
 import { Change, modify } from "../params"
+import { markdown } from "../lib/utils"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft lockern",
@@ -24,4 +25,17 @@ export default defineLaw({
     const relWindPercentage: Percent = (v.electricityWind / v.electricityDemand) * 100
     return linear(70, 30, relWindPercentage)
   },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 2
+
+    # Priorität
+
+    - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
+    - 100% bei einem Anteil von Windstrom von 30%.
+    - linear interpoliert
+  `,
 })

@@ -2,6 +2,7 @@ import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
 import { linear } from "../lawTools"
 import { Change, modify } from "../params"
+import { markdown } from "../lib/utils"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden sehr stark fördern",
@@ -29,4 +30,17 @@ export default defineLaw({
     const buildingsPercentage = (game.values.co2emissionsBuildings / game.values.co2emissions) * 100
     return linear(15, 25, buildingsPercentage)
   },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 6
+
+    # Folgen
+
+    # Vorbedingungen
+
+    # Priorität
+  `,
 })
