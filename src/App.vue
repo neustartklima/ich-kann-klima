@@ -66,15 +66,6 @@ body {
   transform-origin: 0 0;
 }
 
-h1 {
-  text-align: left;
-  margin: 0.3em;
-}
-
-ul {
-  list-style-type: "... ";
-}
-
 /* filter breaks preserve3d, so apply highlight filter to child elements */
 .highlighted * {
   filter: drop-shadow(2px 4px 6px red);
