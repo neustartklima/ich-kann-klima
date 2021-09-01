@@ -24750,6 +24750,16 @@ var welt2018BundKassiertMineraloelsteuer = new Citation({
   date: "2018-02-04",
   archiveUrl: "https://web.archive.org/web/20201113072050/https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html"
 });
+var welt2016SteuervorteileKosten18Mrd = new Citation({
+  url: "https://www.welt.de/wirtschaft/article156562013/Steuervorteile-fuer-wenige-kosten-18-Milliarden-Euro.html",
+  title: "Steuervorteile f\xFCr wenige kosten 18 Milliarden Euro",
+  publisher: "welt.de",
+  authors: "Martin Greive",
+  date: "2016-06-26",
+  archiveUrl: "https://web.archive.org/web/20201201122658/https://www.welt.de/wirtschaft/article156562013/Steuervorteile-fuer-wenige-kosten-18-Milliarden-Euro.html",
+  comment: ``,
+  internalComment: ``
+});
 var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   referringUrl: "https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele",
@@ -24776,6 +24786,15 @@ var vdv2019Statistik = new Citation({
   archiveUrl: "https://web.archive.org/web/20210714151304/https://www.vdv.de/vdv-statistik-2019.pdfx",
   comment: `Seite 11 enth\xE4lt CO2e-Emissions-Werte pro Personenkilometer [g/Pkm] f\xFCr mehrere Verkehrsmittel`
 });
+var vdvDatenFakten = new Citation({
+  url: "https://www.vdv.de/daten-fakten.aspx",
+  title: "2019 Statistik",
+  publisher: "VDV",
+  date: "2021-01-01",
+  archiveUrl: "https://web.archive.org/web/20210526133828/https://www.vdv.de/daten-fakten.aspx",
+  comment: ``,
+  internalComment: ``
+});
 var ubaEmissionenDesVerkehrs = new Citation({
   url: "https://www.umweltbundesamt.de/daten/verkehr/emissionen-des-verkehrs#strassenguterverkehr",
   title: "Emissionen des Verkehrs - Stra\xDFeng\xFCterverkehr",
@@ -24789,6 +24808,14 @@ var bmvi2020VerkehrInZahlen = new Citation({
   date: "2021-04-13",
   archiveUrl: "https://web.archive.org/web/20210520124742/https://www.bmvi.de/SharedDocs/DE/Publikationen/G/verkehr-in-zahlen-2020-pdf.pdf?__blob=publicationFile",
   comment: `Seite 219 enth\xE4lt Personenkilometer-Jahreswerte f\xFCr mehrere Verkehrsmittel. Soweit nicht anders angegeben, werden die Werte aus Spalte 2019 verwendet`
+});
+var bmvi2020OePNVFoerderungDesBundes = new Citation({
+  url: "https://bmvi.de/SharedDocs/DE/Dossier/OEPNV/oepnv-foerderung-des-bundes.html",
+  title: "Finanzierung \xD6PNV",
+  publisher: "BMVI",
+  date: "2020-12-09",
+  archiveUrl: "https://web.archive.org/web/20210605120822/https://www.bmvi.de/SharedDocs/DE/Dossier/OEPNV/oepnv-foerderung-des-bundes.html",
+  comment: ``
 });
 var polarstern2021CO2nachBrennstoff = new Citation({
   url: "https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085",
@@ -24881,6 +24908,15 @@ var wp2021Staatsverschuldung = new Citation({
   publisher: "Wikipedia",
   date: "2021-06-30",
   archiveUrl: "https://web.archive.org/web/20210630204805/https://de.wikipedia.org/wiki/Staatsverschuldung_Deutschlands",
+  comment: ``,
+  internalComment: ``
+});
+var duh2020Dienstwagenprivileg = new Citation({
+  url: "https://www.duh.de/presse/pressemitteilungen/pressemitteilung/in-zeiten-des-klimawandels-sind-subventionsformen-wie-das-dienstwagenprivileg-einfach-nicht-mehr-ze/",
+  title: "In Zeiten des Klimawandels sind Subventionsformen wie das Dienstwagenprivileg einfach nicht mehr zeitgem\xE4\xDF - Interview mit Prof. Stefan G\xF6ssling",
+  publisher: "Deutsche Umwelthilfe",
+  date: "2020-08-24",
+  archiveUrl: "https://web.archive.org/web/20210410185937/https://www.duh.de/presse/pressemitteilungen/pressemitteilung/in-zeiten-des-klimawandels-sind-subventionsformen-wie-das-dienstwagenprivileg-einfach-nicht-mehr-ze/",
   comment: ``,
   internalComment: ``
 });
@@ -25645,7 +25681,43 @@ var KohleverstromungEinstellen_default = defineLaw({
       return 0;
     }
     return linear(1e4, 0, game.values.unemployment);
-  }
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 5
+
+    Muss nicht als erstes gewählt werden, weil es sich sofort auswirkt. Andere vorbereitende Maßnahmen sind ggf wichtiger.
+
+    # Folgen
+
+    - [x] Ab Inkrafttreten geht jährliche Braun- und Steinkohle Stromproduktion auf 0 TWh.
+    - [ ] Ab dem Zeitpunkt, zu dem das Gesetz in Kraft tritt, werden pro Jahr 200 Mio t CO2 weniger ausgestoßen. (Das sollte sich indirekt ergeben.)
+    - [x] Der fehlende Strom wird im Zweifel mit Gas erzeugt.
+      - Wenn keine Alternative dann? (Gas oder doch Ausland?)
+      - Abhängig vom Ausbau der erneuerbaren Energien wird durch Gas ersetzt oder durch mehr Strom aus dem Ausland kompensiert.
+    - [x] Aufgrund der erteilten Lizenzen muss den Kraftwerksbetreibern eine Entschädigung von 4.3 Mrd € über 18 Jahre verteilt gezahlt werden.
+    - [x] Kohlesubvention vn 2.5 Mrd € wird abgeschafft. (TODO #78: Quellen?)
+    - [x] Über die nächsten 10 Jahre werden 50000 Arbeitsplätze abgebaut.
+      - 20000 Arbeitsplätze in der Kohleindustrie
+      - Die Hälfte von 60.000 indirekt betroffenen Arbeitsplätzen (TODO #78: (Quellen?)
+    - [x] Beliebtheit unverändert
+      - Aufteilen in Gruppen? Kaum Mehrkosten für Endverbraucher, Berücksichtigung der öffentlichen Diskussion, Freude bei Klimaaktivisten
+    - [x] Versteckte Faktoren: Arbeitsplätze, Verärgerung der alten Industrie
+
+    # Vorbedingungen
+
+    - Kohle liefert mehr als 10% des Stroms.
+    - Arbeitslosigkeit < 10 000 000.
+
+    # Priorität
+
+    - Arbeitslosigkeit 10 000 000 => 0%. (Aktuell 2 695 999 => 73%)
+    - Arbeitslosigkeit 0 => 100%
+    - linear dazwischen
+  `
 });
 
 // src/constants.ts
@@ -25771,7 +25843,20 @@ var DaemmungAltbau4Percent_default = defineLaw({
   priority(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
     return linear(15, 25, buildingsPercentage);
-  }
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 6
+
+    # Folgen
+
+    # Vorbedingungen
+
+    # Priorität
+  `
 });
 
 // src/laws/DaemmungAltbauAbschaffen.ts
@@ -25816,7 +25901,36 @@ var NahverkehrAusbauen_default = defineLaw({
   priority(game) {
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
     return linear(20, 35, mobilityPercentage);
-  }
+  },
+  citations: [bmvi2020OePNVFoerderungDesBundes],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 18
+
+    # Folgen
+
+    - Der Staatshaushalt wird jährlich mit 3 Mrd € mehr belastet. (${cite(bmvi2020OePNVFoerderungDesBundes)})
+    - Nahverkehr Kapazität steigt jährlich um 1%
+    - (Umstieg von individual Verkehr auf ÖPNV wird vereinfacht)
+        - (Geringere Verkehrsbelastung in städtischen Gebieten / auf Kurzstrecken)
+        - Nahverkehr Nutzung steigt jährlich um 1%, sobald die relative Kapazität 105% erreicht hat.
+        - PKW Nutzung sinkt um denselben Wert.
+    - Langfristig: 5 Jahre nach Inkrafttreten:
+        - (CO2 Emissionen des Mobilitätssektors sinken um 2 Mio t pro Jahr.) (Indirekt)
+        - Beliebtheit steigt um 2% pro Jahr.
+
+    # Vorbedingungen
+
+    - Priorität über 0%.
+
+    # Priorität:
+
+    - 0 bei 20% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 35% Anteil
+    - linear interpoliert
+  `
 });
 
 // src/laws/FoerderungFuerTierhaltungAbschaffen.ts
@@ -25854,7 +25968,39 @@ var NahverkehrKostenlos_default = defineLaw({
   priority(game) {
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
     return linear(0, 10, mobilityPercentage);
-  }
+  },
+  citations: [vdvDatenFakten],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 19
+
+    # Folgen
+
+    - Der Staatshaushalt wird jährlich mit 10 Mrd € stärker belastet.
+        - 13.3 Mrd € Ticketeinnahmen pro Jahr (${cite(vdvDatenFakten)})
+        - Annahme: Einsparung durch Ticketverkauf und Personal.
+    - (CO2 Emissionen für Mobilität singenk jährlich um 2 MioTonnen) (indirekt)
+    - Umstieg von individual Verkehr auf ÖPNV lohnt sich mehr
+        - Geringere Verkehrsbelastung in gut angeschlossenen Gebieten.
+        - CO2 Emissionen werden indirekt verbessert.
+        - Nahverkehr Nutzung steigt im ersten Jahr um 10%, danach um 1% jährlich.
+        - Auto Nutzung sinkt entsprechend.
+    - Arbeitslosigkeit steigt im ersten Jahr um 20 000 Menschen.
+    - Popularität steigt im ersten Jah um 10%
+        - (Sozial benachteiligte Personen profitieren)
+
+    # Vorbedingungen:
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 10% Anteil
+    - linear interpoliert
+  `
 });
 
 // src/laws/AutosInInnenstaedtenVerbieten.ts
@@ -26026,7 +26172,35 @@ var DienstwagenPrivilegAbgeschaffen_default = defineLaw({
     const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
     const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
     return linear(50, 100, relCarPercentage);
-  }
+  },
+  citations: [welt2016SteuervorteileKosten18Mrd, duh2020Dienstwagenprivileg],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 20
+
+    Zunächst sollte Nah- und Fernverkehr attraktiver gemacht werden.
+    TODO: Folgen sollten davon abhängen, ob es attraktive Alternativen gibt.
+
+    # Folgen
+
+    - Steuermehreinnahmen: 18 mrd€ / Jahr (${cite(welt2016SteuervorteileKosten18Mrd)})
+    - -0.05% Fahleistung pro Jahr (Anreiz für Auto fällt weg Gebrauchte Wagen werden teuerer).
+        - ${cite(duh2020Dienstwagenprivileg)} sagt es gibt keine echte Schätzung dafür.
+    - Entsprechend mehr Nahverkehrnutzung
+    - Zufriedenheit sinkt einmalig um 1%
+
+    # Vorbedingungen
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0% bei einem Anteil von nichterneuerbaren PKW von 50%.
+    - 100% bei einem Anteil von nichterneuerbaren PKW von 100%. (Zu Beginn: 78%)
+    - linear interpoliert
+  `
 });
 
 // src/laws/Tempolimit130AufAutobahnen.ts
@@ -26149,7 +26323,20 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
     const v = game.values;
     const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
     return linear(70, 30, relWindPercentage);
-  }
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 2
+
+    # Priorität
+
+    - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
+    - 100% bei einem Anteil von Windstrom von 30%.
+    - linear interpoliert
+  `
 });
 
 // src/laws/AbstandsregelnFuerWindkraftAbschaffen.ts
@@ -26256,7 +26443,35 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
     const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
     const percentage = electricityRenewable / game.values.electricityDemand * 100;
     return linear(100, 40, percentage);
-  }
+  },
+  citations: [],
+  details: markdown`
+    Windkraft Betreiber können sich mehrmals im Jahr auf ein eine bestimte Leistung
+    von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstmöglichen
+    Subventionierung umsetzen kann bekommt den Zuschlag.
+  `,
+  internals: markdown`
+    # Happy Path 3
+
+    # Folgen
+
+    - [x] Schulden +-0
+    - [x] Popularität: -2%
+    - [x] Arbeitsplätze: 500.000 also Arbeitslosigkeit -100 Tausend Menschen im ersten Jahr
+    - [ ] Abhängigkeit, ob das Budget ausgeschöpft wird, ist schwierig.)
+    - [x] CO2 Emissionen: Zubau Windkraftonshore +27,6 TWh (es sei den gedeckelt durch Abstandsregeln), Windkraftoffshore + 4,8 TWh.
+
+    # Vorbedingungen
+
+    - Nur wenn "verdoppeln" schon beschlossen wurde.
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
+    - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
+    - linear interpoliert
+  `
 });
 
 // src/laws/AusschreibungsverfahrenfuerWindkraftVerachtfachen.ts
