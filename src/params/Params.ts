@@ -212,7 +212,9 @@ const co2emissions = new ComputedParam({
   details: markdown`
 
   `,
-  internals: markdown`Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.`,
+  internals: markdown`
+Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.
+  `,
 
   citations: [uba2021crfTabellen],
 })
@@ -223,6 +225,23 @@ const electricityDemand = new WritableParam({
   citations: [fraunhoferISE2020ElectricityGeneration],
   details: markdown`
 
+  `,
+  internals: markdown`
+
+  `,
+})
+
+const electricityGridQuality = new WritableParam({
+  unit: "Percent",
+  initialValue: 50,
+  citations: [],
+  details: markdown`
+    Ein qualitatives Maß für den Ausbau des Stromnetzes, der notwendig ist,
+    um as auf dezentrale und neue (z.B. off-shore) Standorte der Stromerzeugung
+    vorzubereiten.
+
+    50% steht für die initiale Situation. 100% ist der ideale notwenidge
+    Ausbausstand für 100% regenerativ/dezentral erzeugten Strom.
   `,
   internals: markdown`
 
@@ -245,6 +264,46 @@ const electricityWind = new WritableParam({
   unit: "TWh",
   initialValue: 131.85,
   citations: [fraunhoferISE2020ElectricityGeneration],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `,
+})
+
+type RefPoint = { value: number; result: number }
+
+/** Linear function connecting two points.
+ *
+ * Implementation:
+ * - If `value == a.value`, `bTerm` is zero and `aTerm == a.result`.
+ * - If `value == b.value`, `aTerm` is zero and `bTerm == - b.result`.
+ *
+ * @param a First point.
+ * @param b Second point.
+ * @returns Function.
+ */
+function linearFunction(a: RefPoint, b: RefPoint): (value: number) => number {
+  const divisor = a.value - b.value
+  return (value: number) => {
+    const aTerm = (a.result * (value - b.value)) / divisor
+    const bTerm = (b.result * (value - a.value)) / divisor
+    return aTerm - bTerm
+  }
+}
+
+const electricityWindUsable = new ComputedParam({
+  unit: "TWh",
+  valueGetter(data: ParamsBase): MioTons {
+    const baseVal = electricityWind.initialValue
+    const quality = data.electricityGridQuality
+    const maxVal = data.electricityDemand
+
+    return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality)
+  },
+  shouldInitiallyBe: electricityWind.initialValue,
+  citations: [],
   details: markdown`
 
   `,
@@ -344,7 +403,7 @@ const electricityGas = new ComputedParam({
     return (
       data.electricityDemand -
       data.electricitySolar -
-      data.electricityWind -
+      data.electricityWindUsable -
       data.electricityWater -
       data.electricityHardCoal -
       data.electricityBrownCoal -
@@ -657,9 +716,11 @@ export const paramDefinitions = {
   co2emissions,
 
   electricityDemand,
+  electricityGridQuality,
 
   electricitySolar,
   electricityWind,
+  electricityWindUsable,
   electricityWindOnshoreMaxNew,
   electricityWater,
   electricityBiomass,

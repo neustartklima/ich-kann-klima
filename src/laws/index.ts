@@ -3,6 +3,7 @@ import KohleverstromungEinstellen from "./KohleverstromungEinstellen"
 import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
 import KernenergienutzungVerlaengern from "./KernenergienutzungVerlaengern"
 import InitialAtomausstieg from "./InitialAtomausstieg"
+import NetzausbauErleichtern from "./NetzausbauErleichtern"
 import DaemmungAltbau1Percent from "./DaemmungAltbau1Percent"
 import DaemmungAltbau2Percent from "./DaemmungAltbau2Percent"
 import DaemmungAltbau4Percent from "./DaemmungAltbau4Percent"
@@ -42,6 +43,7 @@ const allLawsObj = {
   KohleverstromungEinstellen,
   EnergiemixRegeltDerMarkt,
   KernenergienutzungVerlaengern,
+  NetzausbauErleichtern,
 
   AbstandsregelnFuerWindkraftVerschaerfen,
   AbstandsregelnFuerWindkraftWieBisher,
