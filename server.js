@@ -25137,7 +25137,9 @@ var co2emissions = new ComputedParam({
   details: markdown`
 
   `,
-  internals: markdown`Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.`,
+  internals: markdown`
+Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.
+  `,
   citations: [uba2021crfTabellen]
 });
 var electricityDemand = new WritableParam({
@@ -25146,6 +25148,22 @@ var electricityDemand = new WritableParam({
   citations: [fraunhoferISE2020ElectricityGeneration],
   details: markdown`
 
+  `,
+  internals: markdown`
+
+  `
+});
+var electricityGridQuality = new WritableParam({
+  unit: "Percent",
+  initialValue: 50,
+  citations: [],
+  details: markdown`
+    Ein qualitatives Maß für den Ausbau des Stromnetzes, der notwendig ist,
+    um as auf dezentrale und neue (z.B. off-shore) Standorte der Stromerzeugung
+    vorzubereiten.
+
+    50% steht für die initiale Situation. 100% ist der ideale notwenidge
+    Ausbausstand für 100% regenerativ/dezentral erzeugten Strom.
   `,
   internals: markdown`
 
@@ -25166,6 +25184,31 @@ var electricityWind = new WritableParam({
   unit: "TWh",
   initialValue: 131.85,
   citations: [fraunhoferISE2020ElectricityGeneration],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+function linearFunction(a, b) {
+  const divisor = a.value - b.value;
+  return (value) => {
+    const aTerm = a.result * (value - b.value) / divisor;
+    const bTerm = b.result * (value - a.value) / divisor;
+    return aTerm - bTerm;
+  };
+}
+var electricityWindUsable = new ComputedParam({
+  unit: "TWh",
+  valueGetter(data) {
+    const baseVal = electricityWind.initialValue;
+    const quality = data.electricityGridQuality;
+    const maxVal = data.electricityDemand;
+    return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality);
+  },
+  shouldInitiallyBe: electricityWind.initialValue,
+  citations: [],
   details: markdown`
 
   `,
@@ -25254,7 +25297,7 @@ var electricityCoal = new ComputedParam({
 var electricityGas = new ComputedParam({
   unit: "TWh",
   valueGetter(data) {
-    return data.electricityDemand - data.electricitySolar - data.electricityWind - data.electricityWater - data.electricityHardCoal - data.electricityBrownCoal - data.electricityBiomass - data.electricityNuclear;
+    return data.electricityDemand - data.electricitySolar - data.electricityWindUsable - data.electricityWater - data.electricityHardCoal - data.electricityBrownCoal - data.electricityBiomass - data.electricityNuclear;
   },
   details: markdown`
 
@@ -25536,8 +25579,10 @@ var paramDefinitions = {
   co2emissionsEnergy,
   co2emissions,
   electricityDemand,
+  electricityGridQuality,
   electricitySolar,
   electricityWind,
+  electricityWindUsable,
   electricityWindOnshoreMaxNew,
   electricityWater,
   electricityBiomass,
@@ -25777,6 +25822,45 @@ var InitialAtomausstieg_default = defineLaw({
   priority(game) {
     return 0;
   }
+});
+
+// src/laws/NetzausbauErleichtern.ts
+var NetzausbauErleichtern_default = defineLaw({
+  title: "Netzausbau erleichtern",
+  description: "Vereinfachung und Beschleunigung von Planungsverfahren f\xFCr den Ausbau des Stromnetzes",
+  effects(data, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-3).if(startYear2 === currentYear),
+      modify("electricityGridQuality").byValue(1)
+    ];
+  },
+  priority(game) {
+    const v = game.values;
+    const relWindPercentage = v.electricityWindUsable / v.electricityDemand * 100;
+    return linear(70, 30, relWindPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 1
+
+    # Folgen
+
+    - [x] Im ersten Jahr machen BIs schlechte Stimmung: 3% Popularität weniger.
+    - [x] Die Netzqualität steigt jährlich um 1%.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 0% bei einem Anteil von nutzbarem Windstrom von 70%. (Zu Beginn: 27%)
+    - 100% bei einem Anteil von nutzbarem Windstrom von 30%.
+    - linear interpoliert
+  `
 });
 
 // src/laws/DaemmungAltbau1Percent.ts
@@ -26506,6 +26590,7 @@ var allLawsObj = {
   KohleverstromungEinstellen: KohleverstromungEinstellen_default,
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
   KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
+  NetzausbauErleichtern: NetzausbauErleichtern_default,
   AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
   AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
   AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
