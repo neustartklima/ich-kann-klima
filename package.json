@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
     "test": "nyc mocha",
+    "prebuild": "esbuild --bundle --platform=node --sourcemap src/generate.ts | node && npx prettier -w src/events/*",
     "build": "vue-tsc --noEmit && vite build && npm run server:build && npm run copy-sources",
     "serve": "vite preview",
     "start": "cross-env NODE_ENV=production node dist/server.js",
