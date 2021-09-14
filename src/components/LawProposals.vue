@@ -39,12 +39,11 @@ export default defineComponent({
   methods: {
     accept(lawId: LawId) {
       this.store.dispatch("acceptLaw", { lawId })
-      this.poppedUp = false
     },
 
     select(pos: number) {
       this.zIndexes = getZIndexes(this.proposedLaws.length, pos)
-    }
+    },
   },
 })
 </script>
@@ -53,7 +52,7 @@ export default defineComponent({
   <div class="ProposedLaws" :class="{ poppedUp }" @click="poppedUp = true">
     <LawCard
       v-for="(law, pos) in lawsToShow"
-      :key="pos"
+      :key="law.id"
       :law="law"
       :selectable="poppedUp"
       :numCards="lawsToShow.length"
