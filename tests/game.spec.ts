@@ -5,6 +5,9 @@ import { Game, newGame, prepareNextStep } from "../src/game"
 import Sinon from "sinon"
 import FetchQueueFactory from "../src/model/FetchQueue"
 import { Law, LawId } from "../src/laws"
+import { Event } from "../src/events"
+import should from "should"
+import { probabilityThatEventOccurs } from "../src/constants"
 
 function priority(game: Game): number {
   return 1
@@ -47,7 +50,23 @@ const fetchQueue = FetchQueueFactory(mockedFetchFunc)
 const mockedApi = API(fetchQueue)
 const { createGame } = repository({ api: mockedApi, storage })
 
-describe("LawProposer", () => {
+class FisherYatesRandom {
+  index: number = 0
+  numbers: number[]
+  constructor(count: number) {
+    const a = [...Array(count).keys()].map((n) => n / count)
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * i)
+      ;[a[i], a[j]] = [a[j], a[i]]
+    }
+    this.numbers = a
+  }
+  random(): number {
+    return this.numbers[this.index++]
+  }
+}
+
+describe("game", () => {
   let clock: Sinon.SinonFakeTimers
 
   before(() => {
@@ -104,6 +123,61 @@ describe("LawProposer", () => {
       game.acceptedLaws.push({ lawId: allLaws[0].id, effectiveSince: game.currentYear + 1 })
       prepareNextStep(game, allLaws, [])
       game.proposedLaws.length.should.equal(6)
+    })
+
+    it("should return event with highest probability > 1", () => {
+      const game = newGame(allLaws)
+      const events: Event[] = [
+        { id: "1", title: "e1", description: "", apply: () => {}, probability: () => 2 },
+        { id: "2", title: "e2", description: "", apply: () => {}, probability: () => 3 },
+        { id: "3", title: "e3", description: "", apply: () => {}, probability: () => 0.9 },
+      ]
+      const ret = prepareNextStep(game, allLaws, events)
+      should(ret).not.be.undefined()
+      ret?.id.should.equal("2")
+    })
+
+    it("should never return event with probability <=0", () => {
+      const game = newGame(allLaws)
+      const events: Event[] = [
+        { id: "1", title: "e1", description: "", apply: () => {}, probability: () => 0 },
+        { id: "2", title: "e2", description: "", apply: () => {}, probability: () => -0.01 },
+        { id: "3", title: "e3", description: "", apply: () => {}, probability: () => -100 },
+      ]
+      for (var num = 0; num <= 20; num++) {
+        const ret = prepareNextStep(game, allLaws, events)
+        should(ret).be.undefined()
+      }
+    })
+
+    it("should return events with probability between 0 and 1 with according probability", () => {
+      const game = newGame(allLaws)
+      type CEvent = Event & { count: number }
+      const events: CEvent[] = [
+        { id: "1", title: "e1", description: "", apply: () => {}, probability: () => 0.1, count: 0 },
+        { id: "2", title: "e2", description: "", apply: () => {}, probability: () => 0.9, count: 0 },
+        { id: "3", title: "e3", description: "", apply: () => {}, probability: () => 0.5, count: 0 },
+      ]
+      const probSum = events.map((e) => e.probability(game)).reduce((a, b) => a + b)
+
+      const NUM_CALLS = 100
+      const precision = 1
+      const rand = new FisherYatesRandom(NUM_CALLS)
+
+      const counts = events.reduce((counts: Record<string, number>, event) => {
+        counts[event.id] = 0
+        return counts
+      }, {})
+      for (var num = 0; num < NUM_CALLS; num++) {
+        const res = prepareNextStep(game, allLaws, events, () => rand.random())
+        if (res != undefined) counts[res.id]++
+      }
+      const eventCount = Object.values(counts).reduce((a, b) => a + b)
+      eventCount.should.be.approximately(NUM_CALLS * probabilityThatEventOccurs, precision)
+
+      events.forEach((e) =>
+        counts[e.id].should.be.approximately((eventCount * e.probability(game)) / probSum, precision)
+      )
     })
   })
 

@@ -1,4 +1,4 @@
-import { maxProposedLaws, startYear } from "./constants"
+import { maxProposedLaws, probabilityThatEventOccurs, startYear } from "./constants"
 import { allEvents, Event } from "./events"
 import { allLaws, Law, LawId, LawReference } from "./laws"
 import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from "./params"
@@ -62,26 +62,42 @@ export function prepareNextStep(
   events: Event[] = allEvents,
   random = Math.random
 ): Event | undefined {
-  const probEvents = prepareProbEvents(game, events)
-  const selectedEvent = selectEvent(probEvents, random())
-  if (selectedEvent) {
-    game.events.unshift(selectedEvent)
+  const event = checkForEvent(game, events, random)
+  if (event) {
+    game.events.unshift(event)
   }
-  const newProposals = determineNewProposals(game, laws, selectedEvent?.laws ? selectedEvent.laws : [])
+  const newProposals = determineNewProposals(game, laws, event?.laws ? event.laws : [])
   game.proposedLaws = changeInPlace(game.proposedLaws, newProposals)
 
-  return selectedEvent
+  return event
+}
+
+function checkForEvent(game: Game, events: Event[], random: () => number): Event | undefined {
+  const probEvents = prepareProbEvents(game, events)
+  const certainEvent = checkCertainEvent(probEvents)
+  if (certainEvent) {
+    return certainEvent
+  }
+  const correctedEvents = correctProbs(probEvents)
+  return selectEvent(correctedEvents, random())
 }
 
 type ProbEvent = Event & { prob: number }
-const probNoEvent = 0.3
 
 function prepareProbEvents(game: Game, events: Event[]): ProbEvent[] {
-  const probEvents: ProbEvent[] = events
-    .map((event) => ({ ...event, prob: event.probability(game) }))
-    .filter((event) => event.prob && event.prob > 0)
-  const probSum = probEvents.map((e) => e.prob).reduce((sum, p) => sum + p, 0) + probNoEvent
-  return probEvents.map((event) => ({ ...event, prob: event.prob / probSum }))
+  return events.map((event) => ({ ...event, prob: event.probability(game) })).filter((event) => event.prob > 0)
+}
+
+function checkCertainEvent(probEvents: ProbEvent[]): ProbEvent | undefined {
+  return probEvents
+    .filter((event) => event.prob > 1)
+    .reduce((found: ProbEvent | undefined, event) => (event.prob > (found?.prob || 0) ? event : found), undefined)
+}
+
+function correctProbs(probEvents: ProbEvent[]): ProbEvent[] {
+  const probSum = probEvents.map((e) => e.prob).reduce((sum, p) => sum + p, 0)
+  const correctionFactor = probabilityThatEventOccurs / probSum
+  return probEvents.map((event) => ({ ...event, prob: event.prob * correctionFactor }))
 }
 
 function selectEvent(events: ProbEvent[], random: number): Event | undefined {
@@ -92,7 +108,7 @@ function selectEvent(events: ProbEvent[], random: number): Event | undefined {
   return undefined
 }
 
-export function determineNewProposals(game: Game, laws: Law[], eventLawIds: LawId[]): LawId[] {
+function determineNewProposals(game: Game, laws: Law[], eventLawIds: LawId[]): LawId[] {
   const isAccepted = (law: Law) => game.acceptedLaws?.some((l) => l.lawId === law.id)
   const isRejected = (law: Law) => game.rejectedLaws?.includes(law.id)
   const isHidden = (law: Law) => law.labels?.includes("hidden") || false
