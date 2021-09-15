@@ -1,5 +1,6 @@
 import { defineEvent } from "../Factory"
 import { getAcceptedLaw } from "../laws"
+import { eventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Happy New Year!",
@@ -20,6 +21,9 @@ export default defineEvent({
     const numOfLaws = (acceptedLaws && acceptedLaws.length) || 0
     if (numOfLaws < 3) {
       return 0
+    }
+    if (numOfLaws > 4) {
+      return eventProbs.newYear
     }
 
     // After 3 decisions, the year might end, after 5 decisions, the probability is 100%

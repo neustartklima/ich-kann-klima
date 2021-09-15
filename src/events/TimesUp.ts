@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { eventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Du hast durchgehalten",
@@ -12,6 +13,6 @@ export default defineEvent({
   },
 
   probability(game) {
-    return game.currentYear === 2050 ? 1 : 0
+    return game.currentYear === 2050 ? eventProbs.won : 0
   },
 })
