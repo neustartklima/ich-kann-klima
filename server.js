@@ -25706,7 +25706,7 @@ function modify(name) {
 var KohleverstromungEinstellen_default = defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const yearsActive = currentYear - startYear2;
     const compensation = yearsActive < 18 ? 4.3 / 18 : 0;
     const subventions = 2.5;
@@ -25773,7 +25773,7 @@ var endYear = 2050;
 var EnergiemixRegeltDerMarkt_default = defineLaw({
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
-  effects(data) {
+  effects() {
     return [
       modify("stateDebt").byValue(-37),
       modify("electricityHardCoal").byPercent(-10),
@@ -25794,7 +25794,7 @@ var KernenergienutzungVerlaengern_default = defineLaw({
   title: "Kernenergienutzung verl\xE4ngern",
   description: "Kernkraftwerke l\xE4nger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],
-  effects(data) {
+  effects() {
     return [
       modify("electricityNuclear").setValue(104.3),
       modify("stateDebt").byValue(-2.5),
@@ -25811,7 +25811,7 @@ var InitialAtomausstieg_default = defineLaw({
   title: "Initial: Atomausstieg",
   description: "Atomausstieg finded wie beschlossen 2022 statt",
   labels: ["hidden", "initial", "Kernenergie"],
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const mapping = {
       2021: 60.45,
       2022: 30.21
@@ -25828,7 +25828,7 @@ var InitialAtomausstieg_default = defineLaw({
 var NetzausbauErleichtern_default = defineLaw({
   title: "Netzausbau erleichtern",
   description: "Vereinfachung und Beschleunigung von Planungsverfahren f\xFCr den Ausbau des Stromnetzes",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
       modify("electricityGridQuality").byValue(1)
@@ -25867,7 +25867,7 @@ var NetzausbauErleichtern_default = defineLaw({
 var DaemmungAltbau1Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
   description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit verg\xFCnstigten Krediten gef\xF6rdert.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const costsPerYear = 0.5;
     const inEffect = currentYear - startYear2 > 2;
     return [
@@ -25888,7 +25888,7 @@ var DaemmungAltbau1Percent_default = defineLaw({
 var DaemmungAltbau2Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
   description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit einem zinslosen Kredit und einem Zuschuss von 20% der Kosten gef\xF6rdert.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const costsPerYear = 1;
     const inEffect = currentYear - startYear2 > 2;
     return [
@@ -25910,7 +25910,7 @@ var DaemmungAltbau2Percent_default = defineLaw({
 var DaemmungAltbau4Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden sehr stark f\xF6rdern",
   description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungspl\xE4tze im Handwerk geschaffen durch einen Zuschuss von 500\u20AC pro Monat, damit der zu erwartende Bauboom bew\xE4ltigt werden kann.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const costsPerYear = 3;
     const yearsActive = currentYear - startYear2;
     const inEffect = yearsActive >= 2;
@@ -25969,10 +25969,10 @@ var DaemmungAltbauAbschaffen_default = defineLaw({
 var NahverkehrAusbauen_default = defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit st\xE4rker bezuschusst.",
-  effects(data, startYear2, currentYear) {
-    const relCapacity = data.publicLocalCapacity / data.publicLocalUsage * 100;
-    const carModifier = modify("carUsage").byValue(-0.01 * data.publicLocalUsage).if(relCapacity >= 105);
-    const carChange = carModifier.getChange(data);
+  effects(game, startYear2, currentYear) {
+    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
+    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicLocalUsage).if(relCapacity >= 105);
+    const carChange = carModifier.getChange(game.values);
     const yearsActive = currentYear - startYear2;
     return [
       modify("stateDebt").byValue(3),
@@ -26021,7 +26021,7 @@ var NahverkehrAusbauen_default = defineLaw({
 var FoerderungFuerTierhaltungAbschaffen_default = defineLaw({
   title: "F\xF6rderung f\xFCr Tierhaltung abschaffen",
   description: "Subventionen f\xFCr Tierhaltung werden ersatzlos gestrichen",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(-10),
       modify("co2emissionsAgriculture").byValue(-10).if(startYear2 === currentYear),
@@ -26037,10 +26037,10 @@ var FoerderungFuerTierhaltungAbschaffen_default = defineLaw({
 var NahverkehrKostenlos_default = defineLaw({
   title: "Nahverkehr Kostenlos",
   description: "Die Kosten f\xFCr den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr ben\xF6tigt werden.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const percentage = startYear2 === currentYear ? 10 : 1;
-    const carModifier = modify("carUsage").byValue(-(percentage / 100) * data.publicLocalUsage);
-    const carChange = carModifier.getChange(data);
+    const carModifier = modify("carUsage").byValue(-(percentage / 100) * game.values.publicLocalUsage);
+    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(10),
       modify("publicLocalUsage").byValue(-carChange),
@@ -26091,16 +26091,16 @@ var NahverkehrKostenlos_default = defineLaw({
 var AutosInInnenstaedtenVerbieten_default = defineLaw({
   title: "Autos in Innenst\xE4dten verbieten",
   description: "Die Innenst\xE4dte der gro\xDFen St\xE4dte werden zu Autofreien Zonen erkl\xE4rt und begr\xFCnt, sowie Fahrrad und Fu\xDFg\xE4ngerzonen eingerichtet.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     var popularityChange = -2;
-    if (data.publicLocalCapacity > data.publicLocalUsage * 1.2) {
+    if (game.values.publicLocalCapacity > game.values.publicLocalUsage * 1.2) {
       popularityChange = -1;
       if (startYear2 + 2 < currentYear) {
         popularityChange = 2;
       }
     }
-    const carModifier = modify("carUsage").byValue(-0.1 * data.publicLocalUsage).if(startYear2 === currentYear);
-    const carChange = carModifier.getChange(data);
+    const carModifier = modify("carUsage").byValue(-0.1 * game.values.publicLocalUsage).if(startYear2 === currentYear);
+    const carChange = carModifier.getChange(game.values);
     return [modify("popularity").byValue(popularityChange), carModifier, modify("publicLocalUsage").byValue(-carChange)];
   },
   priority(game) {
@@ -26113,10 +26113,10 @@ var AutosInInnenstaedtenVerbieten_default = defineLaw({
 var FernverkehrVerbindungenAusbauen_default = defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",
   description: "Der Ausbau des \xF6ffentlichen Fernverkehrs wird bundesweit st\xE4rker Bezuschusst und Vorangetrieben",
-  effects(data) {
-    const relCapacity = data.publicNationalCapacity / data.publicNationalUsage * 100;
-    const carModifier = modify("carUsage").byValue(0.015 * data.publicNationalUsage).if(relCapacity >= 105);
-    const carChange = carModifier.getChange(data);
+  effects(game) {
+    const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
+    const carModifier = modify("carUsage").byValue(0.015 * game.values.publicNationalUsage).if(relCapacity >= 105);
+    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(6),
       modify("publicNationalCapacity").byPercent(1),
@@ -26136,7 +26136,7 @@ var FernverkehrVerbindungenAusbauen_default = defineLaw({
 var WasserstofftechnologieFoerdern_default = defineLaw({
   title: "Wasserstofftechnologie f\xF6rdern",
   description: "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie wird stark gef\xF6rdert.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(3),
       modify("carRenewablePercentage").byValue(1).if(startYear2 + 5 <= currentYear)
@@ -26154,11 +26154,11 @@ var WasserstofftechnologieFoerdern_default = defineLaw({
 var AbschaffungDerMineraloelsteuer_default = defineLaw({
   title: "Abschaffung der Mineral\xF6lsteuer",
   description: "Die Steuer auf s\xE4mtliche erd\xF6lbasierten Treibstoffe wird abgeschafft.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const localModifier = modify("publicLocalUsage").byPercent(-20).if(startYear2 === currentYear);
     const longModifier = modify("publicNationalUsage").byPercent(-20).if(startYear2 === currentYear);
-    const localChange = localModifier.getChange(data);
-    const longChange = longModifier.getChange(data);
+    const localChange = localModifier.getChange(game.values);
+    const longChange = longModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(41),
       modify("popularity").byValue(5).if(startYear2 === currentYear),
@@ -26199,11 +26199,11 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
 var AusbauVonStrassen_default = defineLaw({
   title: "Ausbau von Stra\xDFen",
   description: "Autobahnen und Stra\xDFen werden intensiver ausgebaut.",
-  effects(data) {
+  effects(game) {
     const localModifier = modify("publicLocalUsage").byPercent(-1);
     const longModifier = modify("publicNationalUsage").byPercent(-1);
-    const localChange = localModifier.getChange(data);
-    const longChange = longModifier.getChange(data);
+    const localChange = localModifier.getChange(game.values);
+    const longChange = longModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(5),
       modify("popularity").byValue(0.5),
@@ -26223,7 +26223,7 @@ var AusbauVonStrassen_default = defineLaw({
 var DieselPrivilegAbgeschaffen_default = defineLaw({
   title: "Diesel Privileg abgeschaffen",
   description: "Diesel wird jetzt genauso besteuert wie Benzin.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(-7.35),
       modify("popularity").byValue(-1).if(startYear2 === currentYear)
@@ -26241,9 +26241,9 @@ var DieselPrivilegAbgeschaffen_default = defineLaw({
 var DienstwagenPrivilegAbgeschaffen_default = defineLaw({
   title: "Dienstwagen Privileg abgeschaffen",
   description: "Steuererleichterungen f\xFCr Dienstwagen werden abgeschafft.",
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     const carModifier = modify("carUsage").byPercent(-0.05);
-    const carChange = carModifier.getChange(data);
+    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(-18),
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
@@ -26293,9 +26293,9 @@ var Tempolimit130AufAutobahnen_default = defineLaw({
   description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 130 km/h.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
-  effects(data) {
+  effects(game) {
     const emissionModifier = modify("carEmissionFactor").byValue(157.9);
-    const emissionChange = emissionModifier.getChange(data);
+    const emissionChange = emissionModifier.getChange(game.values);
     return [
       modify("popularity").byValue(2).if(emissionChange < 0),
       emissionModifier
@@ -26316,9 +26316,9 @@ var Tempolimit120AufAutobahnen_default = defineLaw({
   description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 120 km/h.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
-  effects(data) {
+  effects(game) {
     const emissionModifier = modify("carEmissionFactor").byValue(157.1);
-    const emissionChange = emissionModifier.getChange(data);
+    const emissionChange = emissionModifier.getChange(game.values);
     return [
       modify("popularity").byValue(2).if(emissionChange < 0),
       emissionModifier
@@ -26339,9 +26339,9 @@ var Tempolimit100AufAutobahnen_default = defineLaw({
   description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 100 km/h.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
-  effects(data) {
+  effects(game) {
     const emissionModifier = modify("carEmissionFactor").byValue(154.1);
-    const emissionChange = emissionModifier.getChange(data);
+    const emissionChange = emissionModifier.getChange(game.values);
     return [
       modify("popularity").byValue(-1).if(emissionChange < 0),
       emissionModifier
@@ -26381,7 +26381,7 @@ var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
   description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
   labels: ["initial", "hidden", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effects(data) {
+  effects() {
     return [modify("electricityWindOnshoreMaxNew").setValue(6)];
   },
   priority(game) {
@@ -26397,7 +26397,7 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
   description: "Bundesweite gelockerte Abstandsregeln f\xFCr Windkraftanlagen sowie Bauerlaubniss in W\xE4ldern. Ja auch Bayern wird jetzt gezwungen Windkraftanlagen zuzulassen, sowie andere nicht bauwillige Kommunen.",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
       modify("electricityWindOnshoreMaxNew").setValue(30)
@@ -26429,7 +26429,7 @@ var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
   description: "Jeder der Land besitzt kann seine Windkraftanlage dahin bauen wo er will.",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-40).if(startYear2 === currentYear),
       modify("electricityWindOnshoreMaxNew").setValue(1e3)
@@ -26448,7 +26448,7 @@ var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
   description: "Der Mindestabstand zwischen Wind Energie Anlagen und Wohngeb\xE4uden im Innenbereich muss das Zehnfache der Gesamth\xF6he der Wind Energie Anlagen betragen (10H-Regel)",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effects(data, startYear2, currentYear) {
+  effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(5).if(startYear2 === currentYear),
       modify("electricityWindOnshoreMaxNew").setValue(0.42)
@@ -26468,8 +26468,8 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
   labels: ["initial", "hidden", "WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
-  effects(data) {
-    const onshoreNew = Math.min(6.9, data.electricityWindOnshoreMaxNew);
+  effects(game) {
+    const onshoreNew = Math.min(6.9, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 1.2;
     return [modify("electricityWind").byValue(onshoreNew + offshoreNew)];
   },
@@ -26487,8 +26487,8 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
-  effects(data, startYear2, currentYear) {
-    const onshoreNew = Math.min(13.8, data.electricityWindOnshoreMaxNew);
+  effects(game, startYear2, currentYear) {
+    const onshoreNew = Math.min(13.8, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 2.4;
     return [
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
@@ -26512,8 +26512,8 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
-  effects(data, startYear2, currentYear) {
-    const onshoreNew = Math.min(27.6, data.electricityWindOnshoreMaxNew);
+  effects(game, startYear2, currentYear) {
+    const onshoreNew = Math.min(27.6, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 4.8;
     return [
       modify("popularity").byValue(-2).if(startYear2 === currentYear),
@@ -26565,8 +26565,8 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
-  effects(data, startYear2, currentYear) {
-    const onshoreNew = Math.min(55.2, data.electricityWindOnshoreMaxNew);
+  effects(game, startYear2, currentYear) {
+    const onshoreNew = Math.min(55.2, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 9.6;
     return [
       modify("popularity").byValue(-20).if(startYear2 === currentYear),
