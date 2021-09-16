@@ -9,14 +9,14 @@ export default defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit stärker bezuschusst.",
 
-  effects(data, startYear, currentYear): Change[] {
-    const relCapacity = (data.publicLocalCapacity / data.publicLocalUsage) * 100
+  effects(game, startYear, currentYear): Change[] {
+    const relCapacity = (game.values.publicLocalCapacity / game.values.publicLocalUsage) * 100
 
     // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
     const carModifier = modify("carUsage")
-      .byValue(-0.01 * data.publicLocalUsage)
+      .byValue(-0.01 * game.values.publicLocalUsage)
       .if(relCapacity >= 105)
-    const carChange = carModifier.getChange(data)
+    const carChange = carModifier.getChange(game.values)
 
     const yearsActive = currentYear - startYear
     return [

@@ -8,7 +8,7 @@ export default defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const yearsActive = currentYear - startYear
 
     const compensation: MrdEuro = yearsActive < 18 ? 4.3 / 18 : 0

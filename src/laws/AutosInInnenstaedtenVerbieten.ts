@@ -8,9 +8,9 @@ export default defineLaw({
   description:
     "Die Innenstädte der großen Städte werden zu Autofreien Zonen erklärt und begrünt, sowie Fahrrad und Fußgängerzonen eingerichtet.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     var popularityChange = -2
-    if (data.publicLocalCapacity > data.publicLocalUsage * 1.2) {
+    if (game.values.publicLocalCapacity > game.values.publicLocalUsage * 1.2) {
       popularityChange = -1
       if (startYear + 2 < currentYear) {
         popularityChange = 2
@@ -19,9 +19,9 @@ export default defineLaw({
 
     // Need to use the carModifier with byValue() here, to ensure it does not fall below zero:
     const carModifier = modify("carUsage")
-      .byValue(-0.1 * data.publicLocalUsage)
+      .byValue(-0.1 * game.values.publicLocalUsage)
       .if(startYear === currentYear)
-    const carChange = carModifier.getChange(data)
+    const carChange = carModifier.getChange(game.values)
 
     return [modify("popularity").byValue(popularityChange), carModifier, modify("publicLocalUsage").byValue(-carChange)]
   },

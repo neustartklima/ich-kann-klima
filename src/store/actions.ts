@@ -76,7 +76,7 @@ export const actions = {
     const game = { ...(context.state.game as Game) }
     const laws = game.acceptedLaws.map(getAcceptedLaw)
     game.currentYear++
-    game.values = Calculator.calculateNextYear(game.values, laws, game.currentYear)
+    game.values = Calculator.calculateNextYear(game, laws, game.currentYear)
     await repository.saveGame(game)
     context.commit("setGameState", { game })
   },

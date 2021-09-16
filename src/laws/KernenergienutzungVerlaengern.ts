@@ -10,7 +10,7 @@ export default defineLaw({
   description: "Kernkraftwerke länger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],
 
-  effects(data): Change[] {
+  effects(): Change[] {
     return [
       modify("electricityNuclear").setValue(104.3 as TWh),
       modify("stateDebt").byValue(-2.5 as MrdEuro),

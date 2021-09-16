@@ -7,7 +7,7 @@ export default defineLaw({
   description: "Atomausstieg finded wie beschlossen 2022 statt",
   labels: ["hidden", "initial", "Kernenergie"],
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const mapping: Record<number, number> = {
       2021: 60.45 as TWh,
       2022: 30.21 as TWh,

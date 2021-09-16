@@ -7,7 +7,7 @@ export default defineLaw({
   title: "Diesel Privileg abgeschaffen",
   description: "Diesel wird jetzt genauso besteuert wie Benzin.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     return [
       modify("stateDebt").byValue(-7.35 as MrdEuro),
       modify("popularity")

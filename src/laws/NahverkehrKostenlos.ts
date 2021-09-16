@@ -10,12 +10,12 @@ export default defineLaw({
   description:
     "Die Kosten für den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr benötigt werden.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const percentage = startYear === currentYear ? 10 : 1
 
     // Need to use carModifier and byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage").byValue(-(percentage / 100) * data.publicLocalUsage)
-    const carChange = carModifier.getChange(data)
+    const carModifier = modify("carUsage").byValue(-(percentage / 100) * game.values.publicLocalUsage)
+    const carChange = carModifier.getChange(game.values)
 
     return [
       modify("stateDebt").byValue(10 as MrdEuro),

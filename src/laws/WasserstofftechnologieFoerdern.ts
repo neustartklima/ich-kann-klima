@@ -8,7 +8,7 @@ export default defineLaw({
   description:
     "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie wird stark gefördert.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     return [
       modify("stateDebt").byValue(3 as MrdEuro),
       modify("carRenewablePercentage")

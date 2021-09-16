@@ -9,9 +9,9 @@ export default defineLaw({
   title: "Dienstwagen Privileg abgeschaffen",
   description: "Steuererleichterungen für Dienstwagen werden abgeschafft.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const carModifier = modify("carUsage").byPercent(-0.05)
-    const carChange = carModifier.getChange(data)
+    const carChange = carModifier.getChange(game.values)
     return [
       modify("stateDebt").byValue(-18 as MrdEuro),
       modify("popularity")

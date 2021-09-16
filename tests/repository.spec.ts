@@ -3,7 +3,7 @@ import sinon from "sinon"
 import { createBaseValues, defaultValues } from "../src/params"
 import { API } from "../src/model/api"
 import Repository from "../src/model/Repository"
-import { initGame, newGame } from "../src/game"
+import { initGame } from "../src/game"
 
 describe("createBaseValues(defaultValues)", () => {
   const iniVals = createBaseValues(defaultValues)

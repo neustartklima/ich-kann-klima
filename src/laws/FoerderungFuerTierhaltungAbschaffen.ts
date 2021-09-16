@@ -6,7 +6,7 @@ export default defineLaw({
   title: "Förderung für Tierhaltung abschaffen",
   description: "Subventionen für Tierhaltung werden ersatzlos gestrichen",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     return [
       modify("stateDebt").byValue(-10),
       modify("co2emissionsAgriculture")

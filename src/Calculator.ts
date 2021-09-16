@@ -2,8 +2,8 @@ import { BaseParams, createBaseValues, defaultValues, applyEffects } from "./par
 import { Game } from "./game"
 import { AcceptedLaw } from "./laws"
 
-export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[], year: number): BaseParams {
-  const values = createBaseValues(currentValues)
+export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number): BaseParams {
+  const values = createBaseValues(game.values)
   laws
     .sort((a, b) => {
       if (a.treatAfterLabels?.some((lbl) => b.labels?.includes(lbl))) return 1
@@ -11,7 +11,7 @@ export function calculateNextYear(currentValues: BaseParams, laws: AcceptedLaw[]
       return 0
     })
     .forEach((law) => {
-      const effects = law.effects(values, law.effectiveSince, year)
+      const effects = law.effects({...game, values}, law.effectiveSince, year)
       applyEffects(values, effects)
     })
 

@@ -9,15 +9,15 @@ export default defineLaw({
   title: "Abschaffung der Mineralölsteuer",
   description: "Die Steuer auf sämtliche erdölbasierten Treibstoffe wird abgeschafft.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const localModifier = modify("publicLocalUsage")
       .byPercent(-20)
       .if(startYear === currentYear)
     const longModifier = modify("publicNationalUsage")
       .byPercent(-20)
       .if(startYear === currentYear)
-    const localChange = localModifier.getChange(data)
-    const longChange = longModifier.getChange(data)
+    const localChange = localModifier.getChange(game.values)
+    const longChange = longModifier.getChange(game.values)
 
     return [
       modify("stateDebt").byValue(41 as MrdEuro),

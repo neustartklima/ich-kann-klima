@@ -127,12 +127,12 @@ export default defineComponent({
       const game: Game = this.game
       const law = this.selectedLaw
       if (!law) return []
-      return law.effects(this.game.values, this.startYearOfSelected, this.game.currentYear)
+      return law.effects(this.game, this.startYearOfSelected, this.game.currentYear)
     },
 
     sortedValues(): ValueRow[] {
       if (!this.game) return []
-      return getSortedValues(this.game.values, this.effectsOfSelected)
+      return getSortedValues(this.game, this.effectsOfSelected)
     },
 
     sortedLaws(): LawRow[] {

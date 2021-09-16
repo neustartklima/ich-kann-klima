@@ -7,7 +7,7 @@ export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",
   description: "Die nachträgliche Dämmung von Wohngebäuden wird mit vergünstigten Krediten gefördert.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const costsPerYear: MrdEuro = 0.5
     const inEffect = currentYear - startYear > 2
     return [

@@ -2,16 +2,16 @@ import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
 import { Change, createBaseValues, defaultValues, modify } from "../src/params"
 import { AcceptedLaw, LawId } from "../src/laws"
 import { BaseParams } from "../src/params"
-import { Game } from "../src/game"
+import { Game, initGame } from "../src/game"
 import { EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
 import { MioPsgrKm } from "../src/types"
 import "should"
 
-function agriEffects(data: BaseParams): Change[] {
+function agriEffects(): Change[] {
   return [modify("co2emissionsAgriculture").byValue(-29)]
 }
 
-function priority(game: Game): number {
+function priority(): number {
   return 1
 }
 
@@ -27,21 +27,21 @@ function mockAcceptedLaw(
     description: id,
     labels,
     treatAfterLabels,
-    effects,
+    effects: effects,
     priority,
     effectiveSince: 2021,
   }
 }
 
 function mockEffects(num: MioPsgrKm): EffectsFunc {
-  return (d, s, e) => [modify("carUsage").byValue(num - d.carUsage)]
+  return (d, s, e) => [modify("carUsage").byValue(num - d.values.carUsage)]
 }
 
 const startValues = createBaseValues(defaultValues)
 
 describe("Calculator.calculateNextYear", () => {
   it("should leave all props but co2budget as they are if no laws are accepted", () => {
-    const newValues = calculateNextYear(createBaseValues(defaultValues), [], 2022)
+    const newValues = calculateNextYear(initGame(), [], 2022)
     Object.keys(newValues).forEach((propName) => {
       if (propName !== "co2budget") {
         newValues[propName as keyof BaseParams].should.equal(startValues[propName as keyof BaseParams])
@@ -52,23 +52,23 @@ describe("Calculator.calculateNextYear", () => {
   const acceptedLaws = [mockAcceptedLaw("NahverkehrAusbauen", agriEffects)]
 
   it("should return modified value if it is modified by a law directly", () => {
-    const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
+    const newValues = calculateNextYear(initGame(), acceptedLaws, 2022)
     newValues.co2emissionsAgriculture.should.equal(startValues.co2emissionsAgriculture - 29)
   })
 
   it("should return modified values calculated from other modified values", () => {
-    const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
+    const newValues = calculateNextYear(initGame(), acceptedLaws, 2022)
     newValues.co2emissions.should.equal(startValues.co2emissions - 29)
   })
 
   it("should return modifications from two years", () => {
-    const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
-    const thirdValues = calculateNextYear(newValues, acceptedLaws, 2023)
+    const newValues = calculateNextYear(initGame(), acceptedLaws, 2022)
+    const thirdValues = calculateNextYear({ values: newValues } as Game, acceptedLaws, 2023)
     thirdValues.co2emissions.should.equal(startValues.co2emissions - 58)
   })
 
   it("should calculate remaining co2 budget", () => {
-    const newValues = calculateNextYear(createBaseValues(defaultValues), acceptedLaws, 2022)
+    const newValues = calculateNextYear(initGame(), acceptedLaws, 2022)
     newValues.co2budget.should.equal(startValues.co2budget - newValues.co2emissions)
   })
 
@@ -77,7 +77,7 @@ describe("Calculator.calculateNextYear", () => {
       mockAcceptedLaw("NahverkehrAusbauen", mockEffects(1), [], ["WindkraftAbstandsregel"]),
       mockAcceptedLaw("AusbauVonStrassen", mockEffects(0), ["WindkraftAbstandsregel"], []),
     ]
-    const newValues = calculateNextYear(startValues, sortedLaws, 2022)
+    const newValues = calculateNextYear({ values: startValues } as Game, sortedLaws, 2022)
     newValues.carUsage.should.equal(1)
   })
 
