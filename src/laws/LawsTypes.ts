@@ -1,5 +1,5 @@
 import { Game } from "../game"
-import { BaseParams, Change } from "../params"
+import { Change } from "../params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent } from "../types"
 
@@ -11,7 +11,7 @@ export type LawLabel =
   | "WindkraftAbstandsregel"
   | "WindkraftSubvention"
 
-export type EffectsFunc = (data: BaseParams, startYear: number, currentYear: number) => Change[]
+export type EffectsFunc = (game: Game, startYear: number, currentYear: number) => Change[]
 export type PriorityFunc = (game: Game) => Percent
 
 export type LawDefinition = {

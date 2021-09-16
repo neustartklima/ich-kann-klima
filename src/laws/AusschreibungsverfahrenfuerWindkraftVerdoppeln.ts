@@ -10,8 +10,8 @@ export default defineLaw({
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
-  effects(data, startYear, currentYear): Change[] {
-    const onshoreNew: TWh = Math.min(13.8 as TWh, data.electricityWindOnshoreMaxNew)
+  effects(game, startYear, currentYear): Change[] {
+    const onshoreNew: TWh = Math.min(13.8 as TWh, game.values.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 2.4
     return [
       modify("popularity")

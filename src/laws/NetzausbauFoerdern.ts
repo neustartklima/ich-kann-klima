@@ -8,7 +8,7 @@ export default defineLaw({
   title: "Netzausbau fördern",
   description: "Ausbau des Stromnetzes mit Steuermitteln fördern",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     return [
       modify("popularity")
         .byValue(-1)

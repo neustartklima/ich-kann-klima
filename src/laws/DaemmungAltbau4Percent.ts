@@ -9,7 +9,7 @@ export default defineLaw({
   description:
     "Die nachträgliche Dämmung von Wohngebäuden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungsplätze im Handwerk geschaffen durch einen Zuschuss von 500€ pro Monat, damit der zu erwartende Bauboom bewältigt werden kann.",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     const costsPerYear: MrdEuro = 3
     const yearsActive = currentYear - startYear
     const inEffect = yearsActive >= 2

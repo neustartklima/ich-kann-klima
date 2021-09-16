@@ -7,11 +7,11 @@ export default defineLaw({
   title: "Ausbau von Straßen",
   description: "Autobahnen und Straßen werden intensiver ausgebaut.",
 
-  effects(data) {
+  effects(game) {
     const localModifier = modify("publicLocalUsage").byPercent(-1)
     const longModifier = modify("publicNationalUsage").byPercent(-1)
-    const localChange = localModifier.getChange(data)
-    const longChange = longModifier.getChange(data)
+    const localChange = localModifier.getChange(game.values)
+    const longChange = longModifier.getChange(game.values)
 
     return [
       modify("stateDebt").byValue(5 as MrdEuro),

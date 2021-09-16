@@ -1,15 +1,12 @@
 import "should"
-import API from "../src/model/api"
-import repository from "../src/model/Repository"
-import { Game, newGame, prepareNextStep } from "../src/game"
+import { newGame, prepareNextStep } from "../src/game"
 import Sinon from "sinon"
-import FetchQueueFactory from "../src/model/FetchQueue"
 import { Law, LawId } from "../src/laws"
 import { Event } from "../src/events"
 import should from "should"
 import { probabilityThatEventOccurs } from "../src/constants"
 
-function priority(game: Game): number {
+function priority(): number {
   return 1
 }
 
@@ -28,27 +25,6 @@ const allLaws: Law[] = [
     priority,
   },
 ]
-
-function mockedFetch(info: RequestInfo, init?: RequestInit) {
-  return Promise.resolve({
-    ok: true,
-    headers: { get: (which: string) => "application/json" },
-    json: () => Promise.resolve({ ...JSON.parse(init?.body?.toString() || ""), id: "12345" }),
-  } as Response)
-}
-
-async function mockedFetchFunc(method: string, path: string, data?: Record<string, unknown>): Promise<unknown> {
-  return { ...JSON.parse(data?.toString() || ""), id: "12345" }
-}
-
-const storage = {
-  setItem: Sinon.spy(),
-  getItem: Sinon.spy(),
-} as unknown as Storage
-
-const fetchQueue = FetchQueueFactory(mockedFetchFunc)
-const mockedApi = API(fetchQueue)
-const { createGame } = repository({ api: mockedApi, storage })
 
 class FisherYatesRandom {
   index: number = 0

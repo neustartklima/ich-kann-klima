@@ -9,7 +9,7 @@ export default defineLaw({
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     return [
       modify("popularity")
         .byValue(-40)

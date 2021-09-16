@@ -7,14 +7,14 @@ export default defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",
   description: "Der Ausbau des öffentlichen Fernverkehrs wird bundesweit stärker Bezuschusst und Vorangetrieben",
 
-  effects(data): Change[] {
-    const relCapacity = (data.publicNationalCapacity / data.publicNationalUsage) * 100
+  effects(game): Change[] {
+    const relCapacity = (game.values.publicNationalCapacity / game.values.publicNationalUsage) * 100
 
     // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
     const carModifier = modify("carUsage")
-      .byValue(0.015 * data.publicNationalUsage)
+      .byValue(0.015 * game.values.publicNationalUsage)
       .if(relCapacity >= 105)
-    const carChange = carModifier.getChange(data)
+    const carChange = carModifier.getChange(game.values)
 
     return [
       modify("stateDebt").byValue(6 as MrdEuro),

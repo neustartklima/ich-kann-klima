@@ -8,7 +8,7 @@ export default defineLaw({
   title: "Netzausbau erleichtern",
   description: "Vereinfachung und Beschleunigung von Planungsverfahren für den Ausbau des Stromnetzes",
 
-  effects(data, startYear, currentYear): Change[] {
+  effects(game, startYear, currentYear): Change[] {
     return [
       modify("popularity")
         .byValue(-3)

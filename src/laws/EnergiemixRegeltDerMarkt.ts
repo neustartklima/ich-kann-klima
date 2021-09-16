@@ -8,7 +8,7 @@ export default defineLaw({
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
 
-  effects(data): Change[] {
+  effects(): Change[] {
     return [
       modify("stateDebt").byValue(-37 as MrdEuro),
       modify("electricityHardCoal").byPercent(-10),
