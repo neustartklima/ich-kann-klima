@@ -10,10 +10,14 @@ export type EventDefinition = {
   apply(context: Context): void
   /** A value used to determine if this event occurs now.
    *
-   * Three possible values and their meanings are
+   * Three possible values-ranges and their meanings are
    * - Zero or less: The event may not occur now.
    * - Larger 1: The event occurs now.
    * - Between 0 and 1: Probability that the event occurs relative to others.
+   *
+   * Values larger than one shall only be those defined by {@link specialEventProbs}.
+   *
+   * @remarks
    *
    * Events will be processed as follows:
    * - If some events return > 1, the one with the highest value will occur, otherwise
@@ -38,10 +42,18 @@ export type EventDefinition = {
   internals?: Internals // TODO #79: Make mandatory
 }
 
-export const eventProbs = {
+/** The used special return values of {@link EventDefinition.probability} > 1.
+ *
+ * @remarks
+ *
+ * The names correspond to the events returning them.
+ *
+ * The values define the priority in case several may occur at the same time.
+ */
+export const specialEventProbs = {
   newYear: 2,
-  won: 3,
-  broke: 4,
-  lostElection: 5,
-  co2BudgetUsed: 6,
+  timesUp: 3,
+  finanzKollaps: 4,
+  wahlVerloren: 5,
+  hitzehoelle: 6,
 }
