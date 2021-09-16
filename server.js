@@ -26692,7 +26692,7 @@ var Altbausanierung_default = defineEvent({
   },
   probability(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 25, buildingsPercentage) / 100;
+    return Math.max(1, linear(15, 25, buildingsPercentage) / 100);
   }
 });
 
@@ -26734,6 +26734,15 @@ var EnergieStrategie_default = defineEvent({
   }
 });
 
+// src/events/EventsTypes.ts
+var specialEventProbs = {
+  newYear: 2,
+  timesUp: 3,
+  finanzKollaps: 4,
+  wahlVerloren: 5,
+  hitzehoelle: 6
+};
+
 // src/events/Finanzkollaps.ts
 var Finanzkollaps_default = defineEvent({
   title: "Zusammenbruch des Finanzsystems",
@@ -26745,7 +26754,7 @@ var Finanzkollaps_default = defineEvent({
     context.dispatch("gameOver");
   },
   probability(game) {
-    return game.values.stateDebt > defaultValues.stateDebt * 2 ? 1 : 0;
+    return game.values.stateDebt > defaultValues.stateDebt * 2 ? specialEventProbs.finanzKollaps : 0;
   }
 });
 
@@ -26760,7 +26769,7 @@ var Hitzeh_lle_default = defineEvent({
     context.dispatch("gameOver");
   },
   probability(game) {
-    return game.values.co2budget <= 0 ? 1 : 0;
+    return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0;
   }
 });
 
@@ -26779,6 +26788,9 @@ var NewYear_default = defineEvent({
     const numOfLaws = acceptedLaws && acceptedLaws.length || 0;
     if (numOfLaws < 3) {
       return 0;
+    }
+    if (numOfLaws >= 5) {
+      return specialEventProbs.newYear;
     }
     const probability = Math.round((numOfLaws - 2) * 33.3) / 100;
     return Math.min(1, probability);
@@ -26828,7 +26840,7 @@ var TimesUp_default = defineEvent({
     context.dispatch("gameOver");
   },
   probability(game) {
-    return game.currentYear === 2050 ? 1 : 0;
+    return game.currentYear === 2050 ? specialEventProbs.timesUp : 0;
   }
 });
 
@@ -26843,7 +26855,7 @@ var WahlVerloren_default = defineEvent({
     context.dispatch("gameOver");
   },
   probability(game) {
-    return game.values.popularity <= 0 ? 1 : 0;
+    return game.values.popularity <= 0 ? specialEventProbs.wahlVerloren : 0;
   }
 });
 
