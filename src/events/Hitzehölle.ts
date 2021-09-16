@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { eventProbs } from "./EventsTypes"
+import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Hitzehölle",
@@ -13,6 +13,6 @@ export default defineEvent({
   },
 
   probability(game) {
-    return game.values.co2budget <= 0 ? eventProbs.co2BudgetUsed : 0
+    return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0
   },
 })

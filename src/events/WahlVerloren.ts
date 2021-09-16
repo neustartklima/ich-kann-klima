@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { eventProbs } from "./EventsTypes"
+import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Wahl verloren",
@@ -13,6 +13,6 @@ export default defineEvent({
   },
 
   probability(game) {
-    return game.values.popularity <= 0 ? eventProbs.lostElection : 0
+    return game.values.popularity <= 0 ? specialEventProbs.wahlVerloren : 0
   },
 })
