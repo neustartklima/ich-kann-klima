@@ -32,6 +32,9 @@ import AusschreibungsverfahrenfuerWindkraftWieBisher from "./Ausschreibungsverfa
 import AusschreibungsverfahrenfuerWindkraftVerdoppeln from "./AusschreibungsverfahrenfuerWindkraftVerdoppeln"
 import AusschreibungsverfahrenfuerWindkraftVervierfachen from "./AusschreibungsverfahrenfuerWindkraftVervierfachen"
 import AusschreibungsverfahrenfuerWindkraftVerachtfachen from "./AusschreibungsverfahrenfuerWindkraftVerachtfachen"
+import CO2PreisErhoehen from "./CO2PreisErhoehen"
+import WirksamerCO2Preis from "./WirksamerCO2Preis"
+import VollerCO2Preis from "./VollerCO2Preis"
 
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
@@ -96,6 +99,10 @@ const allLawsObj = {
   TempolimitAufAutobahnenAussitzen,
 
   FoerderungFuerTierhaltungAbschaffen,
+
+  CO2PreisErhoehen,
+  WirksamerCO2Preis,
+  VollerCO2Preis,
 }
 
 export type LawId = keyof typeof allLawsObj

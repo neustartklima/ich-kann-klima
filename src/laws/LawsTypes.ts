@@ -10,6 +10,7 @@ export type LawLabel =
   | "TempolimitAutobahn"
   | "WindkraftAbstandsregel"
   | "WindkraftSubvention"
+  | "CO2Preis"
 
 export type EffectsFunc = (game: Game, startYear: number, currentYear: number) => Change[]
 export type PriorityFunc = (game: Game) => Percent

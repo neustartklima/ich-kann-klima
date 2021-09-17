@@ -1,6 +1,6 @@
 import { allLaws, LawId, LawReference } from "./laws"
 import { Game } from "./game"
-import { MioPsgrKm, MioTons, Percent, TWh } from "./types"
+import { Percent } from "./types"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.
@@ -42,6 +42,28 @@ export function linear<T extends number>(zero: T, hundred: T, actual: T): Percen
   if (shiftedH === 0)
     throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero)
   return (shifted / shiftedH) * 100
+}
+
+/**
+ * Linear interpolation returning a popularity change.
+ *
+ * In contrast to {@link linear} values beyond `noChangeVal` will return zero.
+ *
+ * @param noChangeVal Value for which no popularity change is returned.
+ * @param fullChangeVal Value for which {@link fullPopChange} is returned.
+ * @param actualVal The actural value for which to calculate the change.
+ * @param fullPopChange Return value, if `actualVal == fullChangeVal`.
+ * @return Calculated popularity change.
+ *
+ */
+export function linearPopChange<T extends number>(
+  noChangeVal: T,
+  fullChangeVal: T,
+  actualVal: T,
+  fullPopChange: Percent
+): Percent {
+  const frustrationOrPraise: Percent = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal))
+  return (frustrationOrPraise / 100) * fullPopChange
 }
 
 /**
