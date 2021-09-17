@@ -14,12 +14,11 @@ export default defineLaw({
         .byValue(-1)
         .if(startYear === currentYear),
       modify("stateDebt").byValue(2),
-      modify("electricityGridQuality").byValue(5), //.if(lawIsAccepted("NetzausbauErleichtern")), TODO: Need game here...
+      modify("electricityGridQuality").byValue(5).if(lawIsAccepted(game, "NetzausbauErleichtern")),
     ]
   },
 
   priority(game) {
-    if (!lawIsAccepted(game, "NetzausbauErleichtern")) return 0
     const v = game.values
     const relWindPercentage: Percent = (v.electricityWindUsable / v.electricityDemand) * 100
     return linear(70, 30, relWindPercentage)
@@ -29,11 +28,12 @@ export default defineLaw({
 
   `,
   internals: markdown`
-    # Happy Path 1
+    # Happy Path 8
 
     # Folgen
 
     - [x] Im ersten Jahr machen BIs schlechte Stimmung: 1% Popularität weniger.
+    - [x] Kostet 2 Mrd Euro im Jahr.
     - [x] Die Netzqualität steigt jährlich um 5%, aber nur, wenn auch die Planungsverfahren vereinfacht wurden.
 
     # Voraussetzungen
