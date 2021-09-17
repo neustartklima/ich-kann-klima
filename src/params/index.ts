@@ -2,7 +2,6 @@ import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import { paramDefinitions } from "./Params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
-import { Game } from "../game"
 
 export type ParamDefinitions = typeof paramDefinitions
 

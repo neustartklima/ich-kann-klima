@@ -120,7 +120,6 @@ export const bmvi2020OePNVFoerderungDesBundes = new Citation({
   comment: ``,
 })
 
-
 export const polarstern2021CO2nachBrennstoff = new Citation({
   url: "https://www.polarstern-energie.de/magazin/artikel/heizen-co2-vergleich-von-brennstoffen/#c7085",
   title: "Heizung: Wie viel CO2 dein Brennstoff verursacht",
@@ -240,6 +239,28 @@ export const duh2020Dienstwagenprivileg = new Citation({
   date: "2020-08-24",
   archiveUrl:
     "https://web.archive.org/web/20210410185937/https://www.duh.de/presse/pressemitteilungen/pressemitteilung/in-zeiten-des-klimawandels-sind-subventionsformen-wie-das-dienstwagenprivileg-einfach-nicht-mehr-ze/",
+  comment: ``,
+  internalComment: ``,
+})
+
+export const ucl2021EconomicCostSixTimesHigher = new Citation({
+  url: "https://phys.org/news/2021-09-economic-climate-higher-previously-thought.html",
+  title: "Economic cost of climate change could be six times higher than previously thought",
+  publisher: "University College London",
+  date: "2021-09-06",
+  archiveUrl:
+    "https://web.archive.org/web/20210915122616/https://phys.org/news/2021-09-economic-climate-higher-previously-thought.html",
+  comment: `Corresponding publication: Jarmo S Kikstra et al, The social cost of carbon dioxide under climate-economy feedbacks and temperature variability, Environmental Research Letters (2021). DOI: 10.1088/1748-9326/ac1d0b`,
+  internalComment: ``,
+})
+
+export const wdr2021KlimaschutzMitCO2Preis = new Citation({
+  url: "https://www1.wdr.de/nachrichten/benzinpreis-klima-kohlendioxid-steuern-100.html",
+  title: "",
+  publisher: "WDR",
+  date: "2021-09-06",
+  archiveUrl:
+    "https://web.archive.org/web/20210909151034/https://www1.wdr.de/nachrichten/benzinpreis-klima-kohlendioxid-steuern-100.html",
   comment: ``,
   internalComment: ``,
 })
