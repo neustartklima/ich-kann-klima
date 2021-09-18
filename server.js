@@ -24673,6 +24673,10 @@ function linear(zero, hundred, actual) {
     throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero);
   return shifted / shiftedH * 100;
 }
+function linearPopChange(noChangeVal, fullChangeVal, actualVal, fullPopChange) {
+  const frustrationOrPraise = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal));
+  return frustrationOrPraise / 100 * fullPopChange;
+}
 function lawIsAccepted(game, lawId) {
   if (!allLaws.map((l) => l.id).includes(lawId))
     throw new Error("Unknown law ID " + lawId + " used in a law.");
@@ -24917,6 +24921,24 @@ var duh2020Dienstwagenprivileg = new Citation({
   publisher: "Deutsche Umwelthilfe",
   date: "2020-08-24",
   archiveUrl: "https://web.archive.org/web/20210410185937/https://www.duh.de/presse/pressemitteilungen/pressemitteilung/in-zeiten-des-klimawandels-sind-subventionsformen-wie-das-dienstwagenprivileg-einfach-nicht-mehr-ze/",
+  comment: ``,
+  internalComment: ``
+});
+var ucl2021EconomicCostSixTimesHigher = new Citation({
+  url: "https://phys.org/news/2021-09-economic-climate-higher-previously-thought.html",
+  title: "Economic cost of climate change could be six times higher than previously thought",
+  publisher: "University College London",
+  date: "2021-09-06",
+  archiveUrl: "https://web.archive.org/web/20210915122616/https://phys.org/news/2021-09-economic-climate-higher-previously-thought.html",
+  comment: `Corresponding publication: Jarmo S Kikstra et al, The social cost of carbon dioxide under climate-economy feedbacks and temperature variability, Environmental Research Letters (2021). DOI: 10.1088/1748-9326/ac1d0b`,
+  internalComment: ``
+});
+var wdr2021KlimaschutzMitCO2Preis = new Citation({
+  url: "https://www1.wdr.de/nachrichten/benzinpreis-klima-kohlendioxid-steuern-100.html",
+  title: "",
+  publisher: "WDR",
+  date: "2021-09-06",
+  archiveUrl: "https://web.archive.org/web/20210909151034/https://www1.wdr.de/nachrichten/benzinpreis-klima-kohlendioxid-steuern-100.html",
   comment: ``,
   internalComment: ``
 });
@@ -25863,6 +25885,90 @@ var NetzausbauErleichtern_default = defineLaw({
   `
 });
 
+// src/laws/StromspeicherungErleichtern.ts
+var StromspeicherungErleichtern_default = defineLaw({
+  title: "Stromspeicherung erleichtern",
+  description: "B\xFCrokratische H\xFCrden f\xFCr den Bau von Speicheranlagen und Einspeisung von gespeichertem Strom werden abgeschafft.",
+  effects(game, startYear2, currentYear) {
+    return [modify("electricityGridQuality").byValue(0.2)];
+  },
+  priority(game) {
+    const v = game.values;
+    return linear(70, 30, v.electricityGridQuality);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 1.7
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    - [x] Die Netzqualität steigt jährlich um 0.2%.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
+    - 100% bei einer Netzqualität von 40%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/StromspeicherungFoerdern.ts
+var StromspeicherungFoerdern_default = defineLaw({
+  title: "Stromspeicherung f\xF6rdern",
+  description: "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln f\xF6rdern",
+  effects(game, startYear2, currentYear) {
+    if (!lawIsAccepted(game, "StromspeicherungErleichtern")) {
+      return [modify("stateDebt").byValue(1)];
+    }
+    return [
+      modify("popularity").byValue(0.2),
+      modify("stateDebt").byValue(2),
+      modify("electricityGridQuality").byValue(1)
+    ];
+  },
+  priority(game) {
+    const v = game.values;
+    return linear(70, 30, v.electricityGridQuality);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 8.5
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    - [x] Wenn nicht "StromspeicherungErleichtern" ausgewählt wurde, kostet das 1 MrdEuro im Jahr, sonst:
+    - [x] Viele verdienen Geld mit kleinen Batteriespeichern: Popularität steigt um 0,2% pro Jahr.
+    - [x] Die Netzqualität steigt jährlich um 2%.
+    - [x] Konsten: 2 Mrd Euro pro Jahr.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
+    - 100% bei einer Netzqualität von 40%.
+    - linear interpoliert
+  `
+});
+
 // src/laws/DaemmungAltbau1Percent.ts
 var DaemmungAltbau1Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
@@ -26583,6 +26689,269 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
   }
 });
 
+// src/laws/CO2PreisErhoehen.ts
+var CO2PreisErhoehen_default = defineLaw({
+  title: "CO2 Preis Erh\xF6hen",
+  description: "Die Preise werden schneller erh\xF6ht, als bisher geplant. Eine Tonne CO2 kostet in 2 Jahren 70 Euro und in 4 Jahren 100 Euro.",
+  labels: ["CO2Preis"],
+  removeLawsWithLabels: ["CO2Preis"],
+  effects(game, startYear2, currentYear) {
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const electricityRenewablePercentage = electricityRenewable / game.values.electricityDemand * 100;
+    const electricityPopChange = linearPopChange(50, 0, electricityRenewablePercentage, -1);
+    const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1);
+    const relReduction = -0.5;
+    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
+    const hardModifier = modify("electricityHardCoal").byPercent(relReduction);
+    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values);
+    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction);
+    const buildingsOilChange = buildingsOilModifier.getChange(game.values);
+    const carModifier = modify("carUsage").byPercent(relReduction);
+    const carChange = carModifier.getChange(game.values);
+    return [
+      modify("stateDebt").byValue(-45 * 1e6 * game.values.co2emissions).if(currentYear >= startYear2 + 2),
+      modify("stateDebt").byValue(-30 * 1e6 * game.values.co2emissions).if(currentYear >= startYear2 + 4),
+      modify("popularity").byValue(electricityPopChange + carPopChange),
+      modify("co2emissionsIndustry").byPercent(relReduction),
+      modify("co2emissionsAgriculture").byPercent(relReduction),
+      modify("co2emissionsOthers").byPercent(relReduction),
+      brownModifier,
+      hardModifier,
+      modify("electricityWind").byValue(0.7 * -coalChange),
+      modify("electricitySolar").byValue(0.3 * -coalChange),
+      buildingsOilModifier,
+      modify("buildingsSourceBio").byValue(-buildingsOilChange),
+      carModifier,
+      modify("publicNationalUsage").byValue(0.5 * -carChange),
+      modify("publicLocalUsage").byValue(0.5 * -carChange)
+    ];
+  },
+  priority(game) {
+    return 100;
+  },
+  citations: [wdr2021KlimaschutzMitCO2Preis],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    ## Staatsschulden
+
+    sinken um die zusätzlich eingenommene CO2-Steuer: Nach 2 Jahren um 45€, nach 4 Jahren um 75€ pro emittierter Tonne CO2.
+
+    ## Popularität
+
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren an der Stromerzeugung.
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren am Straßenverkehr.
+
+    Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
+
+    - Anteil >= 50%: Popularität sinkt nicht.
+    - Anteil = 25%: Popularität sinkt um 0.5% pro Jahr.
+    - Anteil = 0%: Pooularität sinkt um 1% pro Jahr.
+      (dazwischen linear interpoliert.)
+
+    ## Fossile
+
+    - [x] Nutzungen, die fossile Energieträger verwenden, reduzieren sich jährlich um 0,5%.
+
+    - Es werden 0,5% von allen CO2 Emissionen bzw. emittierenden Größen abgezogen.
+    - Nicht mehr erzeugter Kohlestrom wird zu 70% aus Windkraft udn 30% Solar erzeugt.
+    - Erdöl wird ersetzt durch biologische Quellen.
+    - KFZ wird je zur Hälfte durch Fernverkehr und Nahverkehr ersetzt.
+
+    TODO #78: Dies ist ein sehr grobes Modell.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 100%
+  `
+});
+
+// src/laws/WirksamerCO2Preis.ts
+var WirksamerCO2Preis_default = defineLaw({
+  title: "Wirksamer CO2 Preis",
+  description: "Eine Tonne CO2 kostet ab jetzt 150 Euro.",
+  labels: ["CO2Preis"],
+  removeLawsWithLabels: ["CO2Preis"],
+  effects(game, startYear2, currentYear) {
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const electricityRenewablePercentage = electricityRenewable / game.values.electricityDemand * 100;
+    const electricityPopChange = linearPopChange(80, 50, electricityRenewablePercentage, -3);
+    const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3);
+    const relReduction = -2;
+    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
+    const hardModifier = modify("electricityHardCoal").byPercent(relReduction);
+    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values);
+    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction);
+    const buildingsOilChange = buildingsOilModifier.getChange(game.values);
+    const carModifier = modify("carUsage").byPercent(relReduction);
+    const carChange = carModifier.getChange(game.values);
+    return [
+      modify("stateDebt").byValue(-125 * 1e6 * game.values.co2emissions),
+      modify("popularity").byValue(electricityPopChange + carPopChange),
+      modify("co2emissionsIndustry").byPercent(relReduction),
+      modify("co2emissionsAgriculture").byPercent(relReduction),
+      modify("co2emissionsOthers").byPercent(relReduction),
+      brownModifier,
+      hardModifier,
+      modify("electricityWind").byValue(0.7 * -coalChange),
+      modify("electricitySolar").byValue(0.3 * -coalChange),
+      buildingsOilModifier,
+      modify("buildingsSourceBio").byValue(-buildingsOilChange),
+      carModifier,
+      modify("publicNationalUsage").byValue(0.5 * -carChange),
+      modify("publicLocalUsage").byValue(0.5 * -carChange)
+    ];
+  },
+  priority(game) {
+    return 100;
+  },
+  citations: [wdr2021KlimaschutzMitCO2Preis],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 5.5
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    ## Staatsschulden
+
+    sinken um die zusätzlich eingenommene CO2-Steuer von 125€ pro Tonne CO2.
+
+    ## Popularität
+
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren an der Stromerzeugung.
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren am Straßenverkehr.
+
+    Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
+
+    - Anteil >= 80%: Popularität sinkt nicht.
+    - Anteil = 65%: Popularität sinkt um 1,5% pro Jahr.
+    - Anteil = 50%: Popularität sinkt um 3% pro Jahr.
+    - Anteil = 20%: Pooularität sinkt um 6% pro Jahr.
+      (dazwischen linear interpoliert.)
+
+    ## Fossile
+
+    - [x] Nutzungen, die fossile Energieträger verwenden, reduzieren sich jährlich um 2%.
+
+    - Es werden 2% von allen CO2 Emissionen bzw. emittierenden Größen abgezogen.
+    - Nicht mehr erzeugter Kohlestrom wird zu 70% aus Windkraft udn 30% Solar erzeugt.
+    - Erdöl wird ersetzt durch biologische Quellen.
+    - KFZ wird je zur Hälfte durch Fernverkehr und Nahverkehr ersetzt.
+
+    TODO #78: Dies ist ein sehr grobes Modell.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 100%
+  `
+});
+
+// src/laws/VollerCO2Preis.ts
+var VollerCO2Preis_default = defineLaw({
+  title: "Voller CO2 Preis",
+  description: "Eine Tonne CO2 kostet ab jetzt 3000 Euro. Das deckt die derzeit prognostizierten Klimafolgekosten.",
+  labels: ["CO2Preis"],
+  removeLawsWithLabels: ["CO2Preis"],
+  effects(game, startYear2, currentYear) {
+    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+    const electricityRenewablePercentage = electricityRenewable / game.values.electricityDemand * 100;
+    const electricityPopChange = linearPopChange(90, 50, electricityRenewablePercentage, -10);
+    const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10);
+    const relReduction = -5;
+    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
+    const hardModifier = modify("electricityHardCoal").byPercent(relReduction);
+    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values);
+    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction);
+    const buildingsOilChange = buildingsOilModifier.getChange(game.values);
+    const carModifier = modify("carUsage").byPercent(relReduction);
+    const carChange = carModifier.getChange(game.values);
+    return [
+      modify("stateDebt").byValue(-3e3 * 1e6 * game.values.co2emissions),
+      modify("popularity").byValue(electricityPopChange + carPopChange),
+      modify("co2emissionsIndustry").byPercent(relReduction),
+      modify("co2emissionsAgriculture").byPercent(relReduction),
+      modify("co2emissionsOthers").byPercent(relReduction),
+      brownModifier,
+      hardModifier,
+      modify("electricityWind").byValue(0.7 * -coalChange),
+      modify("electricitySolar").byValue(0.3 * -coalChange),
+      buildingsOilModifier,
+      modify("buildingsSourceBio").byValue(-buildingsOilChange),
+      carModifier,
+      modify("publicNationalUsage").byValue(0.5 * -carChange),
+      modify("publicLocalUsage").byValue(0.5 * -carChange)
+    ];
+  },
+  priority(game) {
+    return 100;
+  },
+  citations: [ucl2021EconomicCostSixTimesHigher],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    ## Staatsschulden
+
+    sinken um die eingenommene CO2-Steuer von 150€ pro Tonne CO2.
+
+    ## Popularität
+
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren an der Stromerzeugung.
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren am Straßenverkehr.
+
+    Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
+
+    - Anteil >= 90%: Popularität sinkt nicht.
+    - Anteil = 70%: Popularität sinkt um 5% pro Jahr.
+    - Anteil = 50%: Popularität sinkt um 10% pro Jahr.
+    - Anteil = 10%: Pooularität sinkt um 20% pro Jahr.
+      (dazwischen linear interpoliert.)
+
+    ## Fossile
+
+    - [x] Nutzungen, die fossile Energieträger verwenden, reduzieren sich jährlich um 5%.
+
+    - Es werden 5% von allen CO2 Emissionen bzw. emittierenden Größen abgezogen.
+    - Nicht mehr erzeugter Kohlestrom wird zu 70% aus Windkraft udn 30% Solar erzeugt.
+    - Erdöl wird ersetzt durch biologische Quellen.
+    - KFZ wird je zur Hälfte durch Fernverkehr und Nahverkehr ersetzt.
+
+    TODO #78: Dies ist ein sehr grobes Modell.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 100%
+  `
+});
+
 // src/laws/index.ts
 var allLawsObj = {
   AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
@@ -26591,6 +26960,8 @@ var allLawsObj = {
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
   KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
   NetzausbauErleichtern: NetzausbauErleichtern_default,
+  StromspeicherungErleichtern: StromspeicherungErleichtern_default,
+  StromspeicherungFoerdern: StromspeicherungFoerdern_default,
   AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
   AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
   AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
@@ -26616,7 +26987,10 @@ var allLawsObj = {
   Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
   Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
   TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default,
-  FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default
+  FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default,
+  CO2PreisErhoehen: CO2PreisErhoehen_default,
+  WirksamerCO2Preis: WirksamerCO2Preis_default,
+  VollerCO2Preis: VollerCO2Preis_default
 };
 var allLaws = lawList(allLawsObj);
 function getLaw(lawId) {
