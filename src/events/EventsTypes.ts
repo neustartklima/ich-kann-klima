@@ -1,13 +1,13 @@
 import { LawId } from "../laws"
 import { Citations } from "../citations"
-import { Context } from "../store"
 import { Details, Internals, Ratio } from "../types"
 import { Game } from "../game"
+import { Change } from "../params"
 
 export type EventDefinition = {
   title: string
   description: string
-  apply(context: Context): void
+  apply(game: Game): Change[]
   /** A value used to determine if this event occurs now.
    *
    * Three possible values-ranges and their meanings are

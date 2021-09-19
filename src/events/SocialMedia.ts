@@ -8,8 +8,8 @@ export default defineEvent({
     Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
   `,
 
-  apply(context) {
-    context.dispatch("applyEffects", [modify("popularity").byPercent(-20)])
+  apply() {
+    return [modify("popularity").byPercent(-20)]
   },
 
   probability() {

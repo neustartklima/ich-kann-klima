@@ -2,6 +2,7 @@ import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import { paramDefinitions } from "./Params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
+import { store } from "../store"
 
 export type ParamDefinitions = typeof paramDefinitions
 
@@ -97,8 +98,27 @@ export function createBaseValues(values: WritableParams): Params {
   return result as Params
 }
 
+export function dispatch(actionName: string, payload?: unknown) {
+  return {
+    type: "dispatch",
+    condition: true as boolean,
+
+    if(condition: boolean) {
+      this.condition = condition
+      return this
+    },
+
+    apply(): void {
+      if (this.condition) {
+        store.dispatch(actionName, payload)
+      }
+    },
+  }
+}
+
 export function modify(name: keyof WritableBaseParams) {
   return {
+    type: "modify",
     name,
     value: 0 as number,
     percent: 0 as Percent,
@@ -146,6 +166,13 @@ export function modify(name: keyof WritableBaseParams) {
       return newVal - oldVal
     },
 
+    apply(values: BaseParams) {
+      if (this.condition) {
+        values[this.name] = this.getChange(values)
+      }
+      return this
+    },
+
     getNewVal(values: BaseParams): number {
       if (!this.condition) {
         return values[this.name]
@@ -155,13 +182,9 @@ export function modify(name: keyof WritableBaseParams) {
   }
 }
 
-export type Change = ReturnType<typeof modify>
+export type Change = ReturnType<typeof modify> | ReturnType<typeof dispatch>
 
 export function applyEffects(values: BaseParams, changes: Change[]): BaseParams {
-  changes
-    .filter((change) => change.condition)
-    .forEach((change) => {
-      values[change.name] = change.getNewVal(values)
-    })
+  changes.filter((change) => change.condition).forEach((change) => change.apply(values))
   return values
 }

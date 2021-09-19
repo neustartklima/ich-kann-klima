@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
@@ -8,8 +9,8 @@ export default defineEvent({
     und die Menschen hast du auf diesem Weg auch mitgenommen. Gratulation!
   `,
 
-  apply(context) {
-    context.dispatch("gameOver")
+  apply() {
+    return [dispatch("gameOver")]
   },
 
   probability(game) {

@@ -85,7 +85,8 @@ export const actions = {
     if (!payload.event) return
     const game = { ...(context.state.game as Game) }
     await repository.eventOccurred(game, payload.event)
-    payload.event.apply(context)
+    const changes = payload.event.apply(game)
+    this.applyEffects(context, changes)
   },
 
   acknowledgeEvent(context: Context, event: Event) {

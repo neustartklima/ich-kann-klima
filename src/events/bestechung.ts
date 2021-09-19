@@ -1,5 +1,6 @@
 import { defineEvent } from "../Factory"
 import { idsToLaws, Law } from "../laws"
+import { dispatch } from "../params"
 
 // if proposed laws contain at least one with the words 'subvention' and 'abbau', this event might occur
 function getFirstMatchingLaw(proposedLaws: Law[]) {
@@ -13,15 +14,14 @@ export default defineEvent({
     nicht zustimmen wirst.
   `,
 
-  apply(context) {
-    const game = context.state.game
-    if (!game) {
-      return
+  apply(game) {
+    if (game) {
+      const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws))
+      if (law) {
+        return [dispatch("rejectLaw", { lawId: law.id })]
+      }
     }
-    const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws))
-    if (law) {
-      context.dispatch("rejectLaw", { lawId: law.id })
-    }
+    return []
   },
 
   probability(game) {

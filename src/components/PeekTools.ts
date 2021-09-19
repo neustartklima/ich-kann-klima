@@ -1,4 +1,4 @@
-import { BaseParams, Change, createBaseValues, applyEffects, paramList } from "../params"
+import { BaseParams, Change, createBaseValues, applyEffects, paramList, modify } from "../params"
 import { Game } from "../game"
 import { Law, LawId } from "../laws"
 import { Event } from "../events"
@@ -29,7 +29,7 @@ export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
   }
 
   function getEffect(key: keyof BaseParams): number {
-    const effect = effects.find((e) => e.name === key)
+    const effect = effects.find((e) => e.type === "modify" && (e as ReturnType<typeof modify>).name === key) as ReturnType<typeof modify>
     return effect && effect.condition ? effect.value : 0
   }
 

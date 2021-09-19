@@ -6,7 +6,9 @@ export default defineEvent({
     "Der Bundestag debattierte heute über die Strategie zur Stromerzeugung in Deutschland. Die Meinungen der Parteien gingen dabei stark auseinander.",
   laws: ["KohleverstromungEinstellen", "EnergiemixRegeltDerMarkt", "KernenergienutzungVerlaengern"],
 
-  apply() {},
+  apply() {
+    return []
+  },
 
   probability() {
     return Math.random()

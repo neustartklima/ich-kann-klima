@@ -11,7 +11,9 @@ export default defineEvent({
     "TempolimitAufAutobahnenAussitzen",
   ],
 
-  apply() {},
+  apply() {
+    return []
+  },
 
   probability() {
     return Math.random()

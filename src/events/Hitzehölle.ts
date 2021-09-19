@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
@@ -8,8 +9,8 @@ export default defineEvent({
   Um die verbleibdenden Teile sind erbitterte Kämpfe ausgebrochen.
   `,
 
-  apply(context) {
-    context.dispatch("gameOver")
+  apply() {
+    return [dispatch("gameOver")]
   },
 
   probability(game) {

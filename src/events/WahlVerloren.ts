@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
@@ -8,8 +9,8 @@ export default defineEvent({
     die 5% Marke gerutscht. An eine weitere Kanzlerschaft hat schon länger kein vernünftiger Mensch mehr geglaubt.
   `,
 
-  apply(context) {
-    context.dispatch("gameOver")
+  apply() {
+    return [dispatch("gameOver")]
   },
 
   probability(game) {

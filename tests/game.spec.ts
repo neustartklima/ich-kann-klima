@@ -104,9 +104,9 @@ describe("game", () => {
     it("should return event with highest probability > 1", () => {
       const game = newGame(allLaws)
       const events: Event[] = [
-        { id: "1", title: "e1", description: "", apply: () => {}, probability: () => 2 },
-        { id: "2", title: "e2", description: "", apply: () => {}, probability: () => 3 },
-        { id: "3", title: "e3", description: "", apply: () => {}, probability: () => 0.9 },
+        { id: "1", title: "e1", description: "", apply: () => [], probability: () => 2 },
+        { id: "2", title: "e2", description: "", apply: () => [], probability: () => 3 },
+        { id: "3", title: "e3", description: "", apply: () => [], probability: () => 0.9 },
       ]
       const ret = prepareNextStep(game, allLaws, events)
       should(ret).not.be.undefined()
@@ -116,9 +116,9 @@ describe("game", () => {
     it("should never return event with probability <=0", () => {
       const game = newGame(allLaws)
       const events: Event[] = [
-        { id: "1", title: "e1", description: "", apply: () => {}, probability: () => 0 },
-        { id: "2", title: "e2", description: "", apply: () => {}, probability: () => -0.01 },
-        { id: "3", title: "e3", description: "", apply: () => {}, probability: () => -100 },
+        { id: "1", title: "e1", description: "", apply: () => [], probability: () => 0 },
+        { id: "2", title: "e2", description: "", apply: () => [], probability: () => -0.01 },
+        { id: "3", title: "e3", description: "", apply: () => [], probability: () => -100 },
       ]
       for (var num = 0; num <= 20; num++) {
         const ret = prepareNextStep(game, allLaws, events)
@@ -130,9 +130,9 @@ describe("game", () => {
       const game = newGame(allLaws)
       type CEvent = Event & { count: number }
       const events: CEvent[] = [
-        { id: "1", title: "e1", description: "", apply: () => {}, probability: () => 0.1, count: 0 },
-        { id: "2", title: "e2", description: "", apply: () => {}, probability: () => 0.9, count: 0 },
-        { id: "3", title: "e3", description: "", apply: () => {}, probability: () => 0.5, count: 0 },
+        { id: "1", title: "e1", description: "", apply: () => [], probability: () => 0.1, count: 0 },
+        { id: "2", title: "e2", description: "", apply: () => [], probability: () => 0.9, count: 0 },
+        { id: "3", title: "e3", description: "", apply: () => [], probability: () => 0.5, count: 0 },
       ]
       const probSum = events.map((e) => e.probability(game)).reduce((a, b) => a + b)
 

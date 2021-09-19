@@ -13,7 +13,9 @@ export default defineEvent({
     "DaemmungAltbau4Percent",
   ],
 
-  apply() {},
+  apply() {
+    return []
+  },
 
   probability(game) {
     const buildingsPercentage = (game.values.co2emissionsBuildings / game.values.co2emissions) * 100
