@@ -84,3 +84,27 @@ export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | 
     .find((law) => matcher.test(law.lawId))
   return lawRef?.lawId
 }
+
+/** Amount of electrical power produced by wind relative to total demand.
+ *
+ * @param game The game.
+ * @returns Percentage of electrical power.
+ */
+export function windPercentage(game: Game): Percent {
+  const v = game.values
+  return (v.electricityWindUsable / v.electricityDemand) * 100
+}
+
+/** Amount of electrical power produced with renewable sources relative to total demand.
+ *
+ * @param game The game.
+ * @returns Percentage of electrical power.
+ */
+export function renewablePercentage(game: Game): Percent {
+  const electricityRenewable =
+    game.values.electricityWindUsable +
+    game.values.electricitySolar +
+    game.values.electricityWater +
+    game.values.electricityBiomass
+  return (electricityRenewable / game.values.electricityDemand) * 100
+}

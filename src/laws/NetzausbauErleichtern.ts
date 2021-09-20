@@ -1,6 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linear } from "../lawTools"
-import { Percent, TWh } from "../types"
+import { linear, windPercentage } from "../lawTools"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 
@@ -18,9 +17,7 @@ export default defineLaw({
   },
 
   priority(game) {
-    const v = game.values
-    const relWindPercentage: Percent = (v.electricityWindUsable / v.electricityDemand) * 100
-    return linear(70, 30, relWindPercentage)
+    return linear(70, 30, windPercentage(game))
   },
   citations: [],
   details: markdown`
