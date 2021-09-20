@@ -300,13 +300,12 @@ const electricityWindUsable = new ComputedParam({
     const quality = data.electricityGridQuality
     const maxVal = data.electricityDemand
 
-    return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality)
+    const gridMax = linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality)
+    return Math.min(gridMax, data.electricityWind)
   },
   shouldInitiallyBe: electricityWind.initialValue,
   citations: [],
-  details: markdown`
-
-  `,
+  details: markdown`The electrical energy produced by wind and not impaired by poor quality of the grid.`,
   internals: markdown`
 
   `,
