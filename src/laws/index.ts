@@ -24,6 +24,7 @@ import Tempolimit130AufAutobahnen from "./Tempolimit130AufAutobahnen"
 import Tempolimit120AufAutobahnen from "./Tempolimit120AufAutobahnen"
 import Tempolimit100AufAutobahnen from "./Tempolimit100AufAutobahnen"
 import TempolimitAufAutobahnenAussitzen from "./TempolimitAufAutobahnenAussitzen"
+import WindkraftVereinfachen from "./WindkraftVereinfachen"
 import AbstandsregelnFuerWindkraftWieBisher from "./AbstandsregelnFuerWindkraftWieBisher"
 import AbstandsregelnFuerWindkraftLockern from "./AbstandsregelnFuerWindkraftLockern"
 import AbstandsregelnFuerWindkraftAbschaffen from "./AbstandsregelnFuerWindkraftAbschaffen"
@@ -40,7 +41,7 @@ import SolarstromFoerderungBeibehalten from "./SolarstromFoerderungBeibehalten"
 import SolarstromFoerdernx2 from "./SolarstromFoerdernx2"
 import SolarstromFoerdernx4 from "./SolarstromFoerdernx4"
 import SolarstromFoerdernx8 from "./SolarstromFoerdernx8"
-import WindkraftVereinfachen from "./WindkraftVereinfachen"
+import SolarAufAllenDaechernVerpflichtend from "./SolarAufAllenDaechernVerpflichtend"
 
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
@@ -76,6 +77,7 @@ const allLawsObj = {
   SolarstromFoerdernx2,
   SolarstromFoerdernx4,
   SolarstromFoerdernx8,
+  SolarAufAllenDaechernVerpflichtend,
 
   DaemmungAltbau1Percent,
   DaemmungAltbau2Percent,
