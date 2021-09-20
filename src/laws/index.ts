@@ -40,6 +40,7 @@ import SolarstromFoerderungBeibehalten from "./SolarstromFoerderungBeibehalten"
 import SolarstromFoerdernx2 from "./SolarstromFoerdernx2"
 import SolarstromFoerdernx4 from "./SolarstromFoerdernx4"
 import SolarstromFoerdernx8 from "./SolarstromFoerdernx8"
+import WindkraftVereinfachen from "./WindkraftVereinfachen"
 
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
@@ -57,6 +58,8 @@ const allLawsObj = {
 
   StromspeicherungErleichtern,
   StromspeicherungFoerdern,
+
+  WindkraftVereinfachen,
 
   AbstandsregelnFuerWindkraftVerschaerfen,
   AbstandsregelnFuerWindkraftWieBisher,

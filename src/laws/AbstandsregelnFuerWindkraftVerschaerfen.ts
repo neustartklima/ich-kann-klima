@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linear } from "../lawTools"
+import { lawIsAccepted, linear, windPercentage } from "../lawTools"
 import { Percent, TWh } from "../types"
 import { Change, modify } from "../params"
 
@@ -20,8 +20,9 @@ export default defineLaw({
   },
 
   priority(game) {
-    const v = game.values
-    const relWindPercentage: Percent = (v.electricityWind / v.electricityDemand) * 100
-    return linear(0, 100, relWindPercentage)
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
+      return linear(0, 100, windPercentage(game))
+    }
+    return 0
   },
 })
