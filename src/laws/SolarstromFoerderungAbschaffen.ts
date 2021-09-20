@@ -1,4 +1,5 @@
 import { defineLaw } from "../Factory"
+import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { Change, modify } from "../params"
 
@@ -14,7 +15,10 @@ export default defineLaw({
   },
 
   priority(game) {
-    return Math.random()
+    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+      return linear(0, 100, renewablePercentage(game))
+    }
+    return 0
   },
 
   details: markdown`

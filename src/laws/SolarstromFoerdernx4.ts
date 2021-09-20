@@ -1,5 +1,6 @@
 import { cite, wuppertalStudie } from "../citations"
 import { defineLaw } from "../Factory"
+import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { Change, modify } from "../params"
 
@@ -12,16 +13,23 @@ export default defineLaw({
 
   effects(game, startYear, currentYear): Change[] {
     return [
-      modify("popularity").byValue(20).if(startYear === currentYear),
-      modify("unemployment").byValue(-89000).if(startYear === currentYear),
+      modify("popularity")
+        .byValue(20)
+        .if(startYear === currentYear),
+      modify("unemployment")
+        .byValue(-89000)
+        .if(startYear === currentYear),
       modify("electricitySolar").byValue(20),
     ]
   },
 
   priority(game) {
-    return Math.random()
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return linear(100, 30, renewablePercentage(game))
+    }
+    return 0
   },
-  
+
   details: markdown`
     Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
     Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
