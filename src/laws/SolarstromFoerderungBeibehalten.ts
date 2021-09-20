@@ -1,4 +1,5 @@
 import { defineLaw } from "../Factory"
+import { linear, renewablePercentage } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { Change, modify } from "../params"
 
@@ -10,16 +11,15 @@ export default defineLaw({
   treatAfterLabels: [],
 
   effects(): Change[] {
-    return [
-      modify("electricitySolar").byValue(5),
-    ]
+    return [modify("electricitySolar").byValue(5)]
   },
 
   priority(game) {
-    return Math.random()
+    return linear(70, 100, renewablePercentage(game))
   },
-  
+
   details: markdown`
     Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
-    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.`
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+  `,
 })
