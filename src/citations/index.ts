@@ -27,6 +27,14 @@ export const fraunhoferISE2020ElectricityGeneration = new Citation({
   localCopy: "Bar Charts Electricity Generation Energy-Charts.pdf",
 })
 
+export const fraunhoferISE2020InstalledPower = new Citation({
+  url: "https://energy-charts.info/charts/installed_power/chart.htm?l=en&c=DE&stacking=grouped&year=2020",
+  title: "Net installed electricity generation capacity in Germany in 2020",
+  publisher: "Fraunhofer ISE",
+  archiveNotPossible: true,
+  localCopy: "Installed Power _ Energy-Charts.pdf",
+})
+
 export const welt2018BundKassiertMineraloelsteuer = new Citation({
   url: "https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html",
   title: "Bund kassiert so viel Mineralölsteuer wie seit Jahren nicht",
@@ -47,6 +55,14 @@ export const welt2016SteuervorteileKosten18Mrd = new Citation({
     "https://web.archive.org/web/20201201122658/https://www.welt.de/wirtschaft/article156562013/Steuervorteile-fuer-wenige-kosten-18-Milliarden-Euro.html",
   comment: ``,
   internalComment: ``,
+})
+
+export const wuppertalStudie = new Citation({
+  url: "https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf",
+  title: "CO2-neutral bis 2035: Eckpunkte eines deutschen Beitrags zur Einhaltung der 1,5-°C-Grenze",
+  publisher: "Wuppertal Institut",
+  date: "2020-10",
+  archiveUrl: "https://web.archive.org/https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf",
 })
 
 export const uba2020DeutscheTreibhausgasEmissionen = new Citation({

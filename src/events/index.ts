@@ -10,6 +10,7 @@ import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
 import TimesUp from "./TimesUp"
 import WahlVerloren from "./WahlVerloren"
 import WindkraftAusschreibung from "./WindkraftAusschreibung"
+import SolarstromFoerderung from "./SolarstromFoerderung"
 
 import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
@@ -32,4 +33,5 @@ export const allEvents = prepareModuleList({
   TimesUp,
   WahlVerloren,
   WindkraftAusschreibung,
+  SolarstromFoerderung,
 }) as Event[]
