@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linearPopChange } from "../lawTools"
+import { linearPopChange, renewablePercentage } from "../lawTools"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 import { ucl2021EconomicCostSixTimesHigher } from "../citations"
@@ -12,13 +12,7 @@ export default defineLaw({
   removeLawsWithLabels: ["CO2Preis"],
 
   effects(game, startYear, currentYear): Change[] {
-    const electricityRenewable =
-      game.values.electricityWind +
-      game.values.electricitySolar +
-      game.values.electricityWater +
-      game.values.electricityBiomass
-    const electricityRenewablePercentage = (electricityRenewable / game.values.electricityDemand) * 100
-    const electricityPopChange = linearPopChange(90, 50, electricityRenewablePercentage, -10)
+    const electricityPopChange = linearPopChange(90, 50, renewablePercentage(game), -10)
 
     const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10)
 

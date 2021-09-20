@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linearPopChange } from "../lawTools"
+import { linearPopChange, renewablePercentage } from "../lawTools"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
@@ -13,13 +13,7 @@ export default defineLaw({
   removeLawsWithLabels: ["CO2Preis"],
 
   effects(game, startYear, currentYear): Change[] {
-    const electricityRenewable =
-      game.values.electricityWind +
-      game.values.electricitySolar +
-      game.values.electricityWater +
-      game.values.electricityBiomass
-    const electricityRenewablePercentage = (electricityRenewable / game.values.electricityDemand) * 100
-    const electricityPopChange = linearPopChange(50, 0, electricityRenewablePercentage, -1)
+    const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1)
 
     const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1)
 
