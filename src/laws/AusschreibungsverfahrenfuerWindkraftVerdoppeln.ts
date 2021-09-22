@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { TsdPeople, TWh } from "../types"
-import { lawIsAccepted, linear } from "../lawTools"
+import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
 import { Change, modify } from "../params"
 
 export default defineLaw({
@@ -11,6 +11,8 @@ export default defineLaw({
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
   effects(game, startYear, currentYear): Change[] {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
+
     const onshoreNew: TWh = Math.min(13.8 as TWh, game.values.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 2.4
     return [
@@ -20,18 +22,19 @@ export default defineLaw({
       modify("unemployment")
         .byValue(-20 as TsdPeople)
         .if(startYear === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew),
+      modify("electricityWind")
+        .byValue(onshoreNew + offshoreNew)
+        .if(currentYear >= startYear + delay),
     ]
   },
 
   priority(game) {
-    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) return 0
-    const electricityRenewable =
-      game.values.electricityWind +
-      game.values.electricitySolar +
-      game.values.electricityWater +
-      game.values.electricityBiomass
-    const percentage = (electricityRenewable / game.values.electricityDemand) * 100
-    return linear(100, 50, percentage)
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) {
+      return linear(100, 50, renewablePercentage(game))
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return linear(40, 100, renewablePercentage(game))
+    }
+    return 0
   },
 })

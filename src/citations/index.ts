@@ -14,9 +14,11 @@ export const citationsDescription = (citations: Citations) =>
   citations.map((citation) => citation.toString()).join("; ")
 
 export const umweltrat2020Umweltgutachten = new Citation({
-  url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",
+  url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=31",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
   publisher: "Umweltrat",
+  archiveUrl:
+    "https://web.archive.org/web/20210828201134/https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=31",
 })
 
 export const fraunhoferISE2020ElectricityGeneration = new Citation({
@@ -25,6 +27,14 @@ export const fraunhoferISE2020ElectricityGeneration = new Citation({
   publisher: "Fraunhofer ISE",
   archiveNotPossible: true,
   localCopy: "Bar Charts Electricity Generation Energy-Charts.pdf",
+})
+
+export const fraunhoferISE2020InstalledPower = new Citation({
+  url: "https://energy-charts.info/charts/installed_power/chart.htm?l=en&c=DE&stacking=grouped&year=2020",
+  title: "Net installed electricity generation capacity in Germany in 2020",
+  publisher: "Fraunhofer ISE",
+  archiveNotPossible: true,
+  localCopy: "Installed Power _ Energy-Charts.pdf",
 })
 
 export const welt2018BundKassiertMineraloelsteuer = new Citation({
@@ -48,6 +58,28 @@ export const welt2016SteuervorteileKosten18Mrd = new Citation({
   comment: ``,
   internalComment: ``,
 })
+
+export const wuppertalStudie = new Citation({
+  url: "https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf",
+  title: "CO2-neutral bis 2035: Eckpunkte eines deutschen Beitrags zur Einhaltung der 1,5-°C-Grenze",
+  publisher: "Wuppertal Institut",
+  date: "2020-10",
+  archiveUrl:
+    "https://web.archive.org/web/20210916070821/https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf",
+})
+
+export const wuppertalStudieFactsheet = new Citation({
+  url: "https://wupperinst.org/fa/redaktion/downloads/projects/CO2-neutral_2035_Factsheet.pdf",
+  title:
+    "Schlüsselergebnisse der Studie des Wuppertal Instituts für Klima, Umwelt, Energie zu einem Beitrag Deutschlands zur Einhaltung der 1,5-°C-Grenze",
+  publisher: "Wuppertal Institut",
+  date: "2020-10-13",
+  archiveUrl:
+    "https://web.archive.org/web/20210726125101/https://wupperinst.org/fa/redaktion/downloads/projects/CO2-neutral_2035_Factsheet.pdf",
+  comment: `Summary of ${cite(wuppertalStudie)}.`,
+})
+
+wuppertalStudie.comment = `Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`
 
 export const uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",

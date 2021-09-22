@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linear } from "../lawTools"
+import { lawIsAccepted, linear, windPercentage } from "../lawTools"
 import { Percent, TWh } from "../types"
 import { Change, modify } from "../params"
 
@@ -10,17 +10,21 @@ export default defineLaw({
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
 
   effects(game, startYear, currentYear): Change[] {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
     return [
       modify("popularity")
         .byValue(-40)
         .if(startYear === currentYear),
-      modify("electricityWindOnshoreMaxNew").setValue(1000 as TWh),
+      modify("electricityWindOnshoreMaxNew")
+        .setValue(1000 as TWh)
+        .if(currentYear >= startYear + delay),
     ]
   },
 
   priority(game) {
-    const v = game.values
-    const relWindPercentage: Percent = (v.electricityWind / v.electricityDemand) * 100
-    return linear(80, 40, relWindPercentage)
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
+      return linear(80, 40, windPercentage(game))
+    }
+    return 0
   },
 })

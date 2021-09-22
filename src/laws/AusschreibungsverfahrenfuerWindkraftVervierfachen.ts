@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { TsdPeople, TWh } from "../types"
-import { lawIsAccepted, linear } from "../lawTools"
+import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 
@@ -12,6 +12,8 @@ export default defineLaw({
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
   effects(game, startYear, currentYear): Change[] {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
+
     const onshoreNew: TWh = Math.min(27.6 as TWh, game.values.electricityWindOnshoreMaxNew)
     const offshoreNew: TWh = 4.8
     return [
@@ -21,19 +23,20 @@ export default defineLaw({
       modify("unemployment")
         .byValue(-100 as TsdPeople)
         .if(startYear === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew),
+      modify("electricityWind")
+        .byValue(onshoreNew + offshoreNew)
+        .if(currentYear >= startYear + delay),
     ]
   },
 
   priority(game) {
-    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) return 0
-    const electricityRenewable =
-      game.values.electricityWind +
-      game.values.electricitySolar +
-      game.values.electricityWater +
-      game.values.electricityBiomass
-    const percentage = (electricityRenewable / game.values.electricityDemand) * 100
-    return linear(100, 40, percentage)
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return linear(100, 40, renewablePercentage(game))
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
+      return linear(0, 100, renewablePercentage(game))
+    }
+    return 0
   },
   citations: [],
   details: markdown`
@@ -59,8 +62,13 @@ export default defineLaw({
 
     # Priorität
 
+    Wenn bisher "verdoppeln":
+
     - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
     - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
+      Wenn bisher "verachtfachen:
+    - 0% bei einem Anteil der erneuerbaren Stromquellen von 0%. (Zu Beginn: 50%)
+    - 100% bei einem Anteil der erneuerbaren Stromquellen von 100%.
     - linear interpoliert
   `,
 })

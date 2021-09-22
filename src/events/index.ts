@@ -10,6 +10,7 @@ import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
 import TimesUp from "./TimesUp"
 import WahlVerloren from "./WahlVerloren"
 import WindkraftAusschreibung from "./WindkraftAusschreibung"
+import SolarstromFoerderung from "./SolarstromFoerderung"
 import AtomKatastrophe from "./AtomKatastrophe"
 import BSE from "./BSE"
 import Dürrewelle from "./Dürrewelle"
@@ -36,6 +37,7 @@ export const allEvents = prepareModuleList({
   TimesUp,
   WahlVerloren,
   WindkraftAusschreibung,
+  SolarstromFoerderung,
   AtomKatastrophe,
   BSE,
   Dürrewelle,
