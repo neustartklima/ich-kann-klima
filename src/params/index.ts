@@ -172,7 +172,8 @@ export function modify(name: keyof WritableBaseParams) {
 
     apply(context: EffectableContext) {
       if (this.condition) {
-        context.values[this.name] = this.getChange(context.values)
+        const { newVal } = this.getOldNew(context.values)
+        context.values[this.name] = newVal
       }
       return this
     },
