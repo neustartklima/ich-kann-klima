@@ -24686,6 +24686,14 @@ function getActiveLaw(lawRefs, matcher) {
   const lawRef = lawRefs.sort((law1, law2) => law2.effectiveSince - law1.effectiveSince).find((law) => matcher.test(law.lawId));
   return lawRef?.lawId;
 }
+function windPercentage(game) {
+  const v = game.values;
+  return v.electricityWindUsable / v.electricityDemand * 100;
+}
+function renewablePercentage(game) {
+  const electricityRenewable = game.values.electricityWindUsable + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+  return electricityRenewable / game.values.electricityDemand * 100;
+}
 
 // src/citations/CitationsTypes.ts
 var dateFormatter = new Intl.DateTimeFormat("de-DE");
@@ -24735,9 +24743,10 @@ function cite(cit) {
 }
 var citationsDescription = (citations) => citations.map((citation) => citation.toString()).join("; ");
 var umweltrat2020Umweltgutachten = new Citation({
-  url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=22",
+  url: "https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=31",
   title: "Umweltgutachten 2020 Kapitel 2 Pariser Klimaziele",
-  publisher: "Umweltrat"
+  publisher: "Umweltrat",
+  archiveUrl: "https://web.archive.org/web/20210828201134/https://www.umweltrat.de/SharedDocs/Downloads/DE/01_Umweltgutachten/2016_2020/2020_Umweltgutachten_Kap_02_Pariser_Klimaziele.pdf?__blob=publicationFile&v=31"
 });
 var fraunhoferISE2020ElectricityGeneration = new Citation({
   url: "https://energy-charts.info/charts/energy/chart.htm?l=en&c=DE&interval=year&year=2020",
@@ -24745,6 +24754,13 @@ var fraunhoferISE2020ElectricityGeneration = new Citation({
   publisher: "Fraunhofer ISE",
   archiveNotPossible: true,
   localCopy: "Bar Charts Electricity Generation Energy-Charts.pdf"
+});
+var fraunhoferISE2020InstalledPower = new Citation({
+  url: "https://energy-charts.info/charts/installed_power/chart.htm?l=en&c=DE&stacking=grouped&year=2020",
+  title: "Net installed electricity generation capacity in Germany in 2020",
+  publisher: "Fraunhofer ISE",
+  archiveNotPossible: true,
+  localCopy: "Installed Power _ Energy-Charts.pdf"
 });
 var welt2018BundKassiertMineraloelsteuer = new Citation({
   url: "https://www.welt.de/wirtschaft/article173181909/Mineraloelsteuer-Einnahmen-auf-hoechstem-Stand-seit-14-Jahren.html",
@@ -24764,6 +24780,22 @@ var welt2016SteuervorteileKosten18Mrd = new Citation({
   comment: ``,
   internalComment: ``
 });
+var wuppertalStudie = new Citation({
+  url: "https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf",
+  title: "CO2-neutral bis 2035: Eckpunkte eines deutschen Beitrags zur Einhaltung der 1,5-\xB0C-Grenze",
+  publisher: "Wuppertal Institut",
+  date: "2020-10",
+  archiveUrl: "https://web.archive.org/web/20210916070821/https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf"
+});
+var wuppertalStudieFactsheet = new Citation({
+  url: "https://wupperinst.org/fa/redaktion/downloads/projects/CO2-neutral_2035_Factsheet.pdf",
+  title: "Schl\xFCsselergebnisse der Studie des Wuppertal Instituts f\xFCr Klima, Umwelt, Energie zu einem Beitrag Deutschlands zur Einhaltung der 1,5-\xB0C-Grenze",
+  publisher: "Wuppertal Institut",
+  date: "2020-10-13",
+  archiveUrl: "https://web.archive.org/web/20210726125101/https://wupperinst.org/fa/redaktion/downloads/projects/CO2-neutral_2035_Factsheet.pdf",
+  comment: `Summary of ${cite(wuppertalStudie)}.`
+});
+wuppertalStudie.comment = `Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`;
 var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   referringUrl: "https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele",
@@ -25227,13 +25259,12 @@ var electricityWindUsable = new ComputedParam({
     const baseVal = electricityWind.initialValue;
     const quality = data.electricityGridQuality;
     const maxVal = data.electricityDemand;
-    return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality);
+    const gridMax = linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality);
+    return Math.min(gridMax, data.electricityWind);
   },
   shouldInitiallyBe: electricityWind.initialValue,
   citations: [],
-  details: markdown`
-
-  `,
+  details: markdown`The electrical energy produced by wind and not impaired by poor quality of the grid.`,
   internals: markdown`
 
   `
@@ -25857,9 +25888,7 @@ var NetzausbauErleichtern_default = defineLaw({
     ];
   },
   priority(game) {
-    const v = game.values;
-    const relWindPercentage = v.electricityWindUsable / v.electricityDemand * 100;
-    return linear(70, 30, relWindPercentage);
+    return linear(70, 30, windPercentage(game));
   },
   citations: [],
   details: markdown`
@@ -26481,19 +26510,59 @@ var TempolimitAufAutobahnenAussitzen_default = defineLaw({
   }
 });
 
-// src/laws/AbstandsregelnFuerWindkraftWieBisher.ts
-var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
-  title: "Abstandsregeln f\xFCr Windkraft wie bisher",
-  description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
-  labels: ["initial", "hidden", "WindkraftAbstandsregel"],
-  removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effects() {
-    return [modify("electricityWindOnshoreMaxNew").setValue(6)];
+// src/laws/WindkraftVereinfachen.ts
+var WindkraftVereinfachen_default = defineLaw({
+  title: "Windkraft vereinfachen",
+  description: "Genehmigungen f\xFCr Windkraftanlagen werden vereinfacht und beschleunigt.",
+  labels: [],
+  removeLawsWithLabels: [],
+  effects(game, startYear2, currentYear) {
+    return [];
   },
   priority(game) {
-    const v = game.values;
-    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
-    return linear(30, 100, relWindPercentage);
+    return linear(80, 40, windPercentage(game));
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 1.3
+
+    # Folgen
+
+    - Popularität unverändert: Einige freuen sich, andere ärgern die Windräder.
+    - Kostenneutral.
+    - Änderungen in den Ausschreibungsverfahren und Abstandsregeln wirken sich schneller aus.
+
+    # Priorität
+
+    - 0% bei einem Anteil von Windstrom von 80%. (Zu Beginn: 27%)
+    - 100% bei einem Anteil von Windstrom von 40%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/AbstandsregelnFuerWindkraftWieBisher.ts
+var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft wie zu Beginn",
+  description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
+  labels: ["initial", "WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
+    return [
+      modify("electricityWindOnshoreMaxNew").setValue(6).if(currentYear >= startYear2 + delay)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
+      return linear(30, 100, windPercentage(game));
+    }
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftVerschaerfen")) {
+      return linear(70, 30, windPercentage(game));
+    }
+    return 0;
   }
 });
 
@@ -26504,15 +26573,20 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
   effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     return [
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
-      modify("electricityWindOnshoreMaxNew").setValue(30)
+      modify("electricityWindOnshoreMaxNew").setValue(30).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
-    const v = game.values;
-    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
-    return linear(70, 30, relWindPercentage);
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
+      return linear(70, 30, windPercentage(game));
+    }
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftAbschaffen")) {
+      return linear(30, 100, windPercentage(game));
+    }
+    return 0;
   },
   citations: [],
   details: markdown`
@@ -26523,9 +26597,16 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
 
     # Priorität
 
+    Zu Beginn und wenn "WieBisher" ausgewählt:
+
     - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
     - 100% bei einem Anteil von Windstrom von 30%.
     - linear interpoliert
+
+    Wenn Abstandsregeln abgeschafft wurden:
+
+    - 0% bei einem Anteil von Windstrom von 30%.
+    - 100% bei einem Anteil von Windstrom von 100%.
   `
 });
 
@@ -26536,15 +26617,17 @@ var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
   effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     return [
       modify("popularity").byValue(-40).if(startYear2 === currentYear),
-      modify("electricityWindOnshoreMaxNew").setValue(1e3)
+      modify("electricityWindOnshoreMaxNew").setValue(1e3).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
-    const v = game.values;
-    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
-    return linear(80, 40, relWindPercentage);
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
+      return linear(80, 40, windPercentage(game));
+    }
+    return 0;
   }
 });
 
@@ -26561,28 +26644,33 @@ var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
     ];
   },
   priority(game) {
-    const v = game.values;
-    const relWindPercentage = v.electricityWind / v.electricityDemand * 100;
-    return linear(0, 100, relWindPercentage);
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
+      return linear(0, 100, windPercentage(game));
+    }
+    return 0;
   }
 });
 
 // src/laws/AusschreibungsverfahrenfuerWindkraftWieBisher.ts
 var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft wie bisher",
+  title: "Ausschreibungsverfahren f\xFCr Windkraft wie zu Beginn",
   description: "Windkraft Betreiber k\xF6nnen sich mehrmals im Jahr auf ein eine bestimte Leistung von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstm\xF6glichen Subventionierung umsetzen kann bekommt den Zuschlag. Insgesamt werden 8,1 TWh pro Jahr ausgeschrieben.",
   labels: ["initial", "hidden", "WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
-  effects(game) {
+  effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(6.9, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 1.2;
-    return [modify("electricityWind").byValue(onshoreNew + offshoreNew)];
+    return [
+      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
+    ];
   },
   priority(game) {
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const percentage = electricityRenewable / game.values.electricityDemand * 100;
-    return linear(100, 30, percentage);
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return linear(60, 100, renewablePercentage(game));
+    }
+    return 0;
   }
 });
 
@@ -26594,20 +26682,23 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
   effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(13.8, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 2.4;
     return [
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
       modify("unemployment").byValue(-20).if(startYear2 === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew)
+      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
-    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher"))
-      return 0;
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const percentage = electricityRenewable / game.values.electricityDemand * 100;
-    return linear(100, 50, percentage);
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) {
+      return linear(100, 50, renewablePercentage(game));
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return linear(40, 100, renewablePercentage(game));
+    }
+    return 0;
   }
 });
 
@@ -26619,20 +26710,23 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
   effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(27.6, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 4.8;
     return [
       modify("popularity").byValue(-2).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew)
+      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
-    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln"))
-      return 0;
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const percentage = electricityRenewable / game.values.electricityDemand * 100;
-    return linear(100, 40, percentage);
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return linear(100, 40, renewablePercentage(game));
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
+      return linear(0, 100, renewablePercentage(game));
+    }
+    return 0;
   },
   citations: [],
   details: markdown`
@@ -26658,8 +26752,13 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
 
     # Priorität
 
+    Wenn bisher "verdoppeln":
+
     - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
     - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
+      Wenn bisher "verachtfachen:
+    - 0% bei einem Anteil der erneuerbaren Stromquellen von 0%. (Zu Beginn: 50%)
+    - 100% bei einem Anteil der erneuerbaren Stromquellen von 100%.
     - linear interpoliert
   `
 });
@@ -26672,20 +26771,20 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
   effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(55.2, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 9.6;
     return [
       modify("popularity").byValue(-20).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew)
+      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
-    if (!lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen"))
-      return 0;
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const percentage = electricityRenewable / game.values.electricityDemand * 100;
-    return linear(100, 0, percentage);
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return linear(100, 0, renewablePercentage(game));
+    }
+    return 0;
   }
 });
 
@@ -26696,9 +26795,7 @@ var CO2PreisErhoehen_default = defineLaw({
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
   effects(game, startYear2, currentYear) {
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const electricityRenewablePercentage = electricityRenewable / game.values.electricityDemand * 100;
-    const electricityPopChange = linearPopChange(50, 0, electricityRenewablePercentage, -1);
+    const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1);
     const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1);
     const relReduction = -0.5;
     const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
@@ -26783,9 +26880,7 @@ var WirksamerCO2Preis_default = defineLaw({
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
   effects(game, startYear2, currentYear) {
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const electricityRenewablePercentage = electricityRenewable / game.values.electricityDemand * 100;
-    const electricityPopChange = linearPopChange(80, 50, electricityRenewablePercentage, -3);
+    const electricityPopChange = linearPopChange(80, 50, renewablePercentage(game), -3);
     const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3);
     const relReduction = -2;
     const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
@@ -26872,9 +26967,7 @@ var VollerCO2Preis_default = defineLaw({
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
   effects(game, startYear2, currentYear) {
-    const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-    const electricityRenewablePercentage = electricityRenewable / game.values.electricityDemand * 100;
-    const electricityPopChange = linearPopChange(90, 50, electricityRenewablePercentage, -10);
+    const electricityPopChange = linearPopChange(90, 50, renewablePercentage(game), -10);
     const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10);
     const relReduction = -5;
     const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
@@ -26952,6 +27045,166 @@ var VollerCO2Preis_default = defineLaw({
   `
 });
 
+// src/laws/SolarstromFoerderungAbschaffen.ts
+var SolarstromFoerderungAbschaffen_default = defineLaw({
+  title: "Solarstrom F\xF6rderung einstellen",
+  description: "Mittlere bis gro\xDFe Solaranlagen sollten sich selbst tragen. Die F\xF6rderung wird abgeschafft.",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effects() {
+    return [modify("electricitySolar").byValue(2)];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+      return linear(0, 100, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+
+  `
+});
+
+// src/laws/SolarstromFoerderungBeibehalten.ts
+var SolarstromFoerderungBeibehalten_default = defineLaw({
+  title: "Solarstrom F\xF6rderung beibehalten",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen wie bisher",
+  labels: ["initial", "SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effects() {
+    return [modify("electricitySolar").byValue(5)];
+  },
+  priority(game) {
+    return linear(70, 100, renewablePercentage(game));
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+  `
+});
+
+// src/laws/SolarstromFoerdernx2.ts
+var SolarstromFoerdernx2_default = defineLaw({
+  title: "Solarstrom F\xF6rderung x2",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verdoppeln",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(10).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-31e3).if(startYear2 === currentYear),
+      modify("electricitySolar").byValue(10)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.`
+});
+
+// src/laws/SolarstromFoerdernx4.ts
+var SolarstromFoerdernx4_default = defineLaw({
+  title: "Solarstrom F\xF6rderung x4",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen vervierfachen",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(20).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-89e3).if(startYear2 === currentYear),
+      modify("electricitySolar").byValue(20)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+    Nachrüst Pflicht für besonders geeignete Gebäude, moderater Zuwachs der Freiflächen Photovoltaik mit Doppeltbewirtschaftung von Energieerzeugung und Landwirtschaft #AgroPV.
+  `,
+  internals: markdown`
+    # Happy path 10
+
+    ${cite(wuppertalStudie)}
+  `,
+  citations: [wuppertalStudie]
+});
+
+// src/laws/SolarstromFoerdernx8.ts
+var SolarstromFoerdernx8_default = defineLaw({
+  title: "Solarstrom F\xF6rderung x8",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verachtfachen",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-10).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-209e3).if(startYear2 === currentYear),
+      modify("electricitySolar").byValue(40)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+    Nachrüst Pflicht für alle Gebäude, auch bei moderater Ausbäute.
+    Umwandlung vieler Landwirtschaftlicher flächen in Freiflächen PV.`
+});
+
+// src/laws/SolarAufAllenDaechernVerpflichtend.ts
+var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
+  title: "Solar auf neuen D\xE4chern verpflichtend",
+  description: "Alle Neubauten bekommen PV Anlagen auf die D\xE4cher.",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-3).if(startYear2 === currentYear),
+      modify("electricitySolar").byValue(2)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 11
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - Popularität sinkt um 3 Prozent im ersten Jahr, weil das als Zwang empfunden wird.
+    - Zusätzlicher Ausbau um 2TWh pro Jahr.
+  `
+});
+
 // src/laws/index.ts
 var allLawsObj = {
   AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
@@ -26962,6 +27215,7 @@ var allLawsObj = {
   NetzausbauErleichtern: NetzausbauErleichtern_default,
   StromspeicherungErleichtern: StromspeicherungErleichtern_default,
   StromspeicherungFoerdern: StromspeicherungFoerdern_default,
+  WindkraftVereinfachen: WindkraftVereinfachen_default,
   AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
   AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
   AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
@@ -26970,6 +27224,12 @@ var allLawsObj = {
   AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
   AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
   AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default,
+  SolarstromFoerderungAbschaffen: SolarstromFoerderungAbschaffen_default,
+  SolarstromFoerderungBeibehalten: SolarstromFoerderungBeibehalten_default,
+  SolarstromFoerdernx2: SolarstromFoerdernx2_default,
+  SolarstromFoerdernx4: SolarstromFoerdernx4_default,
+  SolarstromFoerdernx8: SolarstromFoerdernx8_default,
+  SolarAufAllenDaechernVerpflichtend: SolarAufAllenDaechernVerpflichtend_default,
   DaemmungAltbau1Percent: DaemmungAltbau1Percent_default,
   DaemmungAltbau2Percent: DaemmungAltbau2Percent_default,
   DaemmungAltbau4Percent: DaemmungAltbau4Percent_default,
@@ -27268,6 +27528,38 @@ var WindkraftAusschreibung_default = defineEvent({
   `
 });
 
+// src/events/SolarstromFoerderung.ts
+var SolarstromFoerderung_default = defineEvent({
+  title: "B\xFCrgerinitiative fordert st\xE4rkere Solarf\xF6rderung",
+  description: "",
+  laws: [
+    "SolarstromFoerderungAbschaffen",
+    "SolarstromFoerderungBeibehalten",
+    "SolarstromFoerdernx2",
+    "SolarstromFoerdernx4",
+    "SolarstromFoerdernx8"
+  ],
+  apply() {
+  },
+  probability(game) {
+    const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
+    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungBeibehalten");
+    const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
+    return abgeschafft || beibehalten || x2 ? Math.random() : 0;
+  },
+  citations: [
+    fraunhoferISE2020InstalledPower
+  ],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Installierte Leistung 2020 54GW entspricht Jährlich ~51,42TWh.
+    ${cite(fraunhoferISE2020InstalledPower)}
+    Ausgeschrieben sind 5-6GW PV Leistung
+  `
+});
+
 // src/events/index.ts
 var allEvents = prepareModuleList({
   AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
@@ -27281,7 +27573,8 @@ var allEvents = prepareModuleList({
   TempolimitAufAutobahnen: TempolimitAufAutobahnen_default,
   TimesUp: TimesUp_default,
   WahlVerloren: WahlVerloren_default,
-  WindkraftAusschreibung: WindkraftAusschreibung_default
+  WindkraftAusschreibung: WindkraftAusschreibung_default,
+  SolarstromFoerderung: SolarstromFoerderung_default
 });
 
 // src/server/EventController.ts
