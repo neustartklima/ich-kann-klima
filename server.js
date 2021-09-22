@@ -15636,7 +15636,7 @@ var require_route = __commonJS({
       }
       return methods2;
     };
-    Route.prototype.dispatch = function dispatch(req, res, done) {
+    Route.prototype.dispatch = function dispatch2(req, res, done) {
       var idx = 0;
       var stack = this.stack;
       if (stack.length === 0) {
@@ -22249,7 +22249,7 @@ var require_showdown = __commonJS({
           var rsp = text.match(/^\s*/)[0].length, rgx = new RegExp("^\\s{0," + rsp + "}", "gm");
           return text.replace(rgx, "");
         }
-        this._dispatch = function dispatch(evtName, text, options2, globals) {
+        this._dispatch = function dispatch2(evtName, text, options2, globals) {
           if (listeners.hasOwnProperty(evtName)) {
             for (var ei = 0; ei < listeners[evtName].length; ++ei) {
               var nText = listeners[evtName][ei](evtName, text, this, options2, globals);
@@ -25705,8 +25705,24 @@ function createBaseValues(values) {
   }));
   return result;
 }
+function dispatch(actionName, payload) {
+  return {
+    type: "dispatch",
+    condition: true,
+    if(condition) {
+      this.condition = condition;
+      return this;
+    },
+    apply(context) {
+      if (this.condition) {
+        context.dispatch(actionName, payload);
+      }
+    }
+  };
+}
 function modify(name) {
   return {
+    type: "modify",
     name,
     value: 0,
     percent: 0,
@@ -25746,11 +25762,12 @@ function modify(name) {
       const { oldVal, newVal } = this.getOldNew(values);
       return newVal - oldVal;
     },
-    getNewVal(values) {
-      if (!this.condition) {
-        return values[this.name];
+    apply(context) {
+      if (this.condition) {
+        const { newVal } = this.getOldNew(context.values);
+        context.values[this.name] = newVal;
       }
-      return this.getOldNew(values).newVal;
+      return this;
     }
   };
 }
@@ -27305,6 +27322,7 @@ var AbstandsregelnWindkraft_default = defineEvent({
     "AbstandsregelnFuerWindkraftAbschaffen"
   ],
   apply() {
+    return [];
   },
   probability() {
     return Math.random();
@@ -27323,6 +27341,7 @@ var Altbausanierung_default = defineEvent({
     "DaemmungAltbau4Percent"
   ],
   apply() {
+    return [];
   },
   probability(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
@@ -27340,15 +27359,14 @@ var bestechung_default = defineEvent({
     Ferienvilla auf Sardinien einladen. Er verl\xE4sst sich nat\xFCrlich darauf, dass du dem Gesetzentwurf zum Abbau von Subventionen
     nicht zustimmen wirst.
   `,
-  apply(context) {
-    const game = context.state.game;
-    if (!game) {
-      return;
+  apply(game) {
+    if (game) {
+      const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
+      if (law) {
+        return [dispatch("rejectLaw", { lawId: law.id })];
+      }
     }
-    const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
-    if (law) {
-      context.dispatch("rejectLaw", { lawId: law.id });
-    }
+    return [];
   },
   probability(game) {
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
@@ -27362,6 +27380,7 @@ var EnergieStrategie_default = defineEvent({
   description: "Der Bundestag debattierte heute \xFCber die Strategie zur Stromerzeugung in Deutschland. Die Meinungen der Parteien gingen dabei stark auseinander.",
   laws: ["KohleverstromungEinstellen", "EnergiemixRegeltDerMarkt", "KernenergienutzungVerlaengern"],
   apply() {
+    return [];
   },
   probability() {
     return Math.random();
@@ -27384,8 +27403,8 @@ var Finanzkollaps_default = defineEvent({
     jemals wieder wirst zur\xFCckahlen k\xF6nnen. Daher gibt dir auch niemand mehr Geld, mit dem du die Staatsangestellten oder die offenen Verpflichtungen zahlen
     k\xF6nntest. Das Spiel ist damit leider beendet.
   `,
-  apply(context) {
-    context.dispatch("gameOver");
+  apply() {
+    return [dispatch("gameOver")];
   },
   probability(game) {
     return game.values.stateDebt > defaultValues.stateDebt * 2 ? specialEventProbs.finanzKollaps : 0;
@@ -27399,8 +27418,8 @@ var Hitzeh_lle_default = defineEvent({
   stehen unter Wasser, ganze Landstriche sind verschwunden. In den trockeneren Gebieten ist die Temperatur so hoch, dass nichts mehr w\xE4chst.
   Um die verbleibdenden Teile sind erbitterte K\xE4mpfe ausgebrochen.
   `,
-  apply(context) {
-    context.dispatch("gameOver");
+  apply() {
+    return [dispatch("gameOver")];
   },
   probability(game) {
     return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0;
@@ -27414,8 +27433,8 @@ var NewYear_default = defineEvent({
     und kommt zu dem nicht weiter \xFCberraschenden Ergebnis, dass sie sehr wirkungsvolle Gesetze beschlossen hat. Die Opposition -
     ebenfalls nicht \xFCberraschend - sieht die Sache anders und verurteilt die Regierungserkl\xE4rung als haltlos.
   `,
-  apply(context) {
-    context.dispatch("advanceYear");
+  apply() {
+    return [dispatch("advanceYear")];
   },
   probability(game) {
     const acceptedLaws = game?.acceptedLaws.map(getAcceptedLaw).filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1);
@@ -27438,8 +27457,8 @@ var SocialMedia_default = defineEvent({
     Netz kursieren, dass du vor einigen Jahren bei einer Demo dabei warst, bei der die Gewalt eskaliert ist.
     Die Zeitungen haben die Meldung schon aufgegriffen und es gibt Spekulationen, ob man dir das Misstrauen aussprechen wird.
   `,
-  apply(context) {
-    context.dispatch("applyEffects", [modify("popularity").byPercent(-20)]);
+  apply() {
+    return [modify("popularity").byPercent(-20)];
   },
   probability() {
     return Math.random();
@@ -27457,6 +27476,7 @@ var TempolimitAufAutobahnen_default = defineEvent({
     "TempolimitAufAutobahnenAussitzen"
   ],
   apply() {
+    return [];
   },
   probability() {
     return Math.random();
@@ -27470,8 +27490,8 @@ var TimesUp_default = defineEvent({
     bis hierhin durchzuhalten! Das ist wunderbar, denn noch immer ist der Planet bewohnbar, deine Ma\xDFnahmen waren zu finanzieren
     und die Menschen hast du auf diesem Weg auch mitgenommen. Gratulation!
   `,
-  apply(context) {
-    context.dispatch("gameOver");
+  apply() {
+    return [dispatch("gameOver")];
   },
   probability(game) {
     return game.currentYear === 2050 ? specialEventProbs.timesUp : 0;
@@ -27485,8 +27505,8 @@ var WahlVerloren_default = defineEvent({
     Deine Partei hat daher bei der Wahl gerade mal 1.3% erreicht (weil wohl manche nicht wussten, zu welcher Partei du geh\xF6rst) und ist damit unter
     die 5% Marke gerutscht. An eine weitere Kanzlerschaft hat schon l\xE4nger kein vern\xFCnftiger Mensch mehr geglaubt.
   `,
-  apply(context) {
-    context.dispatch("gameOver");
+  apply() {
+    return [dispatch("gameOver")];
   },
   probability(game) {
     return game.values.popularity <= 0 ? specialEventProbs.wahlVerloren : 0;
@@ -27504,6 +27524,7 @@ var WindkraftAusschreibung_default = defineEvent({
     "AusschreibungsverfahrenfuerWindkraftVerachtfachen"
   ],
   apply() {
+    return [];
   },
   probability() {
     return Math.random();
@@ -27540,6 +27561,7 @@ var SolarstromFoerderung_default = defineEvent({
     "SolarstromFoerdernx8"
   ],
   apply() {
+    return [];
   },
   probability(game) {
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
@@ -27547,9 +27569,7 @@ var SolarstromFoerderung_default = defineEvent({
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
     return abgeschafft || beibehalten || x2 ? Math.random() : 0;
   },
-  citations: [
-    fraunhoferISE2020InstalledPower
-  ],
+  citations: [fraunhoferISE2020InstalledPower],
   details: markdown`
 
   `,
@@ -27557,6 +27577,88 @@ var SolarstromFoerderung_default = defineEvent({
     Installierte Leistung 2020 54GW entspricht Jährlich ~51,42TWh.
     ${cite(fraunhoferISE2020InstalledPower)}
     Ausgeschrieben sind 5-6GW PV Leistung
+  `
+});
+
+// src/events/AtomKatastrophe.ts
+var AtomKatastrophe_default = defineEvent({
+  title: "Atom-Katastrophe",
+  description: `Atomkraftwerk Tihange fliegt in die Luft`,
+  apply() {
+    return [dispatch("gameOver")];
+  },
+  probability(game) {
+    const law = game.acceptedLaws.find((l) => l.lawId === "KernenergienutzungVerlaengern");
+    return law ? Math.random() : 0;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/BSE.ts
+var BSE_default = defineEvent({
+  title: "Staatsoberhaupt verstorben",
+  description: `Du stirbst an der neuen BSE Variante. Tja, h\xE4ttest du dich mal besser um das Tierwohl gek\xFCmmert...`,
+  apply() {
+    return [dispatch("gameOver")];
+  },
+  probability(game) {
+    const law = idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law2) => law2.title.match(/tierwohl/i));
+    return law ? 0 : Math.random();
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/Dürrewelle.ts
+var D_rrewelle_default = defineEvent({
+  title: "",
+  description: ``,
+  apply() {
+    return [];
+  },
+  probability() {
+    return Math.random();
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/PRSkandal.ts
+var PRSkandal_default = defineEvent({
+  title: "PR-Skandal",
+  description: `Du wurdest mit dem Vorstand von RWE beim Currywurst essen gesehen und fotografiert. Das Bild geht jetzt viral und f\xFChrt zu einer neuen Diskussion \xFCber Lobbyismus.`,
+  apply() {
+    return [modify("popularity").byValue(2)];
+  },
+  probability() {
+    return Math.random();
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Klimaaktivisten steigen dir aufs Dach! Aber bei den Lobbyisten steigt deine Beliebtheit. Das gleicht deinen Popularitätsverlust etwas aus.
   `
 });
 
@@ -27574,7 +27676,11 @@ var allEvents = prepareModuleList({
   TimesUp: TimesUp_default,
   WahlVerloren: WahlVerloren_default,
   WindkraftAusschreibung: WindkraftAusschreibung_default,
-  SolarstromFoerderung: SolarstromFoerderung_default
+  SolarstromFoerderung: SolarstromFoerderung_default,
+  AtomKatastrophe: AtomKatastrophe_default,
+  BSE: BSE_default,
+  D\u00FCrrewelle: D_rrewelle_default,
+  PRSkandal: PRSkandal_default
 });
 
 // src/server/EventController.ts
@@ -27605,7 +27711,7 @@ var EventStore_default = ({
 }) => {
   const { existsSync, mkdirSync, createReadStream, createWriteStream } = fileSystem;
   const listeners = {};
-  async function dispatch(event) {
+  async function dispatch2(event) {
     try {
       const relevantListeners = listeners[event.type] || [];
       relevantListeners.forEach((listener) => listener(event));
@@ -27621,10 +27727,10 @@ var EventStore_default = ({
   const changeStream = createWriteStream(eventsFileName, { flags: "a" });
   changeStream.on("error", logger.error);
   return {
-    dispatch,
+    dispatch: dispatch2,
     async replay() {
       try {
-        const stream = createReadStream(eventsFileName).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).pipe(import_event_stream.default.mapSync(dispatch));
+        const stream = createReadStream(eventsFileName).pipe(import_event_stream.default.split()).pipe(import_event_stream.default.parse()).pipe(import_event_stream.default.mapSync(dispatch2));
         await new Promise((resolve2, reject) => {
           stream.on("end", resolve2);
           stream.on("error", reject);
@@ -27642,7 +27748,7 @@ var EventStore_default = ({
       try {
         const completeEvent = { ts: new Date(), ...event };
         changeStream.write(JSON.stringify(completeEvent) + "\n");
-        dispatch(completeEvent);
+        dispatch2(completeEvent);
       } catch (error) {
         logger.error(error);
       }
