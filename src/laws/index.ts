@@ -11,11 +11,14 @@ import DaemmungAltbau2Percent from "./DaemmungAltbau2Percent"
 import DaemmungAltbau4Percent from "./DaemmungAltbau4Percent"
 import DaemmungAltbauAbschaffen from "./DaemmungAltbauAbschaffen"
 import NahverkehrAusbauen from "./NahverkehrAusbauen"
+import NahverkehrModernisieren from "./NahverkehrModernisieren"
 import FoerderungFuerTierhaltungAbschaffen from "./FoerderungFuerTierhaltungAbschaffen"
 import NahverkehrKostenlos from "./NahverkehrKostenlos"
 import AutosInInnenstaedtenVerbieten from "./AutosInInnenstaedtenVerbieten"
 import FernverkehrVerbindungenAusbauen from "./FernverkehrVerbindungenAusbauen"
+import FernverkehrModernisieren from "./FernverkehrModernisieren"
 import WasserstofftechnologieFoerdern from "./WasserstofftechnologieFoerdern"
+import WasserstoffmobilitaetFoerdern from "./WasserstoffmobilitaetFoerdern"
 import AbschaffungDerMineraloelsteuer from "./AbschaffungDerMineraloelsteuer"
 import AusbauVonStrassen from "./AusbauVonStrassen"
 import DieselPrivilegAbgeschaffen from "./DieselPrivilegAbgeschaffen"
@@ -24,6 +27,8 @@ import Tempolimit130AufAutobahnen from "./Tempolimit130AufAutobahnen"
 import Tempolimit120AufAutobahnen from "./Tempolimit120AufAutobahnen"
 import Tempolimit100AufAutobahnen from "./Tempolimit100AufAutobahnen"
 import TempolimitAufAutobahnenAussitzen from "./TempolimitAufAutobahnenAussitzen"
+import ElektromobilitaetFoerdern from "./ElektromobilitaetFoerdern"
+import LadeinfrastrukturAusbauen from "./LadeinfrastrukturAusbauen"
 import WindkraftVereinfachen from "./WindkraftVereinfachen"
 import AbstandsregelnFuerWindkraftWieBisher from "./AbstandsregelnFuerWindkraftWieBisher"
 import AbstandsregelnFuerWindkraftLockern from "./AbstandsregelnFuerWindkraftLockern"
@@ -99,9 +104,12 @@ const allLawsObj = {
   NahverkehrKostenlos,
   AutosInInnenstaedtenVerbieten,
   WasserstofftechnologieFoerdern,
+  WasserstoffmobilitaetFoerdern,
 
   NahverkehrAusbauen,
+  NahverkehrModernisieren,
   FernverkehrVerbindungenAusbauen,
+  FernverkehrModernisieren,
   AusbauVonStrassen,
 
   AbschaffungDerMineraloelsteuer,
@@ -113,6 +121,9 @@ const allLawsObj = {
   Tempolimit120AufAutobahnen,
   Tempolimit100AufAutobahnen,
   TempolimitAufAutobahnenAussitzen,
+
+  ElektromobilitaetFoerdern,
+  LadeinfrastrukturAusbauen,
 
   FoerderungFuerTierhaltungAbschaffen,
 
