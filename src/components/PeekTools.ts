@@ -19,7 +19,8 @@ export type ValueRow = {
 
 export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
   const nextValues = createBaseValues(game.values)
-  applyEffects(nextValues, effects)
+  const context = { dispatch: () => undefined, values: nextValues}
+  applyEffects(context, effects)
 
   function valueStr(key: keyof BaseParams): string {
     return game.values[key].toFixed(2)

@@ -4,6 +4,7 @@ import { AcceptedLaw } from "./laws"
 
 export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number): BaseParams {
   const values = createBaseValues(game.values)
+  const context = { dispatch: () => undefined, state: { game: { ...game, values} }}
   laws
     .sort((a, b) => {
       if (a.treatAfterLabels?.some((lbl) => b.labels?.includes(lbl))) return 1
@@ -11,8 +12,8 @@ export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number)
       return 0
     })
     .forEach((law) => {
-      const effects = law.effects({...game, values}, law.effectiveSince, year)
-      applyEffects(values, effects)
+      const effects = law.effects({ ...game, values }, law.effectiveSince, year)
+      applyEffects({ dispatch: () => undefined, values }, effects)
     })
 
   // re-calculate remaining CO2 budget

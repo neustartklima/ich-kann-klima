@@ -2,7 +2,11 @@ import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import { paramDefinitions } from "./Params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
-import { store } from "../store"
+
+type EffectableContext = {
+  values: BaseParams
+  dispatch: (actionName: string, payload?: unknown) => void
+}
 
 export type ParamDefinitions = typeof paramDefinitions
 
@@ -108,9 +112,9 @@ export function dispatch(actionName: string, payload?: unknown) {
       return this
     },
 
-    apply(): void {
+    apply(context: EffectableContext): void {
       if (this.condition) {
-        store.dispatch(actionName, payload)
+        context.dispatch(actionName, payload)
       }
     },
   }
@@ -166,9 +170,9 @@ export function modify(name: keyof WritableBaseParams) {
       return newVal - oldVal
     },
 
-    apply(values: BaseParams) {
+    apply(context: EffectableContext) {
       if (this.condition) {
-        values[this.name] = this.getChange(values)
+        context.values[this.name] = this.getChange(context.values)
       }
       return this
     },
@@ -184,7 +188,6 @@ export function modify(name: keyof WritableBaseParams) {
 
 export type Change = ReturnType<typeof modify> | ReturnType<typeof dispatch>
 
-export function applyEffects(values: BaseParams, changes: Change[]): BaseParams {
-  changes.filter((change) => change.condition).forEach((change) => change.apply(values))
-  return values
+export function applyEffects(context: EffectableContext, changes: Change[]): void {
+  changes.filter((change) => change.condition).forEach((change) => change.apply(context))
 }
