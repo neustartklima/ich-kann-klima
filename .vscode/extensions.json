@@ -13,6 +13,7 @@
     "buster.ndjson-colorizer",
     "github.vscode-pull-request-github",
     "tobermory.es6-string-html",
-    "hediet.vscode-drawio"
+    "hediet.vscode-drawio",
+    "johnsoncodehk.vscode-typescript-vue-plugin"
   ]
 }
