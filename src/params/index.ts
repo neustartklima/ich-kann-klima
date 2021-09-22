@@ -177,13 +177,6 @@ export function modify(name: keyof WritableBaseParams) {
       }
       return this
     },
-
-    getNewVal(values: BaseParams): number {
-      if (!this.condition) {
-        return values[this.name]
-      }
-      return this.getOldNew(values).newVal
-    },
   }
 }
 
