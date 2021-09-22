@@ -188,14 +188,16 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in selectedParam.citations" :key="pos" :citation="citation" />
     </div>
-    <table class="paramsList">
-      <tr v-for="row in sortedValues" :key="row.id" class="clickable" :class="row.class" @click="selectParam(row.id)">
-        <td>{{ row.id }}</td>
-        <td class="numbercol">{{ row.value }}</td>
-        <td class="effcol">{{ row.effect }}</td>
-        <td>{{ row.unit }}</td>
-      </tr>
-    </table>
+    <div class="paramsList">
+      <table>
+        <tr v-for="row in sortedValues" :key="row.id" class="clickable" :class="row.class" @click="selectParam(row.id)">
+          <td>{{ row.id }}</td>
+          <td class="numbercol">{{ row.value }}</td>
+          <td class="effcol">{{ row.effect }}</td>
+          <td>{{ row.unit }}</td>
+        </tr>
+      </table>
+    </div>
     <div>
       <table class="buttonlist">
         <tr>
@@ -203,37 +205,41 @@ export default defineComponent({
           <td class="clickable eventButton" :class="selectedTable" @click="selectedTable = 'events'">Events</td>
         </tr>
       </table>
-      <table v-if="selectedTable === 'laws'" class="lawlist">
-        <tr>
-          <th @click="sortLaws('state')" class="clickable">S</th>
-          <th @click="sortLaws('id')" class="clickable">ID</th>
-          <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
-        </tr>
-        <tr v-for="law in sortedLaws" :key="law.id" class="clickable" :class="law.state" @click="selectLaw(law.id)">
-          <td>{{ law.state }}</td>
-          <td>{{ law.id }}</td>
-          <td class="priocol">{{ law.priority }}</td>
-        </tr>
-      </table>
-      <table v-if="selectedTable === 'events'" class="lawlist">
-        <tr>
-          <th @click="sortEvents('id')" class="clickable">ID</th>
-          <th @click="sortEvents('probability')" class="clickable priocol">Probability</th>
-        </tr>
-        <tr v-for="event in sortedEvents" :key="event.id" class="clickable" @click="selectEvent(event.id)">
-          <td>{{ event.id }}</td>
-          <td class="priocol">{{ event.probability }}</td>
-        </tr>
-      </table>
+      <div class="lawList">
+        <table v-if="selectedTable === 'laws'">
+          <tr>
+            <th @click="sortLaws('state')" class="clickable">S</th>
+            <th @click="sortLaws('id')" class="clickable">ID</th>
+            <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
+          </tr>
+          <tr v-for="law in sortedLaws" :key="law.id" class="clickable" :class="law.state" @click="selectLaw(law.id)">
+            <td>{{ law.state }}</td>
+            <td>{{ law.id }}</td>
+            <td class="priocol">{{ law.priority }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="eventList">
+        <table v-if="selectedTable === 'events'">
+          <tr>
+            <th @click="sortEvents('id')" class="clickable">ID</th>
+            <th @click="sortEvents('probability')" class="clickable priocol">Probability</th>
+          </tr>
+          <tr v-for="event in sortedEvents" :key="event.id" class="clickable" @click="selectEvent(event.id)">
+            <td>{{ event.id }}</td>
+            <td class="priocol">{{ event.probability }}</td>
+          </tr>
+        </table>
+      </div>
     </div>
   </details>
 </template>
 
 <style lang="scss" scoped>
 $hover: #c0c0c0;
-$shadedBackground: #f0f0f0;
-$sectionBackground: #fffeee;
-$lightBackground: #ffffff;
+$shadedBackground: #f0e7d0;
+$sectionBackground: #f0e7d0;
+$lightBackground: #fff5dd;
 
 .peekData {
   padding: 0 5px;
@@ -250,7 +256,7 @@ $lightBackground: #ffffff;
 
   .buttonlist {
     width: 100%;
-    background-color: $shadedBackground;
+    background-color: $lightBackground;
     border-collapse: collapse;
     td {
       font-weight: bold;
@@ -260,25 +266,29 @@ $lightBackground: #ffffff;
   }
 
   .lawButton.events {
-    background-color: white;
+    background-color: $shadedBackground;
+    color: grey;
   }
   .eventButton.laws {
-    background-color: white;
-  }
-
-  .lawlist,
-  .eventList {
     background-color: $shadedBackground;
-    width: 30em;
+    color: grey;
   }
 
-  .paramsList {
+  .paramsList,
+  .lawList,
+  .eventList {
+    min-width: 32em;
+    max-height: 95vh;
+    overflow-y: scroll;
     background-color: $lightBackground;
   }
 
+  .paramsList {
+    background-color: $shadedBackground;
+  }
   .Details {
     width: 35em;
-    background-color: $shadedBackground;
+    background-color: $lightBackground;
     > * {
       margin: 0.67em 0 0.67em 0;
     }
@@ -311,7 +321,7 @@ $lightBackground: #ffffff;
   }
 
   .p {
-    background: lightyellow;
+    background: lightgreen;
   }
 
   .r {
