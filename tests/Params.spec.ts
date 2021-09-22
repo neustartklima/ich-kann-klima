@@ -71,20 +71,26 @@ describe("createBaseValues(defaultValues)", () => {
 })
 
 describe("applyEffects", () => {
-  const initialValues = () => ({ co2budget: 1000 } as unknown as BaseParams)
+  const initialContext = () => ({
+    dispatch: () => undefined,
+    values: { co2budget: 1000 } as unknown as BaseParams
+  })
 
   it("should modify parameters by absolute value", () => {
-    const values = applyEffects(initialValues(), [modify("co2budget").byValue(-123)])
-    values.should.deepEqual({ co2budget: 877 })
+    const context = initialContext()
+    applyEffects(context, [modify("co2budget").byValue(-123)])
+    context.values.should.deepEqual({ co2budget: 877 })
   })
 
   it("should modify parameters by percent", () => {
-    const values = applyEffects(initialValues(), [modify("co2budget").byPercent(-42)])
-    values.should.deepEqual({ co2budget: 580 })
+    const context = initialContext()
+    const values = applyEffects(context, [modify("co2budget").byPercent(-42)])
+    context.values.should.deepEqual({ co2budget: 580 })
   })
 
   it("should only modify if condition is met", () => {
-    const values = applyEffects(initialValues(), [modify("co2budget").byPercent(-42).if(false)])
-    values.should.deepEqual({ co2budget: 1000 })
+    const context = initialContext()
+    const values = applyEffects(context, [modify("co2budget").byPercent(-42).if(false)])
+    context.values.should.deepEqual({ co2budget: 1000 })
   })
 })

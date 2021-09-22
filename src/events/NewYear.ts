@@ -1,5 +1,6 @@
 import { defineEvent } from "../Factory"
 import { getAcceptedLaw } from "../laws"
+import { dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
@@ -9,8 +10,8 @@ export default defineEvent({
     ebenfalls nicht überraschend - sieht die Sache anders und verurteilt die Regierungserklärung als haltlos.
   `,
 
-  apply(context) {
-    context.dispatch("advanceYear")
+  apply() {
+    return [dispatch("advanceYear")]
   },
 
   probability(game) {

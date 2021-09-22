@@ -1,4 +1,4 @@
-import { BaseParams, Change, createBaseValues, applyEffects, paramList } from "../params"
+import { BaseParams, Change, createBaseValues, applyEffects, paramList, modify } from "../params"
 import { Game } from "../game"
 import { Law, LawId } from "../laws"
 import { Event } from "../events"
@@ -19,7 +19,8 @@ export type ValueRow = {
 
 export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
   const nextValues = createBaseValues(game.values)
-  applyEffects(nextValues, effects)
+  const context = { dispatch: () => undefined, values: nextValues}
+  applyEffects(context, effects)
 
   function valueStr(key: keyof BaseParams): string {
     return game.values[key].toFixed(2)
@@ -29,7 +30,7 @@ export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
   }
 
   function getEffect(key: keyof BaseParams): number {
-    const effect = effects.find((e) => e.name === key)
+    const effect = effects.find((e) => e.type === "modify" && (e as ReturnType<typeof modify>).name === key) as ReturnType<typeof modify>
     return effect && effect.condition ? effect.value : 0
   }
 

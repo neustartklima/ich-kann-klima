@@ -14,7 +14,9 @@ export default defineEvent({
     "SolarstromFoerdernx8",
   ],
 
-  apply() {},
+  apply() {
+    return []
+  },
 
   probability(game) {
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")
@@ -23,9 +25,7 @@ export default defineEvent({
     return abgeschafft || beibehalten || x2 ? Math.random() : 0
   },
 
-  citations: [
-    fraunhoferISE2020InstalledPower,
-  ],
+  citations: [fraunhoferISE2020InstalledPower],
   details: markdown`
 
   `,
@@ -33,5 +33,5 @@ export default defineEvent({
     Installierte Leistung 2020 54GW entspricht Jährlich ~51,42TWh.
     ${cite(fraunhoferISE2020InstalledPower)}
     Ausgeschrieben sind 5-6GW PV Leistung
-  `
+  `,
 })

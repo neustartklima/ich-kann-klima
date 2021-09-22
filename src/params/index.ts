@@ -3,6 +3,11 @@ import { paramDefinitions } from "./Params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
 
+type EffectableContext = {
+  values: BaseParams
+  dispatch: (actionName: string, payload?: unknown) => void
+}
+
 export type ParamDefinitions = typeof paramDefinitions
 
 type RemoveNeverField<T> = {
@@ -97,8 +102,27 @@ export function createBaseValues(values: WritableParams): Params {
   return result as Params
 }
 
+export function dispatch(actionName: string, payload?: unknown) {
+  return {
+    type: "dispatch",
+    condition: true as boolean,
+
+    if(condition: boolean) {
+      this.condition = condition
+      return this
+    },
+
+    apply(context: EffectableContext): void {
+      if (this.condition) {
+        context.dispatch(actionName, payload)
+      }
+    },
+  }
+}
+
 export function modify(name: keyof WritableBaseParams) {
   return {
+    type: "modify",
     name,
     value: 0 as number,
     percent: 0 as Percent,
@@ -146,22 +170,18 @@ export function modify(name: keyof WritableBaseParams) {
       return newVal - oldVal
     },
 
-    getNewVal(values: BaseParams): number {
-      if (!this.condition) {
-        return values[this.name]
+    apply(context: EffectableContext) {
+      if (this.condition) {
+        const { newVal } = this.getOldNew(context.values)
+        context.values[this.name] = newVal
       }
-      return this.getOldNew(values).newVal
+      return this
     },
   }
 }
 
-export type Change = ReturnType<typeof modify>
+export type Change = ReturnType<typeof modify> | ReturnType<typeof dispatch>
 
-export function applyEffects(values: BaseParams, changes: Change[]): BaseParams {
-  changes
-    .filter((change) => change.condition)
-    .forEach((change) => {
-      values[change.name] = change.getNewVal(values)
-    })
-  return values
+export function applyEffects(context: EffectableContext, changes: Change[]): void {
+  changes.filter((change) => change.condition).forEach((change) => change.apply(context))
 }

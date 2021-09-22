@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { defaultValues } from "../params"
+import { defaultValues, dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
@@ -9,8 +9,8 @@ export default defineEvent({
     könntest. Das Spiel ist damit leider beendet.
   `,
 
-  apply(context) {
-    context.dispatch("gameOver")
+  apply() {
+    return [dispatch("gameOver")]
   },
 
   probability(game) {

@@ -11,8 +11,8 @@ export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number)
       return 0
     })
     .forEach((law) => {
-      const effects = law.effects({...game, values}, law.effectiveSince, year)
-      applyEffects(values, effects)
+      const effects = law.effects({ ...game, values }, law.effectiveSince, year)
+      applyEffects({ dispatch: () => undefined, values }, effects)
     })
 
   // re-calculate remaining CO2 budget

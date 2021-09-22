@@ -85,7 +85,8 @@ export const actions = {
     if (!payload.event) return
     const game = { ...(context.state.game as Game) }
     await repository.eventOccurred(game, payload.event)
-    payload.event.apply(context)
+    const changes = payload.event.apply(game)
+    this.applyEffects(context, changes)
   },
 
   acknowledgeEvent(context: Context, event: Event) {
@@ -96,8 +97,9 @@ export const actions = {
   },
 
   applyEffects(context: Context, changes: Change[]) {
-    const values = applyEffects({ ...(context.state.game?.values as BaseParams) }, changes)
-    const game = { ...context.state.game, values } as Game
+    const effectedContext = { dispatch: context.dispatch, values: context.state.game!.values }
+    applyEffects(effectedContext, changes)
+    const game = { ...context.state.game, values: effectedContext.values } as Game
     repository.saveGame(game)
     context.commit("setGameState", { game })
   },

@@ -11,7 +11,9 @@ export default defineEvent({
     "AbstandsregelnFuerWindkraftAbschaffen",
   ],
 
-  apply() {},
+  apply() {
+    return []
+  },
 
   probability() {
     return Math.random()
