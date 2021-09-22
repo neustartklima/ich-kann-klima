@@ -66,7 +66,6 @@ export const wuppertalStudie = new Citation({
   date: "2020-10",
   archiveUrl:
     "https://web.archive.org/web/20210916070821/https://epub.wupperinst.org/frontdoor/deliver/index/docId/7606/file/7606_CO2-neutral_2035.pdf",
-  comment: `Zusammengefasst in {cite(wuppertalStudieFactsheet)}.`,
 })
 
 export const wuppertalStudieFactsheet = new Citation({
@@ -79,6 +78,8 @@ export const wuppertalStudieFactsheet = new Citation({
     "https://web.archive.org/web/20210726125101/https://wupperinst.org/fa/redaktion/downloads/projects/CO2-neutral_2035_Factsheet.pdf",
   comment: `Summary of ${cite(wuppertalStudie)}.`,
 })
+
+wuppertalStudie.comment = `Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`
 
 export const uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
