@@ -97,9 +97,9 @@ export const actions = {
   },
 
   applyEffects(context: Context, changes: Change[]) {
-    const effectedContext = { dispatch: context.dispatch, values: context.state.game!.values }
-    applyEffects(effectedContext, changes)
-    const game = { ...context.state.game, values: effectedContext.values } as Game
+    const affectedContext = { dispatch: context.dispatch, values: { ...context.state.game!.values } }
+    applyEffects(affectedContext, changes)
+    const game = { ...context.state.game, values: affectedContext.values } as Game
     repository.saveGame(game)
     context.commit("setGameState", { game })
   },
