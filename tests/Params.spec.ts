@@ -1,6 +1,4 @@
 import should from "should"
-import Sinon from "sinon"
-import { Game } from "../src/game"
 import {
   BaseParams,
   computedParamList,
@@ -71,13 +69,13 @@ describe("createBaseValues(defaultValues)", () => {
   })
 })
 
-describe("applyEffects", () => {
+describe("modify()", () => {
   const initialContext = () => ({
     dispatch: () => undefined,
     values: { co2budget: 1000 } as unknown as BaseParams,
   })
 
-  it("should modify parameters by absolute value", () => {
+  it("should modify parameters by relative value", () => {
     const context = initialContext()
     applyEffects(context, [modify("co2budget").byValue(-123)])
     context.values.should.deepEqual({ co2budget: 877 })
@@ -89,12 +87,30 @@ describe("applyEffects", () => {
     context.values.should.deepEqual({ co2budget: 580 })
   })
 
+  it("should set parameters to absolute value", () => {
+    const context = initialContext()
+    const values = applyEffects(context, [modify("co2budget").setValue(1)])
+    context.values.should.deepEqual({ co2budget: 1 })
+  })
+
   it("should only modify if condition is met", () => {
     const context = initialContext()
     const values = applyEffects(context, [modify("co2budget").byPercent(-42).if(false)])
     context.values.should.deepEqual({ co2budget: 1000 })
   })
 
+  it("should return the future change", () => {
+    const context = initialContext()
+    modify("co2budget").setValue(1010).getChange(context.values).should.be.equal(10)
+  })
+
+  it("should return the future change of 0 if condition is not met", () => {
+    const context = initialContext()
+    modify("co2budget").setValue(1010).if(false).getChange(context.values).should.be.equal(0)
+  })
+})
+
+describe("transfer()", () => {
   const transferContext = (plu: number, cu: number) => ({
     dispatch: () => undefined,
     values: { publicLocalUsage: plu, carUsage: cu } as unknown as BaseParams,
@@ -104,6 +120,12 @@ describe("applyEffects", () => {
     const context = transferContext(100, 200)
     const values = applyEffects(context, [transfer("publicLocalUsage", "carUsage").byPercent(1)])
     context.values.should.deepEqual({ publicLocalUsage: 101, carUsage: 199 })
+  })
+
+  it("should not transfer anything, if a condition is false", () => {
+    const context = transferContext(100, 200)
+    const values = applyEffects(context, [transfer("publicLocalUsage", "carUsage").byPercent(1).if(false)])
+    context.values.should.deepEqual({ publicLocalUsage: 100, carUsage: 200 })
   })
 
   it("should transfer value from one to the other parameter observing the bounds of the source", () => {
@@ -116,5 +138,11 @@ describe("applyEffects", () => {
     const context = transferContext(5, 50)
     const values = applyEffects(context, [transfer("publicLocalUsage", "carUsage").byPercent(-200)])
     context.values.should.deepEqual({ publicLocalUsage: 0, carUsage: 55 })
+  })
+
+  it("should throw if the units of the two parameters differ", () => {
+    should.throws(() => {
+      transfer("carUsage", "co2emissionsIndustry").byValue(1)
+    }, /can only be used for parameters with the same unit/)
   })
 })
