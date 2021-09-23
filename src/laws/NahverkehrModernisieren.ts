@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
 import { linear } from "../lawTools"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { vdvDatenFakten } from "../citations"
 
@@ -10,15 +10,10 @@ export default defineLaw({
   description: "Anschaffung Moderner, bequemer, emissionsfreier Fahrzeuge für den Nahverkehr wird gefördert.",
 
   effects(game, startYear, currentYear): Change[] {
-    // Need to use carModifier and byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicLocalUsage)
-    const carChange = carModifier.getChange(game.values)
-
     return [
       modify("stateDebt").byValue(3 as MrdEuro),
       modify("publicLocalCapacity").byPercent(1),
-      modify("publicLocalUsage").byValue(-carChange),
-      carModifier,
+      transfer("publicLocalUsage", "carUsage").byPercent(1),
       modify("popularity").byValue(3),
     ]
   },

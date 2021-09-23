@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 
 export default defineLaw({
@@ -11,18 +11,15 @@ export default defineLaw({
   effects(game): Change[] {
     const relCapacity = (game.values.publicNationalCapacity / game.values.publicNationalUsage) * 100
 
-    // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage")
-      .byValue(0.015 * game.values.publicNationalUsage)
-      .if(relCapacity >= 105)
-    const carChange = carModifier.getChange(game.values)
-
     return [
       modify("stateDebt").byValue(6 as MrdEuro),
       modify("publicNationalCapacity").byPercent(1),
-      carModifier,
-      modify("publicNationalUsage").byValue(0.667 * -carChange),
-      modify("publicLocalUsage").byValue(0.333 * -carChange),
+      transfer("publicNationalUsage", "carUsage")
+        .byPercent(1)
+        .if(relCapacity >= 105),
+      transfer("publicNationalUsage", "carUsage")
+        .byPercent(0.5)
+        .if(relCapacity >= 105),
       modify("popularity")
         .byValue(2)
         .if(relCapacity >= 105),

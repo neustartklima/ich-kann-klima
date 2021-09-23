@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { MrdEuro, Percent } from "../types"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { cite, duh2020Dienstwagenprivileg, welt2016SteuervorteileKosten18Mrd } from "../citations"
 
@@ -10,15 +10,12 @@ export default defineLaw({
   description: "Steuererleichterungen für Dienstwagen werden abgeschafft.",
 
   effects(game, startYear, currentYear): Change[] {
-    const carModifier = modify("carUsage").byPercent(-0.05)
-    const carChange = carModifier.getChange(game.values)
     return [
       modify("stateDebt").byValue(-18 as MrdEuro),
       modify("popularity")
         .byValue(-1)
         .if(startYear === currentYear),
-      carModifier,
-      modify("publicLocalUsage").byValue(-carChange),
+      transfer("carUsage", "publicLocalUsage").byPercent(-0.05),
     ]
   },
 

@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
 import { linearPopChange, renewablePercentage } from "../lawTools"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
 import { Percent } from "../types"
@@ -19,16 +19,6 @@ export default defineLaw({
 
     const relReduction: Percent = -0.5
 
-    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction)
-    const hardModifier = modify("electricityHardCoal").byPercent(relReduction)
-    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values)
-
-    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction)
-    const buildingsOilChange = buildingsOilModifier.getChange(game.values)
-
-    const carModifier = modify("carUsage").byPercent(relReduction)
-    const carChange = carModifier.getChange(game.values)
-
     return [
       modify("stateDebt")
         .byValue(-45 * 1000000 * game.values.co2emissions)
@@ -43,17 +33,15 @@ export default defineLaw({
       modify("co2emissionsAgriculture").byPercent(relReduction),
       modify("co2emissionsOthers").byPercent(relReduction),
 
-      brownModifier,
-      hardModifier,
-      modify("electricityWind").byValue(0.7 * -coalChange),
-      modify("electricitySolar").byValue(0.3 * -coalChange),
+      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
 
-      buildingsOilModifier,
-      modify("buildingsSourceBio").byValue(-buildingsOilChange), // TODO #78: What about other regernative sources?
+      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction), // TODO #78: What about other regernative sources?
 
-      carModifier,
-      modify("publicNationalUsage").byValue(0.5 * -carChange),
-      modify("publicLocalUsage").byValue(0.5 * -carChange),
+      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
+      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction),
     ]
   },
 

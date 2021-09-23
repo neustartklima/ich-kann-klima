@@ -10,6 +10,7 @@ import {
   applyEffects,
   ParamDefinitions,
   paramKeys,
+  transfer,
 } from "../src/params"
 import { ParamDefinition } from "../src/params/ParamsTypes"
 
@@ -73,7 +74,7 @@ describe("createBaseValues(defaultValues)", () => {
 describe("applyEffects", () => {
   const initialContext = () => ({
     dispatch: () => undefined,
-    values: { co2budget: 1000 } as unknown as BaseParams
+    values: { co2budget: 1000 } as unknown as BaseParams,
   })
 
   it("should modify parameters by absolute value", () => {
@@ -92,5 +93,28 @@ describe("applyEffects", () => {
     const context = initialContext()
     const values = applyEffects(context, [modify("co2budget").byPercent(-42).if(false)])
     context.values.should.deepEqual({ co2budget: 1000 })
+  })
+
+  const transferContext = (plu: number, cu: number) => ({
+    dispatch: () => undefined,
+    values: { publicLocalUsage: plu, carUsage: cu } as unknown as BaseParams,
+  })
+
+  it("should transfer value from one to the other parameter by percentage", () => {
+    const context = transferContext(100, 200)
+    const values = applyEffects(context, [transfer("publicLocalUsage", "carUsage").byPercent(1)])
+    context.values.should.deepEqual({ publicLocalUsage: 101, carUsage: 199 })
+  })
+
+  it("should transfer value from one to the other parameter observing the bounds of the source", () => {
+    const context = transferContext(100, 50)
+    const values = applyEffects(context, [transfer("publicLocalUsage", "carUsage").byValue(60)])
+    context.values.should.deepEqual({ publicLocalUsage: 150, carUsage: 0 })
+  })
+
+  it("should transfer value from one to the other parameter observing the bounds of the target", () => {
+    const context = transferContext(5, 50)
+    const values = applyEffects(context, [transfer("publicLocalUsage", "carUsage").byPercent(-200)])
+    context.values.should.deepEqual({ publicLocalUsage: 0, carUsage: 55 })
   })
 })
