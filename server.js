@@ -25771,6 +25771,53 @@ function modify(name) {
     }
   };
 }
+function transfer(to, from) {
+  if (paramDefinitions[to].unit != paramDefinitions[from].unit)
+    throw new Error("Change 'transfer' can only be used for parameters with the same unit.");
+  return {
+    type: "transfer",
+    to,
+    from,
+    value: 0,
+    percent: 0,
+    condition: true,
+    byPercent(percent) {
+      this.percent = percent;
+      return this;
+    },
+    byValue(value) {
+      this.value = value;
+      return this;
+    },
+    if(condition) {
+      this.condition = condition;
+      return this;
+    },
+    getEffect(values) {
+      const oldTo = values[this.to];
+      const oldFrom = values[this.from];
+      if (!this.condition) {
+        return { oldTo, oldFrom, newTo: oldTo, newFrom: oldFrom };
+      }
+      const pdTo = paramDefinitions[this.to];
+      const pdFrom = paramDefinitions[this.from];
+      const full = this.value || oldTo * this.percent / 100;
+      const reducedTo = pdTo.applyBounds(oldTo + full) - oldTo;
+      const reducedBoth = -pdFrom.applyBounds(oldFrom - reducedTo) + oldFrom;
+      const newTo = oldTo + reducedBoth;
+      const newFrom = oldFrom - reducedBoth;
+      return { oldTo, newTo, oldFrom, newFrom };
+    },
+    apply(context) {
+      if (this.condition) {
+        const { newTo, newFrom } = this.getEffect(context.values);
+        context.values[this.to] = newTo;
+        context.values[this.from] = newFrom;
+      }
+      return this;
+    }
+  };
+}
 
 // src/laws/KohleverstromungEinstellen.ts
 var KohleverstromungEinstellen_default = defineLaw({
@@ -26123,14 +26170,11 @@ var NahverkehrAusbauen_default = defineLaw({
   description: "Der Ausbau des Nahverkehrs wird bundesweit st\xE4rker bezuschusst.",
   effects(game, startYear2, currentYear) {
     const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
-    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicLocalUsage).if(relCapacity >= 105);
-    const carChange = carModifier.getChange(game.values);
     const yearsActive = currentYear - startYear2;
     return [
       modify("stateDebt").byValue(3),
       modify("publicLocalCapacity").byPercent(1),
-      modify("publicLocalUsage").byValue(-carChange),
-      carModifier,
+      transfer("publicLocalUsage", "carUsage").byPercent(1).if(relCapacity >= 105),
       modify("popularity").byValue(2).if(yearsActive >= 5)
     ];
   },
@@ -26174,13 +26218,10 @@ var NahverkehrModernisieren_default = defineLaw({
   title: "Nahverkehr Modernisieren",
   description: "Anschaffung Moderner, bequemer, emissionsfreier Fahrzeuge f\xFCr den Nahverkehr wird gef\xF6rdert.",
   effects(game, startYear2, currentYear) {
-    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicLocalUsage);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(3),
       modify("publicLocalCapacity").byPercent(1),
-      modify("publicLocalUsage").byValue(-carChange),
-      carModifier,
+      transfer("publicLocalUsage", "carUsage").byPercent(1),
       modify("popularity").byValue(3)
     ];
   },
@@ -26241,12 +26282,9 @@ var NahverkehrKostenlos_default = defineLaw({
   description: "Die Kosten f\xFCr den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr ben\xF6tigt werden.",
   effects(game, startYear2, currentYear) {
     const percentage = startYear2 === currentYear ? 10 : 1;
-    const carModifier = modify("carUsage").byValue(-(percentage / 100) * game.values.publicLocalUsage);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(10),
-      modify("publicLocalUsage").byValue(-carChange),
-      carModifier,
+      transfer("publicLocalUsage", "carUsage").byPercent(percentage),
       modify("popularity").byValue(10).if(startYear2 === currentYear),
       modify("unemployment").byValue(20).if(startYear2 === currentYear)
     ];
@@ -26301,9 +26339,10 @@ var AutosInInnenstaedtenVerbieten_default = defineLaw({
         popularityChange = 2;
       }
     }
-    const carModifier = modify("carUsage").byValue(-0.1 * game.values.publicLocalUsage).if(startYear2 === currentYear);
-    const carChange = carModifier.getChange(game.values);
-    return [modify("popularity").byValue(popularityChange), carModifier, modify("publicLocalUsage").byValue(-carChange)];
+    return [
+      modify("popularity").byValue(popularityChange),
+      transfer("publicLocalUsage", "carUsage").byPercent(10).if(startYear2 === currentYear)
+    ];
   },
   priority(game) {
     const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
@@ -26317,14 +26356,11 @@ var FernverkehrVerbindungenAusbauen_default = defineLaw({
   description: "Der Ausbau des \xF6ffentlichen Fernverkehrs wird bundesweit st\xE4rker Bezuschusst und Vorangetrieben",
   effects(game) {
     const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
-    const carModifier = modify("carUsage").byValue(0.015 * game.values.publicNationalUsage).if(relCapacity >= 105);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(6),
       modify("publicNationalCapacity").byPercent(1),
-      carModifier,
-      modify("publicNationalUsage").byValue(0.667 * -carChange),
-      modify("publicLocalUsage").byValue(0.333 * -carChange),
+      transfer("publicNationalUsage", "carUsage").byPercent(1).if(relCapacity >= 105),
+      transfer("publicNationalUsage", "carUsage").byPercent(0.5).if(relCapacity >= 105),
       modify("popularity").byValue(2).if(relCapacity >= 105)
     ];
   },
@@ -26369,13 +26405,10 @@ var FernverkehrModernisieren_default = defineLaw({
   title: "Fernverkehr Modernisieren",
   description: "Moderne, bequeme und weniger anf\xE4llige Z\xFCge werden f\xFCr den Fernverkehr angeschafft.",
   effects(game, startYear2, currentYear) {
-    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicNationalUsage);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(3),
       modify("publicNationalCapacity").byPercent(1),
-      modify("publicNationalUsage").byValue(-carChange),
-      carModifier,
+      transfer("publicNationalUsage", "carUsage").byPercent(1),
       modify("popularity").byValue(3)
     ];
   },
@@ -26485,17 +26518,12 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
   title: "Abschaffung der Mineral\xF6lsteuer",
   description: "Die Steuer auf s\xE4mtliche erd\xF6lbasierten Treibstoffe wird abgeschafft.",
   effects(game, startYear2, currentYear) {
-    const localModifier = modify("publicLocalUsage").byPercent(-20).if(startYear2 === currentYear);
-    const longModifier = modify("publicNationalUsage").byPercent(-20).if(startYear2 === currentYear);
-    const localChange = localModifier.getChange(game.values);
-    const longChange = longModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(41),
       modify("popularity").byValue(5).if(startYear2 === currentYear),
       modify("popularity").byValue(-3).if(startYear2 < currentYear),
-      modify("carUsage").byValue(-localChange - longChange).if(startYear2 === currentYear),
-      localModifier,
-      longModifier
+      transfer("publicLocalUsage", "carUsage").byPercent(-20).if(startYear2 === currentYear),
+      transfer("publicNationalUsage", "carUsage").byPercent(-20).if(startYear2 === currentYear)
     ];
   },
   priority(game) {
@@ -26530,16 +26558,11 @@ var AusbauVonStrassen_default = defineLaw({
   title: "Ausbau von Stra\xDFen",
   description: "Autobahnen und Stra\xDFen werden intensiver ausgebaut.",
   effects(game) {
-    const localModifier = modify("publicLocalUsage").byPercent(-1);
-    const longModifier = modify("publicNationalUsage").byPercent(-1);
-    const localChange = localModifier.getChange(game.values);
-    const longChange = longModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(5),
       modify("popularity").byValue(0.5),
-      modify("carUsage").byValue(-localChange - longChange),
-      localModifier,
-      longModifier
+      transfer("publicLocalUsage", "carUsage").byPercent(-1),
+      transfer("publicNationalUsage", "carUsage").byPercent(-1)
     ];
   },
   priority(game) {
@@ -26572,13 +26595,10 @@ var DienstwagenPrivilegAbgeschaffen_default = defineLaw({
   title: "Dienstwagen Privileg abgeschaffen",
   description: "Steuererleichterungen f\xFCr Dienstwagen werden abgeschafft.",
   effects(game, startYear2, currentYear) {
-    const carModifier = modify("carUsage").byPercent(-0.05);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(-18),
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
-      carModifier,
-      modify("publicLocalUsage").byValue(-carChange)
+      transfer("carUsage", "publicLocalUsage").byPercent(-0.05)
     ];
   },
   priority(game) {
@@ -27083,13 +27103,6 @@ var CO2PreisErhoehen_default = defineLaw({
     const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1);
     const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1);
     const relReduction = -0.5;
-    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
-    const hardModifier = modify("electricityHardCoal").byPercent(relReduction);
-    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values);
-    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction);
-    const buildingsOilChange = buildingsOilModifier.getChange(game.values);
-    const carModifier = modify("carUsage").byPercent(relReduction);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(-45 * 1e6 * game.values.co2emissions).if(currentYear >= startYear2 + 2),
       modify("stateDebt").byValue(-30 * 1e6 * game.values.co2emissions).if(currentYear >= startYear2 + 4),
@@ -27097,15 +27110,13 @@ var CO2PreisErhoehen_default = defineLaw({
       modify("co2emissionsIndustry").byPercent(relReduction),
       modify("co2emissionsAgriculture").byPercent(relReduction),
       modify("co2emissionsOthers").byPercent(relReduction),
-      brownModifier,
-      hardModifier,
-      modify("electricityWind").byValue(0.7 * -coalChange),
-      modify("electricitySolar").byValue(0.3 * -coalChange),
-      buildingsOilModifier,
-      modify("buildingsSourceBio").byValue(-buildingsOilChange),
-      carModifier,
-      modify("publicNationalUsage").byValue(0.5 * -carChange),
-      modify("publicLocalUsage").byValue(0.5 * -carChange)
+      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
+      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
+      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
     ];
   },
   priority(game) {
@@ -27168,28 +27179,19 @@ var WirksamerCO2Preis_default = defineLaw({
     const electricityPopChange = linearPopChange(80, 50, renewablePercentage(game), -3);
     const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3);
     const relReduction = -2;
-    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
-    const hardModifier = modify("electricityHardCoal").byPercent(relReduction);
-    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values);
-    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction);
-    const buildingsOilChange = buildingsOilModifier.getChange(game.values);
-    const carModifier = modify("carUsage").byPercent(relReduction);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(-125 * 1e6 * game.values.co2emissions),
       modify("popularity").byValue(electricityPopChange + carPopChange),
       modify("co2emissionsIndustry").byPercent(relReduction),
       modify("co2emissionsAgriculture").byPercent(relReduction),
       modify("co2emissionsOthers").byPercent(relReduction),
-      brownModifier,
-      hardModifier,
-      modify("electricityWind").byValue(0.7 * -coalChange),
-      modify("electricitySolar").byValue(0.3 * -coalChange),
-      buildingsOilModifier,
-      modify("buildingsSourceBio").byValue(-buildingsOilChange),
-      carModifier,
-      modify("publicNationalUsage").byValue(0.5 * -carChange),
-      modify("publicLocalUsage").byValue(0.5 * -carChange)
+      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
+      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
+      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
     ];
   },
   priority(game) {
@@ -27255,28 +27257,19 @@ var VollerCO2Preis_default = defineLaw({
     const electricityPopChange = linearPopChange(90, 50, renewablePercentage(game), -10);
     const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10);
     const relReduction = -5;
-    const brownModifier = modify("electricityBrownCoal").byPercent(relReduction);
-    const hardModifier = modify("electricityHardCoal").byPercent(relReduction);
-    const coalChange = brownModifier.getChange(game.values) + hardModifier.getChange(game.values);
-    const buildingsOilModifier = modify("buildingsSourceOil").byPercent(relReduction);
-    const buildingsOilChange = buildingsOilModifier.getChange(game.values);
-    const carModifier = modify("carUsage").byPercent(relReduction);
-    const carChange = carModifier.getChange(game.values);
     return [
       modify("stateDebt").byValue(-3e3 * 1e6 * game.values.co2emissions),
       modify("popularity").byValue(electricityPopChange + carPopChange),
       modify("co2emissionsIndustry").byPercent(relReduction),
       modify("co2emissionsAgriculture").byPercent(relReduction),
       modify("co2emissionsOthers").byPercent(relReduction),
-      brownModifier,
-      hardModifier,
-      modify("electricityWind").byValue(0.7 * -coalChange),
-      modify("electricitySolar").byValue(0.3 * -coalChange),
-      buildingsOilModifier,
-      modify("buildingsSourceBio").byValue(-buildingsOilChange),
-      carModifier,
-      modify("publicNationalUsage").byValue(0.5 * -carChange),
-      modify("publicLocalUsage").byValue(0.5 * -carChange)
+      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
+      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
+      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
+      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
+      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
     ];
   },
   priority(game) {
