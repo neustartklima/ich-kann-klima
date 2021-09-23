@@ -26169,6 +26169,56 @@ var NahverkehrAusbauen_default = defineLaw({
   `
 });
 
+// src/laws/NahverkehrModernisieren.ts
+var NahverkehrModernisieren_default = defineLaw({
+  title: "Nahverkehr Modernisieren",
+  description: "Anschaffung Moderner, bequemer, emissionsfreier Fahrzeuge f\xFCr den Nahverkehr wird gef\xF6rdert.",
+  effects(game, startYear2, currentYear) {
+    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicLocalUsage);
+    const carChange = carModifier.getChange(game.values);
+    return [
+      modify("stateDebt").byValue(3),
+      modify("publicLocalCapacity").byPercent(1),
+      modify("publicLocalUsage").byValue(-carChange),
+      carModifier,
+      modify("popularity").byValue(3)
+    ];
+  },
+  priority(game) {
+    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
+    return linear(0, 10, mobilityPercentage);
+  },
+  citations: [vdvDatenFakten],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 16
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - Der Staatshaushalt wird jährlich mit 3 Mrd € stärker belastet.
+    - Die "Kapazität" des Nahverkehrs steigt jährlich um 1%.
+    - Umstieg von individual Verkehr auf Nahverkehr ist attraktiver:
+      - Nahverkehr Nutzung steigt 1% jährlich.
+      - Auto Nutzung sinkt entsprechend.
+    - Popularität steigt jährlich um 3%.
+
+    # Vorbedingungen:
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 10% Anteil
+    - linear interpoliert
+  `
+});
+
 // src/laws/FoerderungFuerTierhaltungAbschaffen.ts
 var FoerderungFuerTierhaltungAbschaffen_default = defineLaw({
   title: "F\xF6rderung f\xFCr Tierhaltung abschaffen",
@@ -26275,13 +26325,93 @@ var FernverkehrVerbindungenAusbauen_default = defineLaw({
       carModifier,
       modify("publicNationalUsage").byValue(0.667 * -carChange),
       modify("publicLocalUsage").byValue(0.333 * -carChange),
-      modify("popularity").byValue(2)
+      modify("popularity").byValue(2).if(relCapacity >= 105)
     ];
   },
   priority(game) {
     const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
     return linear(150, 80, relCapacity);
-  }
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 17
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - Der Staatshaushalt wird jährlich mit 6 Mrd € mehr belastet. (Analog zu Nahverkehr)
+    - Fernverkehr Kapazität steigt jährlich um 1%
+    - Sobald die Kapazität um 5% gestiegen ist (relative Kapazität >= 105%):
+      - Fernverkehr Nutzung steigt jährlich um 1%.
+      - Nahverkehr Nutzung steigt jährlich um die Hälfte der Steigerung des Fernverkehrs.
+      - PKW Nutzung sinkt entsprechend um die Summe der Steigerungen von Fern- und Nahverkehr
+      - Die Popularität steigt um 2% pro Jahr.
+
+    # Vorbedingungen
+
+    - Priorität über 0%.
+
+    # Priorität:
+
+    - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
+    - 100 bei 80% relativer Kapazität.
+    - linear interpoliert
+  `
+});
+
+// src/laws/FernverkehrModernisieren.ts
+var FernverkehrModernisieren_default = defineLaw({
+  title: "Fernverkehr Modernisieren",
+  description: "Moderne, bequeme und weniger anf\xE4llige Z\xFCge werden f\xFCr den Fernverkehr angeschafft.",
+  effects(game, startYear2, currentYear) {
+    const carModifier = modify("carUsage").byValue(-0.01 * game.values.publicNationalUsage);
+    const carChange = carModifier.getChange(game.values);
+    return [
+      modify("stateDebt").byValue(3),
+      modify("publicNationalCapacity").byPercent(1),
+      modify("publicNationalUsage").byValue(-carChange),
+      carModifier,
+      modify("popularity").byValue(3)
+    ];
+  },
+  priority(game) {
+    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
+    return linear(0, 10, mobilityPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 15
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - Der Staatshaushalt wird jährlich mit 3 Mrd € stärker belastet.
+    - Die "Kapazität" des Fernverkehrs steigt jährlich um 1%.
+    - Umstieg von individual Verkehr auf Fernverkehr ist attraktiver:
+      - Fernverkehr Nutzung steigt 1% jährlich.
+      - Auto Nutzung sinkt entsprechend.
+    - Popularität steigt jährlich um 3%.
+
+    # Vorbedingungen:
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 10% Anteil
+    - linear interpoliert
+  `
 });
 
 // src/laws/WasserstofftechnologieFoerdern.ts
@@ -26300,6 +26430,54 @@ var WasserstofftechnologieFoerdern_default = defineLaw({
     const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
     return linear(40, 90, relCarPercentage);
   }
+});
+
+// src/laws/WasserstoffmobilitaetFoerdern.ts
+var WasserstoffmobilitaetFoerdern_default = defineLaw({
+  title: "Wasserstoffmobilit\xE4t f\xF6rdern",
+  description: "Wasserstoffbasierte Fahrzeuge werden gef\xF6rdert.",
+  effects(game, startYear2, currentYear) {
+    if (lawIsAccepted(game, "WasserstofftechnologieFoerdern")) {
+      return [
+        modify("stateDebt").byValue(3),
+        modify("carRenewablePercentage").byValue(1),
+        modify("popularity").byValue(1).if(startYear2 === currentYear)
+      ];
+    }
+    return [];
+  },
+  priority(game) {
+    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
+    return linear(0, 10, mobilityPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 21
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    Nur wenn "WasserstofftechnologieFoerdern" beschlossen wurde:
+
+    - Der Staatshaushalt wird jährlich mit 3 Mrd € stärker belastet.
+    - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
+    - Popularität steigt im ersten Jah um 1%
+
+    # Vorbedingungen:
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 10% Anteil
+    - linear interpoliert
+  `
 });
 
 // src/laws/AbschaffungDerMineraloelsteuer.ts
@@ -26525,6 +26703,96 @@ var TempolimitAufAutobahnenAussitzen_default = defineLaw({
     const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
     return linear(10, 60, relCarPercentage);
   }
+});
+
+// src/laws/ElektromobilitaetFoerdern.ts
+var ElektromobilitaetFoerdern_default = defineLaw({
+  title: "Elektromobilit\xE4t F\xF6rdern",
+  description: "H\xF6here Kaufpr\xE4mien, Steuerbefreiung, g\xFCnstiges Laden f\xFCr E-Autos.",
+  effects(game, startYear2, currentYear) {
+    if (lawIsAccepted(game, "LadeinfrastrukturAusbauen")) {
+      return [
+        modify("stateDebt").byValue(5),
+        modify("carRenewablePercentage").byValue(1),
+        modify("popularity").byValue(4).if(startYear2 === currentYear)
+      ];
+    }
+    return [];
+  },
+  priority(game) {
+    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
+    return linear(0, 25, mobilityPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 13
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    Nur wenn "LadeinfrastrukturAusbauen" beschlossen wurde:
+    - Der Staatshaushalt wird jährlich mit 5 Mrd € stärker belastet.
+    - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
+    - Popularität steigt im ersten Jah um 4%
+
+    # Vorbedingungen:
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 25% Anteil
+    - linear interpoliert
+  `
+});
+
+// src/laws/LadeinfrastrukturAusbauen.ts
+var LadeinfrastrukturAusbauen_default = defineLaw({
+  title: "Ladeinfrastruktur ausbauen",
+  description: "Ausbau der Ladeinfrastruktur wird mit Steuermitteln stark gef\xF6rdert.",
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("stateDebt").byValue(5),
+      modify("carRenewablePercentage").byValue(1),
+      modify("popularity").byValue(2).if(startYear2 === currentYear)
+    ];
+  },
+  priority(game) {
+    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
+    return linear(0, 10, mobilityPercentage);
+  },
+  citations: [vdvDatenFakten],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 10.5
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - Der Staatshaushalt wird jährlich mit 5 Mrd € stärker belastet.
+    - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
+    - Popularität steigt im ersten Jah um 2%
+
+    # Vorbedingungen:
+
+    - Priorität über 0%.
+
+    # Priorität
+
+    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
+    - 100 bei 10% Anteil
+    - linear interpoliert
+  `
 });
 
 // src/laws/WindkraftVereinfachen.ts
@@ -27254,8 +27522,11 @@ var allLawsObj = {
   NahverkehrKostenlos: NahverkehrKostenlos_default,
   AutosInInnenstaedtenVerbieten: AutosInInnenstaedtenVerbieten_default,
   WasserstofftechnologieFoerdern: WasserstofftechnologieFoerdern_default,
+  WasserstoffmobilitaetFoerdern: WasserstoffmobilitaetFoerdern_default,
   NahverkehrAusbauen: NahverkehrAusbauen_default,
+  NahverkehrModernisieren: NahverkehrModernisieren_default,
   FernverkehrVerbindungenAusbauen: FernverkehrVerbindungenAusbauen_default,
+  FernverkehrModernisieren: FernverkehrModernisieren_default,
   AusbauVonStrassen: AusbauVonStrassen_default,
   AbschaffungDerMineraloelsteuer: AbschaffungDerMineraloelsteuer_default,
   DieselPrivilegAbgeschaffen: DieselPrivilegAbgeschaffen_default,
@@ -27264,6 +27535,8 @@ var allLawsObj = {
   Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
   Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
   TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default,
+  ElektromobilitaetFoerdern: ElektromobilitaetFoerdern_default,
+  LadeinfrastrukturAusbauen: LadeinfrastrukturAusbauen_default,
   FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default,
   CO2PreisErhoehen: CO2PreisErhoehen_default,
   WirksamerCO2Preis: WirksamerCO2Preis_default,
