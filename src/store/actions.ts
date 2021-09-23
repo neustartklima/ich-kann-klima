@@ -9,7 +9,7 @@ import router from "../router"
 import FetchQueueFactory from "../model/FetchQueue"
 import RequestFactory from "../model/Request"
 import { LawId } from "../laws"
-import { BaseParams, Change, applyEffects } from "../params"
+import { Change, applyEffects, createBaseValues } from "../params"
 import { steps } from "../tourSteps"
 
 const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
@@ -86,7 +86,7 @@ export const actions = {
     const game = { ...(context.state.game as Game) }
     await repository.eventOccurred(game, payload.event)
     const changes = payload.event.apply(game)
-    this.applyEffects(context, changes)
+    context.dispatch("applyEffects", { changes })
   },
 
   acknowledgeEvent(context: Context, event: Event) {
@@ -96,9 +96,9 @@ export const actions = {
     context.commit("setGameState", { game })
   },
 
-  applyEffects(context: Context, changes: Change[]) {
-    const affectedContext = { dispatch: context.dispatch, values: { ...context.state.game!.values } }
-    applyEffects(affectedContext, changes)
+  applyEffects(context: Context, payload: { changes: Change[] }) {
+    const affectedContext = { dispatch: context.dispatch, values: createBaseValues(context.state.game!.values) }
+    applyEffects(affectedContext, payload.changes)
     const game = { ...context.state.game, values: affectedContext.values } as Game
     repository.saveGame(game)
     context.commit("setGameState", { game })
