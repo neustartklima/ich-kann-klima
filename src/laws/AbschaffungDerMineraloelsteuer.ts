@@ -2,7 +2,7 @@ import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { cite, welt2018BundKassiertMineraloelsteuer } from "../citations"
 import { MrdEuro, Percent } from "../types"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 
 export default defineLaw({
@@ -10,15 +10,6 @@ export default defineLaw({
   description: "Die Steuer auf sämtliche erdölbasierten Treibstoffe wird abgeschafft.",
 
   effects(game, startYear, currentYear): Change[] {
-    const localModifier = modify("publicLocalUsage")
-      .byPercent(-20)
-      .if(startYear === currentYear)
-    const longModifier = modify("publicNationalUsage")
-      .byPercent(-20)
-      .if(startYear === currentYear)
-    const localChange = localModifier.getChange(game.values)
-    const longChange = longModifier.getChange(game.values)
-
     return [
       modify("stateDebt").byValue(41 as MrdEuro),
       modify("popularity")
@@ -27,11 +18,12 @@ export default defineLaw({
       modify("popularity")
         .byValue(-3)
         .if(startYear < currentYear),
-      modify("carUsage")
-        .byValue(-localChange - longChange)
+      transfer("publicLocalUsage", "carUsage")
+        .byPercent(-20)
         .if(startYear === currentYear),
-      localModifier,
-      longModifier,
+      transfer("publicNationalUsage", "carUsage")
+        .byPercent(-20)
+        .if(startYear === currentYear),
     ]
   },
 

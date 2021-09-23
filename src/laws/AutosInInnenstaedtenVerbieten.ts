@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { linear } from "../lawTools"
 import { Percent } from "../types"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 
 export default defineLaw({
   title: "Autos in Innenstädten verbieten",
@@ -18,12 +18,13 @@ export default defineLaw({
     }
 
     // Need to use the carModifier with byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage")
-      .byValue(-0.1 * game.values.publicLocalUsage)
-      .if(startYear === currentYear)
-    const carChange = carModifier.getChange(game.values)
 
-    return [modify("popularity").byValue(popularityChange), carModifier, modify("publicLocalUsage").byValue(-carChange)]
+    return [
+      modify("popularity").byValue(popularityChange),
+      transfer("publicLocalUsage", "carUsage")
+        .byPercent(10)
+        .if(startYear === currentYear),
+    ]
   },
 
   priority(game) {

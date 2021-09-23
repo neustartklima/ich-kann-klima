@@ -2,6 +2,7 @@ import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import { paramDefinitions } from "./Params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
+import { assert } from "../server/models/EventStore"
 
 type EffectableContext = {
   values: BaseParams
@@ -13,11 +14,9 @@ export type ParamDefinitions = typeof paramDefinitions
 type RemoveNeverField<T> = {
   [P in keyof T as T[P] extends never ? never : P]: T[P]
 }
-type PickByType<T, C> = RemoveNeverField<
-  {
-    [Key in keyof T]: T[Key] extends C ? T[Key] : never
-  }
->
+type PickByType<T, C> = RemoveNeverField<{
+  [Key in keyof T]: T[Key] extends C ? T[Key] : never
+}>
 
 type WritableParamDefinitions = PickByType<ParamDefinitions, WritableParam>
 type ComputedParamDefinitions = PickByType<ParamDefinitions, ComputedParam>
@@ -174,6 +173,59 @@ export function modify(name: keyof WritableBaseParams) {
       if (this.condition) {
         const { newVal } = this.getOldNew(context.values)
         context.values[this.name] = newVal
+      }
+      return this
+    },
+  }
+}
+
+export function transfer(to: keyof WritableBaseParams, from: keyof WritableBaseParams) {
+  if (paramDefinitions[to].unit != paramDefinitions[from].unit)
+    throw new Error("Change 'transfer' can only be used for parameters with the same unit.")
+  return {
+    type: "transfer",
+    to,
+    from,
+    value: 0 as number,
+    percent: 0 as Percent,
+    condition: true as boolean,
+
+    byPercent(percent: Percent) {
+      this.percent = percent
+      return this
+    },
+
+    byValue(value: number) {
+      this.value = value
+      return this
+    },
+
+    if(condition: boolean) {
+      this.condition = condition
+      return this
+    },
+
+    getEffect(values: BaseParams) {
+      const oldTo = values[this.to]
+      const oldFrom = values[this.from]
+      if (!this.condition) {
+        return { oldTo, oldFrom, newTo: oldTo, newFrom: oldFrom }
+      }
+      const pdTo: WritableParam = paramDefinitions[this.to]
+      const pdFrom: WritableParam = paramDefinitions[this.from]
+      const full = this.value || (oldTo * this.percent!) / 100
+      const reducedTo = pdTo.applyBounds(oldTo + full) - oldTo
+      const reducedBoth = -pdFrom.applyBounds(oldFrom - reducedTo) + oldFrom
+      const newTo = oldTo + reducedBoth
+      const newFrom = oldFrom - reducedBoth
+      return { oldTo, newTo, oldFrom, newFrom }
+    },
+
+    apply(context: EffectableContext) {
+      if (this.condition) {
+        const { newTo, newFrom } = this.getEffect(context.values)
+        context.values[this.to] = newTo
+        context.values[this.from] = newFrom
       }
       return this
     },

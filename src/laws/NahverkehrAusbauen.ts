@@ -1,7 +1,7 @@
 import { defineLaw } from "../Factory"
 import { MrdEuro } from "../types"
 import { linear } from "../lawTools"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { bmvi2020OePNVFoerderungDesBundes, cite } from "../citations"
 
@@ -12,18 +12,13 @@ export default defineLaw({
   effects(game, startYear, currentYear): Change[] {
     const relCapacity = (game.values.publicLocalCapacity / game.values.publicLocalUsage) * 100
 
-    // Need to use carModifier with byValue() here, to ensure it does not fall below zero:
-    const carModifier = modify("carUsage")
-      .byValue(-0.01 * game.values.publicLocalUsage)
-      .if(relCapacity >= 105)
-    const carChange = carModifier.getChange(game.values)
-
     const yearsActive = currentYear - startYear
     return [
       modify("stateDebt").byValue(3 as MrdEuro),
       modify("publicLocalCapacity").byPercent(1),
-      modify("publicLocalUsage").byValue(-carChange),
-      carModifier,
+      transfer("publicLocalUsage", "carUsage")
+        .byPercent(1)
+        .if(relCapacity >= 105),
       modify("popularity")
         .byValue(2)
         .if(yearsActive >= 5),
