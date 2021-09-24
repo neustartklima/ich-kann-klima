@@ -24695,6 +24695,21 @@ function renewablePercentage(game) {
   return electricityRenewable / game.values.electricityDemand * 100;
 }
 
+// src/lib/utils.ts
+var import_showdown = __toModule(require_showdown());
+var converter = new import_showdown.Converter();
+function markdown(fragments, ...variables) {
+  let strings = fragments.map((fragment, i) => fragment + (variables[i] || "")).join("").split("\n");
+  if (strings[0].length === 0) {
+    strings.shift();
+  }
+  const indent = strings[0].match(/^(\s+)/);
+  if (indent && !strings.filter((s) => s.trim()).some((s) => !s.startsWith(indent[1]))) {
+    strings = strings.map((s) => s.replace(indent[1], ""));
+  }
+  return converter.makeHtml(strings.join("\n"));
+}
+
 // src/citations/CitationsTypes.ts
 var dateFormatter = new Intl.DateTimeFormat("de-DE");
 var Citation = class {
@@ -24795,7 +24810,7 @@ var wuppertalStudieFactsheet = new Citation({
   archiveUrl: "https://web.archive.org/web/20210726125101/https://wupperinst.org/fa/redaktion/downloads/projects/CO2-neutral_2035_Factsheet.pdf",
   comment: `Summary of ${cite(wuppertalStudie)}.`
 });
-wuppertalStudie.comment = `Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`;
+wuppertalStudie.comment = markdown`Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`;
 var uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
   referringUrl: "https://www.umweltbundesamt.de/daten/klima/treibhausgas-emissionen-in-deutschland#nationale-und-europaische-klimaziele",
@@ -25021,21 +25036,6 @@ var ComputedParam = class extends ParamDefinition {
     this.shouldInitiallyBe = input.shouldInitiallyBe;
   }
 };
-
-// src/lib/utils.ts
-var import_showdown = __toModule(require_showdown());
-var converter = new import_showdown.Converter();
-function markdown(fragments, ...variables) {
-  let strings = fragments.map((fragment, i) => fragment + (variables[i] || "")).join("").split("\n");
-  if (strings[0].length === 0) {
-    strings.shift();
-  }
-  const indent = strings[0].match(/^(\s+)/);
-  if (indent && !strings.filter((s) => s.trim()).some((s) => !s.startsWith(indent[1]))) {
-    strings = strings.map((s) => s.replace(indent[1], ""));
-  }
-  return converter.makeHtml(strings.join("\n"));
-}
 
 // src/params/Params.ts
 var co2budget = new WritableParam({
