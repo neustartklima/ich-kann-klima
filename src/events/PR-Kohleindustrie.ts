@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { lawIsAccepted } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
 
@@ -7,13 +8,16 @@ export default defineEvent({
   description: `Du wurdest mit dem Vorstand von RWE beim Currywurst essen gesehen und fotografiert. Das Bild geht jetzt viral und führt zu einer neuen Diskussion über Lobbyismus.`,
 
   apply() {
-    return [modify("popularity").byValue(2)]
+    return [modify("popularity").byValue(-2)]
   },
 
-  probability() {
+  probability(game) {
+    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
+      return 0
+    }
     // - viele Investitionen in Kohlekraft getätigt
     // - Ablehnung von Gesetzen für erneuerbare Energien
-    return Math.random()
+    return 0.3
   },
 
   laws: [],
