@@ -101,6 +101,7 @@ const initialGame: Game = {
   rejectedLaws: [],
   currentYear: 2021,
   events: [],
+  actionCount: 0,
   over: false,
 }
 
