@@ -1,6 +1,6 @@
 import { Game, GameId, initGame } from "../game"
 import { API } from "./api"
-import { allLaws, Law } from "../laws"
+import { allLaws, Law, LawId } from "../laws"
 import { Event } from "../events"
 
 interface Logger {
@@ -61,8 +61,8 @@ export default function ({
       }
     },
 
-    async decisionMade(game: Game, law: Law, accepted: boolean): Promise<void> {
-      api.decisionMade(game.id, law.id, accepted)
+    async decisionMade(game: Game, lawId: LawId | "sitOut", accepted: boolean): Promise<void> {
+      api.decisionMade(game.id, lawId, accepted)
     },
 
     async eventOccurred(game: Game, event: Event): Promise<void> {

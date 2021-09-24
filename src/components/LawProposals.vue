@@ -44,6 +44,10 @@ export default defineComponent({
     select(pos: number) {
       this.zIndexes = getZIndexes(this.proposedLaws.length, pos)
     },
+
+    sitOut() {
+      this.store.dispatch("sitOut")
+    },
   },
 })
 </script>
@@ -60,6 +64,7 @@ export default defineComponent({
       @selected="() => select(pos)"
     />
   </div>
+  <div class="sitOutButton" @click="() => sitOut()">Aussitzen</div>
 </template>
 
 <style lang="scss" scoped>
@@ -79,5 +84,23 @@ export default defineComponent({
       margin-top: 100px;
     }
   }
+}
+
+.sitOutButton {
+  position: absolute;
+  background: white;
+  padding: 4pt;
+  border: 1px solid;
+  border-radius: 6pt;
+  transform: translate3d(250px, 350px, 400px);
+  transition-duration: 0.1s;
+}
+
+.sitOutButton:hover {
+  background: lightgrey;
+}
+
+.sitOutButton:active {
+  transform: translate3d(250px, 350px, 400px) scale(1.1);
 }
 </style>
