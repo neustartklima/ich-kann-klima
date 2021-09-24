@@ -1,3 +1,4 @@
+import { markdown } from "../lib/utils"
 import { Citation } from "./CitationsTypes"
 
 export type Citations = Citation[]
@@ -79,7 +80,7 @@ export const wuppertalStudieFactsheet = new Citation({
   comment: `Summary of ${cite(wuppertalStudie)}.`,
 })
 
-wuppertalStudie.comment = `Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`
+wuppertalStudie.comment = markdown`Zusammengefasst in ${cite(wuppertalStudieFactsheet)}.`
 
 export const uba2020DeutscheTreibhausgasEmissionen = new Citation({
   url: "https://www.umweltbundesamt.de/sites/default/files/medien/361/dokumente/2021_03_10_trendtabellen_thg_nach_sektoren_v1.0.xlsx",
