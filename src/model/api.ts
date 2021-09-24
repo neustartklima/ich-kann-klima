@@ -20,7 +20,7 @@ export default function APIFactory(fetchQueue: FetchQueue) {
       return fetchQueue.add("put", "/games/" + game.id, game) as Promise<Game>
     },
 
-    decisionMade(gameId: GameId, lawId: LawId, accepted: boolean): Promise<void> {
+    decisionMade(gameId: GameId, lawId: LawId | "sitOut", accepted: boolean): Promise<void> {
       return fetchQueue.add("post", "/games/" + gameId + "/decisions/" + lawId, { accepted }) as Promise<void>
     },
 

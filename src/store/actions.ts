@@ -61,15 +61,24 @@ export const actions = {
     await repository.saveGame(game)
     context.commit("setGameState", { game })
     context.dispatch("applyEvent", { event })
-    await repository.decisionMade(game, newLaw, true)
+    await repository.decisionMade(game, newLaw.id, true)
   },
 
   async rejectLaw(context: Context, payload: { lawId: LawId }) {
     const game = { ...(context.state.game as Game) }
     game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
-    await repository.decisionMade(game, getLaw(payload.lawId), false)
+    await repository.decisionMade(game, payload.lawId, false)
     await repository.saveGame(game)
     context.commit("setGameState", { game })
+  },
+
+  async sitOut(context: Context) {
+    const game = { ...(context.state.game as Game) }
+    await repository.decisionMade(game, "sitOut", true)
+    const event = prepareNextStep(game)
+    await repository.saveGame(game)
+    context.commit("setGameState", { game })
+    context.dispatch("applyEvent", { event })
   },
 
   async advanceYear(context: Context) {
