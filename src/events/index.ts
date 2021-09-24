@@ -1,6 +1,6 @@
 import AbstandsregelnWindkraft from "./AbstandsregelnWindkraft"
 import Altbausanierung from "./Altbausanierung"
-import Bestechung from "./bestechung"
+import Bestechung from "./Bestechung"
 import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
 import Hitzehölle from "./Hitzehölle"
@@ -14,7 +14,8 @@ import SolarstromFoerderung from "./SolarstromFoerderung"
 import AtomKatastrophe from "./AtomKatastrophe"
 import BSE from "./BSE"
 import Dürrewelle from "./Dürrewelle"
-import PRSkandal from "./PRSkandal"
+import PRKohleindustrie from "./PR-Kohleindustrie"
+import PRInnenminister from "./PR-Innenminister"
 
 import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
@@ -41,5 +42,6 @@ export const allEvents = prepareModuleList({
   AtomKatastrophe,
   BSE,
   Dürrewelle,
-  PRSkandal,
+  PRKohleindustrie,
+  PRInnenminister,
 }) as Event[]
