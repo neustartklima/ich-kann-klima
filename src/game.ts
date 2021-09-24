@@ -14,6 +14,7 @@ export type GameDefinition = {
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
+  actionCount: number
 }
 
 export type Game = {
@@ -24,6 +25,7 @@ export type Game = {
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
   events: Event[]
+  actionCount: number
   over: boolean
 }
 
@@ -33,6 +35,7 @@ export const initialGame = {
   acceptedLaws: [],
   proposedLaws: [],
   rejectedLaws: [],
+  actionCount: 0,
 }
 
 export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
@@ -44,6 +47,7 @@ export function initGame(game: GameDefinition = initialGame, id = getUUID()): Ga
     rejectedLaws: game.rejectedLaws,
     values: createBaseValues(game.values),
     events: [],
+    actionCount: game.actionCount,
     over: false,
   }
 }
@@ -68,6 +72,7 @@ export function prepareNextStep(
   }
   const newProposals = determineNewProposals(game, laws, event?.laws ? event.laws : [])
   game.proposedLaws = changeInPlace(game.proposedLaws, newProposals)
+  game.actionCount++
 
   return event
 }

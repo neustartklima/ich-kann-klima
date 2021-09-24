@@ -1,5 +1,5 @@
+import { startYear } from "../constants"
 import { defineEvent } from "../Factory"
-import { getAcceptedLaw } from "../laws"
 import { dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 
@@ -15,20 +15,17 @@ export default defineEvent({
   },
 
   probability(game) {
-    const acceptedLaws = game?.acceptedLaws
-      .map(getAcceptedLaw)
-      .filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1)
-
-    const numOfLaws = (acceptedLaws && acceptedLaws.length) || 0
-    if (numOfLaws < 3) {
+    const pastActions = (game.currentYear - startYear) * 4
+    const numOfActions = game.actionCount - pastActions
+    if (numOfActions < 3) {
       return 0
     }
-    if (numOfLaws >= 5) {
+    if (numOfActions >= 5) {
       return specialEventProbs.newYear
     }
 
     // After 3 decisions, the year might end, after 5 decisions, the probability is 100%
-    const probability = Math.round((numOfLaws - 2) * 33.3) / 100
+    const probability = Math.round((numOfActions - 2) * 33.3) / 100
     return Math.min(1, probability)
   },
 })
