@@ -60,7 +60,7 @@
     "vite": "^2.4.4",
     "vite-plugin-test": "0.0.5",
     "vue-router": "^4.0.9",
-    "vue-tsc": "^0.2.2"
+    "vue-tsc": "^0.3.0"
   },
   "mocha": {
     "require": [
