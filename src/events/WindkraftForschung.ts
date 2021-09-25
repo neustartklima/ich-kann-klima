@@ -1,5 +1,5 @@
 import { defineEvent } from "../Factory"
-import { lawIsAccepted, someOfTheseLawsAreAccepted } from "../lawTools"
+import { lawIsAccepted } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
 

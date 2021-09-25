@@ -16,6 +16,8 @@ import BSE from "./BSE"
 import Dürrewelle from "./Dürrewelle"
 import PRKohleindustrie from "./PR-Kohleindustrie"
 import PRInnenminister from "./PR-Innenminister"
+import Klimafluechtlinge from "./Klimafluechtlinge"
+import Plagiatsaffaere from "./Plagiatsaffaere"
 
 import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
@@ -44,4 +46,6 @@ export const allEvents = prepareModuleList({
   Dürrewelle,
   PRKohleindustrie,
   PRInnenminister,
+  Klimafluechtlinge,
+  Plagiatsaffaere,
 }) as Event[]
