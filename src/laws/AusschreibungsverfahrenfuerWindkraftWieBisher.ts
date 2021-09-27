@@ -18,7 +18,7 @@ export default defineLaw({
     const offshoreNew: TWh = 1.2
     return [
       modify("electricityWind")
-        .byValue(onshoreNew + offshoreNew)
+        .byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100)
         .if(currentYear >= startYear + delay),
     ]
   },

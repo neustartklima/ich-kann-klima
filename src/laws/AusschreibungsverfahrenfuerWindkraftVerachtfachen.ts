@@ -23,8 +23,8 @@ export default defineLaw({
         .byValue(-100 as TsdPeople)
         .if(startYear === currentYear),
       modify("electricityWind")
-        .byValue(onshoreNew + offshoreNew)
-        .if(currentYear >= startYear + delay),
+      .byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100)
+      .if(currentYear >= startYear + delay),
     ]
   },
 
