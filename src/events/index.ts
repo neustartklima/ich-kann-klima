@@ -3,7 +3,7 @@ import Altbausanierung from "./Altbausanierung"
 import Bestechung from "./Bestechung"
 import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
-import Hitzehölle from "./Hitzehölle"
+import Hitzehoelle from "./Hitzehölle"
 import NewYear from "./NewYear"
 import SocialMedia from "./SocialMedia"
 import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
@@ -13,7 +13,7 @@ import WindkraftAusschreibung from "./WindkraftAusschreibung"
 import SolarstromFoerderung from "./SolarstromFoerderung"
 import AtomKatastrophe from "./AtomKatastrophe"
 import BSE from "./BSE"
-import Dürrewelle from "./Dürrewelle"
+import Duerrewelle from "./Duerrewelle"
 import PRKohleindustrie from "./PR-Kohleindustrie"
 import PRInnenminister from "./PR-Innenminister"
 import Klimafluechtlinge from "./Klimafluechtlinge"
@@ -33,7 +33,7 @@ export const allEvents = prepareModuleList({
   Bestechung,
   EnergieStrategie,
   FinanzKollaps,
-  Hitzehölle,
+  Hitzehoelle,
   NewYear,
   SocialMedia,
   TempolimitAufAutobahnen,
@@ -43,7 +43,7 @@ export const allEvents = prepareModuleList({
   SolarstromFoerderung,
   AtomKatastrophe,
   BSE,
-  Dürrewelle,
+  Duerrewelle,
   PRKohleindustrie,
   PRInnenminister,
   Klimafluechtlinge,

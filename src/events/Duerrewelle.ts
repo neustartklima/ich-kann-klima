@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { linear } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
 
@@ -14,7 +15,7 @@ export default defineEvent({
   },
 
   probability(game) {
-    return Math.min(1, Math.max(0, (400 - game.values.co2budget) / 400))
+    return linear(100, 0, 400 - game.values.co2budget) / 100
   },
 
   laws: [],
