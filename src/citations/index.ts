@@ -297,3 +297,9 @@ export const wdr2021KlimaschutzMitCO2Preis = new Citation({
   comment: ``,
   internalComment: ``,
 })
+
+export const wikipediaBetz = new Citation({
+  url: "https://de.wikipedia.org/wiki/Betzsches_Gesetz",
+  title: "Betzsches Gesetz",
+  publisher: "Wikipedia",
+})

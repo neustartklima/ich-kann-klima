@@ -8,13 +8,16 @@ export default defineEvent({
   description: `Wissenschaftler haben eine neue Art der Energiegewinnung durch Wind entwickelt, mit der bestehende Windturbinen deutlich mehr Leistung bringen.`,
 
   apply() {
-    return [modify("popularity").byValue(4), modify("electricityWind").byPercent(30)]
+    return [modify("popularity").byValue(4), modify("electricityWindEfficiency").byPercent(30)]
   },
 
   probability(game) {
     const factor = lawIsAccepted(game, "WindkraftVereinfachen") ? 1.5 : 1
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
       return 0.5 * factor
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return 0.4 * factor
     }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
       return 0.3 * factor

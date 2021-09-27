@@ -16,6 +16,7 @@ import {
   ukgov2018kWhToCO2,
   umweltrat2020Umweltgutachten,
   vdv2019Statistik,
+  wikipediaBetz,
 } from "../citations"
 import { GramPerPsgrKm, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh } from "../types"
 import { markdown } from "../lib/utils"
@@ -321,6 +322,15 @@ const electricityWindOnshoreMaxNew = new WritableParam({
   internals: markdown`
 
   `,
+})
+
+const electricityWindEfficiency = new WritableParam({
+  unit: "Percent",
+  initialValue: 100,
+  citations: [wikipediaBetz],
+  details: markdown`
+    Relative efficiency of wind turbines in percent of the current efficiency (about 40%).
+  `
 })
 
 const electricityWater = new WritableParam({
@@ -721,6 +731,7 @@ export const paramDefinitions = {
   electricityWind,
   electricityWindUsable,
   electricityWindOnshoreMaxNew,
+  electricityWindEfficiency,
   electricityWater,
   electricityBiomass,
   electricityNuclear,
