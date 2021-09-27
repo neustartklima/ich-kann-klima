@@ -11,7 +11,7 @@ export default defineEvent({
   },
 
   probability() {
-    return .3
+    return 0.3
   },
 
   laws: [],
@@ -20,6 +20,6 @@ export default defineEvent({
 
   `,
   internals: markdown`
-    Klimaaktivisten steigen dir aufs Dach! Aber bei den Lobbyisten steigt deine Beliebtheit. Das gleicht deinen Popularitätsverlust etwas aus.
+
   `,
 })
