@@ -27536,20 +27536,6 @@ var allLawsObj = {
   VollerCO2Preis: VollerCO2Preis_default
 };
 var allLaws = lawList(allLawsObj);
-function getLaw(lawId) {
-  const law = allLaws.find((law2) => law2.id === lawId);
-  if (law) {
-    return law;
-  }
-  throw Error(`Law #${lawId} not found`);
-}
-function getAcceptedLaw(lawRef) {
-  const law = getLaw(lawRef.lawId);
-  if (law) {
-    return { ...law, effectiveSince: lawRef.effectiveSince };
-  }
-  throw Error(`Law #${lawRef.lawId} not found`);
-}
 function idsToLaws(lawIds) {
   return lawIds.map((lawId) => {
     const law = allLaws.find((law2) => law2.id === lawId);
@@ -27703,15 +27689,15 @@ var NewYear_default = defineEvent({
     return [dispatch("advanceYear")];
   },
   probability(game) {
-    const acceptedLaws = game?.acceptedLaws.map(getAcceptedLaw).filter((law) => !law.labels?.includes("initial") && law.effectiveSince == game.currentYear + 1);
-    const numOfLaws = acceptedLaws && acceptedLaws.length || 0;
-    if (numOfLaws < 3) {
+    const pastActions = (game.currentYear - startYear) * 4;
+    const numOfActions = game.actionCount - pastActions;
+    if (numOfActions < 3) {
       return 0;
     }
-    if (numOfLaws >= 5) {
+    if (numOfActions >= 5) {
       return specialEventProbs.newYear;
     }
-    const probability = Math.round((numOfLaws - 2) * 33.3) / 100;
+    const probability = Math.round((numOfActions - 2) * 33.3) / 100;
     return Math.min(1, probability);
   }
 });
