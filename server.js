@@ -27899,7 +27899,7 @@ var Duerrewelle_default = defineEvent({
     ];
   },
   probability(game) {
-    return linear(100, 0, 400 - game.values.co2budget) / 100;
+    return Math.min(1, linear(400, 0, game.values.co2budget) / 100);
   },
   laws: [],
   citations: [],

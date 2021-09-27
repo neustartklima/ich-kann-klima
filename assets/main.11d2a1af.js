@@ -846,7 +846,7 @@ Anfangswert ist die deutsche Staatsverschuldung 2019.
 
   `,internals:I`
 
-  `},Duerrewelle:{title:"Dürreperiode",description:"Die anhaltende Trockenheit und die damit verbundene Wasserknappheit hatte Rationierungen zur Folge. Die Ernteausfälle sind enorm.",apply:()=>[kt("gdp").byValue(-100),kt("popularity").byValue(-10)],probability:e=>Si(100,0,400-e.values.co2budget)/100,laws:[],citations:[],details:I`
+  `},Duerrewelle:{title:"Dürreperiode",description:"Die anhaltende Trockenheit und die damit verbundene Wasserknappheit hatte Rationierungen zur Folge. Die Ernteausfälle sind enorm.",apply:()=>[kt("gdp").byValue(-100),kt("popularity").byValue(-10)],probability:e=>Math.min(1,Si(400,0,e.values.co2budget)/100),laws:[],citations:[],details:I`
 
   `,internals:I`
   `},PRKohleindustrie:{title:"PR-Skandal",description:"Du wurdest mit dem Vorstand von RWE beim Currywurst essen gesehen und fotografiert. Das Bild geht jetzt viral und führt zu einer neuen Diskussion über Lobbyismus.",apply:()=>[kt("popularity").byValue(-2)],probability:e=>Ai(e,"WirksamerCO2Preis")||Ai(e,"KohleverstromungEinstellen")?0:.3,laws:[],citations:[],details:I`
