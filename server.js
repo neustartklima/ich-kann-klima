@@ -24989,6 +24989,11 @@ var wdr2021KlimaschutzMitCO2Preis = new Citation({
   comment: ``,
   internalComment: ``
 });
+var wikipediaBetz = new Citation({
+  url: "https://de.wikipedia.org/wiki/Betzsches_Gesetz",
+  title: "Betzsches Gesetz",
+  publisher: "Wikipedia"
+});
 
 // src/params/ParamsTypes.ts
 var ParamDefinition = class {
@@ -25278,6 +25283,14 @@ var electricityWindOnshoreMaxNew = new WritableParam({
   `,
   internals: markdown`
 
+  `
+});
+var electricityWindEfficiency = new WritableParam({
+  unit: "Percent",
+  initialValue: 100,
+  citations: [wikipediaBetz],
+  details: markdown`
+    Relative efficiency of wind turbines in percent of the current efficiency (about 40%).
   `
 });
 var electricityWater = new WritableParam({
@@ -25637,6 +25650,7 @@ var paramDefinitions = {
   electricityWind,
   electricityWindUsable,
   electricityWindOnshoreMaxNew,
+  electricityWindEfficiency,
   electricityWater,
   electricityBiomass,
   electricityNuclear,
@@ -26968,7 +26982,7 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
     const onshoreNew = Math.min(6.9, game.values.electricityWindOnshoreMaxNew);
     const offshoreNew = 1.2;
     return [
-      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
+      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
@@ -26993,7 +27007,7 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
     return [
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
       modify("unemployment").byValue(-20).if(startYear2 === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
+      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
@@ -27021,7 +27035,7 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
     return [
       modify("popularity").byValue(-2).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
+      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
@@ -27082,7 +27096,7 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
     return [
       modify("popularity").byValue(-20).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      modify("electricityWind").byValue(onshoreNew + offshoreNew).if(currentYear >= startYear2 + delay)
+      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
     ];
   },
   priority(game) {
@@ -27601,11 +27615,11 @@ var Altbausanierung_default = defineEvent({
   }
 });
 
-// src/events/bestechung.ts
+// src/events/Bestechung.ts
 function getFirstMatchingLaw(proposedLaws) {
   return proposedLaws.find((law) => law.title.match(/subvention/i) && law.title.match(/abbau/i));
 }
-var bestechung_default = defineEvent({
+var Bestechung_default = defineEvent({
   title: "Anruf von befreundetem Unternehmer",
   description: `Klaus, ein Unternehmer, den du auf einer Dienstreise kennen gelernt hast, ruft an und m\xF6chte dich in seine
     Ferienvilla auf Sardinien einladen. Er verl\xE4sst sich nat\xFCrlich darauf, dass du dem Gesetzentwurf zum Abbau von Subventionen
@@ -27874,15 +27888,18 @@ var BSE_default = defineEvent({
   `
 });
 
-// src/events/Dürrewelle.ts
-var D_rrewelle_default = defineEvent({
-  title: "",
-  description: ``,
+// src/events/Duerrewelle.ts
+var Duerrewelle_default = defineEvent({
+  title: "D\xFCrreperiode",
+  description: `Die anhaltende Trockenheit und die damit verbundene Wasserknappheit hatte Rationierungen zur Folge. Die Ernteausf\xE4lle sind enorm.`,
   apply() {
-    return [];
+    return [
+      modify("gdp").byValue(-100),
+      modify("popularity").byValue(-10)
+    ];
   },
-  probability() {
-    return Math.random();
+  probability(game) {
+    return linear(100, 0, 400 - game.values.co2budget) / 100;
   },
   laws: [],
   citations: [],
@@ -27890,19 +27907,21 @@ var D_rrewelle_default = defineEvent({
 
   `,
   internals: markdown`
-
   `
 });
 
-// src/events/PRSkandal.ts
-var PRSkandal_default = defineEvent({
+// src/events/PR-Kohleindustrie.ts
+var PR_Kohleindustrie_default = defineEvent({
   title: "PR-Skandal",
   description: `Du wurdest mit dem Vorstand von RWE beim Currywurst essen gesehen und fotografiert. Das Bild geht jetzt viral und f\xFChrt zu einer neuen Diskussion \xFCber Lobbyismus.`,
   apply() {
-    return [modify("popularity").byValue(2)];
+    return [modify("popularity").byValue(-2)];
   },
-  probability() {
-    return Math.random();
+  probability(game) {
+    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
+      return 0;
+    }
+    return 0.3;
   },
   laws: [],
   citations: [],
@@ -27914,14 +27933,74 @@ var PRSkandal_default = defineEvent({
   `
 });
 
+// src/events/PR-Innenminister.ts
+var PR_Innenminister_default = defineEvent({
+  title: "PR-Skandal",
+  description: `Auf dem Computer deines Innenministers wurden durch Hackerangriff rechtsradikale Inhalte gefunden.`,
+  apply() {
+    return [modify("popularity").byValue(-2)];
+  },
+  probability() {
+    return 0.3;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/Klimafluechtlinge.ts
+var Klimafluechtlinge_default = defineEvent({
+  title: "Klimafl\xFCchtlinge",
+  description: `Durch weltweiten Temperaturanstieg kommt es international zu mehr Klimafl\xFCchtlingen - auch in Deutschland. Das Kostet die Staatskasse.`,
+  apply() {
+    return [modify("stateDebt").byValue(10)];
+  },
+  probability(game) {
+    return game.values.co2budget < 500 ? 0.2 : 0;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/Plagiatsaffaere.ts
+var Plagiatsaffaere_default = defineEvent({
+  title: "Plagiatsaff\xE4re",
+  description: `W\xE4hrend des Wahlkampfs wirft dir die Opposition Plagiatsverletzungen vor. Das kostet W\xE4hlerstimmen.`,
+  apply() {
+    return [modify("popularity").byValue(-10)];
+  },
+  probability(game) {
+    return 0.5;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
 // src/events/index.ts
 var allEvents = prepareModuleList({
   AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
   Altbausanierung: Altbausanierung_default,
-  Bestechung: bestechung_default,
+  Bestechung: Bestechung_default,
   EnergieStrategie: EnergieStrategie_default,
   FinanzKollaps: Finanzkollaps_default,
-  Hitzeh\u00F6lle: Hitzeh_lle_default,
+  Hitzehoelle: Hitzeh_lle_default,
   NewYear: NewYear_default,
   SocialMedia: SocialMedia_default,
   TempolimitAufAutobahnen: TempolimitAufAutobahnen_default,
@@ -27931,8 +28010,11 @@ var allEvents = prepareModuleList({
   SolarstromFoerderung: SolarstromFoerderung_default,
   AtomKatastrophe: AtomKatastrophe_default,
   BSE: BSE_default,
-  D\u00FCrrewelle: D_rrewelle_default,
-  PRSkandal: PRSkandal_default
+  Duerrewelle: Duerrewelle_default,
+  PRKohleindustrie: PR_Kohleindustrie_default,
+  PRInnenminister: PR_Innenminister_default,
+  Klimafluechtlinge: Klimafluechtlinge_default,
+  Plagiatsaffaere: Plagiatsaffaere_default
 });
 
 // src/server/EventController.ts
