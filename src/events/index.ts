@@ -18,6 +18,7 @@ import PRKohleindustrie from "./PR-Kohleindustrie"
 import PRInnenminister from "./PR-Innenminister"
 import Klimafluechtlinge from "./Klimafluechtlinge"
 import Plagiatsaffaere from "./Plagiatsaffaere"
+import CO2PreisDebatte from "./CO2PreisDebatte"
 
 import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
@@ -48,4 +49,5 @@ export const allEvents = prepareModuleList({
   PRInnenminister,
   Klimafluechtlinge,
   Plagiatsaffaere,
+  CO2PreisDebatte,
 }) as Event[]
