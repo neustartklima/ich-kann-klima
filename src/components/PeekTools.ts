@@ -3,9 +3,12 @@ import { Game } from "../game"
 import { Law, LawId } from "../laws"
 import { Event } from "../events"
 
-function genCompare(a: number | string, b: number | string) {
-  if (a < b) return -1
-  if (a > b) return 1
+type Row<ColKey extends string> = { [P in ColKey]: number | string }
+function rowCompare<ColKey extends string>(a: Row<ColKey>, b: Row<ColKey>, ...cols: ColKey[]) {
+  for (const col of cols) {
+    if (a[col] < b[col]) return -1
+    if (a[col] > b[col]) return 1
+  }
   return 0
 }
 
@@ -19,7 +22,7 @@ export type ValueRow = {
 
 export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
   const nextValues = createBaseValues(game.values)
-  const context = { dispatch: () => undefined, values: nextValues}
+  const context = { dispatch: () => undefined, values: nextValues }
   applyEffects(context, effects)
 
   function valueStr(key: keyof BaseParams): string {
@@ -30,7 +33,9 @@ export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
   }
 
   function getEffect(key: keyof BaseParams): number {
-    const effect = effects.find((e) => e.type === "modify" && (e as ReturnType<typeof modify>).name === key) as ReturnType<typeof modify>
+    const effect = effects.find(
+      (e) => e.type === "modify" && (e as ReturnType<typeof modify>).name === key
+    ) as ReturnType<typeof modify>
     return effect && effect.condition ? effect.value : 0
   }
 
@@ -77,7 +82,7 @@ export function getSortedLaws(game: Game, sortCol: LawCol, sortDir: number, allL
       priority: law.priority(game),
       state: findState(law.id),
     }))
-    .sort((a, b) => genCompare(a[sortCol], b[sortCol]) * sortDir)
+    .sort((a, b) => rowCompare(a, b, sortCol, "id") * sortDir)
     .map((law) => ({ ...law, priority: law.priority.toFixed(2) }))
 }
 
@@ -91,6 +96,6 @@ export type EventCol = keyof EventRow
 export function getSortedEvents(game: Game, sortCol: EventCol, sortDir: number, allEvents: Event[]): EventRow[] {
   return allEvents
     .map((event) => ({ id: event.id, probability: event.probability(game) }))
-    .sort((a, b) => genCompare(a[sortCol], b[sortCol]) * sortDir)
+    .sort((a, b) => rowCompare(a, b, sortCol, "id") * sortDir)
     .map((row) => ({ ...row, probability: (row.probability * 100).toFixed(2) }))
 }
