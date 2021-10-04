@@ -21,10 +21,10 @@ export default defineLaw({
 
     return [
       modify("stateDebt")
-        .byValue(-45 * 1000000 * game.values.co2emissions)
+        .byValue((-45 / 1000) * game.values.co2emissions)
         .if(currentYear >= startYear + 2),
       modify("stateDebt")
-        .byValue(-30 * 1000000 * game.values.co2emissions)
+        .byValue((-30 / 1000) * game.values.co2emissions)
         .if(currentYear >= startYear + 4),
 
       modify("popularity").byValue(electricityPopChange + carPopChange),

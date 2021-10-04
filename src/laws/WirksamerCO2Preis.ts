@@ -19,7 +19,7 @@ export default defineLaw({
     const relReduction: Percent = -2
 
     return [
-      modify("stateDebt").byValue(-125 * 1000000 * game.values.co2emissions),
+      modify("stateDebt").byValue((-125 / 1000) * game.values.co2emissions),
 
       modify("popularity").byValue(electricityPopChange + carPopChange),
 
