@@ -5,7 +5,7 @@ import { markdown } from "../lib/utils"
 export default defineEvent({
   title: "Abstimmung zur Ausschreibung von Windkraftanlagen",
   description:
-    "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Kindkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
+    "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Windkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
   laws: [
     "AusschreibungsverfahrenfuerWindkraftWieBisher",
     "AusschreibungsverfahrenfuerWindkraftVerdoppeln",
