@@ -27782,7 +27782,7 @@ var WahlVerloren_default = defineEvent({
 // src/events/WindkraftAusschreibung.ts
 var WindkraftAusschreibung_default = defineEvent({
   title: "Abstimmung zur Ausschreibung von Windkraftanlagen",
-  description: "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Kindkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
+  description: "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Windkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
   laws: [
     "AusschreibungsverfahrenfuerWindkraftWieBisher",
     "AusschreibungsverfahrenfuerWindkraftVerdoppeln",
