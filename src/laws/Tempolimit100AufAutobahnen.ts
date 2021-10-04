@@ -25,6 +25,6 @@ export default defineLaw({
     if (!lawIsAccepted(game, "Tempolimit120AufAutobahnen")) return 0
     const v = game.values
     const relCarPercentage: Percent = (v.carUsage / v.passengerTransportUsage) * 100
-    return linear(10, 60, relCarPercentage)
+    return linear(10, 100, relCarPercentage)
   },
 })
