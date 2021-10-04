@@ -3,17 +3,20 @@ import { defineComponent } from "vue"
 import healthy from "../assets/plant-healthy.png"
 import sick from "../assets/plant-sick.png"
 import withered from "../assets/plant-withered.png"
+import IndicatorBar from "./IndicatorBar.vue"
 
 export default defineComponent({
   data() {
     return {
-      levels: { healthy, sick, withered } as Record<string, string>
+      levels: { healthy, sick, withered } as Record<string, string>,
     }
   },
 
   props: {
     value: { type: Number, required: true },
   },
+
+  components: { IndicatorBar },
 
   computed: {
     status(): string {
@@ -35,6 +38,7 @@ export default defineComponent({
 
 <template>
   <div id="plant">
+    <IndicatorBar title="CO2-Budget" :value="value" :zoom="2.5" style="margin: -50px 0 0 60px" />
     <img :src="imgSrc" :id="status" />
   </div>
 </template>
