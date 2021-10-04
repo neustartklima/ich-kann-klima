@@ -14,7 +14,7 @@ export default defineLaw({
 
   priority(game) {
     const v = game.values
-    return linear(70, 30, v.electricityGridQuality)
+    return linear(80, 45, v.electricityGridQuality)
   },
   citations: [],
   details: markdown`
@@ -37,7 +37,7 @@ export default defineLaw({
     # Priorität
 
     - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
-    - 100% bei einer Netzqualität von 40%.
+    - 100% bei einer Netzqualität von 45%.
     - linear interpoliert
   `,
 })

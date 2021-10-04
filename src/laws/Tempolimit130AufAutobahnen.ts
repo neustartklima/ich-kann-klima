@@ -22,9 +22,14 @@ export default defineLaw({
   },
 
   priority(game) {
-    if (!lawIsAccepted(game, "Tempolimit100AufAutobahnen")) return 0
+    if (
+      lawIsAccepted(game, "Tempolimit100AufAutobahnen") ||
+      lawIsAccepted(game, "Tempolimit120AufAutobahnen") ||
+      lawIsAccepted(game, "TempolimitAufAutobahnenAussitzen")
+    )
+      return 0
     const v = game.values
     const relCarPercentage: Percent = (v.carUsage / v.passengerTransportUsage) * 100
-    return linear(10, 60, relCarPercentage)
+    return linear(10, 100, relCarPercentage)
   },
 })

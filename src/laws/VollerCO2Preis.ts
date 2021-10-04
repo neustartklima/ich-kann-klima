@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linearPopChange, renewablePercentage } from "../lawTools"
+import { lawIsAccepted, linearPopChange, renewablePercentage } from "../lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { ucl2021EconomicCostSixTimesHigher } from "../citations"
@@ -40,7 +40,8 @@ export default defineLaw({
   },
 
   priority(game) {
-    return 100
+    if (!lawIsAccepted(game, "WirksamerCO2Preis")) return 0
+    return 50
   },
   citations: [ucl2021EconomicCostSixTimesHigher],
   details: markdown`
@@ -82,10 +83,10 @@ export default defineLaw({
 
     # Voraussetzungen
 
-    - Priorität > 0
+    - "WirksamerCO2Preis" wurde beschlossen.
 
     # Priorität
 
-    - 100%
+    - 50%
   `,
 })

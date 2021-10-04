@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { linearPopChange, renewablePercentage } from "../lawTools"
+import { lawIsAccepted, linearPopChange, renewablePercentage } from "../lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
@@ -40,7 +40,8 @@ export default defineLaw({
   },
 
   priority(game) {
-    return 100
+    if (!lawIsAccepted(game, "CO2PreisErhoehen")) return 0
+    return 50
   },
   citations: [wdr2021KlimaschutzMitCO2Preis],
   details: markdown`
@@ -84,10 +85,10 @@ export default defineLaw({
 
     # Voraussetzungen
 
-    - Priorität > 0
+    - "CO2PreisErhoehen" wurde beschlossen.
 
     # Priorität
 
-    - 100%
+    - 50%
   `,
 })
