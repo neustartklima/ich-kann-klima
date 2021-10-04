@@ -27118,8 +27118,8 @@ var CO2PreisErhoehen_default = defineLaw({
     const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1);
     const relReduction = -0.5;
     return [
-      modify("stateDebt").byValue(-45 * 1e6 * game.values.co2emissions).if(currentYear >= startYear2 + 2),
-      modify("stateDebt").byValue(-30 * 1e6 * game.values.co2emissions).if(currentYear >= startYear2 + 4),
+      modify("stateDebt").byValue(-45 / 1e3 * game.values.co2emissions).if(currentYear >= startYear2 + 2),
+      modify("stateDebt").byValue(-30 / 1e3 * game.values.co2emissions).if(currentYear >= startYear2 + 4),
       modify("popularity").byValue(electricityPopChange + carPopChange),
       modify("co2emissionsIndustry").byPercent(relReduction),
       modify("co2emissionsAgriculture").byPercent(relReduction),
@@ -27194,7 +27194,7 @@ var WirksamerCO2Preis_default = defineLaw({
     const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3);
     const relReduction = -2;
     return [
-      modify("stateDebt").byValue(-125 * 1e6 * game.values.co2emissions),
+      modify("stateDebt").byValue(-125 / 1e3 * game.values.co2emissions),
       modify("popularity").byValue(electricityPopChange + carPopChange),
       modify("co2emissionsIndustry").byPercent(relReduction),
       modify("co2emissionsAgriculture").byPercent(relReduction),
@@ -27272,7 +27272,7 @@ var VollerCO2Preis_default = defineLaw({
     const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10);
     const relReduction = -5;
     return [
-      modify("stateDebt").byValue(-3e3 * 1e6 * game.values.co2emissions),
+      modify("stateDebt").byValue(-3 * game.values.co2emissions),
       modify("popularity").byValue(electricityPopChange + carPopChange),
       modify("co2emissionsIndustry").byPercent(relReduction),
       modify("co2emissionsAgriculture").byPercent(relReduction),
