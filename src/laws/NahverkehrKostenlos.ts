@@ -1,6 +1,6 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro, TsdPeople } from "../types"
-import { linear } from "../lawTools"
+import { MrdEuro, Percent, TsdPeople } from "../types"
+import { lawIsAccepted, linear } from "../lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { cite, vdvDatenFakten } from "../citations"
@@ -26,8 +26,8 @@ export default defineLaw({
   },
 
   priority(game) {
-    const mobilityPercentage = (game.values.co2emissionsMobility / game.values.co2emissions) * 100
-    return linear(0, 10, mobilityPercentage)
+    const relCapacity: Percent = (game.values.publicLocalCapacity / game.values.publicLocalUsage) * 100
+    return linear(90, 120, relCapacity)
   },
   citations: [vdvDatenFakten],
   details: markdown`
@@ -57,8 +57,10 @@ export default defineLaw({
 
     # Priorität
 
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    Sollte erst vorgeschlagen werden, wenn genügend Kapazität da ist.
+
+    - 0 bei 90% relativer Kapazität. (Zu Beginn: 100%)
+    - 100 bei 120% relativer Kapazität.
     - linear interpoliert
   `,
 })

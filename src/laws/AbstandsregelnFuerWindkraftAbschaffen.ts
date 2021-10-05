@@ -23,7 +23,7 @@ export default defineLaw({
 
   priority(game) {
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
-      return linear(80, 40, windPercentage(game))
+      return linear(80, 25, windPercentage(game))
     }
     return 0
   },

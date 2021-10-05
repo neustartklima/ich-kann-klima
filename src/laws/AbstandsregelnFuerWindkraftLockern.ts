@@ -25,7 +25,7 @@ export default defineLaw({
 
   priority(game) {
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
-      return linear(70, 30, windPercentage(game))
+      return linear(70, 27, windPercentage(game))
     }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftAbschaffen")) {
       return linear(30, 100, windPercentage(game))
@@ -44,7 +44,7 @@ export default defineLaw({
     Zu Beginn und wenn "WieBisher" ausgewählt:
 
     - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
-    - 100% bei einem Anteil von Windstrom von 30%.
+    - 100% bei einem Anteil von Windstrom von 27%.
     - linear interpoliert
 
     Wenn Abstandsregeln abgeschafft wurden:

@@ -17,7 +17,7 @@ export default defineLaw({
   },
 
   priority(game) {
-    return linear(70, 30, windPercentage(game))
+    return linear(70, 27, windPercentage(game))
   },
   citations: [],
   details: markdown`
@@ -38,7 +38,7 @@ export default defineLaw({
     # Priorität
 
     - 0% bei einem Anteil von nutzbarem Windstrom von 70%. (Zu Beginn: 27%)
-    - 100% bei einem Anteil von nutzbarem Windstrom von 30%.
+    - 100% bei einem Anteil von nutzbarem Windstrom von 27%.
     - linear interpoliert
   `,
 })

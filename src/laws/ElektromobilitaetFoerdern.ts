@@ -22,6 +22,7 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (!lawIsAccepted(game, "LadeinfrastrukturAusbauen")) return 0
     const mobilityPercentage = (game.values.co2emissionsMobility / game.values.co2emissions) * 100
     return linear(0, 25, mobilityPercentage)
   },
@@ -45,6 +46,7 @@ export default defineLaw({
 
     # Vorbedingungen:
 
+    - "LadeinfrastrukturAusbauen" ist beschlossen.
     - Priorität über 0%.
 
     # Priorität
