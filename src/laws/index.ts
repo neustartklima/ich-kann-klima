@@ -4,6 +4,7 @@ import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
 import KernenergienutzungVerlaengern from "./KernenergienutzungVerlaengern"
 import InitialAtomausstieg from "./InitialAtomausstieg"
 import NetzausbauErleichtern from "./NetzausbauErleichtern"
+import NetzausbauFoerdern from "./NetzausbauFoerdern"
 import StromspeicherungErleichtern from "./StromspeicherungErleichtern"
 import StromspeicherungFoerdern from "./StromspeicherungFoerdern"
 import DaemmungAltbau1Percent from "./DaemmungAltbau1Percent"
@@ -61,6 +62,7 @@ const allLawsObj = {
   EnergiemixRegeltDerMarkt,
   KernenergienutzungVerlaengern,
   NetzausbauErleichtern,
+  NetzausbauFoerdern,
 
   StromspeicherungErleichtern,
   StromspeicherungFoerdern,
