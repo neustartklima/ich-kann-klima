@@ -30,7 +30,7 @@ export default defineLaw({
 
   `,
   internals: markdown`
-    # Happy Path 13
+    # Happy Path 20.5
 
     # Folgen
 
@@ -38,6 +38,7 @@ export default defineLaw({
     TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
 
     Nur wenn "LadeinfrastrukturAusbauen" beschlossen wurde:
+
     - Der Staatshaushalt wird jährlich mit 5 Mrd € stärker belastet.
     - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
     - Popularität steigt im ersten Jah um 4%

@@ -28,7 +28,7 @@ export default defineLaw({
 
   `,
   internals: markdown`
-    # Happy Path 10.5
+    # Happy Path 18.5
 
     # Folgen
 
