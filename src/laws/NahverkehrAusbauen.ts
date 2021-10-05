@@ -1,5 +1,5 @@
 import { defineLaw } from "../Factory"
-import { MrdEuro } from "../types"
+import { MrdEuro, Percent } from "../types"
 import { linear } from "../lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
@@ -26,8 +26,8 @@ export default defineLaw({
   },
 
   priority(game) {
-    const mobilityPercentage = (game.values.co2emissionsMobility / game.values.co2emissions) * 100
-    return linear(20, 35, mobilityPercentage)
+    const relCapacity: Percent = (game.values.publicLocalCapacity / game.values.publicLocalUsage) * 100
+    return linear(150, 80, relCapacity)
   },
   citations: [bmvi2020OePNVFoerderungDesBundes],
   details: markdown`
@@ -54,8 +54,10 @@ export default defineLaw({
 
     # Priorität:
 
-    - 0 bei 20% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 35% Anteil
+    Sollte erst vorgeschlagen werden, wenn genügend Nachfrage da ist.
+
+    - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
+    - 100 bei 80% relativer Kapazität.
     - linear interpoliert
   `,
 })

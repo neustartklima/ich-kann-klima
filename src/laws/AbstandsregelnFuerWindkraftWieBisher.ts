@@ -24,7 +24,7 @@ export default defineLaw({
       return linear(30, 100, windPercentage(game))
     }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftVerschaerfen")) {
-      return linear(70, 30, windPercentage(game))
+      return linear(70, 27, windPercentage(game))
     }
     return 0
   },

@@ -56,6 +56,8 @@ export default defineLaw({
 
     # Priorität:
 
+    Sollte erst vorgeschlagen werden, wenn genügend Nachfrage da ist.
+
     - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
     - 100 bei 80% relativer Kapazität.
     - linear interpoliert

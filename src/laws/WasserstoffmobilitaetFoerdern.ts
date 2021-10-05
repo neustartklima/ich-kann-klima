@@ -23,7 +23,7 @@ export default defineLaw({
 
   priority(game) {
     const mobilityPercentage = (game.values.co2emissionsMobility / game.values.co2emissions) * 100
-    return linear(0, 10, mobilityPercentage)
+    return linear(0, 26, mobilityPercentage)
   },
   citations: [],
   details: markdown`
@@ -50,7 +50,7 @@ export default defineLaw({
     # Priorität
 
     - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    - 100 bei 26% Anteil
     - linear interpoliert
   `,
 })
