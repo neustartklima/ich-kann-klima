@@ -31,7 +31,7 @@ export default defineLaw({
 
   priority(game) {
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
-      return linear(100, 40, renewablePercentage(game))
+      return linear(100, 50, renewablePercentage(game))
     }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
       return linear(0, 100, renewablePercentage(game))
@@ -66,7 +66,7 @@ export default defineLaw({
 
     - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
     - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
-      Wenn bisher "verachtfachen:
+      Wenn bisher "verachtfachen":
     - 0% bei einem Anteil der erneuerbaren Stromquellen von 0%. (Zu Beginn: 50%)
     - 100% bei einem Anteil der erneuerbaren Stromquellen von 100%.
     - linear interpoliert
