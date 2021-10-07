@@ -20,7 +20,7 @@ export default defineLaw({
   },
 
   priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(100, 30, renewablePercentage(game))
     }
     return 0
