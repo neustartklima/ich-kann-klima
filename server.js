@@ -28077,7 +28077,7 @@ var CO2PreisDebatte_default = defineEvent({
 });
 
 // src/events/index.ts
-var allEvents = prepareModuleList({
+var allEventsObj = {
   AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
   Altbausanierung: Altbausanierung_default,
   Bestechung: Bestechung_default,
@@ -28099,7 +28099,8 @@ var allEvents = prepareModuleList({
   Klimafluechtlinge: Klimafluechtlinge_default,
   Plagiatsaffaere: Plagiatsaffaere_default,
   CO2PreisDebatte: CO2PreisDebatte_default
-});
+};
+var allEvents = prepareModuleList(allEventsObj);
 
 // src/server/EventController.ts
 function EventController_default({ eventStore: eventStore2, models: models2 }) {
