@@ -1,10 +1,10 @@
 import { defineLaw } from "../Factory"
-import { linear, renewablePercentage } from "../lawTools"
+import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
 import { markdown } from "../lib/utils"
 import { Change, modify } from "../params"
 
 export default defineLaw({
-  title: "Solarstrom Förderung beibehalten",
+  title: "Solarstrom Förderung wie zu Beginn",
   description: "Subventionierung für mittlere bis große Solaranlagen wie bisher",
   labels: ["initial", "SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
@@ -15,7 +15,10 @@ export default defineLaw({
   },
 
   priority(game) {
-    return linear(70, 100, renewablePercentage(game))
+    if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
+      return linear(70, 100, renewablePercentage(game))
+    }
+    return 0
   },
 
   details: markdown`

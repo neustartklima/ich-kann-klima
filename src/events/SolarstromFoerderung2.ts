@@ -8,7 +8,7 @@ export default defineEvent({
   description: "Der Solaranteil ist bereits sehr hoch, die Kosten für die Förderung sind schwer zu vermitteln.",
   laws: [
     "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungBeibehalten",
+    "SolarstromFoerderungWieZuBeginn",
     "SolarstromFoerdernx2",
     "SolarstromFoerdernx4",
     "SolarstromFoerdernx8",

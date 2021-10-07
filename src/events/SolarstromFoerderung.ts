@@ -8,7 +8,7 @@ export default defineEvent({
   description: "",
   laws: [
     "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungBeibehalten",
+    "SolarstromFoerderungWieZuBeginn",
     "SolarstromFoerdernx2",
     "SolarstromFoerdernx4",
     "SolarstromFoerdernx8",
@@ -20,7 +20,7 @@ export default defineEvent({
 
   probability(game) {
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")
-    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungBeibehalten")
+    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2")
     return abgeschafft || beibehalten || x2 ? Math.random() : 0
   },

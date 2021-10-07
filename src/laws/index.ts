@@ -43,7 +43,7 @@ import CO2PreisErhoehen from "./CO2PreisErhoehen"
 import WirksamerCO2Preis from "./WirksamerCO2Preis"
 import VollerCO2Preis from "./VollerCO2Preis"
 import SolarstromFoerderungAbschaffen from "./SolarstromFoerderungAbschaffen"
-import SolarstromFoerderungBeibehalten from "./SolarstromFoerderungBeibehalten"
+import SolarstromFoerderungWieZuBeginn from "./SolarstromFoerderungWieZuBeginn"
 import SolarstromFoerdernx2 from "./SolarstromFoerdernx2"
 import SolarstromFoerdernx4 from "./SolarstromFoerdernx4"
 import SolarstromFoerdernx8 from "./SolarstromFoerdernx8"
@@ -80,7 +80,7 @@ const allLawsObj = {
   AusschreibungsverfahrenfuerWindkraftVerachtfachen,
 
   SolarstromFoerderungAbschaffen,
-  SolarstromFoerderungBeibehalten,
+  SolarstromFoerderungWieZuBeginn,
   SolarstromFoerdernx2,
   SolarstromFoerdernx4,
   SolarstromFoerdernx8,
