@@ -10,7 +10,7 @@ export default defineLaw({
   removeLawsWithLabels: ["TempolimitAutobahn"],
 
   effects(game): Change[] {
-    const emissionModifier = modify("carEmissionFactor").byValue(157.1 as GramPerPsgrKm)
+    const emissionModifier = modify("carEmissionFactor").setValue(157.1 as GramPerPsgrKm)
     const emissionChange = emissionModifier.getChange(game.values)
 
     return [
