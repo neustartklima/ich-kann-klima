@@ -10,7 +10,7 @@ import Heater from "./Heater.vue"
 import Table from "./Table.vue"
 import TVSet from "./TVSet.vue"
 import Tour from "./Tour.vue"
-import { Event } from "../events"
+import { allEvents, Event, EventReference } from "../events"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 
@@ -36,12 +36,20 @@ export default defineComponent({
   },
 
   computed: {
+    eventToShow(): Event | undefined {
+      const eventRefs: EventReference[] = this.store.state.game?.events || []
+      if (eventRefs.length === 0) return undefined
+      const eventRef = eventRefs[0]
+      if (eventRef.acknowledged) return undefined
+      return allEvents.find((e) => e.id === eventRef.id)
+    },
+
     eventTitle(): string {
-      return this.eventToShow()?.title || ""
+      return this.eventToShow?.title || ""
     },
 
     eventText(): string {
-      return this.eventToShow()?.description || ""
+      return this.eventToShow?.description || ""
     },
 
     currentYear(): number {
@@ -64,13 +72,8 @@ export default defineComponent({
   },
 
   methods: {
-    eventToShow(): Event | null {
-      const event: Event = this.$store.state.game?.events[0]
-      return event && !event.acknowledged ? event : null
-    },
-
     acknowledge(): void {
-      this.$store.dispatch("acknowledgeEvent", this.eventToShow())
+      this.$store.dispatch("acknowledgeEvent", this.eventToShow)
     },
   },
 })

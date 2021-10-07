@@ -23,12 +23,7 @@ import CO2PreisDebatte from "./CO2PreisDebatte"
 import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
 
-export type EventId = string
-export type Event = EventDefinition & {
-  id: EventId
-}
-
-export const allEvents = prepareModuleList({
+const allEventsObj = {
   AbstandsregelnWindkraft,
   Altbausanierung,
   Bestechung,
@@ -50,4 +45,18 @@ export const allEvents = prepareModuleList({
   Klimafluechtlinge,
   Plagiatsaffaere,
   CO2PreisDebatte,
-}) as Event[]
+}
+
+export type EventId = keyof typeof allEventsObj
+
+export type Event = EventDefinition & {
+  id: EventId
+}
+
+export type EventReference = {
+  id: EventId
+  occuredIn: number
+  acknowledged: boolean
+}
+
+export const allEvents = prepareModuleList(allEventsObj) as Event[]

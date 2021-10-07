@@ -1,5 +1,5 @@
 import { maxProposedLaws, probabilityThatEventOccurs, startYear } from "./constants"
-import { allEvents, Event } from "./events"
+import { allEvents, Event, EventReference } from "./events"
 import { allLaws, Law, LawId, LawReference } from "./laws"
 import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from "./params"
 import { v1 as getUUID } from "uuid"
@@ -14,7 +14,9 @@ export type GameDefinition = {
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
+  events: EventReference[]
   actionCount: number
+  over: boolean
 }
 
 export type Game = {
@@ -24,7 +26,7 @@ export type Game = {
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
-  events: Event[]
+  events: EventReference[]
   actionCount: number
   over: boolean
 }
@@ -35,7 +37,9 @@ export const initialGame = {
   acceptedLaws: [],
   proposedLaws: [],
   rejectedLaws: [],
+  events: [],
   actionCount: 0,
+  over: false,
 }
 
 export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
@@ -46,9 +50,9 @@ export function initGame(game: GameDefinition = initialGame, id = getUUID()): Ga
     proposedLaws: game.proposedLaws,
     rejectedLaws: game.rejectedLaws,
     values: createBaseValues(game.values),
-    events: [],
+    events: game.events,
     actionCount: game.actionCount,
-    over: false,
+    over: game.over,
   }
 }
 
@@ -68,7 +72,8 @@ export function prepareNextStep(
 ): Event | undefined {
   const event = checkForEvent(game, events, random)
   if (event) {
-    game.events.unshift(event)
+    const eventRef: EventReference = { id: event.id, occuredIn: game.currentYear, acknowledged: false }
+    game.events.unshift(eventRef)
   }
   const newProposals = determineNewProposals(game, laws, event?.laws ? event.laws : [])
   game.proposedLaws = changeInPlace(game.proposedLaws, newProposals)

@@ -77,8 +77,8 @@ describe("API", () => {
 
   describe("eventOccurred", () => {
     it("should add a call to the fetch queue", async () => {
-      await api.eventOccurred("4712", "0816")
-      fetchQueue.add.calledOnceWith("post", "/games/4712/events/0816").should.be.true()
+      await api.eventOccurred("4712", "NewYear")
+      fetchQueue.add.calledOnceWith("post", "/games/4712/events/NewYear").should.be.true()
       fetchQueue.remove.getCalls().length.should.equal(0)
     })
   })
