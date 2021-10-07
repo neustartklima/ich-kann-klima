@@ -25966,7 +25966,7 @@ var NetzausbauErleichtern_default = defineLaw({
     ];
   },
   priority(game) {
-    return linear(70, 30, windPercentage(game));
+    return linear(70, 27, windPercentage(game));
   },
   citations: [],
   details: markdown`
@@ -25987,7 +25987,46 @@ var NetzausbauErleichtern_default = defineLaw({
     # Priorität
 
     - 0% bei einem Anteil von nutzbarem Windstrom von 70%. (Zu Beginn: 27%)
-    - 100% bei einem Anteil von nutzbarem Windstrom von 30%.
+    - 100% bei einem Anteil von nutzbarem Windstrom von 27%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/NetzausbauFoerdern.ts
+var NetzausbauFoerdern_default = defineLaw({
+  title: "Netzausbau f\xF6rdern",
+  description: "Ausbau des Stromnetzes mit Steuermitteln f\xF6rdern",
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-1).if(startYear2 === currentYear),
+      modify("stateDebt").byValue(2),
+      modify("electricityGridQuality").byValue(5).if(lawIsAccepted(game, "NetzausbauErleichtern"))
+    ];
+  },
+  priority(game) {
+    return linear(70, 27, windPercentage(game));
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 8
+
+    # Folgen
+
+    - [x] Im ersten Jahr machen BIs schlechte Stimmung: 1% Popularität weniger.
+    - [x] Kostet 2 Mrd Euro im Jahr.
+    - [x] Die Netzqualität steigt jährlich um 5%, aber nur, wenn auch die Planungsverfahren vereinfacht wurden.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    - 0% bei einem Anteil von nutzbarem Windstrom von 70%. (Zu Beginn: 27%)
+    - 100% bei einem Anteil von nutzbarem Windstrom von 27%.
     - linear interpoliert
   `
 });
@@ -26001,7 +26040,7 @@ var StromspeicherungErleichtern_default = defineLaw({
   },
   priority(game) {
     const v = game.values;
-    return linear(70, 30, v.electricityGridQuality);
+    return linear(80, 45, v.electricityGridQuality);
   },
   citations: [],
   details: markdown`
@@ -26023,8 +26062,10 @@ var StromspeicherungErleichtern_default = defineLaw({
 
     # Priorität
 
+    Identisch zu "StromspeicherungFoerdern".
+
     - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
-    - 100% bei einer Netzqualität von 40%.
+    - 100% bei einer Netzqualität von 45%.
     - linear interpoliert
   `
 });
@@ -26045,7 +26086,7 @@ var StromspeicherungFoerdern_default = defineLaw({
   },
   priority(game) {
     const v = game.values;
-    return linear(70, 30, v.electricityGridQuality);
+    return linear(80, 45, v.electricityGridQuality);
   },
   citations: [],
   details: markdown`
@@ -26070,8 +26111,10 @@ var StromspeicherungFoerdern_default = defineLaw({
 
     # Priorität
 
+    Identisch zu "StromspeicherungErleichtern".
+
     - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
-    - 100% bei einer Netzqualität von 40%.
+    - 100% bei einer Netzqualität von 45%.
     - linear interpoliert
   `
 });
@@ -26193,8 +26236,8 @@ var NahverkehrAusbauen_default = defineLaw({
     ];
   },
   priority(game) {
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(20, 35, mobilityPercentage);
+    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
+    return linear(150, 80, relCapacity);
   },
   citations: [bmvi2020OePNVFoerderungDesBundes],
   details: markdown`
@@ -26221,8 +26264,10 @@ var NahverkehrAusbauen_default = defineLaw({
 
     # Priorität:
 
-    - 0 bei 20% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 35% Anteil
+    Sollte erst vorgeschlagen werden, wenn genügend Nachfrage da ist.
+
+    - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
+    - 100 bei 80% relativer Kapazität.
     - linear interpoliert
   `
 });
@@ -26240,8 +26285,10 @@ var NahverkehrModernisieren_default = defineLaw({
     ];
   },
   priority(game) {
+    if (!lawIsAccepted(game, "FernverkehrModernisieren"))
+      return 0;
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 10, mobilityPercentage);
+    return linear(0, 24, mobilityPercentage);
   },
   citations: [vdvDatenFakten],
   details: markdown`
@@ -26264,12 +26311,13 @@ var NahverkehrModernisieren_default = defineLaw({
 
     # Vorbedingungen:
 
+    - "FernverkehrModernisieren" wurde beschlossen. (Damit nicht zu viele ähnliche Vorschläge gleichzeitig da sind.)
     - Priorität über 0%.
 
     # Priorität
 
     - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    - 100 bei 24% Anteil
     - linear interpoliert
   `
 });
@@ -26304,8 +26352,8 @@ var NahverkehrKostenlos_default = defineLaw({
     ];
   },
   priority(game) {
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 10, mobilityPercentage);
+    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
+    return linear(90, 120, relCapacity);
   },
   citations: [vdvDatenFakten],
   details: markdown`
@@ -26335,8 +26383,10 @@ var NahverkehrKostenlos_default = defineLaw({
 
     # Priorität
 
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    Sollte erst vorgeschlagen werden, wenn genügend Kapazität da ist.
+
+    - 0 bei 90% relativer Kapazität. (Zu Beginn: 100%)
+    - 100 bei 120% relativer Kapazität.
     - linear interpoliert
   `
 });
@@ -26408,6 +26458,8 @@ var FernverkehrVerbindungenAusbauen_default = defineLaw({
 
     # Priorität:
 
+    Sollte erst vorgeschlagen werden, wenn genügend Nachfrage da ist.
+
     - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
     - 100 bei 80% relativer Kapazität.
     - linear interpoliert
@@ -26428,7 +26480,7 @@ var FernverkehrModernisieren_default = defineLaw({
   },
   priority(game) {
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 10, mobilityPercentage);
+    return linear(0, 24, mobilityPercentage);
   },
   citations: [],
   details: markdown`
@@ -26456,7 +26508,7 @@ var FernverkehrModernisieren_default = defineLaw({
     # Priorität
 
     - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    - 100 bei 24% Anteil
     - linear interpoliert
   `
 });
@@ -26495,7 +26547,7 @@ var WasserstoffmobilitaetFoerdern_default = defineLaw({
   },
   priority(game) {
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 10, mobilityPercentage);
+    return linear(0, 26, mobilityPercentage);
   },
   citations: [],
   details: markdown`
@@ -26522,7 +26574,7 @@ var WasserstoffmobilitaetFoerdern_default = defineLaw({
     # Priorität
 
     - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    - 100 bei 26% Anteil
     - linear interpoliert
   `
 });
@@ -26666,11 +26718,11 @@ var Tempolimit130AufAutobahnen_default = defineLaw({
     ];
   },
   priority(game) {
-    if (!lawIsAccepted(game, "Tempolimit100AufAutobahnen"))
+    if (lawIsAccepted(game, "Tempolimit100AufAutobahnen") || lawIsAccepted(game, "Tempolimit120AufAutobahnen") || lawIsAccepted(game, "TempolimitAufAutobahnenAussitzen"))
       return 0;
     const v = game.values;
     const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 60, relCarPercentage);
+    return linear(10, 100, relCarPercentage);
   }
 });
 
@@ -26693,7 +26745,7 @@ var Tempolimit120AufAutobahnen_default = defineLaw({
       return 0;
     const v = game.values;
     const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 60, relCarPercentage);
+    return linear(10, 100, relCarPercentage);
   }
 });
 
@@ -26716,7 +26768,7 @@ var Tempolimit100AufAutobahnen_default = defineLaw({
       return 0;
     const v = game.values;
     const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 60, relCarPercentage);
+    return linear(10, 100, relCarPercentage);
   }
 });
 
@@ -26733,9 +26785,11 @@ var TempolimitAufAutobahnenAussitzen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (lawIsAccepted(game, "Tempolimit100AufAutobahnen") || lawIsAccepted(game, "Tempolimit120AufAutobahnen") || lawIsAccepted(game, "Tempolimit130AufAutobahnen"))
+      return 0;
     const v = game.values;
     const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 60, relCarPercentage);
+    return linear(10, 100, relCarPercentage);
   }
 });
 
@@ -26754,6 +26808,8 @@ var ElektromobilitaetFoerdern_default = defineLaw({
     return [];
   },
   priority(game) {
+    if (!lawIsAccepted(game, "LadeinfrastrukturAusbauen"))
+      return 0;
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
     return linear(0, 25, mobilityPercentage);
   },
@@ -26762,7 +26818,7 @@ var ElektromobilitaetFoerdern_default = defineLaw({
 
   `,
   internals: markdown`
-    # Happy Path 13
+    # Happy Path 20.5
 
     # Folgen
 
@@ -26770,12 +26826,14 @@ var ElektromobilitaetFoerdern_default = defineLaw({
     TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
 
     Nur wenn "LadeinfrastrukturAusbauen" beschlossen wurde:
+
     - Der Staatshaushalt wird jährlich mit 5 Mrd € stärker belastet.
     - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
     - Popularität steigt im ersten Jah um 4%
 
     # Vorbedingungen:
 
+    - "LadeinfrastrukturAusbauen" ist beschlossen.
     - Priorität über 0%.
 
     # Priorität
@@ -26799,14 +26857,14 @@ var LadeinfrastrukturAusbauen_default = defineLaw({
   },
   priority(game) {
     const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 10, mobilityPercentage);
+    return linear(0, 25, mobilityPercentage);
   },
   citations: [vdvDatenFakten],
   details: markdown`
 
   `,
   internals: markdown`
-    # Happy Path 10.5
+    # Happy Path 18.5
 
     # Folgen
 
@@ -26824,7 +26882,7 @@ var LadeinfrastrukturAusbauen_default = defineLaw({
     # Priorität
 
     - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 10% Anteil
+    - 100 bei 25% Anteil
     - linear interpoliert
   `
 });
@@ -26839,7 +26897,7 @@ var WindkraftVereinfachen_default = defineLaw({
     return [];
   },
   priority(game) {
-    return linear(80, 40, windPercentage(game));
+    return linear(80, 27, windPercentage(game));
   },
   citations: [],
   details: markdown`
@@ -26857,7 +26915,7 @@ var WindkraftVereinfachen_default = defineLaw({
     # Priorität
 
     - 0% bei einem Anteil von Windstrom von 80%. (Zu Beginn: 27%)
-    - 100% bei einem Anteil von Windstrom von 40%.
+    - 100% bei einem Anteil von Windstrom von 27%.
     - linear interpoliert
   `
 });
@@ -26879,7 +26937,7 @@ var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
       return linear(30, 100, windPercentage(game));
     }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftVerschaerfen")) {
-      return linear(70, 30, windPercentage(game));
+      return linear(70, 27, windPercentage(game));
     }
     return 0;
   }
@@ -26900,7 +26958,7 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
   },
   priority(game) {
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
-      return linear(70, 30, windPercentage(game));
+      return linear(70, 27, windPercentage(game));
     }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftAbschaffen")) {
       return linear(30, 100, windPercentage(game));
@@ -26919,7 +26977,7 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
     Zu Beginn und wenn "WieBisher" ausgewählt:
 
     - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
-    - 100% bei einem Anteil von Windstrom von 30%.
+    - 100% bei einem Anteil von Windstrom von 27%.
     - linear interpoliert
 
     Wenn Abstandsregeln abgeschafft wurden:
@@ -26944,7 +27002,7 @@ var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
   },
   priority(game) {
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
-      return linear(80, 40, windPercentage(game));
+      return linear(80, 25, windPercentage(game));
     }
     return 0;
   }
@@ -27040,7 +27098,7 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
   },
   priority(game) {
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
-      return linear(100, 40, renewablePercentage(game));
+      return linear(100, 50, renewablePercentage(game));
     }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
       return linear(0, 100, renewablePercentage(game));
@@ -27075,7 +27133,7 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
 
     - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
     - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
-      Wenn bisher "verachtfachen:
+      Wenn bisher "verachtfachen":
     - 0% bei einem Anteil der erneuerbaren Stromquellen von 0%. (Zu Beginn: 50%)
     - 100% bei einem Anteil der erneuerbaren Stromquellen von 100%.
     - linear interpoliert
@@ -27101,7 +27159,7 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
   },
   priority(game) {
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
-      return linear(100, 0, renewablePercentage(game));
+      return linear(100, 50, renewablePercentage(game));
     }
     return 0;
   }
@@ -27134,7 +27192,9 @@ var CO2PreisErhoehen_default = defineLaw({
     ];
   },
   priority(game) {
-    return 100;
+    if (lawIsAccepted(game, "VollerCO2Preis") || lawIsAccepted(game, "WirksamerCO2Preis"))
+      return 0;
+    return 50;
   },
   citations: [wdr2021KlimaschutzMitCO2Preis],
   details: markdown`
@@ -27175,11 +27235,11 @@ var CO2PreisErhoehen_default = defineLaw({
 
     # Voraussetzungen
 
-    - Priorität > 0
+    - Kein anderes CO2 Preis Gesetz wurde bisher beschlossen.
 
     # Priorität
 
-    - 100%
+    - 50%
   `
 });
 
@@ -27209,7 +27269,9 @@ var WirksamerCO2Preis_default = defineLaw({
     ];
   },
   priority(game) {
-    return 100;
+    if (!lawIsAccepted(game, "CO2PreisErhoehen"))
+      return 0;
+    return 50;
   },
   citations: [wdr2021KlimaschutzMitCO2Preis],
   details: markdown`
@@ -27253,11 +27315,11 @@ var WirksamerCO2Preis_default = defineLaw({
 
     # Voraussetzungen
 
-    - Priorität > 0
+    - "CO2PreisErhoehen" wurde beschlossen.
 
     # Priorität
 
-    - 100%
+    - 50%
   `
 });
 
@@ -27287,7 +27349,9 @@ var VollerCO2Preis_default = defineLaw({
     ];
   },
   priority(game) {
-    return 100;
+    if (!lawIsAccepted(game, "WirksamerCO2Preis"))
+      return 0;
+    return 50;
   },
   citations: [ucl2021EconomicCostSixTimesHigher],
   details: markdown`
@@ -27329,11 +27393,11 @@ var VollerCO2Preis_default = defineLaw({
 
     # Voraussetzungen
 
-    - Priorität > 0
+    - "WirksamerCO2Preis" wurde beschlossen.
 
     # Priorität
 
-    - 100%
+    - 50%
   `
 });
 
@@ -27348,7 +27412,7 @@ var SolarstromFoerderungAbschaffen_default = defineLaw({
     return [modify("electricitySolar").byValue(2)];
   },
   priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(0, 100, renewablePercentage(game));
     }
     return 0;
@@ -27358,9 +27422,9 @@ var SolarstromFoerderungAbschaffen_default = defineLaw({
   `
 });
 
-// src/laws/SolarstromFoerderungBeibehalten.ts
-var SolarstromFoerderungBeibehalten_default = defineLaw({
-  title: "Solarstrom F\xF6rderung beibehalten",
+// src/laws/SolarstromFoerderungWieZuBeginn.ts
+var SolarstromFoerderungWieZuBeginn_default = defineLaw({
+  title: "Solarstrom F\xF6rderung wie zu Beginn",
   description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen wie bisher",
   labels: ["initial", "SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
@@ -27369,7 +27433,10 @@ var SolarstromFoerderungBeibehalten_default = defineLaw({
     return [modify("electricitySolar").byValue(5)];
   },
   priority(game) {
-    return linear(70, 100, renewablePercentage(game));
+    if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
+      return linear(70, 100, renewablePercentage(game));
+    }
+    return 0;
   },
   details: markdown`
     Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
@@ -27392,14 +27459,15 @@ var SolarstromFoerdernx2_default = defineLaw({
     ];
   },
   priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(100, 30, renewablePercentage(game));
     }
     return 0;
   },
   details: markdown`
     Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
-    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.`
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+  `
 });
 
 // src/laws/SolarstromFoerdernx4.ts
@@ -27476,7 +27544,7 @@ var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
     ];
   },
   priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungBeibehalten")) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(100, 30, renewablePercentage(game));
     }
     return 0;
@@ -27505,6 +27573,7 @@ var allLawsObj = {
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
   KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
   NetzausbauErleichtern: NetzausbauErleichtern_default,
+  NetzausbauFoerdern: NetzausbauFoerdern_default,
   StromspeicherungErleichtern: StromspeicherungErleichtern_default,
   StromspeicherungFoerdern: StromspeicherungFoerdern_default,
   WindkraftVereinfachen: WindkraftVereinfachen_default,
@@ -27517,7 +27586,7 @@ var allLawsObj = {
   AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
   AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default,
   SolarstromFoerderungAbschaffen: SolarstromFoerderungAbschaffen_default,
-  SolarstromFoerderungBeibehalten: SolarstromFoerderungBeibehalten_default,
+  SolarstromFoerderungWieZuBeginn: SolarstromFoerderungWieZuBeginn_default,
   SolarstromFoerdernx2: SolarstromFoerdernx2_default,
   SolarstromFoerdernx4: SolarstromFoerdernx4_default,
   SolarstromFoerdernx8: SolarstromFoerdernx8_default,
@@ -27821,7 +27890,7 @@ var SolarstromFoerderung_default = defineEvent({
   description: "",
   laws: [
     "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungBeibehalten",
+    "SolarstromFoerderungWieZuBeginn",
     "SolarstromFoerdernx2",
     "SolarstromFoerdernx4",
     "SolarstromFoerdernx8"
@@ -27831,7 +27900,7 @@ var SolarstromFoerderung_default = defineEvent({
   },
   probability(game) {
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
-    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungBeibehalten");
+    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn");
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
     return abgeschafft || beibehalten || x2 ? Math.random() : 0;
   },
@@ -27993,6 +28062,20 @@ var Plagiatsaffaere_default = defineEvent({
   `
 });
 
+// src/events/CO2PreisDebatte.ts
+var CO2PreisDebatte_default = defineEvent({
+  title: "Debatte \xFCber CO2-Preise",
+  description: "Eine marktliberale Kampagne ist sehr erfolgreich darin, Dich als Verbots-Kanzler hinzustellen. Aus allen Richtungen prasseln Forderungen nach einem ad\xE4quaten CO2-Preis auf Dich ein. Nur leider gehen die Vorstellungen \xFCber den genauen Preis sehr weit auseinander.",
+  laws: ["CO2PreisErhoehen", "WirksamerCO2Preis", "VollerCO2Preis"],
+  apply() {
+    return [];
+  },
+  probability(game) {
+    const count = (lawIsAccepted(game, "AutosInInnenstaedtenVerbieten") ? 1 : 0) + (lawIsAccepted(game, "KohleverstromungEinstellen") ? 1 : 0) + (lawIsAccepted(game, "SolarAufAllenDaechernVerpflichtend") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit130AufAutobahnen") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit120AufAutobahnen") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit100AufAutobahnen") ? 1 : 0);
+    return linear(1, 3, count) / 100;
+  }
+});
+
 // src/events/index.ts
 var allEvents = prepareModuleList({
   AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
@@ -28014,7 +28097,8 @@ var allEvents = prepareModuleList({
   PRKohleindustrie: PR_Kohleindustrie_default,
   PRInnenminister: PR_Innenminister_default,
   Klimafluechtlinge: Klimafluechtlinge_default,
-  Plagiatsaffaere: Plagiatsaffaere_default
+  Plagiatsaffaere: Plagiatsaffaere_default,
+  CO2PreisDebatte: CO2PreisDebatte_default
 });
 
 // src/server/EventController.ts
