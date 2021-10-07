@@ -23,14 +23,14 @@ export default defineLaw({
         .byValue(-100 as TsdPeople)
         .if(startYear === currentYear),
       modify("electricityWind")
-      .byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100)
-      .if(currentYear >= startYear + delay),
+        .byValue(((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100)
+        .if(currentYear >= startYear + delay),
     ]
   },
 
   priority(game) {
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
-      return linear(100, 0, renewablePercentage(game))
+      return linear(100, 50, renewablePercentage(game))
     }
     return 0
   },

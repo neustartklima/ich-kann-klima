@@ -36,6 +36,8 @@ export default defineLaw({
 
     # Priorität
 
+    Identisch zu "StromspeicherungFoerdern".
+
     - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
     - 100% bei einer Netzqualität von 45%.
     - linear interpoliert
