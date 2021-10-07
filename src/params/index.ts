@@ -232,7 +232,7 @@ export function transfer(to: keyof WritableBaseParams, from: keyof WritableBaseP
   }
 }
 
-export type Change = ReturnType<typeof modify> | ReturnType<typeof dispatch>
+export type Change = ReturnType<typeof modify> | ReturnType<typeof dispatch> | ReturnType<typeof transfer>
 
 export function applyEffects(context: EffectableContext, changes: Change[]): void {
   changes.filter((change) => change.condition).forEach((change) => change.apply(context))
