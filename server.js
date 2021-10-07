@@ -26710,7 +26710,7 @@ var Tempolimit130AufAutobahnen_default = defineLaw({
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
   effects(game) {
-    const emissionModifier = modify("carEmissionFactor").byValue(157.9);
+    const emissionModifier = modify("carEmissionFactor").setValue(157.9);
     const emissionChange = emissionModifier.getChange(game.values);
     return [
       modify("popularity").byValue(2).if(emissionChange < 0),
@@ -26733,7 +26733,7 @@ var Tempolimit120AufAutobahnen_default = defineLaw({
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
   effects(game) {
-    const emissionModifier = modify("carEmissionFactor").byValue(157.1);
+    const emissionModifier = modify("carEmissionFactor").setValue(157.1);
     const emissionChange = emissionModifier.getChange(game.values);
     return [
       modify("popularity").byValue(2).if(emissionChange < 0),
@@ -26756,7 +26756,7 @@ var Tempolimit100AufAutobahnen_default = defineLaw({
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
   effects(game) {
-    const emissionModifier = modify("carEmissionFactor").byValue(154.1);
+    const emissionModifier = modify("carEmissionFactor").setValue(154.1);
     const emissionChange = emissionModifier.getChange(game.values);
     return [
       modify("popularity").byValue(-1).if(emissionChange < 0),
