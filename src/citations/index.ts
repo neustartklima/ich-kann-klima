@@ -303,3 +303,14 @@ export const wikipediaBetz = new Citation({
   title: "Betzsches Gesetz",
   publisher: "Wikipedia",
 })
+
+export const ageb2020AuswertungstabellenEnergiebilanz = new Citation({
+  url: "https://ag-energiebilanzen.de/index.php?article_id=29&fileName=awt_2020_d.pdf",
+  title: "Auswertungstabellen zur Energiebilanz Deutschland - Daten für die Jahre von 1990 bis 2020",
+  publisher: "AG Energiebilanzen e.V.",
+  date: "2021-09",
+  archiveUrl:
+    "https://web.archive.org/web/20211008095222/https://ag-energiebilanzen.de/index.php?article_id=29&fileName=awt_2020_d.pdf",
+  comment: ``,
+  internalComment: ``,
+})

@@ -1,5 +1,6 @@
 import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import {
+  ageb2020AuswertungstabellenEnergiebilanz,
   ba2020Arbeitslosenzahlen,
   bmvi2020VerkehrInZahlen,
   cite,
@@ -78,6 +79,8 @@ const co2emissionsMobility = new ComputedParam({
       (1.641 as MioTons)
     )
   },
+  // TODO: #72 See `internals`.
+  //shouldInitiallyBe: 164.322,
   citations: [vdv2019Statistik, uba2020DeutscheTreibhausgasEmissionen],
   details: markdown`
 
@@ -97,6 +100,10 @@ const co2emissionsMobility = new ComputedParam({
     Einheitenumrechnung:
     - 1 MioPsgrKm * 1 GramPerPsgrKm = 1 MioGram = 1 Ton.
     - Zieleinheit: MioTons. Also durch 1 000 000 teilen.
+
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 164.322 MioTons pro Jahr.
+
+    TODO: #72 Derzeit ergibt sich die summe 173.7 MioTons. Laut Quelle sollten es 164.322 MioTons sein.
   `,
 })
 
@@ -110,7 +117,7 @@ const co2emissionsBuildings = new ComputedParam({
       data.buildingsSourceTele * 0.16
     )
   },
-  // TODO: #72 Source claims 123.461 MioTons per year in 2019. Sums to 168.6 MioTons.
+  // TODO: #72 See `internals`.
   //shouldInitiallyBe: 123.461 as MioTons,
   citations: [uba2020DeutscheTreibhausgasEmissionen, polarstern2021CO2nachBrennstoff],
   details: markdown`
@@ -126,7 +133,7 @@ const co2emissionsBuildings = new ComputedParam({
 
     ${cite(emse2021CO2Rechner)}: 160g CO2 pro kWh Fernwärme.
 
-    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich auf 123.461 MioTons pro Jahr.
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 123.461 MioTons pro Jahr.
 
     TODO: #72 Tatsächliche Summe ist derzeit 168.6 MioTons. Sollte laut Quelle oben 123.461 MioTons sein.
   `,
@@ -170,6 +177,7 @@ const co2emissionsEnergy = new ComputedParam({
       data.electricityNuclear * 0.005
     )
   },
+  // TODO: #72 See `internals`.
   //shouldInitiallyBe: 258.043 as MioTons,
   citations: [rensmart2021kWhToCO2, uba2020DeutscheTreibhausgasEmissionen],
   details: markdown`
@@ -192,7 +200,7 @@ const co2emissionsEnergy = new ComputedParam({
     - Quellen für Stein-.und Braunkohle.
     - Korrekter Wert und Quelle für Biomasse. (Aktuelle Annahme: Zwischen Wind- und Solarstrom.)
 
-    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: 258.043 as MioTons in 2019.
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 258.043 MioTons pro Jahr.
 
     TODO: #72 Tatsächliche Summe ist derzeit 152.7 MioTons. Sollte laut Quelle oben 258.043 MioTons sein.
   `,
@@ -210,11 +218,19 @@ const co2emissions = new ComputedParam({
       data.co2emissionsOthers
     )
   },
+  // TODO: #72 See `internals`.
+  //shouldInitiallyBe: 809.799,
   details: markdown`
 
   `,
   internals: markdown`
-Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.
+    Die negativen LULUCF emissionen werden hier derzeit nicht berücksichtigt.
+
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 809.799 MioTons pro Jahr.
+
+    TODO: #72  Tatsächliche Summe ist derzeit 759.01 MioTons. Sollte laut Quelle oben 809.799 MioTons sein.
+
+    Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.
   `,
 
   citations: [uba2021crfTabellen],
@@ -306,7 +322,9 @@ const electricityWindUsable = new ComputedParam({
   },
   shouldInitiallyBe: electricityWind.initialValue,
   citations: [],
-  details: markdown`The electrical energy produced by wind and not impaired by poor quality of the grid.`,
+  details: markdown`
+The electrical energy produced by wind and not impaired by poor quality of the grid.
+  `,
   internals: markdown`
 
   `,
@@ -329,8 +347,8 @@ const electricityWindEfficiency = new WritableParam({
   initialValue: 100,
   citations: [wikipediaBetz],
   details: markdown`
-    Relative efficiency of wind turbines in percent of the current efficiency (about 40%).
-  `
+Relative efficiency of wind turbines in percent of the current efficiency (about 40%).
+  `,
 })
 
 const electricityWater = new WritableParam({
@@ -595,11 +613,13 @@ const buildingsDemand = new ComputedParam({
   valueGetter(data: ParamsBase): TWh {
     return data.buildingsPrivateDemand + data.buildingsIndustryDemand
   },
+  shouldInitiallyBe: 770,
+  citations: [],
   details: markdown`
 
   `,
   internals: markdown`
-
+    TODO: #78 Quelle ${cite(ageb2020AuswertungstabellenEnergiebilanz)} gibt diese Zahlen nicht her.
   `,
 })
 
@@ -644,13 +664,19 @@ const buildingsSourceGas = new ComputedParam({
   valueGetter(data: ParamsBase): TWh {
     return data.buildingsDemand - (data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele)
   },
-  //shouldInitiallyBe: ??? as TWh,
+  // TODO: #72 See `internals`.
+  //shouldInitiallyBe: 359 as TWh,
+  citations: [],
   details: markdown`
 
   `,
   internals: markdown`
-TODO: #78 Anfangswert mit Quelle.
-  `,
+    TODO: #78 Anfangswert mit Quelle.
+
+    TODO: #78 Quelle ${cite(ageb2020AuswertungstabellenEnergiebilanz)} gibt diese Zahlen nicht her.
+
+    TODO: #72 Tatsächliche Summe ist derzeit 363 TWh. Sollte laut Quelle oben 359 TWh sein.
+`,
 })
 
 const popularity = new WritableParam({
