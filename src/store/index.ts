@@ -7,10 +7,22 @@ import {
   DispatchOptions,
   ActionContext,
 } from "vuex"
-import { actions } from "./actions"
+import { ActionFactory } from "./actions"
 import { mutations } from "./mutations"
 import { getters } from "./getters"
 import { state } from "./state"
+import router from "../router"
+import API from "../model/api"
+import FetchQueueFactory from "../model/FetchQueue"
+import RequestFactory from "../model/Request"
+import RepositoryFactory from "../model/Repository"
+
+const backendURL = localStorage.getItem("backendURL") || "https://api.ich-kann-klima.de/api"
+const request = RequestFactory(backendURL, fetch)
+const fetchQueue = FetchQueueFactory(request)
+const api = API(fetchQueue)
+const repository = RepositoryFactory({ api })
+const actions = ActionFactory(router, repository)
 
 export type State = typeof state
 export type Mutations = typeof mutations

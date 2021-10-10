@@ -1,7 +1,7 @@
 import { Context, State } from "../src/store"
-import { actions } from "../src/store/actions"
+import { ActionFactory } from "../src/store/actions"
+import { Repository } from "../src/model/Repository"
 import "should"
-import { Router } from "vue-router"
 
 describe("GameOverAction", () => {
   it("should show the GameOver page", async () => {
@@ -13,9 +13,10 @@ describe("GameOverAction", () => {
     const paths = [] as string[]
     const router = {
       push: (path: string) => paths.push(path),
-    } as unknown as Router
-    actions.gameOver({ state, dispatch: commit } as Context)
-    events.should.equal([{ event: "gameOver", payload: undefined }])
+    }
+    const repository = {} as Repository
+    ActionFactory(router, repository).gameOver({ state, commit } as Context)
+    events.should.deepEqual([{ type: "gameOver", payload: undefined }])
   })
 
   it("should not allow users to go the GamePage")
