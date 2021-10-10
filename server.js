@@ -24994,6 +24994,15 @@ var wikipediaBetz = new Citation({
   title: "Betzsches Gesetz",
   publisher: "Wikipedia"
 });
+var ageb2020AuswertungstabellenEnergiebilanz = new Citation({
+  url: "https://ag-energiebilanzen.de/index.php?article_id=29&fileName=awt_2020_d.pdf",
+  title: "Auswertungstabellen zur Energiebilanz Deutschland - Daten f\xFCr die Jahre von 1990 bis 2020",
+  publisher: "AG Energiebilanzen e.V.",
+  date: "2021-09",
+  archiveUrl: "https://web.archive.org/web/20211008095222/https://ag-energiebilanzen.de/index.php?article_id=29&fileName=awt_2020_d.pdf",
+  comment: ``,
+  internalComment: ``
+});
 
 // src/params/ParamsTypes.ts
 var ParamDefinition = class {
@@ -25110,6 +25119,10 @@ var co2emissionsMobility = new ComputedParam({
     Einheitenumrechnung:
     - 1 MioPsgrKm * 1 GramPerPsgrKm = 1 MioGram = 1 Ton.
     - Zieleinheit: MioTons. Also durch 1 000 000 teilen.
+
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 164.322 MioTons pro Jahr.
+
+    TODO: #72 Derzeit ergibt sich die summe 173.7 MioTons. Laut Quelle sollten es 164.322 MioTons sein.
   `
 });
 var co2emissionsBuildings = new ComputedParam({
@@ -25130,7 +25143,7 @@ var co2emissionsBuildings = new ComputedParam({
 
     ${cite(emse2021CO2Rechner)}: 160g CO2 pro kWh Fernwärme.
 
-    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich auf 123.461 MioTons pro Jahr.
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 123.461 MioTons pro Jahr.
 
     TODO: #72 Tatsächliche Summe ist derzeit 168.6 MioTons. Sollte laut Quelle oben 123.461 MioTons sein.
   `
@@ -25183,7 +25196,7 @@ var co2emissionsEnergy = new ComputedParam({
     - Quellen für Stein-.und Braunkohle.
     - Korrekter Wert und Quelle für Biomasse. (Aktuelle Annahme: Zwischen Wind- und Solarstrom.)
 
-    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: 258.043 as MioTons in 2019.
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 258.043 MioTons pro Jahr.
 
     TODO: #72 Tatsächliche Summe ist derzeit 152.7 MioTons. Sollte laut Quelle oben 258.043 MioTons sein.
   `
@@ -25197,7 +25210,13 @@ var co2emissions = new ComputedParam({
 
   `,
   internals: markdown`
-Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.
+    Die negativen LULUCF emissionen werden hier derzeit nicht berücksichtigt.
+
+    ${cite(uba2020DeutscheTreibhausgasEmissionen)}: Gesamtemissionenen addieren sich 2019 auf 809.799 MioTons pro Jahr.
+
+    TODO: #72  Tatsächliche Summe ist derzeit 759.01 MioTons. Sollte laut Quelle oben 809.799 MioTons sein.
+
+    Hier sind ein paar Referenzen gelistet, die interessant sind, und noch nicht verarbeitet wurden.
   `,
   citations: [uba2021crfTabellen]
 });
@@ -25269,7 +25288,9 @@ var electricityWindUsable = new ComputedParam({
   },
   shouldInitiallyBe: electricityWind.initialValue,
   citations: [],
-  details: markdown`The electrical energy produced by wind and not impaired by poor quality of the grid.`,
+  details: markdown`
+The electrical energy produced by wind and not impaired by poor quality of the grid.
+  `,
   internals: markdown`
 
   `
@@ -25290,7 +25311,7 @@ var electricityWindEfficiency = new WritableParam({
   initialValue: 100,
   citations: [wikipediaBetz],
   details: markdown`
-    Relative efficiency of wind turbines in percent of the current efficiency (about 40%).
+Relative efficiency of wind turbines in percent of the current efficiency (about 40%).
   `
 });
 var electricityWater = new WritableParam({
@@ -25527,11 +25548,13 @@ var buildingsDemand = new ComputedParam({
   valueGetter(data) {
     return data.buildingsPrivateDemand + data.buildingsIndustryDemand;
   },
+  shouldInitiallyBe: 770,
+  citations: [],
   details: markdown`
 
   `,
   internals: markdown`
-
+    TODO: #78 Quelle ${cite(ageb2020AuswertungstabellenEnergiebilanz)} gibt diese Zahlen nicht her.
   `
 });
 var buildingsSourceBio = new WritableParam({
@@ -25572,12 +25595,17 @@ var buildingsSourceGas = new ComputedParam({
   valueGetter(data) {
     return data.buildingsDemand - (data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele);
   },
+  citations: [],
   details: markdown`
 
   `,
   internals: markdown`
-TODO: #78 Anfangswert mit Quelle.
-  `
+    TODO: #78 Anfangswert mit Quelle.
+
+    TODO: #78 Quelle ${cite(ageb2020AuswertungstabellenEnergiebilanz)} gibt diese Zahlen nicht her.
+
+    TODO: #72 Tatsächliche Summe ist derzeit 363 TWh. Sollte laut Quelle oben 359 TWh sein.
+`
 });
 var popularity = new WritableParam({
   unit: "Percent",
