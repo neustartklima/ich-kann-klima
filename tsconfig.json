@@ -9,17 +9,12 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    "types": ["vite/client", "mocha"]
+    "types": ["vite/client", "cypress"]
   },
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs",
+      "module": "commonjs"
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.vue",
-    "tests/**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "tests/**/*.spec.ts"]
 }
