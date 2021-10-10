@@ -7,18 +7,30 @@ git clone https://github.com/neustartklima/ich-kann-klima.git
 cd ich-kann-klima
 
 npm install                 # Install dependencies
-npm run server:start &      # Run server in background
 npm run dev                 # Run frontend
 ```
 
 The frontend runs on port 3000 by default, so `open http://localhost:3000` will open the browser (at least on OSX).
+
+## Using a local backend
+
+To start a local backend call
+
+```zsh
+npm run server:start &
+```
+
+and configure your browser to use this backend by entering this command into your dev tools:
+
+```javascript
+localStorage.setItem("backendURL", "/api")
+```
 
 ## Building and running a production version
 
 To build backend and frontend for production use, call `npm run build`.
 
 The built files are located in `dist` and can be used by starting `npm start`.
-
 
 ## Building and running with Docker
 
@@ -49,7 +61,7 @@ a whole bunch of information about the current game state.
 In production this can be enabled by setting the key `devMode` to `true` in
 the local store of the web browser:
 
-```
+```javascript
 localStorage.setItem("devMode", "true")
 ```
 

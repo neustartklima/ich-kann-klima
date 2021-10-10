@@ -12,7 +12,7 @@ import { LawId } from "../laws"
 import { Change, applyEffects, createBaseValues } from "../params"
 import { steps } from "../tourSteps"
 
-const backendURL = import.meta.env.PROD ? "https://api.ich-kann-klima.de/api" : "/api"
+const backendURL = localStorage.getItem("backendURL") || "https://api.ich-kann-klima.de/api"
 const request = RequestFactory(backendURL, fetch)
 const fetchQueue = FetchQueueFactory(request)
 const api = API(fetchQueue)
