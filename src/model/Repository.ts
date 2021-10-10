@@ -12,7 +12,9 @@ interface Storage {
   getItem: (name: string) => string | null
 }
 
-export default function ({
+export type Repository = ReturnType<typeof RepositoryFactory>
+
+export default function RepositoryFactory({
   api,
   logger = console,
   storage = localStorage,
