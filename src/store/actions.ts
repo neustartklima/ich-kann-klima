@@ -1,6 +1,6 @@
 import { Context } from "."
 import { GameId, Game, prepareNextStep, newGame } from "../game"
-import {Repository} from "../model/Repository"
+import { Repository } from "../model/Repository"
 import * as Calculator from "../Calculator"
 import { getAcceptedLaw, getLaw } from "../laws"
 import { Event } from "../events"
@@ -114,14 +114,14 @@ export function ActionFactory(router: Router, repository: Repository) {
       if (step) {
         context.commit("setTour", { step: step.id, active: true })
       } else {
-        this.stopTour(context)
+        context.dispatch("stopTour")
       }
     },
 
     nextTourStep(context: Context) {
       const index = steps.findIndex((step) => context.state.tour.step === step.id)
       if (index < 0 || index == steps.length - 1) {
-        this.stopTour(context)
+        context.dispatch("stopTour")
       } else {
         const step = steps[index + 1]
         context.commit("setTour", { step: step.id, active: true })
