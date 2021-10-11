@@ -47,6 +47,9 @@ jobs:
         with:
           node-version: "14"
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run unit tests
         run: npm run test:unit
 
@@ -89,6 +92,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "14"
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build production code
         run: npm run build
