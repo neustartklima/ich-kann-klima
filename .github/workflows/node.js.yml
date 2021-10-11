@@ -48,7 +48,7 @@ jobs:
           node-version: "14"
 
       - name: Run unit tests
-        run: npm test:unit
+        run: npm run test:unit
 
       - name: Generate Code Coverage report
         id: code-coverage
