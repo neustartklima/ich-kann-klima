@@ -4,8 +4,8 @@ import { Repository } from "../src/model/Repository"
 import "should"
 
 describe("GameOverAction", () => {
-  it("should show the GameOver page", async () => {
-    const state = { game: { over: false } } as State
+  it("should show the GameOver page if game is over", async () => {
+    const state = { game: { id: "game-id", over: false } } as State
     const events = [] as { type: string; payload: unknown }[]
     const commit = async (type: string, payload: unknown) => {
       events.push({ type, payload })
@@ -17,7 +17,6 @@ describe("GameOverAction", () => {
     const repository = {} as Repository
     ActionFactory(router, repository).gameOver({ state, commit } as Context)
     events.should.deepEqual([{ type: "gameOver", payload: undefined }])
+    paths.should.deepEqual(["/games/game-id/over"])
   })
-
-  it("should not allow users to go the GamePage")
 })
