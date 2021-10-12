@@ -33,9 +33,9 @@ export function logAPICalls(logger: Logger = console) {
   }
 }
 
-export function cors() {
+export function cors(url: string) {
   return (req: Request, res: Response, next: NextFunction) => {
-    res.header("Access-Control-Allow-Origin", "https://www.ich-kann-klima.de")
+    res.header("Access-Control-Allow-Origin", url)
     res.header("Access-Control-Allow-Headers", "*")
     res.header("Access-Control-Allow-Methods", "*")
     next()

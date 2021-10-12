@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === "production"
 const projectRoot = isProduction ? __dirname : path.resolve(__dirname, "dist")
 const app = express()
 
-isProduction && app.use(cors())
+app.use(cors(isProduction ? "https://www.ich-kann-klima.de" : "*"))
 app.use(express.json())
 app.use(logAPICalls())
 app.get("/server.js", (req, res, next) => next({ httpStatus: 403, message: "Access denied" }))
