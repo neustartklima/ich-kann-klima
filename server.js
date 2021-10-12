@@ -24594,9 +24594,9 @@ function logAPICalls(logger = console) {
     next();
   };
 }
-function cors() {
+function cors(url) {
   return (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://www.ich-kann-klima.de");
+    res.header("Access-Control-Allow-Origin", url);
     res.header("Access-Control-Allow-Headers", "*");
     res.header("Access-Control-Allow-Methods", "*");
     next();
@@ -28297,7 +28297,7 @@ var port = +(process.env.PORT || "3099");
 var isProduction2 = process.env.NODE_ENV === "production";
 var projectRoot = isProduction2 ? __dirname : import_path3.default.resolve(__dirname, "dist");
 var app = (0, import_express2.default)();
-isProduction2 && app.use(cors());
+app.use(cors(isProduction2 ? "https://www.ich-kann-klima.de" : "*"));
 app.use(import_express2.default.json());
 app.use(logAPICalls());
 app.get("/server.js", (req, res, next) => next({ httpStatus: 403, message: "Access denied" }));
