@@ -28,7 +28,7 @@ export default defineLaw({
 
   priority(game) {
     const buildingsPercentage = (game.values.co2emissionsBuildings / game.values.co2emissions) * 100
-    return linear(15, 25, buildingsPercentage)
+    return linear(15, 40, buildingsPercentage)
   },
   citations: [],
   details: markdown`
