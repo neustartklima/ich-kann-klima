@@ -19,6 +19,6 @@ export default defineEvent({
 
   probability(game) {
     const buildingsPercentage = (game.values.co2emissionsBuildings / game.values.co2emissions) * 100
-    return Math.max(1, linear(15, 25, buildingsPercentage) / 100)
+    return Math.min(1, linear(15, 30, buildingsPercentage) / 100)
   },
 })
