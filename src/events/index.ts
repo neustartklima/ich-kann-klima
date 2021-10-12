@@ -49,6 +49,8 @@ const allEventsObj = {
   CO2PreisDebatte,
 }
 
+const defaultProbability = () => 0.5
+
 export type EventId = keyof typeof allEventsObj
 
 export type Event = EventDefinition & {
@@ -62,4 +64,7 @@ export type EventReference = {
   acknowledged: boolean
 }
 
-export const allEvents = prepareModuleList(allEventsObj) as Event[]
+export const allEvents = prepareModuleList(allEventsObj).map((info) => ({
+  ...info,
+  probability: info.probability || defaultProbability,
+})) as Event[]
