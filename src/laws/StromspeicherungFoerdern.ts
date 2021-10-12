@@ -6,16 +6,20 @@ import { paramDefinitions } from "../params/Params"
 
 export default defineLaw({
   title: "Stromspeicherung fördern",
-  description: "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln fördern",
+  description:
+    "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln fördern. 2 Mrd € pro Jahr.",
 
   effects(game, startYear, currentYear): Change[] {
-    if (!lawIsAccepted(game, "StromspeicherungErleichtern")) {
-      return [modify("stateDebt").byValue(1)]
-    }
+    const delay = lawIsAccepted(game, "StromspeicherungErleichtern") ? 0 : 5
+    const hasEffect = currentYear >= startYear + delay
+    const isBoosted = lawIsAccepted(game, "ForschungUndEntwicklungStromspeicherung", 3)
     return [
-      modify("popularity").byValue(0.2),
-      modify("stateDebt").byValue(2),
-      modify("electricityGridQuality").byValue(1),
+      modify("stateDebt").byValue(1),
+      modify("popularity").byValue(0.2).if(hasEffect),
+      modify("stateDebt").byValue(1).if(hasEffect),
+      modify("electricityGridQuality").byValue(2).if(hasEffect),
+      modify("electricityGridQuality").byValue(2).if(isBoosted),
+      modify("electricityGridQuality").byValue(2).if(hasEffect && isBoosted),
     ]
   },
 
@@ -35,10 +39,15 @@ export default defineLaw({
     Diese Folgen sind völlig aus der Luft gegriffen.
     TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
 
-    - [x] Wenn nicht "StromspeicherungErleichtern" ausgewählt wurde, kostet das 1 MrdEuro im Jahr, sonst:
-    - [x] Viele verdienen Geld mit kleinen Batteriespeichern: Popularität steigt um 0,2% pro Jahr.
-    - [x] Die Netzqualität steigt jährlich um 2%.
-    - [x] Konsten: 2 Mrd Euro pro Jahr.
+    - [x] Kostet 1 MrdEuro im Jahr.
+    - Wenn "StromspeicherungErleichtern" angenommen oder dieses Gesetz vor mehr als 5 Jahren beschlossen:
+      - [x] Weitere 1 MrdEuro im Jahr
+      - [x] Viele verdienen Geld mit kleinen Batteriespeichern: Popularität steigt um 0,2% pro Jahr.
+      - [x] Die Netzqualität steigt jährlich um 2%.
+    - Wenn "ForschungUndEntwicklungStromspeicherung" vor 3 oder mehr Jahren angenommen:
+      - [x] Die Netzqualität steigt jährlich um 2% (zusätzlich).
+    - Wenn "StromspeicherungErleichtern" und "ForschungUndEntwicklungStromspeicherung" angenommen:
+      - [x] Die Netzqualität steigt jährlich um 2% (zusätzlich).
 
     # Voraussetzungen
 

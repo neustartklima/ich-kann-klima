@@ -70,12 +70,13 @@ export function linearPopChange<T extends number>(
  * Check if a law is accepted in a given game.
  * @param game Game to inspect.
  * @param lawId Law ID to search.
+ * @param minActiveYears Number of years the law is active. Default: 0
  * @returns True if law was accepted, false otherwise
  * @throws Error if no law with the given ID is defined.
  */
-export function lawIsAccepted(game: Game, lawId: LawId): boolean {
+export function lawIsAccepted(game: Game, lawId: LawId, minActiveYears: number = 0): boolean {
   if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
-  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear)
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears)
 }
 
 export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | undefined {

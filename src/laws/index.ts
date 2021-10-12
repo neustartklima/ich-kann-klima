@@ -48,6 +48,10 @@ import SolarstromFoerdernx2 from "./SolarstromFoerdernx2"
 import SolarstromFoerdernx4 from "./SolarstromFoerdernx4"
 import SolarstromFoerdernx8 from "./SolarstromFoerdernx8"
 import SolarAufAllenDaechernVerpflichtend from "./SolarAufAllenDaechernVerpflichtend"
+import ForschungUndEntwicklungStromspeicherung from "./ForschungUndEntwicklungStromspeicherung"
+import ForschungEmissionsfreieStahlproduktion from "./ForschungEmissionsfreieStahlproduktion"
+import ForschungEmissionsfreieZementproduktion from "./ForschungEmissionsfreieZementproduktion"
+import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugung"
 
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
@@ -64,8 +68,10 @@ const allLawsObj = {
   NetzausbauErleichtern,
   NetzausbauFoerdern,
 
+  ForschungUndEntwicklungStromspeicherung,
   StromspeicherungErleichtern,
   StromspeicherungFoerdern,
+  ForschungDezentraleStromerzeugung,
 
   WindkraftVereinfachen,
 
@@ -132,6 +138,9 @@ const allLawsObj = {
   CO2PreisErhoehen,
   WirksamerCO2Preis,
   VollerCO2Preis,
+
+  ForschungEmissionsfreieStahlproduktion,
+  ForschungEmissionsfreieZementproduktion,
 }
 
 export type LawId = keyof typeof allLawsObj
