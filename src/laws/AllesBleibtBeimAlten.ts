@@ -1,4 +1,5 @@
 import { defineLaw } from "../Factory"
+import { random } from "../lib/random"
 
 export default defineLaw({
   title: "Alles bleibt wie es ist",
@@ -9,6 +10,6 @@ export default defineLaw({
   },
 
   priority(game) {
-    return Math.random()
+    return random()
   },
 })

@@ -5,6 +5,7 @@ import { Law, LawId } from "../src/laws"
 import { Event } from "../src/events"
 import should from "should"
 import { probabilityThatEventOccurs } from "../src/constants"
+import { shuffleNumbers, random } from "../src/lib/random"
 
 function priority(): number {
   return 1
@@ -25,22 +26,6 @@ const allLaws: Law[] = [
     priority,
   },
 ]
-
-class FisherYatesRandom {
-  index: number = 0
-  numbers: number[]
-  constructor(count: number) {
-    const a = [...Array(count).keys()].map((n) => n / count)
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * i)
-      ;[a[i], a[j]] = [a[j], a[i]]
-    }
-    this.numbers = a
-  }
-  random(): number {
-    return this.numbers[this.index++]
-  }
-}
 
 describe("game", () => {
   let clock: Sinon.SinonFakeTimers
@@ -134,25 +119,27 @@ describe("game", () => {
         { id: "Hitzehoelle", title: "e2", description: "", apply: () => [], probability: () => 0.9, count: 0 },
         { id: "SocialMedia", title: "e3", description: "", apply: () => [], probability: () => 0.5, count: 0 },
       ]
-      const probSum = events.map((e) => e.probability(game)).reduce((a, b) => a + b)
+      const probSum = events.map((e) => (e.probability && e.probability(game)) || random()).reduce((a, b) => a + b)
 
       const NUM_CALLS = 100
       const precision = 1
-      const rand = new FisherYatesRandom(NUM_CALLS)
 
       const counts = events.reduce((counts: Record<string, number>, event) => {
         counts[event.id] = 0
         return counts
       }, {})
-      for (var num = 0; num < NUM_CALLS; num++) {
-        const res = prepareNextStep(game, allLaws, events, () => rand.random())
+      for (let num of shuffleNumbers(NUM_CALLS).values()) {
+        const res = prepareNextStep(game, allLaws, events, () => num as number)
         if (res != undefined) counts[res.id]++
       }
       const eventCount = Object.values(counts).reduce((a, b) => a + b)
       eventCount.should.be.approximately(NUM_CALLS * probabilityThatEventOccurs, precision)
 
       events.forEach((e) =>
-        counts[e.id].should.be.approximately((eventCount * e.probability(game)) / probSum, precision)
+        counts[e.id].should.be.approximately(
+          (eventCount * ((e.probability && e.probability(game)) || random())) / probSum,
+          precision
+        )
       )
     })
   })

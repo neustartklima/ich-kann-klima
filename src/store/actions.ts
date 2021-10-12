@@ -2,11 +2,12 @@ import { Context } from "."
 import { GameId, Game, prepareNextStep, newGame } from "../game"
 import { Repository } from "../model/Repository"
 import * as Calculator from "../Calculator"
-import { getAcceptedLaw, getLaw } from "../laws"
+import { getAcceptedLaw } from "../laws"
 import { Event } from "../events"
 import { LawId } from "../laws"
 import { Change, applyEffects, createBaseValues } from "../params"
 import { steps } from "../tourSteps"
+import { seedWithGame } from "../lib/random"
 
 interface Router {
   push: (path: string) => void
@@ -16,8 +17,9 @@ export function ActionFactory(router: Router, repository: Repository) {
   return {
     async startGame(context: Context) {
       const game = newGame()
-      const event = prepareNextStep(game)
       await repository.createGame(game)
+      seedWithGame(game)
+      const event = prepareNextStep(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })
       router.push("/games/" + game.id)
@@ -27,6 +29,7 @@ export function ActionFactory(router: Router, repository: Repository) {
       try {
         const game = await repository.loadGame(payload.gameId)
         await repository.saveGame(game)
+        seedWithGame(game)
         router.push("/games/" + game.id)
         context.commit("setGameState", { game })
       } catch (error) {

@@ -34,7 +34,7 @@ export type EventDefinition = {
    * @param game The game data to use for determining the probability.
    * @return The probability as described in the summary.
    */
-  probability(game: Game): Ratio
+  probability?(game: Game): Ratio
   acknowledged?: boolean
   laws?: LawId[]
   citations?: Citations // TODO #79: Make mandatory

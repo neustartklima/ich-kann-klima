@@ -1,5 +1,6 @@
 import { defineEvent } from "../Factory"
 import { idsToLaws, Law } from "../laws"
+import { random } from "../lib/random"
 import { dispatch } from "../params"
 
 // if proposed laws contain at least one with the words 'subvention' and 'abbau', this event might occur
@@ -26,6 +27,6 @@ export default defineEvent({
 
   probability(game) {
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws))
-    return law ? Math.random() : 0
+    return law ? random() : 0
   },
 })

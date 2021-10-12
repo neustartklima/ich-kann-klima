@@ -1,6 +1,7 @@
 import { cite, fraunhoferISE2020InstalledPower } from "../citations"
 import { defineEvent } from "../Factory"
 import { lawIsAccepted } from "../lawTools"
+import { random } from "../lib/random"
 import { markdown } from "../lib/utils"
 
 export default defineEvent({
@@ -22,7 +23,7 @@ export default defineEvent({
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")
     const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2")
-    return abgeschafft || beibehalten || x2 ? Math.random() : 0
+    return abgeschafft || beibehalten || x2 ? random() : 0
   },
 
   citations: [fraunhoferISE2020InstalledPower],
