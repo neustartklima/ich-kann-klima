@@ -1,6 +1,5 @@
 import { defineEvent } from "../Factory"
 import { idsToLaws } from "../laws"
-import { random } from "../lib/random"
 import { markdown } from "../lib/utils"
 import { dispatch } from "../params"
 
@@ -17,7 +16,7 @@ export default defineEvent({
       .find((law) => law.title.match(/tierwohl/i))
 
     // Kann passieren, wenn es keine Investitionen in bessere Tierhaltung gab
-    return law ? 0 : random()
+    return law ? 0 : .5
   },
 
   laws: [],

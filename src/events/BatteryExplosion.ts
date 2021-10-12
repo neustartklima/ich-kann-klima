@@ -16,7 +16,7 @@ export default defineEvent({
 
   probability(game) {
     if (lawIsAccepted(game, "ElektromobilitaetFoerdern")) {
-      return .2
+      return 0.2
     } else {
       return 0
     }
