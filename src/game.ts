@@ -5,6 +5,7 @@ import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from 
 import { v1 as getUUID } from "uuid"
 import { Percent } from "./types"
 import { not } from "./lib/utils"
+import { random as libRandom } from "./lib/random"
 
 export type GameId = string
 
@@ -68,7 +69,7 @@ export function prepareNextStep(
   game: Game,
   laws: Law[] = allLaws,
   events: Event[] = allEvents,
-  random = Math.random
+  random = libRandom
 ): Event | undefined {
   const event = checkForEvent(game, events, random)
   if (event) {

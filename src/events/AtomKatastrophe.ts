@@ -1,4 +1,5 @@
 import { defineEvent } from "../Factory"
+import { random } from "../lib/random"
 import { markdown } from "../lib/utils"
 import { dispatch } from "../params"
 
@@ -12,7 +13,7 @@ export default defineEvent({
 
   probability(game) {
     const law = game.acceptedLaws.find((l) => l.lawId === "KernenergienutzungVerlaengern")
-    return law ? Math.random() : 0
+    return law ? random() : 0
   },
 
   laws: [],

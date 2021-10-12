@@ -11,8 +11,4 @@ export default defineEvent({
   apply() {
     return [modify("popularity").byPercent(-20)]
   },
-
-  probability() {
-    return Math.random()
-  },
 })

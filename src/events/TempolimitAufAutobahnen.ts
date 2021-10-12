@@ -14,8 +14,4 @@ export default defineEvent({
   apply() {
     return []
   },
-
-  probability() {
-    return Math.random()
-  },
 })

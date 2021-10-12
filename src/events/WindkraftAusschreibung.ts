@@ -17,10 +17,6 @@ export default defineEvent({
     return []
   },
 
-  probability() {
-    return Math.random()
-  },
-  
   citations: [],
   //citations: [uba2020DeutscheTreibhausgasEmissionen], Hier müssen Referenzen auch aufgeführt werden, mit Komma getrennt.
   details: markdown`

@@ -22,6 +22,8 @@ import CO2PreisDebatte from "./CO2PreisDebatte"
 
 import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
+import { Game } from "../game"
+import { Ratio } from "../types"
 
 const allEventsObj = {
   AbstandsregelnWindkraft,
@@ -51,6 +53,7 @@ export type EventId = keyof typeof allEventsObj
 
 export type Event = EventDefinition & {
   id: EventId
+  probability(game: Game): Ratio
 }
 
 export type EventReference = {

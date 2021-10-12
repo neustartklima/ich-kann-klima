@@ -1,6 +1,7 @@
 import { cite, fraunhoferISE2020InstalledPower } from "../citations"
 import { defineEvent } from "../Factory"
 import { lawIsAccepted } from "../lawTools"
+import { random } from "../lib/random"
 import { markdown } from "../lib/utils"
 
 export default defineEvent({
@@ -23,7 +24,7 @@ export default defineEvent({
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2")
     const x4 = lawIsAccepted(game, "SolarstromFoerdernx4")
     const x8 = lawIsAccepted(game, "SolarstromFoerdernx8")
-    return solarRatio > 50 && (x2 || x4 || x8) ? Math.random() : 0
+    return solarRatio > 50 && (x2 || x4 || x8) ? random() : 0
   },
 
   citations: [fraunhoferISE2020InstalledPower],
