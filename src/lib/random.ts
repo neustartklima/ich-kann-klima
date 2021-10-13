@@ -1,7 +1,7 @@
 import { Game } from "../game"
 import seedrandom from "seedrandom"
 
-let rnd = seedrandom("")
+let rnd = seedrandom("", { state: true })
 
 export let random = () => Math.abs(rnd())
 
