@@ -1,6 +1,6 @@
 import { Game, GameId, initGame } from "../game"
 import { API } from "./api"
-import { allLaws, Law, LawId } from "../laws"
+import { LawId } from "../laws"
 import { Event } from "../events"
 import { getState } from "../lib/random"
 
@@ -52,7 +52,6 @@ export default function RepositoryFactory({
     },
 
     async saveGame(game: Game): Promise<void> {
-      game.prngState = getState()
       storage.setItem("game", JSON.stringify(game))
       try {
         api.saveGame(game) // We don't await here, b/c saving could take place in the background and can even be retried later
