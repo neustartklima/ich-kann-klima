@@ -103,6 +103,7 @@ const initialGame: Game = {
   events: [],
   actionCount: 0,
   over: false,
+  prngState: {},
 }
 
 describe("Calculator.co2Rating", () => {
