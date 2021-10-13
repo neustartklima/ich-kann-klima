@@ -32,6 +32,7 @@
     "npm": ">=6"
   },
   "dependencies": {
+    "@types/seedrandom": "^3.0.1",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "showdown": "^1.9.1",

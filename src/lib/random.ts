@@ -1,12 +1,12 @@
 import { Game } from "../game"
-const seedrandom = require("seedrandom")
+import seedrandom from "seedrandom"
 
-let rnd = new seedrandom()
+let rnd = seedrandom("")
 
 export let random = () => Math.abs(rnd())
 
 export function seedWithGame(game: Game): void {
-  rnd = new seedrandom(game.id)
+  rnd = seedrandom(game.id)
 }
 
 export function shuffleNumbers(length: number) {
