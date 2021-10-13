@@ -6,7 +6,11 @@ let rnd = seedrandom("")
 export let random = () => Math.abs(rnd())
 
 export function seedWithGame(game: Game): void {
-  rnd = seedrandom(game.id)
+  rnd = seedrandom(game.id, { state: game.prngState })
+}
+
+export function getState(): object {
+  return rnd.state()
 }
 
 export function shuffleNumbers(length: number) {

@@ -28,8 +28,8 @@ export function ActionFactory(router: Router, repository: Repository) {
     async loadGame(context: Context, payload: { gameId: GameId }) {
       try {
         const game = await repository.loadGame(payload.gameId)
-        await repository.saveGame(game)
         seedWithGame(game)
+        await repository.saveGame(game)
         router.push("/games/" + game.id)
         context.commit("setGameState", { game })
       } catch (error) {

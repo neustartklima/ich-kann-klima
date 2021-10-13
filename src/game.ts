@@ -30,6 +30,7 @@ export type Game = {
   events: EventReference[]
   actionCount: number
   over: boolean
+  prngState: object
 }
 
 export const initialGame = {
@@ -41,6 +42,7 @@ export const initialGame = {
   events: [],
   actionCount: 0,
   over: false,
+  prngState: {},
 }
 
 export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
@@ -54,6 +56,7 @@ export function initGame(game: GameDefinition = initialGame, id = getUUID()): Ga
     events: game.events,
     actionCount: game.actionCount,
     over: game.over,
+    prngState: {},
   }
 }
 
