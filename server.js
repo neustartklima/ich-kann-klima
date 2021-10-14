@@ -25335,10 +25335,10 @@ function linearPopChange(noChangeVal, fullChangeVal, actualVal, fullPopChange) {
   const frustrationOrPraise = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal));
   return frustrationOrPraise / 100 * fullPopChange;
 }
-function lawIsAccepted(game, lawId) {
+function lawIsAccepted(game, lawId, minActiveYears = 0) {
   if (!allLaws.map((l) => l.id).includes(lawId))
     throw new Error("Unknown law ID " + lawId + " used in a law.");
-  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear);
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears);
 }
 function getActiveLaw(lawRefs, matcher) {
   const lawRef = lawRefs.sort((law1, law2) => law2.effectiveSince - law1.effectiveSince).find((law) => matcher.test(law.lawId));
@@ -26759,15 +26759,18 @@ var StromspeicherungErleichtern_default = defineLaw({
 // src/laws/StromspeicherungFoerdern.ts
 var StromspeicherungFoerdern_default = defineLaw({
   title: "Stromspeicherung f\xF6rdern",
-  description: "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln f\xF6rdern",
+  description: "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln f\xF6rdern. 2 Mrd \u20AC pro Jahr.",
   effects(game, startYear2, currentYear) {
-    if (!lawIsAccepted(game, "StromspeicherungErleichtern")) {
-      return [modify("stateDebt").byValue(1)];
-    }
+    const delay = lawIsAccepted(game, "StromspeicherungErleichtern") ? 0 : 5;
+    const hasEffect = currentYear >= startYear2 + delay;
+    const isBoosted = lawIsAccepted(game, "ForschungUndEntwicklungStromspeicherung", 3);
     return [
-      modify("popularity").byValue(0.2),
-      modify("stateDebt").byValue(2),
-      modify("electricityGridQuality").byValue(1)
+      modify("stateDebt").byValue(1),
+      modify("popularity").byValue(0.2).if(hasEffect),
+      modify("stateDebt").byValue(1).if(hasEffect),
+      modify("electricityGridQuality").byValue(2).if(hasEffect),
+      modify("electricityGridQuality").byValue(2).if(isBoosted),
+      modify("electricityGridQuality").byValue(2).if(hasEffect && isBoosted)
     ];
   },
   priority(game) {
@@ -26786,10 +26789,15 @@ var StromspeicherungFoerdern_default = defineLaw({
     Diese Folgen sind völlig aus der Luft gegriffen.
     TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
 
-    - [x] Wenn nicht "StromspeicherungErleichtern" ausgewählt wurde, kostet das 1 MrdEuro im Jahr, sonst:
-    - [x] Viele verdienen Geld mit kleinen Batteriespeichern: Popularität steigt um 0,2% pro Jahr.
-    - [x] Die Netzqualität steigt jährlich um 2%.
-    - [x] Konsten: 2 Mrd Euro pro Jahr.
+    - [x] Kostet 1 MrdEuro im Jahr.
+    - Wenn "StromspeicherungErleichtern" angenommen oder dieses Gesetz vor mehr als 5 Jahren beschlossen:
+      - [x] Weitere 1 MrdEuro im Jahr
+      - [x] Viele verdienen Geld mit kleinen Batteriespeichern: Popularität steigt um 0,2% pro Jahr.
+      - [x] Die Netzqualität steigt jährlich um 2%.
+    - Wenn "ForschungUndEntwicklungStromspeicherung" vor 3 oder mehr Jahren angenommen:
+      - [x] Die Netzqualität steigt jährlich um 2% (zusätzlich).
+    - Wenn "StromspeicherungErleichtern" und "ForschungUndEntwicklungStromspeicherung" angenommen:
+      - [x] Die Netzqualität steigt jährlich um 2% (zusätzlich).
 
     # Voraussetzungen
 
@@ -26822,7 +26830,7 @@ var DaemmungAltbau1Percent_default = defineLaw({
   },
   priority(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 25, buildingsPercentage);
+    return linear(15, 40, buildingsPercentage);
   }
 });
 
@@ -26844,7 +26852,7 @@ var DaemmungAltbau2Percent_default = defineLaw({
   },
   priority(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 25, buildingsPercentage);
+    return linear(15, 40, buildingsPercentage);
   }
 });
 
@@ -26868,7 +26876,7 @@ var DaemmungAltbau4Percent_default = defineLaw({
   },
   priority(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 25, buildingsPercentage);
+    return linear(15, 40, buildingsPercentage);
   },
   citations: [],
   details: markdown`
@@ -26903,7 +26911,7 @@ var DaemmungAltbauAbschaffen_default = defineLaw({
     if (!currentActiveLawId || currentActiveLawId === "DaemmungAltbauAbschaffen")
       return 0;
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 25, buildingsPercentage);
+    return linear(15, 40, buildingsPercentage);
   }
 });
 
@@ -27202,19 +27210,46 @@ var FernverkehrModernisieren_default = defineLaw({
 // src/laws/WasserstofftechnologieFoerdern.ts
 var WasserstofftechnologieFoerdern_default = defineLaw({
   title: "Wasserstofftechnologie f\xF6rdern",
-  description: "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie wird stark gef\xF6rdert.",
+  description: "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie und zur effizienten Wasserstoffgewinnung wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
   effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(3),
-      modify("carRenewablePercentage").byValue(1).if(startYear2 + 5 <= currentYear)
-    ];
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 5;
+    return [modify("stateDebt").byValue(2).if(inGrantPeriod), modify("carRenewablePercentage").byValue(1).if(effective)];
   },
   priority(game) {
     const v = game.values;
     const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
     const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
     return linear(40, 90, relCarPercentage);
-  }
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 9
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 5 Jahren zahlt es sich aus und der Anteil der erneuerbaren PKW steigt um 1% pro Jahr.
+    - [x] Voraussetzung für weitere Wasserstoffbasierte Gesetze.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Je höher der Anteil nicht-erneuerbaren PKW am gesamt Pasagiertransport is, desto eher
+
+    - 0% bei einem Anteil von von 90%.
+    - 100% bei einer Netzqualität von 40%.
+    - linear interpoliert
+  `
 });
 
 // src/laws/WasserstoffmobilitaetFoerdern.ts
@@ -28251,6 +28286,207 @@ var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
   `
 });
 
+// src/laws/ForschungUndEntwicklungStromspeicherung.ts
+var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
+  title: "Forschung und Entwicklung zur Stromspeicherung f\xF6rdern",
+  description: "Ein F\xF6rderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 3;
+    return [
+      modify("stateDebt").byValue(2).if(inGrantPeriod),
+      modify("electricityGridQuality").byValue(0.2).if(effective)
+    ];
+  },
+  priority(game) {
+    const v = game.values;
+    return linear(80, 45, v.electricityGridQuality);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 4
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 2 Jahren zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 0.2%.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Identisch zu "StromspeicherungErleichtern".
+
+    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
+    - 100% bei einer Netzqualität von 45%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/ForschungEmissionsfreieStahlproduktion.ts
+var ForschungEmissionsfreieStahlproduktion_default = defineLaw({
+  title: "Forschung zur emissionsfreien Stahlproduktion f\xF6rdern",
+  description: "Forschung und Entwicklung von Technologien zur Produktion von Stahl mit stark reduzierten CO2-Emissionen wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 3;
+    const hydrogenReduction = lawIsAccepted(game, "WasserstofftechnologieFoerdern", 3) ? renewablePercentage(game) - 70 : 0;
+    const economicPressure = lawIsAccepted(game, "WirksamerCO2Preis");
+    return [
+      modify("stateDebt").byValue(2).if(inGrantPeriod),
+      modify("co2emissionsIndustry").byValue(-2).if(effective),
+      modify("co2emissionsIndustry").byValue(-2).if(economicPressure),
+      modify("co2emissionsIndustry").byValue(-hydrogenReduction).if(hydrogenReduction > 0)
+    ];
+  },
+  priority(game) {
+    const v = game.values;
+    const industryPercentage = v.co2emissionsIndustry / v.co2emissions * 100;
+    return linear(0, 80, industryPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 12
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    Derzeit identisch zu \`ForschungEmissionsfreieZementproduktion\`, weil Emissionen Beider in
+    \`co2emissionsIndustry\` zusammengefasst sind.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 3 Jahren zahlt es sich aus und die Industrieemissionen werden um 2 MioTons pro Jahr reduziert.
+    - [x] Ein wirksamer CO2-Preis erzeugt ökonomischen Druck, der eine Reduktion um weitere 2 MioTons bewirkt.
+    - [x] Falls "WasserstofftechnologieFoerdern" vor 3 oder mehr Jahren beschlossen wurde und
+          mehr als 70% der Stromproduktion erneuerbar sind, kann genügend Wasserstoff erzeugt werden und
+          pro weiteres Prozent werden die Industrieemmissionen um 1 MioTons pro Jahr reduziert.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Je höher der Anteil der Industrieemmissionen ist, desto höher die Priorität: (24% zu Beginn.)
+
+    - 0% bei einem Anteil von von 0%.
+    - 100% bei einem Anteil von 80%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/ForschungEmissionsfreieZementproduktion.ts
+var ForschungEmissionsfreieZementproduktion_default = defineLaw({
+  title: "Forschung zur emissionsfreien Zementproduktion f\xF6rdern",
+  description: "Forschung und Entwicklung von Technologien zur Produktion von Zement mit stark reduzierten CO2-Emissionen wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 3;
+    const hydrogenReduction = lawIsAccepted(game, "WasserstofftechnologieFoerdern", 3) ? renewablePercentage(game) - 70 : 0;
+    const economicPressure = lawIsAccepted(game, "WirksamerCO2Preis");
+    return [
+      modify("stateDebt").byValue(2).if(inGrantPeriod),
+      modify("co2emissionsIndustry").byValue(-2).if(effective),
+      modify("co2emissionsIndustry").byValue(-2).if(economicPressure),
+      modify("co2emissionsIndustry").byValue(-hydrogenReduction).if(hydrogenReduction > 0)
+    ];
+  },
+  priority(game) {
+    const v = game.values;
+    const industryPercentage = v.co2emissionsIndustry / v.co2emissions * 100;
+    return linear(0, 80, industryPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 7
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    Derzeit identisch zu \`ForschungEmissionsfreieStahlproduktion\`, weil Emissionen Beider in
+    \`co2emissionsIndustry\` zusammengefasst sind.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 3 Jahren zahlt es sich aus und die Industrieemissionen werden um 2 MioTons pro Jahr reduziert.
+    - [x] Ein wirksamer CO2-Preis erzeugt ökonomischen Druck, der eine Reduktion um weitere 2 MioTons bewirkt.
+    - [x] Falls "WasserstofftechnologieFoerdern" vor 3 oder mehr Jahren beschlossen wurde und
+          mehr als 70% der Stromproduktion erneuerbar sind, kann genügend Wasserstoff erzeugt werden und
+          pro weiteres Prozent werden die Industrieemmissionen um 1 MioTons pro Jahr reduziert.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Je höher der Anteil der Industrieemmissionen ist, desto höher die Priorität: (24% zu Beginn.)
+
+    - 0% bei einem Anteil von von 0%.
+    - 100% bei einem Anteil von 80%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/ForschungDezentraleStromerzeugung.ts
+var ForschungDezentraleStromerzeugung_default = defineLaw({
+  title: "Erforschung und Umsetzung dezentraler Stromerzeugung f\xF6rdern",
+  description: "Ein F\xF6rderprogramm zur Erfoschung und Umsetzung der notwendigen Anpassungen von Netz und Infrastruktur f\xFCr die denzentrale Stromerzeugung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 1;
+    return [modify("stateDebt").byValue(2).if(inGrantPeriod), modify("electricityGridQuality").byValue(1).if(effective)];
+  },
+  priority(game) {
+    const v = game.values;
+    return linear(80, 45, v.electricityGridQuality);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 4.5
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 1 Jahr zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 1%.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Identisch zu "StromspeicherungErleichtern".
+
+    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
+    - 100% bei einer Netzqualität von 45%.
+    - linear interpoliert
+  `
+});
+
 // src/laws/index.ts
 var allLawsObj = {
   AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
@@ -28260,8 +28496,10 @@ var allLawsObj = {
   KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
   NetzausbauErleichtern: NetzausbauErleichtern_default,
   NetzausbauFoerdern: NetzausbauFoerdern_default,
+  ForschungUndEntwicklungStromspeicherung: ForschungUndEntwicklungStromspeicherung_default,
   StromspeicherungErleichtern: StromspeicherungErleichtern_default,
   StromspeicherungFoerdern: StromspeicherungFoerdern_default,
+  ForschungDezentraleStromerzeugung: ForschungDezentraleStromerzeugung_default,
   WindkraftVereinfachen: WindkraftVereinfachen_default,
   AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
   AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
@@ -28302,7 +28540,9 @@ var allLawsObj = {
   FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default,
   CO2PreisErhoehen: CO2PreisErhoehen_default,
   WirksamerCO2Preis: WirksamerCO2Preis_default,
-  VollerCO2Preis: VollerCO2Preis_default
+  VollerCO2Preis: VollerCO2Preis_default,
+  ForschungEmissionsfreieStahlproduktion: ForschungEmissionsfreieStahlproduktion_default,
+  ForschungEmissionsfreieZementproduktion: ForschungEmissionsfreieZementproduktion_default
 };
 var allLaws = lawList(allLawsObj);
 function idsToLaws(lawIds) {
@@ -28363,7 +28603,7 @@ var Altbausanierung_default = defineEvent({
   },
   probability(game) {
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return Math.max(1, linear(15, 25, buildingsPercentage) / 100);
+    return Math.min(1, linear(15, 30, buildingsPercentage) / 100);
   }
 });
 
