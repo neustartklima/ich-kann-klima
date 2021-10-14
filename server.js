@@ -1119,12 +1119,12 @@ var require_debug = __commonJS({
       function debug() {
         if (!debug.enabled)
           return;
-        var self = debug;
+        var self2 = debug;
         var curr = +new Date();
         var ms = curr - (prevTime || curr);
-        self.diff = ms;
-        self.prev = prevTime;
-        self.curr = curr;
+        self2.diff = ms;
+        self2.prev = prevTime;
+        self2.curr = curr;
         prevTime = curr;
         var args = new Array(arguments.length);
         for (var i = 0; i < args.length; i++) {
@@ -1142,15 +1142,15 @@ var require_debug = __commonJS({
           var formatter = exports2.formatters[format];
           if (typeof formatter === "function") {
             var val = args[index];
-            match = formatter.call(self, val);
+            match = formatter.call(self2, val);
             args.splice(index, 1);
             index--;
           }
           return match;
         });
-        exports2.formatArgs.call(self, args);
+        exports2.formatArgs.call(self2, args);
         var logFn = debug.log || exports2.log || console.log.bind(console);
-        logFn.apply(self, args);
+        logFn.apply(self2, args);
       }
       debug.namespace = namespace;
       debug.enabled = exports2.enabled(namespace);
@@ -15776,7 +15776,7 @@ var require_router = __commonJS({
       return this;
     };
     proto.handle = function handle(req, res, out) {
-      var self = this;
+      var self2 = this;
       debug("dispatching %s %s", req.method, req.url);
       var idx = 0;
       var protohost = getProtohost(req.url) || "";
@@ -15784,7 +15784,7 @@ var require_router = __commonJS({
       var slashAdded = false;
       var paramcalled = {};
       var options = [];
-      var stack = self.stack;
+      var stack = self2.stack;
       var parentParams = req.params;
       var parentUrl = req.baseUrl || "";
       var done = restore(out, req, "baseUrl", "next", "params");
@@ -15858,9 +15858,9 @@ var require_router = __commonJS({
         if (route) {
           req.route = route;
         }
-        req.params = self.mergeParams ? mergeParams(layer.params, parentParams) : layer.params;
+        req.params = self2.mergeParams ? mergeParams(layer.params, parentParams) : layer.params;
         var layerPath = layer.path;
-        self.process_params(layer, paramcalled, req, res, function(err2) {
+        self2.process_params(layer, paramcalled, req, res, function(err2) {
           if (err2) {
             return next(layerError || err2);
           }
@@ -17193,60 +17193,60 @@ var require_send = __commonJS({
     };
     SendStream.prototype.sendFile = function sendFile(path4) {
       var i = 0;
-      var self = this;
+      var self2 = this;
       debug('stat "%s"', path4);
       fs3.stat(path4, function onstat(err, stat) {
         if (err && err.code === "ENOENT" && !extname(path4) && path4[path4.length - 1] !== sep) {
           return next(err);
         }
         if (err)
-          return self.onStatError(err);
+          return self2.onStatError(err);
         if (stat.isDirectory())
-          return self.redirect(path4);
-        self.emit("file", path4, stat);
-        self.send(path4, stat);
+          return self2.redirect(path4);
+        self2.emit("file", path4, stat);
+        self2.send(path4, stat);
       });
       function next(err) {
-        if (self._extensions.length <= i) {
-          return err ? self.onStatError(err) : self.error(404);
+        if (self2._extensions.length <= i) {
+          return err ? self2.onStatError(err) : self2.error(404);
         }
-        var p = path4 + "." + self._extensions[i++];
+        var p = path4 + "." + self2._extensions[i++];
         debug('stat "%s"', p);
         fs3.stat(p, function(err2, stat) {
           if (err2)
             return next(err2);
           if (stat.isDirectory())
             return next();
-          self.emit("file", p, stat);
-          self.send(p, stat);
+          self2.emit("file", p, stat);
+          self2.send(p, stat);
         });
       }
     };
     SendStream.prototype.sendIndex = function sendIndex(path4) {
       var i = -1;
-      var self = this;
+      var self2 = this;
       function next(err) {
-        if (++i >= self._index.length) {
+        if (++i >= self2._index.length) {
           if (err)
-            return self.onStatError(err);
-          return self.error(404);
+            return self2.onStatError(err);
+          return self2.error(404);
         }
-        var p = join(path4, self._index[i]);
+        var p = join(path4, self2._index[i]);
         debug('stat "%s"', p);
         fs3.stat(p, function(err2, stat) {
           if (err2)
             return next(err2);
           if (stat.isDirectory())
             return next();
-          self.emit("file", p, stat);
-          self.send(p, stat);
+          self2.emit("file", p, stat);
+          self2.send(p, stat);
         });
       }
       next();
     };
     SendStream.prototype.stream = function stream(path4, options) {
       var finished = false;
-      var self = this;
+      var self2 = this;
       var res = this.res;
       var stream2 = fs3.createReadStream(path4, options);
       this.emit("stream", stream2);
@@ -17260,10 +17260,10 @@ var require_send = __commonJS({
           return;
         finished = true;
         destroy(stream2);
-        self.onStatError(err);
+        self2.onStatError(err);
       });
       stream2.on("end", function onend() {
-        self.emit("end");
+        self2.emit("end");
       });
     };
     SendStream.prototype.type = function type(path4) {
@@ -20029,16 +20029,16 @@ var require_response = __commonJS({
       var done = callback;
       var opts = options || {};
       var req = this.req;
-      var self = this;
+      var self2 = this;
       if (typeof options === "function") {
         done = options;
         opts = {};
       }
-      opts._locals = self.locals;
+      opts._locals = self2.locals;
       done = done || function(err, str) {
         if (err)
           return req.next(err);
-        self.send(str);
+        self2.send(str);
       };
       app2.render(view, opts, done);
     };
@@ -20315,6 +20315,659 @@ var require_express2 = __commonJS({
   "node_modules/express/index.js"(exports2, module2) {
     "use strict";
     module2.exports = require_express();
+  }
+});
+
+// node_modules/seedrandom/lib/alea.js
+var require_alea = __commonJS({
+  "node_modules/seedrandom/lib/alea.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function Alea(seed) {
+        var me = this, mash = Mash();
+        me.next = function() {
+          var t = 2091639 * me.s0 + me.c * 23283064365386963e-26;
+          me.s0 = me.s1;
+          me.s1 = me.s2;
+          return me.s2 = t - (me.c = t | 0);
+        };
+        me.c = 1;
+        me.s0 = mash(" ");
+        me.s1 = mash(" ");
+        me.s2 = mash(" ");
+        me.s0 -= mash(seed);
+        if (me.s0 < 0) {
+          me.s0 += 1;
+        }
+        me.s1 -= mash(seed);
+        if (me.s1 < 0) {
+          me.s1 += 1;
+        }
+        me.s2 -= mash(seed);
+        if (me.s2 < 0) {
+          me.s2 += 1;
+        }
+        mash = null;
+      }
+      function copy(f, t) {
+        t.c = f.c;
+        t.s0 = f.s0;
+        t.s1 = f.s1;
+        t.s2 = f.s2;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new Alea(seed), state = opts && opts.state, prng = xg.next;
+        prng.int32 = function() {
+          return xg.next() * 4294967296 | 0;
+        };
+        prng.double = function() {
+          return prng() + (prng() * 2097152 | 0) * 11102230246251565e-32;
+        };
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      function Mash() {
+        var n = 4022871197;
+        var mash = function(data) {
+          data = String(data);
+          for (var i = 0; i < data.length; i++) {
+            n += data.charCodeAt(i);
+            var h = 0.02519603282416938 * n;
+            n = h >>> 0;
+            h -= n;
+            h *= n;
+            n = h >>> 0;
+            h -= n;
+            n += h * 4294967296;
+          }
+          return (n >>> 0) * 23283064365386963e-26;
+        };
+        return mash;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.alea = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xor128.js
+var require_xor128 = __commonJS({
+  "node_modules/seedrandom/lib/xor128.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.x = 0;
+        me.y = 0;
+        me.z = 0;
+        me.w = 0;
+        me.next = function() {
+          var t = me.x ^ me.x << 11;
+          me.x = me.y;
+          me.y = me.z;
+          me.z = me.w;
+          return me.w ^= me.w >>> 19 ^ t ^ t >>> 8;
+        };
+        if (seed === (seed | 0)) {
+          me.x = seed;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 64; k++) {
+          me.x ^= strseed.charCodeAt(k) | 0;
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.x = f.x;
+        t.y = f.y;
+        t.z = f.z;
+        t.w = f.w;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xor128 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xorwow.js
+var require_xorwow = __commonJS({
+  "node_modules/seedrandom/lib/xorwow.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.next = function() {
+          var t = me.x ^ me.x >>> 2;
+          me.x = me.y;
+          me.y = me.z;
+          me.z = me.w;
+          me.w = me.v;
+          return (me.d = me.d + 362437 | 0) + (me.v = me.v ^ me.v << 4 ^ (t ^ t << 1)) | 0;
+        };
+        me.x = 0;
+        me.y = 0;
+        me.z = 0;
+        me.w = 0;
+        me.v = 0;
+        if (seed === (seed | 0)) {
+          me.x = seed;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 64; k++) {
+          me.x ^= strseed.charCodeAt(k) | 0;
+          if (k == strseed.length) {
+            me.d = me.x << 10 ^ me.x >>> 4;
+          }
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.x = f.x;
+        t.y = f.y;
+        t.z = f.z;
+        t.w = f.w;
+        t.v = f.v;
+        t.d = f.d;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xorwow = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xorshift7.js
+var require_xorshift7 = __commonJS({
+  "node_modules/seedrandom/lib/xorshift7.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this;
+        me.next = function() {
+          var X = me.x, i = me.i, t, v, w;
+          t = X[i];
+          t ^= t >>> 7;
+          v = t ^ t << 24;
+          t = X[i + 1 & 7];
+          v ^= t ^ t >>> 10;
+          t = X[i + 3 & 7];
+          v ^= t ^ t >>> 3;
+          t = X[i + 4 & 7];
+          v ^= t ^ t << 7;
+          t = X[i + 7 & 7];
+          t = t ^ t << 13;
+          v ^= t ^ t << 9;
+          X[i] = v;
+          me.i = i + 1 & 7;
+          return v;
+        };
+        function init(me2, seed2) {
+          var j, w, X = [];
+          if (seed2 === (seed2 | 0)) {
+            w = X[0] = seed2;
+          } else {
+            seed2 = "" + seed2;
+            for (j = 0; j < seed2.length; ++j) {
+              X[j & 7] = X[j & 7] << 15 ^ seed2.charCodeAt(j) + X[j + 1 & 7] << 13;
+            }
+          }
+          while (X.length < 8)
+            X.push(0);
+          for (j = 0; j < 8 && X[j] === 0; ++j)
+            ;
+          if (j == 8)
+            w = X[7] = -1;
+          else
+            w = X[j];
+          me2.x = X;
+          me2.i = 0;
+          for (j = 256; j > 0; --j) {
+            me2.next();
+          }
+        }
+        init(me, seed);
+      }
+      function copy(f, t) {
+        t.x = f.x.slice();
+        t.i = f.i;
+        return t;
+      }
+      function impl(seed, opts) {
+        if (seed == null)
+          seed = +new Date();
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (state.x)
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xorshift7 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xor4096.js
+var require_xor4096 = __commonJS({
+  "node_modules/seedrandom/lib/xor4096.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this;
+        me.next = function() {
+          var w = me.w, X = me.X, i = me.i, t, v;
+          me.w = w = w + 1640531527 | 0;
+          v = X[i + 34 & 127];
+          t = X[i = i + 1 & 127];
+          v ^= v << 13;
+          t ^= t << 17;
+          v ^= v >>> 15;
+          t ^= t >>> 12;
+          v = X[i] = v ^ t;
+          me.i = i;
+          return v + (w ^ w >>> 16) | 0;
+        };
+        function init(me2, seed2) {
+          var t, v, i, j, w, X = [], limit = 128;
+          if (seed2 === (seed2 | 0)) {
+            v = seed2;
+            seed2 = null;
+          } else {
+            seed2 = seed2 + "\0";
+            v = 0;
+            limit = Math.max(limit, seed2.length);
+          }
+          for (i = 0, j = -32; j < limit; ++j) {
+            if (seed2)
+              v ^= seed2.charCodeAt((j + 32) % seed2.length);
+            if (j === 0)
+              w = v;
+            v ^= v << 10;
+            v ^= v >>> 15;
+            v ^= v << 4;
+            v ^= v >>> 13;
+            if (j >= 0) {
+              w = w + 1640531527 | 0;
+              t = X[j & 127] ^= v + w;
+              i = t == 0 ? i + 1 : 0;
+            }
+          }
+          if (i >= 128) {
+            X[(seed2 && seed2.length || 0) & 127] = -1;
+          }
+          i = 127;
+          for (j = 4 * 128; j > 0; --j) {
+            v = X[i + 34 & 127];
+            t = X[i = i + 1 & 127];
+            v ^= v << 13;
+            t ^= t << 17;
+            v ^= v >>> 15;
+            t ^= t >>> 12;
+            X[i] = v ^ t;
+          }
+          me2.w = w;
+          me2.X = X;
+          me2.i = i;
+        }
+        init(me, seed);
+      }
+      function copy(f, t) {
+        t.i = f.i;
+        t.w = f.w;
+        t.X = f.X.slice();
+        return t;
+      }
+      ;
+      function impl(seed, opts) {
+        if (seed == null)
+          seed = +new Date();
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (state.X)
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xor4096 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/tychei.js
+var require_tychei = __commonJS({
+  "node_modules/seedrandom/lib/tychei.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.next = function() {
+          var b = me.b, c = me.c, d = me.d, a = me.a;
+          b = b << 25 ^ b >>> 7 ^ c;
+          c = c - d | 0;
+          d = d << 24 ^ d >>> 8 ^ a;
+          a = a - b | 0;
+          me.b = b = b << 20 ^ b >>> 12 ^ c;
+          me.c = c = c - d | 0;
+          me.d = d << 16 ^ c >>> 16 ^ a;
+          return me.a = a - b | 0;
+        };
+        me.a = 0;
+        me.b = 0;
+        me.c = 2654435769 | 0;
+        me.d = 1367130551;
+        if (seed === Math.floor(seed)) {
+          me.a = seed / 4294967296 | 0;
+          me.b = seed | 0;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 20; k++) {
+          me.b ^= strseed.charCodeAt(k) | 0;
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.a = f.a;
+        t.b = f.b;
+        t.c = f.c;
+        t.d = f.d;
+        return t;
+      }
+      ;
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.tychei = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/seedrandom.js
+var require_seedrandom = __commonJS({
+  "node_modules/seedrandom/seedrandom.js"(exports2, module2) {
+    (function(global2, pool, math) {
+      var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
+      function seedrandom2(seed, options, callback) {
+        var key = [];
+        options = options == true ? { entropy: true } : options || {};
+        var shortseed = mixkey(flatten(options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed, 3), key);
+        var arc4 = new ARC4(key);
+        var prng = function() {
+          var n = arc4.g(chunks), d = startdenom, x = 0;
+          while (n < significance) {
+            n = (n + x) * width;
+            d *= width;
+            x = arc4.g(1);
+          }
+          while (n >= overflow) {
+            n /= 2;
+            d /= 2;
+            x >>>= 1;
+          }
+          return (n + x) / d;
+        };
+        prng.int32 = function() {
+          return arc4.g(4) | 0;
+        };
+        prng.quick = function() {
+          return arc4.g(4) / 4294967296;
+        };
+        prng.double = prng;
+        mixkey(tostring(arc4.S), pool);
+        return (options.pass || callback || function(prng2, seed2, is_math_call, state) {
+          if (state) {
+            if (state.S) {
+              copy(state, arc4);
+            }
+            prng2.state = function() {
+              return copy(arc4, {});
+            };
+          }
+          if (is_math_call) {
+            math[rngname] = prng2;
+            return seed2;
+          } else
+            return prng2;
+        })(prng, shortseed, "global" in options ? options.global : this == math, options.state);
+      }
+      function ARC4(key) {
+        var t, keylen = key.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
+        if (!keylen) {
+          key = [keylen++];
+        }
+        while (i < width) {
+          s[i] = i++;
+        }
+        for (i = 0; i < width; i++) {
+          s[i] = s[j = mask & j + key[i % keylen] + (t = s[i])];
+          s[j] = t;
+        }
+        (me.g = function(count) {
+          var t2, r = 0, i2 = me.i, j2 = me.j, s2 = me.S;
+          while (count--) {
+            t2 = s2[i2 = mask & i2 + 1];
+            r = r * width + s2[mask & (s2[i2] = s2[j2 = mask & j2 + t2]) + (s2[j2] = t2)];
+          }
+          me.i = i2;
+          me.j = j2;
+          return r;
+        })(width);
+      }
+      function copy(f, t) {
+        t.i = f.i;
+        t.j = f.j;
+        t.S = f.S.slice();
+        return t;
+      }
+      ;
+      function flatten(obj, depth) {
+        var result = [], typ = typeof obj, prop;
+        if (depth && typ == "object") {
+          for (prop in obj) {
+            try {
+              result.push(flatten(obj[prop], depth - 1));
+            } catch (e) {
+            }
+          }
+        }
+        return result.length ? result : typ == "string" ? obj : obj + "\0";
+      }
+      function mixkey(seed, key) {
+        var stringseed = seed + "", smear, j = 0;
+        while (j < stringseed.length) {
+          key[mask & j] = mask & (smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++);
+        }
+        return tostring(key);
+      }
+      function autoseed() {
+        try {
+          var out;
+          if (nodecrypto && (out = nodecrypto.randomBytes)) {
+            out = out(width);
+          } else {
+            out = new Uint8Array(width);
+            (global2.crypto || global2.msCrypto).getRandomValues(out);
+          }
+          return tostring(out);
+        } catch (e) {
+          var browser = global2.navigator, plugins = browser && browser.plugins;
+          return [+new Date(), global2, plugins, global2.screen, tostring(pool)];
+        }
+      }
+      function tostring(a) {
+        return String.fromCharCode.apply(0, a);
+      }
+      mixkey(math.random(), pool);
+      if (typeof module2 == "object" && module2.exports) {
+        module2.exports = seedrandom2;
+        try {
+          nodecrypto = require("crypto");
+        } catch (ex) {
+        }
+      } else if (typeof define == "function" && define.amd) {
+        define(function() {
+          return seedrandom2;
+        });
+      } else {
+        math["seed" + rngname] = seedrandom2;
+      }
+    })(typeof self !== "undefined" ? self : exports2, [], Math);
+  }
+});
+
+// node_modules/seedrandom/index.js
+var require_seedrandom2 = __commonJS({
+  "node_modules/seedrandom/index.js"(exports2, module2) {
+    var alea = require_alea();
+    var xor128 = require_xor128();
+    var xorwow = require_xorwow();
+    var xorshift7 = require_xorshift7();
+    var xor4096 = require_xor4096();
+    var tychei = require_tychei();
+    var sr = require_seedrandom();
+    sr.alea = alea;
+    sr.xor128 = xor128;
+    sr.xorwow = xorwow;
+    sr.xorshift7 = xorshift7;
+    sr.xor4096 = xor4096;
+    sr.tychei = tychei;
+    module2.exports = sr;
   }
 });
 
@@ -24643,15 +25296,20 @@ function GameController_default({ eventStore: eventStore2, models: models2 }) {
 function defineLaw(law) {
   return law;
 }
-function defineEvent(event) {
-  return event;
-}
 function prepareModuleList(modules) {
   return Object.entries(modules).map(([name, module2]) => ({ ...module2, id: name.replace(/\W/g, "_") }));
 }
 function lawList(modules) {
   return prepareModuleList(modules);
 }
+function defineEvent(event) {
+  return event;
+}
+
+// src/lib/random.ts
+var import_seedrandom = __toModule(require_seedrandom2());
+var rnd = (0, import_seedrandom.default)("", { state: true });
+var random = () => Math.abs(rnd());
 
 // src/laws/AllesBleibtBeimAlten.ts
 var AllesBleibtBeimAlten_default = defineLaw({
@@ -24661,7 +25319,7 @@ var AllesBleibtBeimAlten_default = defineLaw({
     return [];
   },
   priority(game) {
-    return Math.random();
+    return random();
   }
 });
 
@@ -27686,9 +28344,6 @@ var AbstandsregelnWindkraft_default = defineEvent({
   ],
   apply() {
     return [];
-  },
-  probability() {
-    return Math.random();
   }
 });
 
@@ -27733,7 +28388,7 @@ var Bestechung_default = defineEvent({
   },
   probability(game) {
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
-    return law ? Math.random() : 0;
+    return law ? 0.5 : 0;
   }
 });
 
@@ -27744,9 +28399,6 @@ var EnergieStrategie_default = defineEvent({
   laws: ["KohleverstromungEinstellen", "EnergiemixRegeltDerMarkt", "KernenergienutzungVerlaengern"],
   apply() {
     return [];
-  },
-  probability() {
-    return Math.random();
   }
 });
 
@@ -27822,9 +28474,6 @@ var SocialMedia_default = defineEvent({
   `,
   apply() {
     return [modify("popularity").byPercent(-20)];
-  },
-  probability() {
-    return Math.random();
   }
 });
 
@@ -27840,9 +28489,6 @@ var TempolimitAufAutobahnen_default = defineEvent({
   ],
   apply() {
     return [];
-  },
-  probability() {
-    return Math.random();
   }
 });
 
@@ -27889,9 +28535,6 @@ var WindkraftAusschreibung_default = defineEvent({
   apply() {
     return [];
   },
-  probability() {
-    return Math.random();
-  },
   citations: [],
   details: markdown`
     # Bauarbeiten
@@ -27930,7 +28573,7 @@ var SolarstromFoerderung_default = defineEvent({
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
     const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn");
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
-    return abgeschafft || beibehalten || x2 ? Math.random() : 0;
+    return abgeschafft || beibehalten || x2 ? 0.5 : 0;
   },
   citations: [fraunhoferISE2020InstalledPower],
   details: markdown`
@@ -27952,7 +28595,7 @@ var AtomKatastrophe_default = defineEvent({
   },
   probability(game) {
     const law = game.acceptedLaws.find((l) => l.lawId === "KernenergienutzungVerlaengern");
-    return law ? Math.random() : 0;
+    return law ? 0.5 : 0;
   },
   laws: [],
   citations: [],
@@ -27973,7 +28616,7 @@ var BSE_default = defineEvent({
   },
   probability(game) {
     const law = idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law2) => law2.title.match(/tierwohl/i));
-    return law ? 0 : Math.random();
+    return law ? 0 : 0.5;
   },
   laws: [],
   citations: [],
@@ -28128,7 +28771,11 @@ var allEventsObj = {
   Plagiatsaffaere: Plagiatsaffaere_default,
   CO2PreisDebatte: CO2PreisDebatte_default
 };
-var allEvents = prepareModuleList(allEventsObj);
+var defaultProbability = () => 0.5;
+var allEvents = prepareModuleList(allEventsObj).map((info) => ({
+  ...info,
+  probability: info.probability || defaultProbability
+}));
 
 // src/server/EventController.ts
 function EventController_default({ eventStore: eventStore2, models: models2 }) {
