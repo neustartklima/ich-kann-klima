@@ -31,7 +31,7 @@ export function ActionFactory(router: Router, repository: Repository) {
         seedWithGame(game)
         game.prngState = getState()
         await repository.saveGame(game)
-        router.push("/games/" + game.id)
+        router.push("/games/" + game.id + (game.over ? "/over" : ""))
         context.commit("setGameState", { game })
       } catch (error) {
         // Game cannot be found locally, and the API doesn't know about that game or could not be reached, game cannot be started
