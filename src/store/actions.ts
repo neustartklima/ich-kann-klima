@@ -7,7 +7,6 @@ import { Event } from "../events"
 import { LawId } from "../laws"
 import { Change, applyEffects, createBaseValues } from "../params"
 import { steps } from "../tourSteps"
-import { getState, seedWithGame } from "../lib/random"
 
 interface Router {
   push: (path: string) => void
@@ -18,7 +17,6 @@ export function ActionFactory(router: Router, repository: Repository) {
     async startGame(context: Context) {
       const game = newGame()
       await repository.createGame(game)
-      seedWithGame(game)
       const event = prepareNextStep(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })
@@ -28,8 +26,6 @@ export function ActionFactory(router: Router, repository: Repository) {
     async loadGame(context: Context, payload: { gameId: GameId }) {
       try {
         const game = await repository.loadGame(payload.gameId)
-        seedWithGame(game)
-        game.prngState = getState()
         await repository.saveGame(game)
         router.push("/games/" + game.id + (game.over ? "/over" : ""))
         context.commit("setGameState", { game })
@@ -57,7 +53,6 @@ export function ActionFactory(router: Router, repository: Repository) {
         .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
       game.acceptedLaws = [...filteredLawRefs, newLawRef]
       const event = prepareNextStep(game)
-      game.prngState = getState()
       await repository.saveGame(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })
@@ -68,7 +63,6 @@ export function ActionFactory(router: Router, repository: Repository) {
       const game = { ...(context.state.game as Game) }
       game.rejectedLaws = [...game.rejectedLaws, payload.lawId]
       await repository.decisionMade(game, payload.lawId, false)
-      game.prngState = getState()
       await repository.saveGame(game)
       context.commit("setGameState", { game })
     },
@@ -77,7 +71,6 @@ export function ActionFactory(router: Router, repository: Repository) {
       const game = { ...(context.state.game as Game) }
       await repository.decisionMade(game, "sitOut", true)
       const event = prepareNextStep(game)
-      game.prngState = getState()
       await repository.saveGame(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })
@@ -88,7 +81,6 @@ export function ActionFactory(router: Router, repository: Repository) {
       const laws = game.acceptedLaws.map(getAcceptedLaw)
       game.currentYear++
       game.values = Calculator.calculateNextYear(game, laws, game.currentYear)
-      game.prngState = getState()
       await repository.saveGame(game)
       context.commit("setGameState", { game })
     },
@@ -104,7 +96,6 @@ export function ActionFactory(router: Router, repository: Repository) {
     acknowledgeEvent(context: Context, event: Event) {
       const game = { ...(context.state.game as Game) }
       game.events.find((e) => e.id === event.id)!.acknowledged = true
-      game.prngState = getState()
       repository.saveGame(game)
       context.commit("setGameState", { game })
     },
@@ -112,7 +103,7 @@ export function ActionFactory(router: Router, repository: Repository) {
     applyEffects(context: Context, payload: { changes: Change[] }) {
       const affectedContext = { dispatch: context.dispatch, values: createBaseValues(context.state.game!.values) }
       applyEffects(affectedContext, payload.changes)
-      const game = { ...context.state.game, values: affectedContext.values, prngState: getState() } as Game
+      const game = { ...context.state.game, values: affectedContext.values } as Game
       repository.saveGame(game)
       context.commit("setGameState", { game })
     },

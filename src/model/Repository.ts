@@ -2,7 +2,7 @@ import { Game, GameId, initGame } from "../game"
 import { API } from "./api"
 import { LawId } from "../laws"
 import { Event } from "../events"
-import { getState } from "../lib/random"
+import { getState, seedWithGame } from "../lib/random"
 
 interface Logger {
   warn: (msg: string, details?: unknown) => void
@@ -26,6 +26,7 @@ export default function RepositoryFactory({
 }) {
   return {
     async createGame(game: Game): Promise<Game> {
+      seedWithGame(game)
       storage.setItem("game", JSON.stringify(game))
 
       try {
@@ -43,15 +44,18 @@ export default function RepositoryFactory({
       if (storedItem) {
         const storedGame = JSON.parse(storedItem)
         if (storedGame.id === id) {
+          seedWithGame(storedGame)
           return initGame(storedGame, id)
         }
       }
 
       const storedGame = await api.loadGame(id)
+      seedWithGame(storedGame)
       return initGame(storedGame, id)
     },
 
     async saveGame(game: Game): Promise<void> {
+      game.prngState = getState()
       storage.setItem("game", JSON.stringify(game))
       try {
         api.saveGame(game) // We don't await here, b/c saving could take place in the background and can even be retried later
