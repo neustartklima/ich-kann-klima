@@ -16,6 +16,7 @@ import {
 } from "./PeekTools"
 import { allLaws, Law } from "../laws"
 import Citation from "./Citation.vue"
+import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
 import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
@@ -24,6 +25,7 @@ import { Event, allEvents } from "../events"
 export default defineComponent({
   components: {
     Citation,
+    PeekChart,
   },
 
   setup() {
@@ -152,6 +154,12 @@ export default defineComponent({
   <details class="peekData">
     <summary @click="unselect()" class="clickable">Peek</summary>
     <div v-if="selectedLaw" class="Details">
+      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2emissions" />
+      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="popularity" />
+      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="stateDebt" />
+      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2budget" />
+    </div>
+    <div v-if="selectedLaw" class="Details">
       <div class="Title">{{ selectedLaw.title }}</div>
       <div class="Description">{{ selectedLaw.description }}</div>
       <div class="SectionHead">Details:</div>
@@ -276,7 +284,8 @@ $lightBackground: #fff5dd;
 
   .paramsList,
   .lawList,
-  .eventList {
+  .eventList,
+  .Details {
     min-width: 32em;
     max-height: 95vh;
     overflow-y: scroll;

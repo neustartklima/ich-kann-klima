@@ -33,11 +33,13 @@
   },
   "dependencies": {
     "@types/seedrandom": "^3.0.1",
+    "apexcharts": "^3.29.0",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "showdown": "^1.9.1",
     "uuid": "^8.3.2",
     "vue": "^3.1.5",
+    "vue3-apexcharts": "^1.4.1",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
