@@ -39,7 +39,6 @@ export default defineComponent({
 
   data() {
     return {
-      selectedTable: "laws" as "laws" | "events",
       lawsSortCol: "state" as LawCol,
       lawsSortDir: 1,
       eventsSortCol: "probability" as EventCol,
@@ -47,6 +46,11 @@ export default defineComponent({
       lawSelected: undefined as string | undefined,
       eventSelected: undefined as string | undefined,
       paramSelected: undefined as ParamKey | undefined,
+      showDetails: true as boolean,
+      showCharts: true as boolean,
+      showParams: true as boolean,
+      showLaws: true as boolean,
+      showEvents: false as boolean,
     }
   },
   methods: {
@@ -65,6 +69,14 @@ export default defineComponent({
         this.eventsSortDir = 1
       }
       this.eventsSortCol = column
+    },
+    toggleLawList() {
+      this.showLaws = !this.showLaws
+      if (this.showLaws) this.showEvents = false
+    },
+    toggleEventList() {
+      this.showEvents = !this.showEvents
+      if (this.showEvents) this.showLaws = false
     },
     selectLaw(id: string | undefined) {
       this.unselect()
@@ -153,13 +165,20 @@ export default defineComponent({
 <template>
   <details class="peekData">
     <summary @click="unselect()" class="clickable">Peek</summary>
-    <div v-if="selectedLaw" class="Details">
+    <div class="Menu">
+      <a @click="showCharts = !showCharts" class="clickable" :class="showCharts ? 'selected' : ''">Charts</a>&nbsp;
+      <a @click="showDetails = !showDetails" class="clickable" :class="showDetails ? 'selected' : ''">Details</a>&nbsp;
+      <a @click="showParams = !showParams" class="clickable" :class="showParams ? 'selected' : ''">Params</a>&nbsp;
+      <a @click="toggleLawList()" class="clickable" :class="showLaws ? 'selected' : ''">Laws</a>&nbsp;
+      <a @click="toggleEventList()" class="clickable" :class="showEvents ? 'selected' : ''">Events</a>&nbsp;
+    </div>
+    <div v-if="selectedLaw && showCharts" class="Details sidebyside">
       <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2emissions" />
       <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="popularity" />
       <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="stateDebt" />
       <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2budget" />
     </div>
-    <div v-if="selectedLaw" class="Details">
+    <div v-if="selectedLaw && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedLaw.title }}</div>
       <div class="Description">{{ selectedLaw.description }}</div>
       <div class="SectionHead">Details:</div>
@@ -169,7 +188,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in citationsOfLaw" :key="pos" :citation="citation" />
     </div>
-    <div v-if="selectedEvent" class="Details">
+    <div v-if="selectedEvent && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedEvent.title }}</div>
       <div class="Description">{{ selectedEvent.description }}</div>
       <div class="SectionHead">Details:</div>
@@ -179,7 +198,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in selectedEvent?.citations" :key="pos" :citation="citation" />
     </div>
-    <div v-if="selectedParam" class="Details">
+    <div v-if="selectedParam && showDetails" class="Details sidebyside">
       <div class="Title">{{ paramSelected }} [{{ selectedParam.unit }}]</div>
       <div v-if="wParam">Initial value: {{ wParam.initialValue }} {{ wParam.unit }}</div>
       <div v-if="cParam && cParam.shouldInitiallyBe">
@@ -196,7 +215,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in selectedParam.citations" :key="pos" :citation="citation" />
     </div>
-    <div class="paramsList">
+    <div v-if="showParams" class="paramsList sidebyside">
       <table>
         <tr v-for="row in sortedValues" :key="row.id" class="clickable" :class="row.class" @click="selectParam(row.id)">
           <td>{{ row.id }}</td>
@@ -206,45 +225,38 @@ export default defineComponent({
         </tr>
       </table>
     </div>
-    <div>
-      <table class="buttonlist">
+    <div v-if="showLaws" class="lawList sidebyside">
+      <table>
         <tr>
-          <td class="clickable lawButton" :class="selectedTable" @click="selectedTable = 'laws'">Laws</td>
-          <td class="clickable eventButton" :class="selectedTable" @click="selectedTable = 'events'">Events</td>
+          <th @click="sortLaws('state')" class="clickable">S</th>
+          <th @click="sortLaws('id')" class="clickable">ID</th>
+          <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
+        </tr>
+        <tr v-for="law in sortedLaws" :key="law.id" class="clickable" :class="law.state" @click="selectLaw(law.id)">
+          <td>{{ law.state }}</td>
+          <td>{{ law.id }}</td>
+          <td class="priocol">{{ law.priority }}</td>
         </tr>
       </table>
-      <div class="lawList">
-        <table v-if="selectedTable === 'laws'">
-          <tr>
-            <th @click="sortLaws('state')" class="clickable">S</th>
-            <th @click="sortLaws('id')" class="clickable">ID</th>
-            <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
-          </tr>
-          <tr v-for="law in sortedLaws" :key="law.id" class="clickable" :class="law.state" @click="selectLaw(law.id)">
-            <td>{{ law.state }}</td>
-            <td>{{ law.id }}</td>
-            <td class="priocol">{{ law.priority }}</td>
-          </tr>
-        </table>
-      </div>
-      <div class="eventList">
-        <table v-if="selectedTable === 'events'">
-          <tr>
-            <th @click="sortEvents('id')" class="clickable">ID</th>
-            <th @click="sortEvents('probability')" class="clickable priocol">Probability</th>
-          </tr>
-          <tr v-for="event in sortedEvents" :key="event.id" class="clickable" @click="selectEvent(event.id)">
-            <td>{{ event.id }}</td>
-            <td class="priocol">{{ event.probability }}</td>
-          </tr>
-        </table>
-      </div>
+    </div>
+    <div v-if="showEvents" class="eventList sidebyside">
+      <table>
+        <tr>
+          <th @click="sortEvents('id')" class="clickable">ID</th>
+          <th @click="sortEvents('probability')" class="clickable priocol">Probability</th>
+        </tr>
+        <tr v-for="event in sortedEvents" :key="event.id" class="clickable" @click="selectEvent(event.id)">
+          <td>{{ event.id }}</td>
+          <td class="priocol">{{ event.probability }}</td>
+        </tr>
+      </table>
     </div>
   </details>
 </template>
 
 <style lang="scss" scoped>
 $hover: #c0c0c0;
+$selected: #e0e0e0;
 $shadedBackground: #f0e7d0;
 $sectionBackground: #f0e7d0;
 $lightBackground: #fff5dd;
@@ -252,34 +264,15 @@ $lightBackground: #fff5dd;
 .peekData {
   padding: 0 5px;
   font-size: 12px;
-  background: transparent;
+  background-color: $lightBackground;
 
-  summary {
-    background-color: $lightBackground;
+  summary,
+  .Menu {
+    text-align: right;
   }
-  > div,
-  > table {
+
+  .sidebyside {
     float: left;
-  }
-
-  .buttonlist {
-    width: 100%;
-    background-color: $lightBackground;
-    border-collapse: collapse;
-    td {
-      font-weight: bold;
-      text-align: center;
-      padding: 0.3em;
-    }
-  }
-
-  .lawButton.events {
-    background-color: $shadedBackground;
-    color: grey;
-  }
-  .eventButton.laws {
-    background-color: $shadedBackground;
-    color: grey;
   }
 
   .paramsList,
@@ -289,7 +282,6 @@ $lightBackground: #fff5dd;
     min-width: 32em;
     max-height: 95vh;
     overflow-y: scroll;
-    background-color: $lightBackground;
   }
 
   .paramsList {
@@ -297,7 +289,6 @@ $lightBackground: #fff5dd;
   }
   .Details {
     width: 35em;
-    background-color: $lightBackground;
     > * {
       margin: 0.67em 0 0.67em 0;
     }
@@ -358,6 +349,10 @@ $lightBackground: #fff5dd;
 
   &[open] {
     border: 1px solid #cccccc;
+  }
+
+  .selected {
+    background-color: $selected;
   }
 }
 </style>

@@ -48,6 +48,9 @@ export default defineComponent({
         },
         xaxis: {
           categories: chartYears,
+          labels: {
+            rotate: -90,
+          },
         },
       })
     )
