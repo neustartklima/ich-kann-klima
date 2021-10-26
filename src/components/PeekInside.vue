@@ -3,7 +3,7 @@ import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
 import { Game } from "../game"
 import { Change, ParamKey } from "../params"
-import { startYear } from "../constants"
+import { endYear, startYear } from "../constants"
 import {
   LawCol,
   getSortedLaws,
@@ -14,7 +14,7 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import { allLaws, Law } from "../laws"
+import { allLaws, Law, LawId } from "../laws"
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
@@ -30,10 +30,12 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
+    const gameYears = [...Array(endYear - startYear + 1).keys()].map((n) => n + startYear)
 
     return {
       store,
       game: computed(() => store.state.game),
+      gameYears,
     }
   },
 
@@ -47,10 +49,11 @@ export default defineComponent({
       eventSelected: undefined as string | undefined,
       paramSelected: undefined as ParamKey | undefined,
       showDetails: true as boolean,
-      showCharts: true as boolean,
+      showCharts: false as boolean,
       showParams: true as boolean,
       showLaws: true as boolean,
       showEvents: false as boolean,
+      showYears: false as boolean,
     }
   },
   methods: {
@@ -158,6 +161,14 @@ export default defineComponent({
       if (!this.game) return []
       return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
+
+    lawsInYear(): (year: number) => LawId[] {
+      if (!this.game) return () => []
+      return (year: number) => {
+        if (!this.game) return []
+        return this.game.acceptedLaws.filter((l) => l.effectiveSince === year).map((l) => l.lawId)
+      }
+    },
   },
 })
 </script>
@@ -171,6 +182,7 @@ export default defineComponent({
       <a @click="showParams = !showParams" class="clickable" :class="showParams ? 'selected' : ''">Params</a>&nbsp;
       <a @click="toggleLawList()" class="clickable" :class="showLaws ? 'selected' : ''">Laws</a>&nbsp;
       <a @click="toggleEventList()" class="clickable" :class="showEvents ? 'selected' : ''">Events</a>&nbsp;
+      <a @click="showYears = !showYears" class="clickable" :class="showYears ? 'selected' : ''">Years</a>&nbsp;
     </div>
     <div v-if="selectedLaw && showCharts" class="Details sidebyside">
       <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2emissions" />
@@ -251,6 +263,20 @@ export default defineComponent({
         </tr>
       </table>
     </div>
+    <div v-if="showYears" class="yearList sidebyside">
+      <table>
+        <template v-for="year in gameYears">
+          <tr>
+            <th>{{ year }}</th>
+          </tr>
+          <template v-for="law in lawsInYear(year)">
+            <tr>
+              <td>{{ law }}</td>
+            </tr>
+          </template>
+        </template>
+      </table>
+    </div>
   </details>
 </template>
 
@@ -278,8 +304,8 @@ $lightBackground: #fff5dd;
   .paramsList,
   .lawList,
   .eventList,
+  .yearList,
   .Details {
-    min-width: 32em;
     max-height: 95vh;
     overflow-y: scroll;
   }
@@ -287,6 +313,17 @@ $lightBackground: #fff5dd;
   .paramsList {
     background-color: $shadedBackground;
   }
+
+  .yearList {
+    th {
+      font-weight: bold;
+      text-align: left;
+    }
+    td {
+      text-indent: 10pt;
+    }
+  }
+
   .Details {
     width: 35em;
     > * {
