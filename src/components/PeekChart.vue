@@ -45,6 +45,7 @@ export default defineComponent({
       (): ApexOptions => ({
         chart: {
           id: props.paramId + "-withLawEffects",
+          animations: { enabled: false },
         },
         xaxis: {
           categories: chartYears,
