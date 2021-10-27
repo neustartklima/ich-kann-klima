@@ -1,8 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { Game, gameYears } from "../game"
-import { Change, ParamKey } from "../params"
+import { Game, GameYear, gameYears, newGame } from "../game"
+import { BaseParams, Change, ParamKey } from "../params"
 import { startYear } from "../constants"
 import {
   LawCol,
@@ -18,9 +18,10 @@ import { AcceptedLaw, allLaws, getAcceptedLaw, Law, LawId, lawIds, LawReference 
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
-import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
+import { ComputedParam, ParamDefinition, ParamsBase, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
 import { Event, allEvents } from "../events"
+import { calculateNextYear } from "../Calculator"
 
 export default defineComponent({
   components: {
@@ -116,13 +117,13 @@ export default defineComponent({
         }
       } else if (lawId) {
         const dropped = event.dataTransfer.getData("year")
-        const year: number | undefined = this.gameYears.find((y) => y == Number(dropped))
+        const year: GameYear | undefined = this.gameYears.find((y) => y == Number(dropped))
         if (year) {
           this.simulateLaw(lawId, year)
         }
       }
     },
-    simulateLaw(lawId: LawId, year: number) {
+    simulateLaw(lawId: LawId, year: GameYear) {
       this.simulatedLaws = this.simulatedLaws.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
     },
   },
@@ -201,6 +202,19 @@ export default defineComponent({
       return this.combinedLaws.map((l) => getAcceptedLaw(l))
     },
 
+    simulatedValues(): BaseParams[] {
+      const laws: AcceptedLaw[] = this.lawsToSimulate
+      const g: Game = newGame()
+
+      return this.gameYears.map((y) => {
+        while (y > g.currentYear) {
+          g.currentYear++
+          g.values = calculateNextYear(g, laws, g.currentYear)
+        }
+        return g.values
+      })
+    },
+
     lawsInYear(): (year: number) => (LawReference & { cls: string })[] {
       return (year: number) => {
         return this.combinedLaws.filter((l) => l.effectiveSince === year)
@@ -222,10 +236,10 @@ export default defineComponent({
       <a @click="showYears = !showYears" class="clickable" :class="showYears ? 'selected' : ''">Years</a>&nbsp;
     </div>
     <div v-if="showCharts" class="Details sidebyside">
-      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="co2emissions" />
-      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="popularity" />
-      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="stateDebt" />
-      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="co2budget" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="co2emissions" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="popularity" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="stateDebt" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="co2budget" />
     </div>
     <div v-if="selectedLaw && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedLaw.title }}</div>
