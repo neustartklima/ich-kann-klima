@@ -2,26 +2,13 @@
 import { computed, defineComponent, PropType } from "@vue/runtime-core"
 import { ApexOptions } from "apexcharts"
 import { calculateNextYear } from "../Calculator"
-import { endYear, startYear } from "../constants"
-import { Game } from "../game"
-import { getAcceptedLaw, Law } from "../laws"
+import { Game, gameYears, newGame } from "../game"
+import { AcceptedLaw } from "../laws"
 import { ParamKey } from "../params"
 import { useStore } from "../store"
 
-export function getParamOverYearsWithLaw(
-  game: Game | undefined,
-  law: Law | undefined,
-  years: number[],
-  param: ParamKey
-): number[] {
-  if (game === undefined || law === undefined) return []
-
-  const g: Game = { ...game }
-
-  const initialLaws = g.acceptedLaws.map(getAcceptedLaw)
-  const laws = g.acceptedLaws.some((l) => l.lawId === law.id)
-    ? initialLaws
-    : [...initialLaws, { ...law, effectiveSince: g.currentYear + 1 }]
+export function getParamOverYearsWithLaw(laws: AcceptedLaw[], years: number[], param: ParamKey): number[] {
+  const g: Game = newGame()
 
   return years.map((y) => {
     while (y > g.currentYear) {
@@ -34,13 +21,13 @@ export function getParamOverYearsWithLaw(
 
 export default defineComponent({
   props: {
-    selectedLaw: { type: Object as PropType<Law | undefined>, required: true },
+    lawsToSimulate: { type: Array as PropType<Array<AcceptedLaw>>, required: true },
     paramId: { type: String as PropType<ParamKey>, required: true },
   },
   setup(props, context) {
     const store = useStore()
     const game = computed(() => store.state.game)
-    const chartYears = [...Array(endYear - startYear + 1).keys()].map((n) => n + startYear)
+
     const chartOptions = computed(
       (): ApexOptions => ({
         chart: {
@@ -48,7 +35,7 @@ export default defineComponent({
           animations: { enabled: false },
         },
         xaxis: {
-          categories: chartYears,
+          categories: gameYears,
           labels: {
             rotate: -90,
           },
@@ -57,8 +44,8 @@ export default defineComponent({
     )
     const series = computed((): { name: string; data: number[] }[] => [
       {
-        name: props.selectedLaw?.id || "",
-        data: getParamOverYearsWithLaw(game.value, props.selectedLaw, chartYears, props.paramId),
+        name: "Simulated " + props.paramId,
+        data: getParamOverYearsWithLaw(props.lawsToSimulate, gameYears, props.paramId),
       },
     ])
 

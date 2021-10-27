@@ -10,6 +10,7 @@ export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number)
       if (b.treatAfterLabels?.some((lbl) => a.labels?.includes(lbl))) return -1
       return 0
     })
+    .filter((law) => law.effectiveSince <= year)
     .forEach((law) => {
       const effects = law.effects({ ...game, values }, law.effectiveSince, year)
       applyEffects({ dispatch: () => undefined, values }, effects)

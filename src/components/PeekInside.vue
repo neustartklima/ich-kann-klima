@@ -14,7 +14,7 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import { allLaws, Law, LawId, lawIds, LawReference } from "../laws"
+import { AcceptedLaw, allLaws, getAcceptedLaw, Law, LawId, lawIds, LawReference } from "../laws"
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
@@ -189,14 +189,21 @@ export default defineComponent({
       return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
 
-    lawsInYear(): (year: number) => { lawId: LawId; cls: string }[] {
+    combinedLaws(): (LawReference & { cls: string })[] {
       const simLaws = this.simulatedLaws.map((l) => ({ ...l, cls: "simulated" }))
       const accLaws = (this.game?.acceptedLaws || [])
         .filter((al) => !simLaws.some((sl) => sl.lawId === al.lawId))
         .map((l) => ({ ...l, cls: "accepted" }))
-      const combinedLaws = accLaws.concat(simLaws)
+      return accLaws.concat(simLaws)
+    },
+
+    lawsToSimulate(): AcceptedLaw[] {
+      return this.combinedLaws.map((l) => getAcceptedLaw(l))
+    },
+
+    lawsInYear(): (year: number) => (LawReference & { cls: string })[] {
       return (year: number) => {
-        return combinedLaws.filter((l) => l.effectiveSince === year)
+        return this.combinedLaws.filter((l) => l.effectiveSince === year)
       }
     },
   },
@@ -214,11 +221,11 @@ export default defineComponent({
       <a @click="toggleEventList()" class="clickable" :class="showEvents ? 'selected' : ''">Events</a>&nbsp;
       <a @click="showYears = !showYears" class="clickable" :class="showYears ? 'selected' : ''">Years</a>&nbsp;
     </div>
-    <div v-if="selectedLaw && showCharts" class="Details sidebyside">
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2emissions" />
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="popularity" />
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="stateDebt" />
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2budget" />
+    <div v-if="showCharts" class="Details sidebyside">
+      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="co2emissions" />
+      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="popularity" />
+      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="stateDebt" />
+      <PeekChart :lawsToSimulate="lawsToSimulate" paramId="co2budget" />
     </div>
     <div v-if="selectedLaw && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedLaw.title }}</div>
