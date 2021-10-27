@@ -1,9 +1,9 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { Game } from "../game"
+import { Game, gameYears } from "../game"
 import { Change, ParamKey } from "../params"
-import { endYear, startYear } from "../constants"
+import { startYear } from "../constants"
 import {
   LawCol,
   getSortedLaws,
@@ -14,7 +14,7 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import { allLaws, Law, LawId } from "../laws"
+import { allLaws, Law, LawId, lawIds, LawReference } from "../laws"
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
@@ -30,7 +30,6 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
-    const gameYears = [...Array(endYear - startYear + 1).keys()].map((n) => n + startYear)
 
     return {
       store,
@@ -54,6 +53,7 @@ export default defineComponent({
       showLaws: true as boolean,
       showEvents: false as boolean,
       showYears: false as boolean,
+      simulatedLaws: [] as LawReference[],
     }
   },
   methods: {
@@ -97,6 +97,33 @@ export default defineComponent({
       this.lawSelected = undefined
       this.eventSelected = undefined
       this.paramSelected = undefined
+    },
+    dragStart(event: DragEvent, data: { lawId?: LawId; year?: number }) {
+      const { lawId, year } = data
+      if (!event.dataTransfer) return
+      event.dataTransfer.dropEffect = "link"
+      if (lawId) event.dataTransfer.setData("lawId", lawId)
+      if (year) event.dataTransfer.setData("year", year.toString())
+    },
+    onDrop(event: DragEvent, data: { lawId?: LawId; year?: number }) {
+      const { lawId, year } = data
+      if (!event.dataTransfer) return
+      if (year) {
+        const dropped = event.dataTransfer.getData("lawId")
+        const lawId: LawId | undefined = lawIds.find((id) => id === dropped)
+        if (lawId) {
+          this.simulateLaw(lawId, year)
+        }
+      } else if (lawId) {
+        const dropped = event.dataTransfer.getData("year")
+        const year: number | undefined = this.gameYears.find((y) => y == Number(dropped))
+        if (year) {
+          this.simulateLaw(lawId, year)
+        }
+      }
+    },
+    simulateLaw(lawId: LawId, year: number) {
+      this.simulatedLaws = this.simulatedLaws.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
     },
   },
 
@@ -162,11 +189,14 @@ export default defineComponent({
       return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
 
-    lawsInYear(): (year: number) => LawId[] {
-      if (!this.game) return () => []
+    lawsInYear(): (year: number) => { lawId: LawId; cls: string }[] {
+      const simLaws = this.simulatedLaws.map((l) => ({ ...l, cls: "simulated" }))
+      const accLaws = (this.game?.acceptedLaws || [])
+        .filter((al) => !simLaws.some((sl) => sl.lawId === al.lawId))
+        .map((l) => ({ ...l, cls: "accepted" }))
+      const combinedLaws = accLaws.concat(simLaws)
       return (year: number) => {
-        if (!this.game) return []
-        return this.game.acceptedLaws.filter((l) => l.effectiveSince === year).map((l) => l.lawId)
+        return combinedLaws.filter((l) => l.effectiveSince === year)
       }
     },
   },
@@ -244,7 +274,18 @@ export default defineComponent({
           <th @click="sortLaws('id')" class="clickable">ID</th>
           <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
         </tr>
-        <tr v-for="law in sortedLaws" :key="law.id" class="clickable" :class="law.state" @click="selectLaw(law.id)">
+        <tr
+          v-for="law in sortedLaws"
+          :key="law.id"
+          class="clickable"
+          :class="law.state"
+          @click="selectLaw(law.id)"
+          draggable="true"
+          @dragstart="dragStart($event, { lawId: law.id })"
+          @drop.prevent="onDrop($event, { lawId: law.id })"
+          @dragover.prevent
+          @dragenter.prevent
+        >
           <td>{{ law.state }}</td>
           <td>{{ law.id }}</td>
           <td class="priocol">{{ law.priority }}</td>
@@ -265,15 +306,28 @@ export default defineComponent({
     </div>
     <div v-if="showYears" class="yearList sidebyside">
       <table>
-        <template v-for="year in gameYears">
-          <tr>
+        <template v-for="year in gameYears" :key="year">
+          <tr
+            draggable="true"
+            @dragstart="dragStart($event, { year })"
+            @drop.prevent="onDrop($event, { year })"
+            @dragover.prevent
+            @dragenter.prevent
+          >
             <th>{{ year }}</th>
           </tr>
-          <template v-for="law in lawsInYear(year)">
-            <tr>
-              <td>{{ law }}</td>
-            </tr>
-          </template>
+          <tr
+            v-for="{ lawId, cls } in lawsInYear(year)"
+            :key="lawId"
+            :class="cls"
+            draggable="true"
+            @dragstart="dragStart($event, { lawId })"
+            @drop.prevent="onDrop($event, { lawId })"
+            @dragover.prevent
+            @dragenter.prevent
+          >
+            <td>{{ lawId }}</td>
+          </tr>
         </template>
       </table>
     </div>
@@ -321,6 +375,12 @@ $lightBackground: #fff5dd;
     }
     td {
       text-indent: 10pt;
+    }
+    .accepted {
+      color: blue;
+    }
+    .simulated {
+      color: brown;
     }
   }
 

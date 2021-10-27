@@ -144,6 +144,7 @@ const allLawsObj = {
 }
 
 export type LawId = keyof typeof allLawsObj
+export const lawIds = Object.keys(allLawsObj) as LawId[]
 
 export type Law = LawDefinition & {
   id: LawId

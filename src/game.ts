@@ -1,4 +1,4 @@
-import { maxProposedLaws, probabilityThatEventOccurs, startYear } from "./constants"
+import { endYear, maxProposedLaws, probabilityThatEventOccurs, startYear } from "./constants"
 import { allEvents, Event, EventReference } from "./events"
 import { allLaws, Law, LawId, LawReference } from "./laws"
 import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from "./params"
@@ -67,6 +67,10 @@ export function newGame(laws: Law[] = allLaws, initialData: GameDefinition = ini
     .map((law) => ({ lawId: law.id, effectiveSince: game.currentYear }))
   return game
 }
+
+export type GameYear = number
+
+export const gameYears: GameYear[] = [...Array(endYear - startYear + 1).keys()].map((n) => n + startYear)
 
 export function prepareNextStep(
   game: Game,
