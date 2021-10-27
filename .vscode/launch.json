@@ -35,6 +35,13 @@
       "request": "attach",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}",
+    },
+    {
+      "name": "Launch Firefox",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
     }
   ]
 }
