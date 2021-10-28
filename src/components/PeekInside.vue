@@ -1,8 +1,8 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { Game } from "../game"
-import { Change, ParamKey } from "../params"
+import { Game, GameYear, gameYears, newGame } from "../game"
+import { BaseParams, Change, ParamKey } from "../params"
 import { startYear } from "../constants"
 import {
   LawCol,
@@ -14,13 +14,14 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import { allLaws, Law } from "../laws"
+import { AcceptedLaw, allLaws, getAcceptedLaw, Law, LawId, lawIds, LawReference } from "../laws"
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
-import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
+import { ComputedParam, ParamDefinition, ParamsBase, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
 import { Event, allEvents } from "../events"
+import { calculateNextYear } from "../Calculator"
 
 export default defineComponent({
   components: {
@@ -34,12 +35,12 @@ export default defineComponent({
     return {
       store,
       game: computed(() => store.state.game),
+      gameYears,
     }
   },
 
   data() {
     return {
-      selectedTable: "laws" as "laws" | "events",
       lawsSortCol: "state" as LawCol,
       lawsSortDir: 1,
       eventsSortCol: "probability" as EventCol,
@@ -47,6 +48,13 @@ export default defineComponent({
       lawSelected: undefined as string | undefined,
       eventSelected: undefined as string | undefined,
       paramSelected: undefined as ParamKey | undefined,
+      showDetails: true as boolean,
+      showCharts: false as boolean,
+      showParams: true as boolean,
+      showLaws: true as boolean,
+      showEvents: false as boolean,
+      showYears: false as boolean,
+      simulatedLaws: [] as LawReference[],
     }
   },
   methods: {
@@ -66,6 +74,14 @@ export default defineComponent({
       }
       this.eventsSortCol = column
     },
+    toggleLawList() {
+      this.showLaws = !this.showLaws
+      if (this.showLaws) this.showEvents = false
+    },
+    toggleEventList() {
+      this.showEvents = !this.showEvents
+      if (this.showEvents) this.showLaws = false
+    },
     selectLaw(id: string | undefined) {
       this.unselect()
       this.lawSelected = id
@@ -82,6 +98,33 @@ export default defineComponent({
       this.lawSelected = undefined
       this.eventSelected = undefined
       this.paramSelected = undefined
+    },
+    dragStart(event: DragEvent, data: { lawId?: LawId; year?: number }) {
+      const { lawId, year } = data
+      if (!event.dataTransfer) return
+      event.dataTransfer.dropEffect = "link"
+      if (lawId) event.dataTransfer.setData("lawId", lawId)
+      if (year) event.dataTransfer.setData("year", year.toString())
+    },
+    onDrop(event: DragEvent, data: { lawId?: LawId; year?: number }) {
+      const { lawId, year } = data
+      if (!event.dataTransfer) return
+      if (year) {
+        const dropped = event.dataTransfer.getData("lawId")
+        const lawId: LawId | undefined = lawIds.find((id) => id === dropped)
+        if (lawId) {
+          this.simulateLaw(lawId, year)
+        }
+      } else if (lawId) {
+        const dropped = event.dataTransfer.getData("year")
+        const year: GameYear | undefined = this.gameYears.find((y) => y == Number(dropped))
+        if (year) {
+          this.simulateLaw(lawId, year)
+        }
+      }
+    },
+    simulateLaw(lawId: LawId, year: GameYear) {
+      this.simulatedLaws = this.simulatedLaws.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
     },
   },
 
@@ -146,6 +189,37 @@ export default defineComponent({
       if (!this.game) return []
       return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
+
+    combinedLaws(): (LawReference & { cls: string })[] {
+      const simLaws = this.simulatedLaws.map((l) => ({ ...l, cls: "simulated" }))
+      const accLaws = (this.game?.acceptedLaws || [])
+        .filter((al) => !simLaws.some((sl) => sl.lawId === al.lawId))
+        .map((l) => ({ ...l, cls: "accepted" }))
+      return accLaws.concat(simLaws)
+    },
+
+    lawsToSimulate(): AcceptedLaw[] {
+      return this.combinedLaws.map((l) => getAcceptedLaw(l))
+    },
+
+    simulatedValues(): BaseParams[] {
+      const laws: AcceptedLaw[] = this.lawsToSimulate
+      const g: Game = newGame()
+
+      return this.gameYears.map((y) => {
+        while (y > g.currentYear) {
+          g.currentYear++
+          g.values = calculateNextYear(g, laws, g.currentYear)
+        }
+        return g.values
+      })
+    },
+
+    lawsInYear(): (year: number) => (LawReference & { cls: string })[] {
+      return (year: number) => {
+        return this.combinedLaws.filter((l) => l.effectiveSince === year)
+      }
+    },
   },
 })
 </script>
@@ -153,13 +227,21 @@ export default defineComponent({
 <template>
   <details class="peekData">
     <summary @click="unselect()" class="clickable">Peek</summary>
-    <div v-if="selectedLaw" class="Details">
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2emissions" />
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="popularity" />
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="stateDebt" />
-      <PeekChart :game="game" :selectedLaw="selectedLaw" paramId="co2budget" />
+    <div class="Menu">
+      <a @click="showCharts = !showCharts" class="clickable" :class="showCharts ? 'selected' : ''">Charts</a>&nbsp;
+      <a @click="showDetails = !showDetails" class="clickable" :class="showDetails ? 'selected' : ''">Details</a>&nbsp;
+      <a @click="showParams = !showParams" class="clickable" :class="showParams ? 'selected' : ''">Params</a>&nbsp;
+      <a @click="toggleLawList()" class="clickable" :class="showLaws ? 'selected' : ''">Laws</a>&nbsp;
+      <a @click="toggleEventList()" class="clickable" :class="showEvents ? 'selected' : ''">Events</a>&nbsp;
+      <a @click="showYears = !showYears" class="clickable" :class="showYears ? 'selected' : ''">Years</a>&nbsp;
     </div>
-    <div v-if="selectedLaw" class="Details">
+    <div v-if="showCharts" class="Details sidebyside">
+      <PeekChart :simulatedValues="simulatedValues" paramId="co2emissions" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="popularity" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="stateDebt" />
+      <PeekChart :simulatedValues="simulatedValues" paramId="co2budget" />
+    </div>
+    <div v-if="selectedLaw && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedLaw.title }}</div>
       <div class="Description">{{ selectedLaw.description }}</div>
       <div class="SectionHead">Details:</div>
@@ -169,7 +251,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in citationsOfLaw" :key="pos" :citation="citation" />
     </div>
-    <div v-if="selectedEvent" class="Details">
+    <div v-if="selectedEvent && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedEvent.title }}</div>
       <div class="Description">{{ selectedEvent.description }}</div>
       <div class="SectionHead">Details:</div>
@@ -179,7 +261,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in selectedEvent?.citations" :key="pos" :citation="citation" />
     </div>
-    <div v-if="selectedParam" class="Details">
+    <div v-if="selectedParam && showDetails" class="Details sidebyside">
       <div class="Title">{{ paramSelected }} [{{ selectedParam.unit }}]</div>
       <div v-if="wParam">Initial value: {{ wParam.initialValue }} {{ wParam.unit }}</div>
       <div v-if="cParam && cParam.shouldInitiallyBe">
@@ -196,7 +278,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in selectedParam.citations" :key="pos" :citation="citation" />
     </div>
-    <div class="paramsList">
+    <div v-if="showParams" class="paramsList sidebyside">
       <table>
         <tr v-for="row in sortedValues" :key="row.id" class="clickable" :class="row.class" @click="selectParam(row.id)">
           <td>{{ row.id }}</td>
@@ -206,45 +288,76 @@ export default defineComponent({
         </tr>
       </table>
     </div>
-    <div>
-      <table class="buttonlist">
+    <div v-if="showLaws" class="lawList sidebyside">
+      <table>
         <tr>
-          <td class="clickable lawButton" :class="selectedTable" @click="selectedTable = 'laws'">Laws</td>
-          <td class="clickable eventButton" :class="selectedTable" @click="selectedTable = 'events'">Events</td>
+          <th @click="sortLaws('state')" class="clickable">S</th>
+          <th @click="sortLaws('id')" class="clickable">ID</th>
+          <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
+        </tr>
+        <tr
+          v-for="law in sortedLaws"
+          :key="law.id"
+          class="clickable"
+          :class="law.state"
+          @click="selectLaw(law.id)"
+          draggable="true"
+          @dragstart="dragStart($event, { lawId: law.id })"
+          @drop.prevent="onDrop($event, { lawId: law.id })"
+          @dragover.prevent
+          @dragenter.prevent
+        >
+          <td>{{ law.state }}</td>
+          <td>{{ law.id }}</td>
+          <td class="priocol">{{ law.priority }}</td>
         </tr>
       </table>
-      <div class="lawList">
-        <table v-if="selectedTable === 'laws'">
-          <tr>
-            <th @click="sortLaws('state')" class="clickable">S</th>
-            <th @click="sortLaws('id')" class="clickable">ID</th>
-            <th @click="sortLaws('priority')" class="clickable priocol">Priority</th>
+    </div>
+    <div v-if="showEvents" class="eventList sidebyside">
+      <table>
+        <tr>
+          <th @click="sortEvents('id')" class="clickable">ID</th>
+          <th @click="sortEvents('probability')" class="clickable priocol">Probability</th>
+        </tr>
+        <tr v-for="event in sortedEvents" :key="event.id" class="clickable" @click="selectEvent(event.id)">
+          <td>{{ event.id }}</td>
+          <td class="priocol">{{ event.probability }}</td>
+        </tr>
+      </table>
+    </div>
+    <div v-if="showYears" class="yearList sidebyside">
+      <table>
+        <template v-for="year in gameYears" :key="year">
+          <tr
+            draggable="true"
+            @dragstart="dragStart($event, { year })"
+            @drop.prevent="onDrop($event, { year })"
+            @dragover.prevent
+            @dragenter.prevent
+          >
+            <th>{{ year }}</th>
           </tr>
-          <tr v-for="law in sortedLaws" :key="law.id" class="clickable" :class="law.state" @click="selectLaw(law.id)">
-            <td>{{ law.state }}</td>
-            <td>{{ law.id }}</td>
-            <td class="priocol">{{ law.priority }}</td>
+          <tr
+            v-for="{ lawId, cls } in lawsInYear(year)"
+            :key="lawId"
+            :class="cls"
+            draggable="true"
+            @dragstart="dragStart($event, { lawId })"
+            @drop.prevent="onDrop($event, { lawId })"
+            @dragover.prevent
+            @dragenter.prevent
+          >
+            <td>{{ lawId }}</td>
           </tr>
-        </table>
-      </div>
-      <div class="eventList">
-        <table v-if="selectedTable === 'events'">
-          <tr>
-            <th @click="sortEvents('id')" class="clickable">ID</th>
-            <th @click="sortEvents('probability')" class="clickable priocol">Probability</th>
-          </tr>
-          <tr v-for="event in sortedEvents" :key="event.id" class="clickable" @click="selectEvent(event.id)">
-            <td>{{ event.id }}</td>
-            <td class="priocol">{{ event.probability }}</td>
-          </tr>
-        </table>
-      </div>
+        </template>
+      </table>
     </div>
   </details>
 </template>
 
 <style lang="scss" scoped>
 $hover: #c0c0c0;
+$selected: #e0e0e0;
 $shadedBackground: #f0e7d0;
 $sectionBackground: #f0e7d0;
 $lightBackground: #fff5dd;
@@ -252,52 +365,48 @@ $lightBackground: #fff5dd;
 .peekData {
   padding: 0 5px;
   font-size: 12px;
-  background: transparent;
+  background-color: $lightBackground;
 
-  summary {
-    background-color: $lightBackground;
+  summary,
+  .Menu {
+    text-align: right;
   }
-  > div,
-  > table {
+
+  .sidebyside {
     float: left;
-  }
-
-  .buttonlist {
-    width: 100%;
-    background-color: $lightBackground;
-    border-collapse: collapse;
-    td {
-      font-weight: bold;
-      text-align: center;
-      padding: 0.3em;
-    }
-  }
-
-  .lawButton.events {
-    background-color: $shadedBackground;
-    color: grey;
-  }
-  .eventButton.laws {
-    background-color: $shadedBackground;
-    color: grey;
   }
 
   .paramsList,
   .lawList,
   .eventList,
+  .yearList,
   .Details {
-    min-width: 32em;
     max-height: 95vh;
     overflow-y: scroll;
-    background-color: $lightBackground;
   }
 
   .paramsList {
     background-color: $shadedBackground;
   }
+
+  .yearList {
+    th {
+      font-weight: bold;
+      text-align: left;
+    }
+    td {
+      text-indent: 10pt;
+    }
+    .accepted {
+      color: blue;
+    }
+    .simulated {
+      color: brown;
+    }
+  }
+
   .Details {
     width: 35em;
-    background-color: $lightBackground;
     > * {
       margin: 0.67em 0 0.67em 0;
     }
@@ -358,6 +467,10 @@ $lightBackground: #fff5dd;
 
   &[open] {
     border: 1px solid #cccccc;
+  }
+
+  .selected {
+    background-color: $selected;
   }
 }
 </style>

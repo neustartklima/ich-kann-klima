@@ -59,7 +59,7 @@ export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
 }
 
 export type LawRow = {
-  id: string
+  id: LawId
   priority: string
   state: string
 }
