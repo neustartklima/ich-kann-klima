@@ -69,3 +69,8 @@ This can be done by selecting "Inspect" or "Untersuchen" in the context menu of 
 Then locate the local storage (firefox: "Web-Storage", chrome: "Application").
 It should contain a key `game`.
 Add a key (double click or plus sign) and change it to `devMode` and change its value to `true`.
+
+## Current Work
+
+Issues to work on can be found with this query:
+[open, not marked with `later`, and not assigned](https://github.com/neustartklima/ich-kann-klima/issues?q=is%3Aissue+is%3Aopen+-label%3Alater+no%3Aassignee+sort%3Aupdated-desc).
