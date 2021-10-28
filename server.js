@@ -28544,9 +28544,10 @@ var allLawsObj = {
   ForschungEmissionsfreieStahlproduktion: ForschungEmissionsfreieStahlproduktion_default,
   ForschungEmissionsfreieZementproduktion: ForschungEmissionsfreieZementproduktion_default
 };
+var lawIds = Object.keys(allLawsObj);
 var allLaws = lawList(allLawsObj);
-function idsToLaws(lawIds) {
-  return lawIds.map((lawId) => {
+function idsToLaws(lawIds2) {
+  return lawIds2.map((lawId) => {
     const law = allLaws.find((law2) => law2.id === lawId);
     if (!law) {
       console.error(`Inconsistency: Proposed law #${lawId} not found`);
