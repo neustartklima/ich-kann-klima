@@ -7,4 +7,15 @@
     "*.json": "ndjson"
   },
   "svg.preview.background": "transparent"
+  "githubIssues.queries": [ 
+        {
+            "label": "My Issues",
+            "query": "default"
+        },
+        {
+            "label": "Suggested",
+            "query": "state:open repo:${owner}/${repository} -label:later no:assignee sort:updated-desc"
+
+        }
+    ],
 }
