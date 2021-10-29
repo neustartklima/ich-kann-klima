@@ -294,6 +294,7 @@ export default defineComponent({
       <a @click="showYears = !showYears" class="clickable" :class="showYears ? 'selected' : ''">Years</a>&nbsp;
     </div>
     <div v-if="showCharts" class="Details sidebyside">
+      <PeekChart v-if="paramSelected" :simulatedValues="simulatedValues" :paramId="paramSelected" />
       <PeekChart :simulatedValues="simulatedValues" paramId="co2emissions" />
       <PeekChart :simulatedValues="simulatedValues" paramId="popularity" />
       <PeekChart :simulatedValues="simulatedValues" paramId="stateDebt" />
