@@ -1,3 +1,5 @@
+![Node.js CI](https://github.com/neustartklima/ich-kann-klima/actions/workflows/node.js.yml/badge.svg)
+
 # Ich kann Klima
 
 ## Das Klimawahl Challenge Game
