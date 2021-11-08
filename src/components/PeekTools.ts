@@ -1,7 +1,7 @@
 import { BaseParams, Change, createBaseValues, applyEffects, paramList, modify } from "../params"
 import { Game } from "../game"
 import { Law, LawId } from "../laws"
-import { Event } from "../events"
+import { Event, EventId } from "../events"
 
 type Row<ColKey extends string> = { [P in ColKey]: number | string }
 function rowCompare<ColKey extends string>(a: Row<ColKey>, b: Row<ColKey>, ...cols: ColKey[]) {
@@ -87,7 +87,7 @@ export function getSortedLaws(game: Game, sortCol: LawCol, sortDir: number, allL
 }
 
 export type EventRow = {
-  id: string
+  id: EventId
   probability: string
 }
 
