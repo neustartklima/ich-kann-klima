@@ -8,7 +8,7 @@ import { BaseParams, ParamKey } from "../params"
 export default defineComponent({
   components: { apexchart: VueApexCharts },
   props: {
-    simulatedValues: { type: Array as PropType<Array<BaseParams>>, required: true },
+    chartData: { type: Object as PropType<{ values: BaseParams[]; changes: BaseParams[] }>, required: true },
     paramId: { type: String as PropType<ParamKey>, required: true },
     selectedYear: { type: Number as PropType<GameYear> },
   },
@@ -19,6 +19,10 @@ export default defineComponent({
         chart: {
           id: props.paramId + "-withLawEffects",
           animations: { enabled: false },
+          stacked: true,
+        },
+        legend: {
+          show: false,
         },
         xaxis: {
           categories: gameYears,
@@ -28,10 +32,26 @@ export default defineComponent({
         },
       })
     )
+
+    const pairs = computed((): { value: number; change: number }[] =>
+      props.chartData.values.map((v, i) => ({
+        value: v[props.paramId],
+        change: props.chartData.changes[i][props.paramId],
+      }))
+    )
+
     const series = computed((): { name: string; data: number[] }[] => [
       {
         name: "Simulated " + props.paramId,
-        data: props.simulatedValues.map((v) => Math.round(v[props.paramId])),
+        data: pairs.value.map((p) => Math.round(p.change * p.value > 0 ? p.value - p.change : p.value)),
+      },
+      {
+        name: "Gains of " + props.paramId + " by selected law",
+        data: pairs.value.map((p) => Math.round(p.change * p.value > 0 ? p.change : 0)),
+      },
+      {
+        name: "Losses of " + props.paramId + " by selected law",
+        data: pairs.value.map((p) => Math.round(p.change * p.value < 0 ? -p.change : 0)),
       },
     ])
 

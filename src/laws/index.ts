@@ -55,6 +55,7 @@ import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugu
 
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
+import { BaseParams, ParamKey, paramKeys } from "../params"
 
 const allLawsObj = {
   AllesBleibtBeimAlten,
@@ -187,3 +188,26 @@ export function idsToLaws(lawIds: LawId[]): Law[] {
     })
     .filter((a) => a)
 }
+
+/** A set of parameters per law for some laws. */
+export type ParamsOfLaws = { [lawId in LawId]?: BaseParams }
+
+/** Helper function to generate ParamsOfLaws for some laws.
+ *
+ * @param laws The laws for which to generate the params.
+ * @param perLaw A function called once for each law generating an intermediate result.
+ * @param perParam A function called once for each law and paramKey.
+ * @returns A ParamsOfLaws containing the results.
+ */
+export const getParamsOfLaws = <L extends Law, R>(
+  laws: L[],
+  perLaw: (law: L) => R,
+  perParam: (law: L, lawResult: R, paramKey: ParamKey) => number
+): ParamsOfLaws =>
+  Object.fromEntries(
+    laws.map((law) => {
+      const lawResult: R = perLaw(law)
+      const params = Object.fromEntries(paramKeys.map((k) => [k, perParam(law, lawResult, k)])) as BaseParams
+      return [law.id, params]
+    })
+  )

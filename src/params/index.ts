@@ -84,21 +84,32 @@ export const paramList: ParamEntry[] = Object.entries(paramDefinitions).map((e) 
   e[1] instanceof WritableParam ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0])
 )
 
-export const defaultValues: WritableParams = writableParamList.reduce(
-  (newObj, e) => ({ ...newObj, [e.name]: e.initialValue }),
-  {} as WritableParams
-)
+export const defaultValues: WritableParams = writableParamList.reduce((newObj, e) => {
+  newObj[e.name] = e.initialValue
+  return newObj
+}, {} as WritableParams)
+
+export const zeroParams: Params = paramList.reduce((newObj, p) => {
+  newObj[p.name] = 0
+  return newObj
+}, {} as Params)
 
 export function createBaseValues(values: WritableParams): Params {
   const result: ParamsBase = { ...values }
   Object.entries(computedParamDefinitions).forEach((e) =>
     Object.defineProperty(result, e[0], {
+      enumerable: true,
       get: () => {
         return e[1].valueGetter(result)
       },
     })
   )
   return result as Params
+}
+
+export function copyValues(values: Params): Params {
+  const result: Params = { ...values }
+  return result
 }
 
 export function dispatch(actionName: string, payload?: unknown) {

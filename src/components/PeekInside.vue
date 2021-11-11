@@ -2,7 +2,7 @@
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
 import { Game, GameYear, gameYears, newGame } from "../game"
-import { BaseParams, Change, ParamKey } from "../params"
+import { applyEffects, BaseParams, Change, createBaseValues, ParamKey, paramKeys, zeroParams } from "../params"
 import { startYear } from "../constants"
 import {
   LawCol,
@@ -14,14 +14,24 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import { AcceptedLaw, allLaws, getAcceptedLaw, Law, LawId, lawIds, LawReference } from "../laws"
+import {
+  AcceptedLaw,
+  allLaws,
+  getAcceptedLaw,
+  getParamsOfLaws,
+  Law,
+  LawId,
+  lawIds,
+  LawReference,
+  ParamsOfLaws,
+} from "../laws"
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
 import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
 import { Event, allEvents, EventId } from "../events"
-import { calculateNextYear } from "../Calculator"
+import { calculateNextYearWithLaws } from "../Calculator"
 import { directive as ClickAway } from "vue3-click-away"
 
 type Preset = { name: string; laws: LawReference[] }
@@ -210,12 +220,12 @@ export default defineComponent({
   },
 
   computed: {
-    startYearOfSelected(): number {
-      if (!this.lawSelected || !this.game) return startYear
-      const acceptedLaws = this.game.acceptedLaws
-      const acceptedLaw = acceptedLaws.find((al) => al.lawId === this.lawSelected)
+    startYearOfSelected(): number | undefined {
+      if (!this.lawSelected) return undefined
+      if (!this.game) return startYear
+      const acceptedLaw = this.lawsToSimulate.find((al) => al.id === this.lawSelected)
       if (acceptedLaw) return acceptedLaw.effectiveSince
-      return startYear
+      return this.game.currentYear
     },
 
     selectedLaw(): Law | undefined {
@@ -248,17 +258,24 @@ export default defineComponent({
       }
     },
 
+    currentYear(): GameYear {
+      if (this.yearSelected) {
+        return this.yearSelected
+      }
+      if (this.game) {
+        return this.game.currentYear
+      }
+      return startYear
+    },
+
     effectsOfSelected(): Change[] {
-      if (!this.lawSelected || !this.game) return []
-      const game: Game = this.game
-      const law = this.selectedLaw
-      if (!law) return []
-      return law.effects(this.game, this.startYearOfSelected, this.game.currentYear)
+      if (!this.selectedLaw || !this.startYearOfSelected || !this.game) return []
+      return this.selectedLaw.effects(this.game, this.startYearOfSelected, this.currentYear)
     },
 
     sortedValues(): ValueRow[] {
       if (!this.game) return []
-      return getSortedValues(this.game, this.effectsOfSelected)
+      return getSortedValues(this.simOfYear.values, this.effectsOfLawInYear, this.effectsOfSelected)
     },
 
     sortedLaws(): LawRow[] {
@@ -283,17 +300,61 @@ export default defineComponent({
       return this.combinedLaws.map((l) => getAcceptedLaw(l))
     },
 
-    simulatedValues(): BaseParams[] {
+    effectsOfLawInYear(): BaseParams | undefined {
+      return this.lawSelected ? this.simOfYear.effectsOfLaws[this.lawSelected] : undefined
+    },
+
+    simOfYear(): { values: BaseParams; effectsOfLaws: ParamsOfLaws } {
+      if (this.yearSelected === undefined && this.game) {
+        const effects = this.effectsOfSelected
+        const values = this.game.values
+        if (this.lawSelected === undefined || effects.length === 0) {
+          return { values, effectsOfLaws: {} }
+        }
+        const nextValues = createBaseValues(values)
+        const context = { dispatch: () => undefined, values: nextValues }
+        applyEffects(context, effects)
+        const valChanges = Object.fromEntries(paramKeys.map((k) => [k, nextValues[k] - values[k]])) as BaseParams
+        return { values, effectsOfLaws: { [this.lawSelected]: valChanges } }
+      } else {
+        const index = this.yearSelected ? this.yearSelected - this.gameYears[0] : 0
+        return this.simulation[index]
+      }
+    },
+
+    simulation(): { values: BaseParams; effectsOfLaws: ParamsOfLaws }[] {
       const laws: AcceptedLaw[] = this.lawsToSimulate
       const g: Game = newGame()
 
-      return this.gameYears.map((y) => {
+      const res = this.gameYears.map((y) => {
         while (y > g.currentYear) {
           g.currentYear++
-          g.values = calculateNextYear(g, laws, g.currentYear)
+          const { values, effectsOfLaws } = calculateNextYearWithLaws(g, laws, g.currentYear)
+          g.values = values
+          if (y === g.currentYear) {
+            return { values, effectsOfLaws }
+          }
         }
-        return g.values
+        return { values: g.values, effectsOfLaws: {} }
       })
+      return res
+    },
+
+    simulatedValues(): BaseParams[] {
+      return this.simulation.map((data) => data.values)
+    },
+
+    simEffectOfLaw(): BaseParams[] {
+      if (!this.lawSelected) return gameYears.map((y) => zeroParams)
+      const lawId: LawId = this.lawSelected
+      return this.simulation.map((y) => {
+        const effOfSel = y.effectsOfLaws[lawId]
+        return effOfSel ? effOfSel : zeroParams
+      })
+    },
+
+    chartData(): { values: BaseParams[]; changes: BaseParams[] } {
+      return { values: this.simulatedValues, changes: this.simEffectOfLaw }
     },
 
     lawsInYear(): (year: number) => (LawReference & { cls: string })[] {
@@ -320,13 +381,13 @@ export default defineComponent({
       <PeekChart
         v-if="paramSelected"
         v-model:selectedYear="yearSelected"
-        :simulatedValues="simulatedValues"
+        :chartData="chartData"
         :paramId="paramSelected"
       />
-      <PeekChart v-model:selectedYear="yearSelected" :simulatedValues="simulatedValues" paramId="co2emissions" />
-      <PeekChart v-model:selectedYear="yearSelected" :simulatedValues="simulatedValues" paramId="popularity" />
-      <PeekChart v-model:selectedYear="yearSelected" :simulatedValues="simulatedValues" paramId="stateDebt" />
-      <PeekChart v-model:selectedYear="yearSelected" :simulatedValues="simulatedValues" paramId="co2budget" />
+      <PeekChart v-model:selectedYear="yearSelected" :chartData="chartData" paramId="co2emissions" />
+      <PeekChart v-model:selectedYear="yearSelected" :chartData="chartData" paramId="popularity" />
+      <PeekChart v-model:selectedYear="yearSelected" :chartData="chartData" paramId="stateDebt" />
+      <PeekChart v-model:selectedYear="yearSelected" :chartData="chartData" paramId="co2budget" />
     </div>
     <div v-if="lastSelected === 'law' && selectedLaw && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedLaw.title }}</div>
@@ -366,6 +427,10 @@ export default defineComponent({
       <Citation class="Section" v-for="(citation, pos) in selectedParam.citations" :key="pos" :citation="citation" />
     </div>
     <div v-if="showParams" class="paramsList sidebyside">
+      <div class="paramsHeader">
+        <div>Start of law: {{ startYearOfSelected }}</div>
+        <div>Current year: {{ currentYear }}</div>
+      </div>
       <table>
         <tr
           v-for="row in sortedValues"
@@ -597,6 +662,16 @@ $lightBackground: #fff5dd;
     padding: 0.4rem;
     li {
       padding: 0.1rem;
+    }
+  }
+
+  .paramsHeader {
+    display: flex;
+    div {
+      width: 10em;
+      background-color: $lightBackground;
+      margin: 0.2em 0.2em 0.2em 3.5em;
+      padding: 0.2em 0.2em 0.2em 2em;
     }
   }
 }
