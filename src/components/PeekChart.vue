@@ -30,6 +30,12 @@ export default defineComponent({
             rotate: -90,
           },
         },
+        markers: {
+          size: 0,
+        },
+        dataLabels: {
+          enabled: false,
+        },
       })
     )
 
