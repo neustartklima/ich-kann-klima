@@ -46,18 +46,33 @@ export default defineComponent({
       }))
     )
 
+    const chartData = computed((): { value: number; gain: number; loss: number }[] =>
+      pairs.value.map((p) => {
+        const prevVal = p.value - p.change
+        if (p.change * p.value > 0) {
+          if (prevVal * p.value > 0) {
+            return { value: prevVal, gain: p.change, loss: 0 }
+          } else {
+            return { value: 0, gain: p.value, loss: prevVal }
+          }
+        } else {
+          return { value: p.value, gain: 0, loss: -p.change }
+        }
+      })
+    )
+
     const series = computed((): { name: string; data: number[] }[] => [
       {
         name: "Simulated " + props.paramId,
-        data: pairs.value.map((p) => Math.round(p.change * p.value > 0 ? p.value - p.change : p.value)),
+        data: chartData.value.map((p) => Math.round(p.value)),
       },
       {
         name: "Gains of " + props.paramId + " by selected law",
-        data: pairs.value.map((p) => Math.round(p.change * p.value > 0 ? p.change : 0)),
+        data: chartData.value.map((p) => Math.round(p.gain)),
       },
       {
         name: "Losses of " + props.paramId + " by selected law",
-        data: pairs.value.map((p) => Math.round(p.change * p.value < 0 ? -p.change : 0)),
+        data: chartData.value.map((p) => Math.round(p.loss)),
       },
     ])
 
