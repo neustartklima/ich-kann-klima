@@ -1,7 +1,7 @@
 import { BaseParams, Change, createBaseValues, applyEffects, paramList, modify } from "../params"
 import { Game } from "../game"
 import { Law, LawId } from "../laws"
-import { Event } from "../events"
+import { Event, EventId } from "../events"
 
 type Row<ColKey extends string> = { [P in ColKey]: number | string }
 function rowCompare<ColKey extends string>(a: Row<ColKey>, b: Row<ColKey>, ...cols: ColKey[]) {
@@ -20,13 +20,9 @@ export type ValueRow = {
   class: "writable" | "calculated"
 }
 
-export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
-  const nextValues = createBaseValues(game.values)
-  const context = { dispatch: () => undefined, values: nextValues }
-  applyEffects(context, effects)
-
+export function getSortedValues(values: BaseParams, diffs: BaseParams | undefined, effects: Change[]): ValueRow[] {
   function valueStr(key: keyof BaseParams): string {
-    return game.values[key].toFixed(2)
+    return values[key].toFixed(2)
   }
   function formatEffect(effect: number) {
     return (effect > 0 ? "+" : "") + effect.toFixed(2)
@@ -41,7 +37,7 @@ export function getSortedValues(game: Game, effects: Change[]): ValueRow[] {
 
   function effectStr(key: keyof BaseParams): string {
     const effect = getEffect(key)
-    const valDiff = nextValues[key] - game.values[key]
+    const valDiff = diffs ? diffs[key] : 0
     if (effect && Math.abs(effect - valDiff) < 0.001) return formatEffect(effect)
     if (effect) return formatEffect(effect) + " / " + formatEffect(valDiff)
     if (valDiff != 0) return formatEffect(valDiff)
@@ -87,7 +83,7 @@ export function getSortedLaws(game: Game, sortCol: LawCol, sortDir: number, allL
 }
 
 export type EventRow = {
-  id: string
+  id: EventId
   probability: string
 }
 

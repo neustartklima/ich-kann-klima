@@ -1,25 +1,41 @@
-import { BaseParams, createBaseValues, defaultValues, applyEffects } from "./params"
+import { BaseParams, createBaseValues, defaultValues, applyEffects, paramKeys, ParamKey, copyValues } from "./params"
 import { Game } from "./game"
-import { AcceptedLaw } from "./laws"
+import { AcceptedLaw, getParamsOfLaws, ParamsOfLaws } from "./laws"
 
 export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number): BaseParams {
+  return calculateNextYearWithLaws(game, laws, year).values
+}
+
+export function calculateNextYearWithLaws(
+  game: Game,
+  laws: AcceptedLaw[],
+  year: number
+): { values: BaseParams; effectsOfLaws: ParamsOfLaws } {
   const values = createBaseValues(game.values)
-  laws
+
+  const orderedLaws = laws
     .sort((a, b) => {
       if (a.treatAfterLabels?.some((lbl) => b.labels?.includes(lbl))) return 1
       if (b.treatAfterLabels?.some((lbl) => a.labels?.includes(lbl))) return -1
       return 0
     })
     .filter((law) => law.effectiveSince <= year)
-    .forEach((law) => {
+
+  const effectsOfLaws = getParamsOfLaws(
+    orderedLaws,
+    (law) => {
+      const prevValues: BaseParams = copyValues(values)
       const effects = law.effects({ ...game, values }, law.effectiveSince, year)
       applyEffects({ dispatch: () => undefined, values }, effects)
-    })
+      return prevValues
+    },
+    (law, prevValues, paramKey) => values[paramKey] - prevValues[paramKey]
+  )
 
   // re-calculate remaining CO2 budget
   values.co2budget -= values.co2emissions
 
-  return values
+  return { values, effectsOfLaws }
 }
 
 function clampToPercent(value: number) {
