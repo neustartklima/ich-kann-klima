@@ -14,21 +14,25 @@ export default defineComponent({
   },
   emits: ["update:selectedYear"],
   setup(props, context) {
+    const barColor = "#9c6d00"
+    const lossColor = "#ce900070"
+    const gainColor = "#644600"
     const chartOptions = computed(
       (): ApexOptions => ({
-        chart: {
-          id: props.paramId + "-withLawEffects",
-          animations: { enabled: false },
-          stacked: true,
-        },
-        legend: {
-          show: false,
-        },
         xaxis: {
           categories: gameYears,
           labels: {
             rotate: -90,
           },
+        },
+        chart: {
+          id: props.paramId + "-withLawEffects",
+          animations: { enabled: false },
+          stacked: true,
+        },
+        colors: [barColor, gainColor, lossColor],
+        legend: {
+          show: false,
         },
         markers: {
           size: 0,
