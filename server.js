@@ -26395,10 +26395,18 @@ var ComputedParamEntry = class extends ComputedParam {
 };
 var computedParamList = Object.entries(computedParamDefinitions).map((e) => new ComputedParamEntry(e[1], e[0]));
 var paramList = Object.entries(paramDefinitions).map((e) => e[1] instanceof WritableParam ? new WritableParamEntry(e[1], e[0]) : new ComputedParamEntry(e[1], e[0]));
-var defaultValues = writableParamList.reduce((newObj, e) => ({ ...newObj, [e.name]: e.initialValue }), {});
+var defaultValues = writableParamList.reduce((newObj, e) => {
+  newObj[e.name] = e.initialValue;
+  return newObj;
+}, {});
+var zeroParams = paramList.reduce((newObj, p) => {
+  newObj[p.name] = 0;
+  return newObj;
+}, {});
 function createBaseValues(values) {
   const result = { ...values };
   Object.entries(computedParamDefinitions).forEach((e) => Object.defineProperty(result, e[0], {
+    enumerable: true,
     get: () => {
       return e[1].valueGetter(result);
     }
@@ -28487,6 +28495,32 @@ var ForschungDezentraleStromerzeugung_default = defineLaw({
   `
 });
 
+// src/laws/Test.ts
+var Test_default = defineLaw({
+  title: "Test",
+  description: "Unsinniges Gesetz zum Testen.",
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byPercent(50).if((currentYear - startYear2) % 3 != 0),
+      modify("popularity").byPercent(-50).if((currentYear - startYear2) % 3 === 0),
+      modify("stateDebt").byPercent(-200).if(currentYear === startYear2),
+      modify("stateDebt").byPercent(50).if((currentYear - startYear2) % 3 != 0),
+      modify("stateDebt").byPercent(-50).if((currentYear - startYear2) % 3 === 0),
+      modify("stateDebt").byPercent(-200).if(currentYear === startYear2 + 10)
+    ];
+  },
+  priority(game) {
+    return 0;
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
 // src/laws/index.ts
 var allLawsObj = {
   AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
@@ -28542,7 +28576,8 @@ var allLawsObj = {
   WirksamerCO2Preis: WirksamerCO2Preis_default,
   VollerCO2Preis: VollerCO2Preis_default,
   ForschungEmissionsfreieStahlproduktion: ForschungEmissionsfreieStahlproduktion_default,
-  ForschungEmissionsfreieZementproduktion: ForschungEmissionsfreieZementproduktion_default
+  ForschungEmissionsfreieZementproduktion: ForschungEmissionsfreieZementproduktion_default,
+  Test: Test_default
 };
 var lawIds = Object.keys(allLawsObj);
 var allLaws = lawList(allLawsObj);
