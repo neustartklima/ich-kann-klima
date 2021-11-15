@@ -52,6 +52,7 @@ import ForschungUndEntwicklungStromspeicherung from "./ForschungUndEntwicklungSt
 import ForschungEmissionsfreieStahlproduktion from "./ForschungEmissionsfreieStahlproduktion"
 import ForschungEmissionsfreieZementproduktion from "./ForschungEmissionsfreieZementproduktion"
 import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugung"
+import Test from "./Test"
 
 import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
@@ -142,6 +143,8 @@ const allLawsObj = {
 
   ForschungEmissionsfreieStahlproduktion,
   ForschungEmissionsfreieZementproduktion,
+
+  Test,
 }
 
 export type LawId = keyof typeof allLawsObj
