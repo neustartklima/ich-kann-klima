@@ -146,13 +146,13 @@ export default defineComponent({
         const dropped = event.dataTransfer.getData("lawId")
         const lawId: LawId | undefined = lawIds.find((id) => id === dropped)
         if (lawId) {
-          this.simulateLaw(lawId, year)
+          this.addToSimulation(lawId, year)
         }
       } else if (lawId) {
         const dropped = event.dataTransfer.getData("year")
         const year: GameYear | undefined = this.gameYears.find((y) => y == Number(dropped))
         if (year) {
-          this.simulateLaw(lawId, year)
+          this.addToSimulation(lawId, year)
         }
       }
     },
@@ -424,6 +424,7 @@ export default defineComponent({
             :key="lawId"
             :class="{ clickable: true, selected: lawSelected === lawId, [cls]: true }"
             @click="selectLaw(lawId)"
+            @click.right.prevent="removeFromSimulation(lawId)"
             draggable="true"
             @dragstart="dragStart($event, { lawId })"
             @drop.prevent="onDrop($event, { lawId })"

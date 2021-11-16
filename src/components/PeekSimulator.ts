@@ -48,8 +48,12 @@ const staticPresets: Preset[] = [
 export function vueSimulationObjects(game: Ref<Game | undefined>) {
   const laws = ref<LawReference[]>([])
 
-  function simulateLaw(lawId: LawId, year: GameYear) {
+  function addToSimulation(lawId: LawId, year: GameYear) {
     laws.value = laws.value.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
+  }
+
+  function removeFromSimulation(lawId: LawId) {
+    laws.value = laws.value.filter((l) => l.lawId != lawId)
   }
 
   function loadPreset(preset: Preset) {
@@ -70,7 +74,8 @@ export function vueSimulationObjects(game: Ref<Game | undefined>) {
   const simulation = createSimulation(laws)
 
   return {
-    simulateLaw,
+    addToSimulation,
+    removeFromSimulation,
     loadPreset,
     simulatedLaws,
     simulation,
