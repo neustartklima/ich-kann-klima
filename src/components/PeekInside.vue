@@ -162,7 +162,7 @@ export default defineComponent({
     startYearOfSelected(): number | undefined {
       if (!this.lawSelected) return undefined
       if (!this.game) return startYear
-      const acceptedLaw = this.combinedLaws.find((l) => l.lawId === this.lawSelected)
+      const acceptedLaw = this.simulatedLaws.find((l) => l.lawId === this.lawSelected)
       if (acceptedLaw) return acceptedLaw.effectiveSince
       return this.game.currentYear
     },
@@ -268,7 +268,7 @@ export default defineComponent({
 
     lawsInYear(): (year: number) => (LawReference & { cls: string })[] {
       return (year: number) => {
-        return this.combinedLaws.filter((l) => l.effectiveSince === year)
+        return this.simulatedLaws.filter((l) => l.effectiveSince === year)
       }
     },
   },
@@ -473,6 +473,7 @@ $lightBackground: #fff5dd;
   }
 
   .yearList {
+    min-width: 29em;
     th {
       font-weight: bold;
       text-align: left;
@@ -480,11 +481,9 @@ $lightBackground: #fff5dd;
     td {
       text-indent: 10pt;
     }
-    .accepted {
-      color: blue;
-    }
     .simulated {
-      color: brown;
+      font-weight: bold;
+      color: #9c6d00;
     }
   }
 

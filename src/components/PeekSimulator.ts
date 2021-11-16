@@ -1,12 +1,11 @@
-import { AcceptedLaw, getAcceptedLaw, LawId, LawReference, ParamsOfLaws } from "../laws"
+import { getAcceptedLaw, LawId, LawReference } from "../laws"
 import { computed, Ref, ref } from "@vue/runtime-core"
 import { Game, GameYear, gameYears, newGame } from "../game"
 import { calculateNextYearWithLaws } from "../Calculator"
-import { BaseParams } from "../params"
 
 type Preset = { name: string; laws: LawReference[] }
 
-const presets: Preset[] = [
+const staticPresets: Preset[] = [
   {
     name: "Clear",
     laws: [],
@@ -47,47 +46,47 @@ const presets: Preset[] = [
 ]
 
 export function vueSimulationObjects(game: Ref<Game | undefined>) {
-  const simulatedLaws = ref<LawReference[]>([])
+  const laws = ref<LawReference[]>([])
 
   function simulateLaw(lawId: LawId, year: GameYear) {
-    simulatedLaws.value = simulatedLaws.value.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
+    laws.value = laws.value.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
   }
 
   function loadPreset(preset: Preset) {
-    simulatedLaws.value = preset.laws
+    laws.value = preset.laws
   }
 
-  const combinedLaws = computed<(LawReference & { cls: string })[]>(() => {
-    const simLaws = simulatedLaws.value.map((l) => ({ ...l, cls: "simulated" }))
-    const accLaws = (game.value?.acceptedLaws || [])
-      .filter((al) => !simLaws.some((sl) => sl.lawId === al.lawId))
-      .map((l) => ({ ...l, cls: "accepted" }))
-    return accLaws.concat(simLaws)
+  const currentGame = computed<Preset>(() => ({
+    name: "Current Game",
+    laws: game.value?.acceptedLaws || [],
+  }))
+
+  const presets = computed<Preset[]>(() => [currentGame.value, ...staticPresets])
+
+  const simulatedLaws = computed<(LawReference & { cls: string })[]>(() => {
+    return laws.value.map((l) => ({ ...l, cls: "simulated" }))
   })
 
-  const lawsToSimulate = computed<AcceptedLaw[]>(() => {
-    return combinedLaws.value.map((l) => getAcceptedLaw(l))
-  })
-
-  const simulation = createSimulation(lawsToSimulate)
+  const simulation = createSimulation(laws)
 
   return {
     simulateLaw,
     loadPreset,
-    combinedLaws,
+    simulatedLaws,
     simulation,
     presets,
   }
 }
 
-function createSimulation(laws: Ref<AcceptedLaw[]>) {
+function createSimulation(laws: Ref<LawReference[]>) {
   return computed(() => {
     const g: Game = newGame()
+    const accLaws = laws.value.map((l) => getAcceptedLaw(l))
 
     const res = gameYears.map((y) => {
       while (y > g.currentYear) {
         g.currentYear++
-        const { values, effectsOfLaws } = calculateNextYearWithLaws(g, laws.value, g.currentYear)
+        const { values, effectsOfLaws } = calculateNextYearWithLaws(g, accLaws, g.currentYear)
         g.values = values
         if (y === g.currentYear) {
           return { values, effectsOfLaws }
