@@ -1,7 +1,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useStore } from "../store"
-import { Game, GameYear, gameYears, newGame } from "../game"
+import { GameYear, gameYears } from "../game"
 import { applyEffects, BaseParams, Change, createBaseValues, ParamKey, paramKeys, zeroParams } from "../params"
 import { startYear } from "../constants"
 import {
@@ -14,86 +14,39 @@ import {
   EventRow,
   EventCol,
 } from "./PeekTools"
-import {
-  AcceptedLaw,
-  allLaws,
-  getAcceptedLaw,
-  getParamsOfLaws,
-  Law,
-  LawId,
-  lawIds,
-  LawReference,
-  ParamsOfLaws,
-} from "../laws"
+import { allLaws, Law, LawId, lawIds, LawReference, ParamsOfLaws } from "../laws"
 import Citation from "./Citation.vue"
 import PeekChart from "./PeekChart.vue"
 import { Citations } from "../citations"
 import { ComputedParam, ParamDefinition, WritableParam } from "../params/ParamsTypes"
 import { paramDefinitions } from "../params/Params"
 import { Event, allEvents, EventId } from "../events"
-import { calculateNextYearWithLaws } from "../Calculator"
-import { directive as ClickAway } from "vue3-click-away"
-
-type Preset = { name: string; laws: LawReference[] }
-
-const presets: Preset[] = [
-  {
-    name: "Clear",
-    laws: [],
-  },
-  {
-    name: "Happy Path",
-    laws: [
-      /*  1   */ { lawId: "NetzausbauErleichtern", effectiveSince: 2021 },
-      /*  1.3 */ { lawId: "WindkraftVereinfachen", effectiveSince: 2021 },
-      /*  1.7 */ { lawId: "StromspeicherungErleichtern", effectiveSince: 2021 },
-      /*  2   */ { lawId: "AbstandsregelnFuerWindkraftLockern", effectiveSince: 2021 },
-      /*  3   */ { lawId: "AusschreibungsverfahrenfuerWindkraftVervierfachen", effectiveSince: 2021 },
-      /*  4   */ { lawId: "ForschungUndEntwicklungStromspeicherung", effectiveSince: 2022 },
-      /*  4.5 */ { lawId: "ForschungDezentraleStromerzeugung", effectiveSince: 2022 },
-      /*  5   */ { lawId: "KohleverstromungEinstellen", effectiveSince: 2022 },
-      /*  5.5 */ { lawId: "WirksamerCO2Preis", effectiveSince: 2022 },
-      /*  6   */ { lawId: "DaemmungAltbau4Percent", effectiveSince: 2022 },
-      /*  7   */ { lawId: "ForschungEmissionsfreieZementproduktion", effectiveSince: 2023 },
-      /*  8   */ { lawId: "NetzausbauFoerdern", effectiveSince: 2023 },
-      /*  8.5 */ { lawId: "StromspeicherungFoerdern", effectiveSince: 2023 },
-      /*  9   */ { lawId: "WasserstofftechnologieFoerdern", effectiveSince: 2023 },
-      /* 10   */ { lawId: "SolarstromFoerdernx4", effectiveSince: 2024 },
-      /* 11   */ { lawId: "SolarAufAllenDaechernVerpflichtend", effectiveSince: 2024 },
-      /* 12   */ { lawId: "ForschungEmissionsfreieStahlproduktion", effectiveSince: 2024 },
-      /* 13   */
-      /* 14   */
-      /* 15   */ { lawId: "FernverkehrModernisieren", effectiveSince: 2025 },
-      /* 16   */ { lawId: "NahverkehrModernisieren", effectiveSince: 2026 },
-      /* 17   */ { lawId: "FernverkehrVerbindungenAusbauen", effectiveSince: 2026 },
-      /* 18   */ { lawId: "NahverkehrAusbauen", effectiveSince: 2026 },
-      /* 18.5 */ { lawId: "LadeinfrastrukturAusbauen", effectiveSince: 2026 },
-      /* 19   */ { lawId: "NahverkehrKostenlos", effectiveSince: 2027 },
-      /* 20   */ { lawId: "DienstwagenPrivilegAbgeschaffen", effectiveSince: 2027 },
-      /* 20.5 */ { lawId: "ElektromobilitaetFoerdern", effectiveSince: 2027 },
-      /* 21   */ { lawId: "WasserstoffmobilitaetFoerdern", effectiveSince: 2027 },
-    ],
-  },
-]
+import { directive as clickaway } from "vue3-click-away"
+import { vueSimulationObjects } from "./PeekSimulator"
+import Menu from "./Menu.vue"
 
 export default defineComponent({
   directives: {
-    ClickAway,
+    clickaway,
   },
 
   components: {
     Citation,
     PeekChart,
+    Menu,
   },
 
   setup() {
     const store = useStore()
+    const game = computed(() => store.state.game)
+
+    const simulationObjects = vueSimulationObjects(game)
 
     return {
       store,
-      game: computed(() => store.state.game),
+      game,
       gameYears,
-      presets,
+      ...simulationObjects,
     }
   },
 
@@ -114,8 +67,6 @@ export default defineComponent({
       showLaws: true as boolean,
       showEvents: false as boolean,
       showYears: false as boolean,
-      simulatedLaws: [] as LawReference[],
-      presetsOpen: false as boolean,
     }
   },
   methods: {
@@ -205,25 +156,13 @@ export default defineComponent({
         }
       }
     },
-    simulateLaw(lawId: LawId, year: GameYear) {
-      this.simulatedLaws = this.simulatedLaws.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
-    },
-    presetsToggle() {
-      this.presetsOpen = !this.presetsOpen
-    },
-    presetsClose() {
-      this.presetsOpen = false
-    },
-    loadPreset(preset: Preset) {
-      this.simulatedLaws = preset.laws
-    },
   },
 
   computed: {
     startYearOfSelected(): number | undefined {
       if (!this.lawSelected) return undefined
       if (!this.game) return startYear
-      const acceptedLaw = this.lawsToSimulate.find((al) => al.id === this.lawSelected)
+      const acceptedLaw = this.combinedLaws.find((l) => l.lawId === this.lawSelected)
       if (acceptedLaw) return acceptedLaw.effectiveSince
       return this.game.currentYear
     },
@@ -288,18 +227,6 @@ export default defineComponent({
       return getSortedEvents(this.game, this.eventsSortCol, this.eventsSortDir, allEvents)
     },
 
-    combinedLaws(): (LawReference & { cls: string })[] {
-      const simLaws = this.simulatedLaws.map((l) => ({ ...l, cls: "simulated" }))
-      const accLaws = (this.game?.acceptedLaws || [])
-        .filter((al) => !simLaws.some((sl) => sl.lawId === al.lawId))
-        .map((l) => ({ ...l, cls: "accepted" }))
-      return accLaws.concat(simLaws)
-    },
-
-    lawsToSimulate(): AcceptedLaw[] {
-      return this.combinedLaws.map((l) => getAcceptedLaw(l))
-    },
-
     effectsOfLawInYear(): BaseParams | undefined {
       return this.lawSelected ? this.simOfYear.effectsOfLaws[this.lawSelected] : undefined
     },
@@ -320,24 +247,6 @@ export default defineComponent({
         const index = this.yearSelected ? this.yearSelected - this.gameYears[0] : 0
         return this.simulation[index]
       }
-    },
-
-    simulation(): { values: BaseParams; effectsOfLaws: ParamsOfLaws }[] {
-      const laws: AcceptedLaw[] = this.lawsToSimulate
-      const g: Game = newGame()
-
-      const res = this.gameYears.map((y) => {
-        while (y > g.currentYear) {
-          g.currentYear++
-          const { values, effectsOfLaws } = calculateNextYearWithLaws(g, laws, g.currentYear)
-          g.values = values
-          if (y === g.currentYear) {
-            return { values, effectsOfLaws }
-          }
-        }
-        return { values: g.values, effectsOfLaws: {} }
-      })
-      return res
     },
 
     simulatedValues(): BaseParams[] {
@@ -488,12 +397,14 @@ export default defineComponent({
     </div>
     <div v-if="showYears" class="yearList sidebyside">
       <div>
-        <span @click="presetsToggle" v-click-away="presetsClose" class="clickable" :class="{ open: presetsOpen }">
-          <a>Presets</a>
+        <Menu>
+          <a class="clickable">Presets</a>
           <ul class="dropdown">
-            <li v-for="preset in presets" :key="preset.name" @click="loadPreset(preset)">{{ preset.name }}</li>
+            <li v-for="preset in presets" :key="preset.name" class="clickable" @click="loadPreset(preset)">
+              {{ preset.name }}
+            </li>
           </ul>
-        </span>
+        </Menu>
       </div>
       <table>
         <template v-for="year in gameYears" :key="year">
@@ -649,12 +560,7 @@ $lightBackground: #fff5dd;
     background-color: $hover;
   }
 
-  .open .dropdown {
-    display: block;
-  }
-
   .dropdown {
-    display: none;
     position: absolute;
     background-color: #fafafa;
     margin: 0rem;
