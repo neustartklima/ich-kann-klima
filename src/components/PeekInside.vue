@@ -139,22 +139,25 @@ export default defineComponent({
       if (lawId) event.dataTransfer.setData("lawId", lawId)
       if (year) event.dataTransfer.setData("year", year.toString())
     },
+    getDropped<T extends string | number>(event: DragEvent, id: string, list: T[]): T | undefined {
+      if (!event.dataTransfer) return undefined
+      const dropped = event.dataTransfer.getData(id)
+      return list.find((id) => id == dropped)
+    },
     onDrop(event: DragEvent, data: { lawId?: LawId; year?: number }) {
       const { lawId, year } = data
-      if (!event.dataTransfer) return
-      if (year) {
-        const dropped = event.dataTransfer.getData("lawId")
-        const lawId: LawId | undefined = lawIds.find((id) => id === dropped)
-        if (lawId) {
-          this.addToSimulation(lawId, year)
-        }
-      } else if (lawId) {
-        const dropped = event.dataTransfer.getData("year")
-        const year: GameYear | undefined = this.gameYears.find((y) => y == Number(dropped))
-        if (year) {
-          this.addToSimulation(lawId, year)
-        }
+      const droppedLaw = this.getDropped(event, "lawId", lawIds)
+      const droppedYear = this.getDropped(event, "year", this.gameYears)
+      if (year && droppedLaw) {
+        this.addToSimulation(droppedLaw, year)
+      } else if (lawId && droppedYear) {
+        this.addToSimulation(lawId, droppedYear)
+      } else if (lawId && droppedLaw) {
+        this.removeFromSimulation(droppedLaw)
       }
+    },
+    rightClick(lawId: LawId, year: GameYear) {
+      this.toggleInSimulation(lawId, year)
     },
   },
 
@@ -254,7 +257,15 @@ export default defineComponent({
     },
 
     simEffectOfLaw(): BaseParams[] {
-      if (!this.lawSelected) return gameYears.map((y) => zeroParams)
+      if (!this.lawSelected && this.compareActive) {
+        return this.secondSimulation.map(
+          (y, i) =>
+            Object.fromEntries(
+              Object.entries(y.values).map(([k, v]) => [k, this.simulation[i].values[k as ParamKey] - v])
+            ) as BaseParams
+        )
+      }
+      if (!this.compareActive) return gameYears.map((y) => zeroParams)
       const lawId: LawId = this.lawSelected
       return this.simulation.map((y) => {
         const effOfSel = y.effectsOfLaws[lawId]
@@ -403,8 +414,9 @@ export default defineComponent({
             <li v-for="preset in presets" :key="preset.name" class="clickable" @click="loadPreset(preset)">
               {{ preset.name }}
             </li>
-          </ul>
-        </Menu>
+          </ul> </Menu
+        >&nbsp;
+        <a class="clickable" :class="compareActive ? 'selected' : ''" @click="toggleCompare()">Compare</a>
       </div>
       <table>
         <template v-for="year in gameYears" :key="year">
@@ -424,10 +436,10 @@ export default defineComponent({
             :key="lawId"
             :class="{ clickable: true, selected: lawSelected === lawId, [cls]: true }"
             @click="selectLaw(lawId)"
-            @click.right.prevent="removeFromSimulation(lawId)"
+            @click.right.prevent="rightClick(lawId, year)"
             draggable="true"
             @dragstart="dragStart($event, { lawId })"
-            @drop.prevent="onDrop($event, { lawId })"
+            @drop.prevent="onDrop($event, { year })"
             @dragover.prevent
             @dragenter.prevent
           >
@@ -482,9 +494,17 @@ $lightBackground: #fff5dd;
     td {
       text-indent: 10pt;
     }
-    .simulated {
+    .new {
+      font-weight: bold;
+      color: #473201;
+    }
+    .both {
       font-weight: bold;
       color: #9c6d00;
+    }
+    .saved {
+      font-weight: bold;
+      color: #e9a300;
     }
   }
 

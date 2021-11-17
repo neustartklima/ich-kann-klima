@@ -2,6 +2,7 @@ import { getAcceptedLaw, LawId, LawReference } from "../laws"
 import { computed, Ref, ref } from "@vue/runtime-core"
 import { Game, GameYear, gameYears, newGame } from "../game"
 import { calculateNextYearWithLaws } from "../Calculator"
+import LawProposalsVue from "./LawProposals.vue"
 
 type Preset = { name: string; laws: LawReference[] }
 
@@ -45,19 +46,49 @@ const staticPresets: Preset[] = [
   },
 ]
 
+type SimLaw = LawReference & { sortId: number }
+
+const toSimLaws = (laws: LawReference[]): SimLaw[] => laws.map((l, i) => ({ ...l, sortId: i }))
+
+const equal = (a: SimLaw, b: SimLaw): boolean => a.lawId === b.lawId && a.effectiveSince === b.effectiveSince
+
 export function vueSimulationObjects(game: Ref<Game | undefined>) {
-  const laws = ref<LawReference[]>([])
+  const laws = ref<SimLaw[]>([])
+  const savedLaws = ref<SimLaw[]>([])
+  const compareActive = ref<boolean>(false)
 
   function addToSimulation(lawId: LawId, year: GameYear) {
-    laws.value = laws.value.filter((l) => l.lawId != lawId).concat({ lawId, effectiveSince: year })
+    const lws = laws.value
+    const newEntry: SimLaw = { lawId, effectiveSince: year, sortId: 0 }
+    newEntry.sortId =
+      savedLaws.value.find((s) => equal(newEntry, s))?.sortId || (lws.length === 0 ? 0 : lws[lws.length - 1].sortId + 1)
+    laws.value = lws.filter((l) => l.lawId != lawId).concat(newEntry)
   }
 
   function removeFromSimulation(lawId: LawId) {
     laws.value = laws.value.filter((l) => l.lawId != lawId)
   }
 
+  function toggleInSimulation(lawId: LawId, year: GameYear) {
+    const compare: SimLaw = { lawId, effectiveSince: year, sortId: 0 }
+    if (laws.value.some((l) => equal(l, compare))) {
+      removeFromSimulation(lawId)
+    } else {
+      addToSimulation(lawId, year)
+    }
+  }
+
   function loadPreset(preset: Preset) {
-    laws.value = preset.laws
+    laws.value = toSimLaws(preset.laws)
+  }
+
+  function toggleCompare() {
+    compareActive.value = !compareActive.value
+    if (compareActive.value) {
+      savedLaws.value = laws.value
+    } else {
+      savedLaws.value = []
+    }
   }
 
   const currentGame = computed<Preset>(() => ({
@@ -68,18 +99,27 @@ export function vueSimulationObjects(game: Ref<Game | undefined>) {
   const presets = computed<Preset[]>(() => [currentGame.value, ...staticPresets])
 
   const simulatedLaws = computed<(LawReference & { cls: string })[]>(() => {
-    return laws.value.map((l) => ({ ...l, cls: "simulated" }))
+    const bothAndNew = laws.value.map((l) => ({ ...l, cls: savedLaws.value.some((s) => equal(l, s)) ? "both" : "new" }))
+    const onlySaved = savedLaws.value
+      .filter((s) => !laws.value.some((l) => equal(l, s)))
+      .map((s) => ({ ...s, cls: "saved" }))
+    return [...bothAndNew, ...onlySaved].sort((a, b) => a.sortId - b.sortId)
   })
 
   const simulation = createSimulation(laws)
+  const secondSimulation = createSimulation(savedLaws)
 
   return {
     addToSimulation,
     removeFromSimulation,
+    toggleInSimulation,
     loadPreset,
+    compareActive,
+    toggleCompare,
+    presets,
     simulatedLaws,
     simulation,
-    presets,
+    secondSimulation,
   }
 }
 
