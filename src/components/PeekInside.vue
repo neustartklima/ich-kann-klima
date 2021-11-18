@@ -231,7 +231,12 @@ export default defineComponent({
     },
 
     effectsOfLawInYear(): BaseParams | undefined {
-      return this.lawSelected ? this.simOfYear.effectsOfLaws[this.lawSelected] : undefined
+      if (this.lawSelected) {
+        return this.simOfYear.effectsOfLaws[this.lawSelected]
+      } else if (this.yearSelected) {
+        return this.simEffectOfLaw[this.yearSelected - this.gameYears[0]]
+      }
+      return undefined
     },
 
     simOfYear(): { values: BaseParams; effectsOfLaws: ParamsOfLaws } {
@@ -303,7 +308,7 @@ export default defineComponent({
       <a @click="toggleEventList()" class="clickable" :class="showEvents ? 'selected' : ''">Events</a>&nbsp;
       <a @click="showYears = !showYears" class="clickable" :class="showYears ? 'selected' : ''">Years</a>&nbsp;
     </div>
-    <div v-if="showCharts" class="Details sidebyside">
+    <div v-if="showCharts" class="Details sidebyside" :class="{ lawSelected: lawSelected != undefined }">
       <PeekChart
         v-if="paramSelected"
         v-model:selectedYear="yearSelected"
@@ -352,7 +357,7 @@ export default defineComponent({
       <div class="SectionHead">Referenzen:</div>
       <Citation class="Section" v-for="(citation, pos) in selectedParam.citations" :key="pos" :citation="citation" />
     </div>
-    <div v-if="showParams" class="paramsList sidebyside">
+    <div v-if="showParams" class="paramsList sidebyside" :class="{ lawSelected: lawSelected != undefined }">
       <div class="paramsHeader">
         <div>Start of law: {{ startYearOfSelected }}</div>
         <div>Current year: {{ currentYear }}</div>
@@ -489,6 +494,10 @@ $lightBackground: #fff5dd;
 
   .paramsList {
     background-color: $shadedBackground;
+  }
+
+  .lawSelected {
+    background-color: #f8e3ae;
   }
 
   .yearList {
