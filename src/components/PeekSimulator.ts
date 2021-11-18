@@ -2,7 +2,6 @@ import { getAcceptedLaw, LawId, LawReference } from "../laws"
 import { computed, Ref, ref } from "@vue/runtime-core"
 import { Game, GameYear, gameYears, newGame } from "../game"
 import { calculateNextYearWithLaws } from "../Calculator"
-import LawProposalsVue from "./LawProposals.vue"
 
 type Preset = { name: string; laws: LawReference[] }
 
@@ -48,9 +47,14 @@ const staticPresets: Preset[] = [
 
 type SimLaw = LawReference & { sortId: number }
 
+const equal = (a: SimLaw, b: SimLaw): boolean => a.lawId === b.lawId && a.effectiveSince === b.effectiveSince
+
 const toSimLaws = (laws: LawReference[]): SimLaw[] => laws.map((l, i) => ({ ...l, sortId: i }))
 
-const equal = (a: SimLaw, b: SimLaw): boolean => a.lawId === b.lawId && a.effectiveSince === b.effectiveSince
+function newSortId(...sortedLists: SimLaw[][]): number {
+  const candIds = sortedLists.map((list) => (list.length === 0 ? 0 : list[list.length - 1].sortId + 1))
+  return candIds.length === 0 ? 0 : Math.max.apply(Math, candIds)
+}
 
 export function vueSimulationObjects(game: Ref<Game | undefined>) {
   const laws = ref<SimLaw[]>([])
@@ -60,9 +64,12 @@ export function vueSimulationObjects(game: Ref<Game | undefined>) {
   function addToSimulation(lawId: LawId, year: GameYear) {
     const lws = laws.value
     const newEntry: SimLaw = { lawId, effectiveSince: year, sortId: 0 }
-    newEntry.sortId =
-      savedLaws.value.find((s) => equal(newEntry, s))?.sortId || (lws.length === 0 ? 0 : lws[lws.length - 1].sortId + 1)
-    laws.value = lws.filter((l) => l.lawId != lawId).concat(newEntry)
+    const savedId = savedLaws.value.find((s) => equal(newEntry, s))?.sortId
+    newEntry.sortId = savedId != undefined ? savedId : newSortId(lws, savedLaws.value)
+    laws.value = lws
+      .filter((l) => l.lawId != lawId)
+      .concat(newEntry)
+      .sort((a, b) => a.sortId - b.sortId)
   }
 
   function removeFromSimulation(lawId: LawId) {
