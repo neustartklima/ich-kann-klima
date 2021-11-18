@@ -1,6 +1,47 @@
 # Developing #ich-kann-klima
 
-To run #ich-kann-klima on your local machine, clone the repository, install dependencies and start the frontend's dev server:
+## Install Tools
+
+Strictly needed is only [git](https://git-scm.com/) and
+[node.js](https://nodejs.org/en/). Several extensions of
+[vscode](https://code.visualstudio.com/) are quite essential,
+such as the auto-formatter Prettier.
+
+### git
+
+On windows download and install from <https://git-scm.com/>.
+
+### node.js
+
+We currently use version 14 of and might soon switch to version 16.
+
+Therefore, it is best to install it via a version management tool,
+such as [nvm-windows](https://github.com/coreybutler/nvm-windows) for
+Windows or [nvm](https://github.com/nvm-sh/nvm) for Linux or Mac.
+It is easier to install them, if there is no node version installed,
+previously. Follow the instructions on their pages and then
+
+```bash
+nvm install 14.16.1
+nvm use 14.16.1
+```
+
+The last command might need admin priviledges.
+
+### vscode
+
+Install it from <https://code.visualstudio.com/>.
+
+After cloning the repository, open the new directory in vscode. It will
+suggest to install all recommended extensions.
+
+Whenever you save a file it will be automatially formatted by Prettier.
+That way we do not fuss with formatting, but with the content.
+
+## Start development server
+
+To run #ich-kann-klima on your local machine, clone the repository,
+install dependencies and start the frontend's dev server:
 
 ```bash
 git clone https://github.com/neustartklima/ich-kann-klima.git
@@ -10,7 +51,8 @@ npm install                 # Install dependencies
 npm run dev                 # Run frontend
 ```
 
-The frontend runs on port 3000 by default, so `open http://localhost:3000` will open the browser (at least on OSX).
+The frontend runs on port 3000 by default.
+Click on <http://localhost:3000>` to show the game.
 
 ## Using a local backend
 
