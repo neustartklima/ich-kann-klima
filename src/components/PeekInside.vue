@@ -257,7 +257,18 @@ export default defineComponent({
     },
 
     simEffectOfLaw(): BaseParams[] {
-      if (!this.lawSelected && this.compareActive) {
+      if (this.lawSelected) {
+        const lawId: LawId = this.lawSelected
+        return this.simulation.map((y) => {
+          const effOfSel = y.effectsOfLaws[lawId]
+          return effOfSel ? effOfSel : zeroParams
+        })
+      }
+      if (this.compareActive) {
+        // This is a dirty hack squeezing the second simulation into the "changes" passed to the charts.
+        // It would be much cleaner to pass the values of the second simulation directly to the charts,
+        // but that would require quite a bit more effort, IF the old mode above (lawSelected) is kept.
+        // On the other hand, it would be much cleaner, if that mode is removed.
         return this.secondSimulation.map(
           (y, i) =>
             Object.fromEntries(
@@ -265,12 +276,7 @@ export default defineComponent({
             ) as BaseParams
         )
       }
-      if (!this.compareActive) return gameYears.map((y) => zeroParams)
-      const lawId: LawId = this.lawSelected
-      return this.simulation.map((y) => {
-        const effOfSel = y.effectsOfLaws[lawId]
-        return effOfSel ? effOfSel : zeroParams
-      })
+      return gameYears.map((y) => zeroParams)
     },
 
     chartData(): { values: BaseParams[]; changes: BaseParams[] } {
