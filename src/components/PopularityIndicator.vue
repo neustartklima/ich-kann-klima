@@ -23,7 +23,7 @@ export default defineComponent({
 
 <template>
   <div id="popularity">
-    <IndicatorBar title="Beliebtheit" :value="value" :zoom="2.8" style="margin: -80px 0 0 200px " />
+    <IndicatorBar id="indicator" title="Beliebtheit" :value="value" />
     <img v-if="areHappy" src="../assets/people-happy.png" id="happy" />
     <img v-if="areAngry" src="../assets/people-angry.png" id="angry" />
   </div>
@@ -32,12 +32,17 @@ export default defineComponent({
 <style lang="scss" scoped>
 #popularity {
   position: absolute;
-  width: 520px;
-  transform: translate3d(200px, 80px, -500px);
-
-  img {
+  left: 300px;
+  top: 166px;
+  #indicator {
     position: absolute;
-    width: 100%;
+    left: 250px;
+    bottom: 10px;
+  }
+  img {
+    width: 343px;
+    position: absolute;
+    will-change: transform;
   }
 }
 </style>

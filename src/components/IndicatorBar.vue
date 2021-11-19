@@ -5,23 +5,9 @@ export default defineComponent({
   props: {
     title: { type: String, required: true },
     value: { type: Number, required: true },
-    zoom: { type: Number, default: 1 },
   },
 
   computed: {
-    titleStyle(): Record<string, string> {
-      return {
-        fontSize: this.zoom * 0.5 + "em",
-      }
-    },
-
-    progressBarStyle(): Record<string, string> {
-      return {
-        width: this.zoom * 50 + "px",
-        height: this.zoom * 5 + "px",
-      }
-    },
-
     indicatorStyle(): Record<string, string> {
       const backgroundColor = this.value > 40 ? "green" : this.value > 20 ? "goldenrod" : "red"
       return {
@@ -35,8 +21,8 @@ export default defineComponent({
 
 <template>
   <div class="container">
-    <div class="title" :style="titleStyle">{{ title }}</div>
-    <div class="progress-bar" :style="progressBarStyle">
+    <div class="title">{{ title }}</div>
+    <div class="progress-bar">
       <div class="indicator" :style="indicatorStyle" />
     </div>
   </div>
@@ -48,6 +34,8 @@ export default defineComponent({
 }
 
 .progress-bar {
+  width: 100px;
+  height: 10px;
   border: 1px solid #888888;
   border-radius: 3px;
   z-index: 9999;

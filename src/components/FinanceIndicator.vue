@@ -31,7 +31,7 @@ export default defineComponent({
 
 <template>
   <div id="finances">
-    <IndicatorBar title="Finanzen" :value="value" :zoom="0.9" />
+    <IndicatorBar id="indicator" title="Finanzen" :value="value" />
     <img v-if="isShort" src="../assets/money-short.png" id="short" />
     <img v-if="isLess" src="../assets/money-less.png" id="less" />
     <img v-if="isMore" src="../assets/money-more.png" id="more" />
@@ -42,17 +42,28 @@ export default defineComponent({
 <style lang="scss" scoped>
 #finances {
   position: absolute;
-  width: 60px;
-  transform: translate3d(550px, 300px, 500px);
-
+  left: 550px;
+  top: 640px;
+  #indicator {
+    position: absolute;
+    left: 150px;
+  }
   img {
     position: absolute;
-    width: 100%;
-    transform: scale3d(1.2, 1.2, 1);
+    bottom: 0;
+    will-change: transform;
   }
-
   #short {
-    width: 35%;
+    width: 60px;
+  }
+  #less {
+    width: 156px;
+  }
+  #more {
+    width: 200px;
+  }
+  #much {
+    width: 160px;
   }
 }
 </style>
