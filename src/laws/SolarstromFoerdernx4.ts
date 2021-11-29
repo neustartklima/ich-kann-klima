@@ -1,6 +1,6 @@
 import { cite, wuppertalStudie } from "../citations"
-import { defineLaw } from "../Factory"
-import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
+import { defineLaw } from "./LawsTypes"
+import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 import { markdown } from "../lib/utils"
 import { Change, modify } from "../params"
 

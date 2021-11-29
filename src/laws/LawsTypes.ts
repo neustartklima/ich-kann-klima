@@ -29,3 +29,7 @@ export type LawDefinition = {
   details?: Details // TODO #79: Make mandatory
   internals?: Internals // TODO #79: Make mandatory
 }
+
+export function defineLaw(law: LawDefinition): LawDefinition {
+  return law
+}

@@ -1,5 +1,5 @@
-import { defineLaw } from "../Factory"
-import { linear } from "../lawTools"
+import { defineLaw } from "./LawsTypes"
+import { linear } from "./lawTools"
 import { Change, modify } from "../params"
 
 export default defineLaw({

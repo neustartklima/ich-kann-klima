@@ -54,9 +54,9 @@ import ForschungEmissionsfreieZementproduktion from "./ForschungEmissionsfreieZe
 import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugung"
 import Test from "./Test"
 
-import { lawList } from "../Factory"
 import { LawDefinition } from "./LawsTypes"
 import { BaseParams, ParamKey, paramKeys } from "../params"
+import { objectToArrayWithId } from "../lib/utils"
 
 const allLawsObj = {
   AllesBleibtBeimAlten,
@@ -161,6 +161,10 @@ export type LawReference = {
 
 export type AcceptedLaw = Law & { effectiveSince: number }
 export type LawView = Law & { pos: number; zIndex: number }
+
+export function lawList(modules: Record<LawId, LawDefinition>): Law[] {
+  return objectToArrayWithId(modules)
+}
 
 export const allLaws: Law[] = lawList(allLawsObj)
 

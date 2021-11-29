@@ -20,10 +20,10 @@ import Klimafluechtlinge from "./Klimafluechtlinge"
 import Plagiatsaffaere from "./Plagiatsaffaere"
 import CO2PreisDebatte from "./CO2PreisDebatte"
 
-import { prepareModuleList } from "../Factory"
 import { EventDefinition } from "./EventsTypes"
 import { Game } from "../game"
 import { Ratio } from "../types"
+import { objectToArrayWithId } from "../lib/utils"
 
 const allEventsObj = {
   AbstandsregelnWindkraft,
@@ -64,7 +64,7 @@ export type EventReference = {
   acknowledged: boolean
 }
 
-export const allEvents = prepareModuleList(allEventsObj).map((info) => ({
-  ...info,
-  probability: info.probability || defaultProbability,
-})) as Event[]
+export const allEvents: Event[] = objectToArrayWithId(allEventsObj).map((event) => ({
+  ...event,
+  probability: event.probability || defaultProbability,
+}))

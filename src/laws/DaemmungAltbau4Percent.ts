@@ -1,6 +1,6 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { MrdEuro } from "../types"
-import { linear } from "../lawTools"
+import { linear } from "./lawTools"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 

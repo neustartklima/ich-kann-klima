@@ -1,5 +1,5 @@
-import { defineEvent } from "../Factory"
-import { lawIsAccepted, linear } from "../lawTools"
+import { defineEvent } from "./EventsTypes"
+import { lawIsAccepted, linear } from "../laws/lawTools"
 
 export default defineEvent({
   title: "Debatte über CO2-Preise",

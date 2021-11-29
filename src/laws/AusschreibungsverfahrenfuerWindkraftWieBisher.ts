@@ -1,6 +1,6 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { TWh } from "../types"
-import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
+import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 import { Change, modify } from "../params"
 
 export default defineLaw({
@@ -18,7 +18,7 @@ export default defineLaw({
     const offshoreNew: TWh = 1.2
     return [
       modify("electricityWind")
-        .byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100)
+        .byValue(((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100)
         .if(currentYear >= startYear + delay),
     ]
   },

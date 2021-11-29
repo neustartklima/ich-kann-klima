@@ -1,6 +1,6 @@
 import { endYear, startYear } from "../constants"
-import { linear } from "../lawTools"
-import { defineLaw } from "../Factory"
+import { linear } from "./lawTools"
+import { defineLaw } from "./LawsTypes"
 import { MrdEuro, TWh } from "../types"
 import { Change, modify } from "../params"
 

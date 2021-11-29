@@ -1,7 +1,7 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
-import { linear } from "../lawTools"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Forschung und Entwicklung zur Stromspeicherung fördern",
@@ -12,12 +12,8 @@ export default defineLaw({
     const inGrantPeriod = currentYear < startYear + 5
     const effective = currentYear >= startYear + 3
     return [
-      modify("stateDebt")
-        .byValue(2)
-        .if(inGrantPeriod),
-      modify("electricityGridQuality")
-        .byValue(0.2)
-        .if(effective),
+      modify("stateDebt").byValue(2).if(inGrantPeriod),
+      modify("electricityGridQuality").byValue(0.2).if(effective),
     ]
   },
 

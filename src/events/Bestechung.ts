@@ -1,4 +1,4 @@
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 import { idsToLaws, Law } from "../laws"
 import { dispatch } from "../params"
 
@@ -26,6 +26,6 @@ export default defineEvent({
 
   probability(game) {
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws))
-    return law ? .5 : 0
+    return law ? 0.5 : 0
   },
 })

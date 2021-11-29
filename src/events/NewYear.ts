@@ -1,5 +1,5 @@
 import { startYear } from "../constants"
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 import { dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 

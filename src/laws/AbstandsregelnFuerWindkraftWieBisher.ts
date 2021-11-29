@@ -1,5 +1,5 @@
-import { defineLaw } from "../Factory"
-import { lawIsAccepted, linear, windPercentage } from "../lawTools"
+import { defineLaw } from "./LawsTypes"
+import { lawIsAccepted, linear, windPercentage } from "./lawTools"
 import { TWh } from "../types"
 import { Change, modify } from "../params"
 

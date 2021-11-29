@@ -1,4 +1,4 @@
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 import { modify } from "../params"
 
 export default defineEvent({

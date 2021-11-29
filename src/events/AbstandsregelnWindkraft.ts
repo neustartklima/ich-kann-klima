@@ -1,4 +1,4 @@
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 
 export default defineEvent({
   title: "Abstandsregeln für Windkraft erneut im Fokus",

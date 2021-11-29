@@ -1,6 +1,6 @@
 import { cite, fraunhoferISE2020InstalledPower } from "../citations"
-import { defineEvent } from "../Factory"
-import { lawIsAccepted } from "../lawTools"
+import { defineEvent } from "./EventsTypes"
+import { lawIsAccepted } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 
 export default defineEvent({

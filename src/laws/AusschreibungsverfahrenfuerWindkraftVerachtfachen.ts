@@ -1,6 +1,6 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { TsdPeople, TWh } from "../types"
-import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
+import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 import { Change, modify } from "../params"
 
 export default defineLaw({

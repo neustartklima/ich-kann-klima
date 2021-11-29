@@ -1,5 +1,5 @@
-import { defineEvent } from "../Factory"
-import { linear } from "../lawTools"
+import { defineEvent } from "./EventsTypes"
+import { linear } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
 
@@ -8,10 +8,7 @@ export default defineEvent({
   description: `Die anhaltende Trockenheit und die damit verbundene Wasserknappheit hatte Rationierungen zur Folge. Die Ernteausfälle sind enorm.`,
 
   apply() {
-    return [
-      modify("gdp").byValue(-100),
-      modify("popularity").byValue(-10),
-    ]
+    return [modify("gdp").byValue(-100), modify("popularity").byValue(-10)]
   },
 
   probability(game) {
@@ -24,5 +21,6 @@ export default defineEvent({
 
   `,
   internals: markdown`
+
   `,
 })

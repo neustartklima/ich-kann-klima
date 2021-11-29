@@ -1,4 +1,4 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { TWh } from "../types"
 import { Change, modify } from "../params"
 
