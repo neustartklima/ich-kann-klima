@@ -1,5 +1,5 @@
 import { Context } from "."
-import { GameId, Game, prepareNextStep, newGame } from "../game"
+import { GameId, Game, prepareNextStep, newGame, acceptLaw, sitOut } from "../game"
 import { Repository } from "../model/Repository"
 import * as Calculator from "../Calculator"
 import { getAcceptedLaw } from "../laws"
@@ -42,21 +42,11 @@ export function ActionFactory(router: Router, repository: Repository) {
 
     async acceptLaw(context: Context, payload: { lawId: LawId }) {
       const game = { ...(context.state.game as Game) }
-      const newLawRef = { lawId: payload.lawId, effectiveSince: game.currentYear + 1 }
-      const newLaw = getAcceptedLaw(newLawRef)
-      const removeLawsWithLabels = newLaw.removeLawsWithLabels
-      const filteredLawRefs = game.acceptedLaws
-        .map(getAcceptedLaw)
-        .filter(
-          (lawToCheck) => !removeLawsWithLabels?.some((labelToRemove) => lawToCheck.labels?.includes(labelToRemove))
-        )
-        .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
-      game.acceptedLaws = [...filteredLawRefs, newLawRef]
-      const event = prepareNextStep(game)
+      const event = acceptLaw(payload.lawId, game)
       await repository.saveGame(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })
-      await repository.decisionMade(game, newLaw.id, true)
+      await repository.decisionMade(game, payload.lawId, true)
     },
 
     async rejectLaw(context: Context, payload: { lawId: LawId }) {
@@ -70,7 +60,7 @@ export function ActionFactory(router: Router, repository: Repository) {
     async sitOut(context: Context) {
       const game = { ...(context.state.game as Game) }
       await repository.decisionMade(game, "sitOut", true)
-      const event = prepareNextStep(game)
+      const event = sitOut(game)
       await repository.saveGame(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })

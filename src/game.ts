@@ -1,46 +1,48 @@
-import { endYear, maxProposedLaws, probabilityThatEventOccurs, startYear } from "./constants"
+import { endYear, maxProposedLaws, probabilityThatEventOccurs, sitOutDuration, startDate, startYear } from "./constants"
 import { allEvents, Event, EventReference } from "./events"
-import { allLaws, Law, LawId, LawReference } from "./laws"
+import { allLaws, getAcceptedLaw, Law, LawId, LawReference } from "./laws"
 import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from "./params"
 import { v1 as getUUID } from "uuid"
 import { Percent } from "./types"
 import { not } from "./lib/utils"
 import { random as libRandom } from "./lib/random"
+import { date, Date, duration } from "./lib/Temporal"
+import { Effort } from "./laws/LawsTypes"
 
 export type GameId = string
 
 export type GameDefinition = {
+  currentDate: string
   currentYear: number
   values: WritableBaseParams
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
   events: EventReference[]
-  actionCount: number
   over: boolean
 }
 
 export type Game = {
   id: GameId
+  currentDate: string
   currentYear: number
   values: BaseParams
   acceptedLaws: LawReference[]
   proposedLaws: LawId[]
   rejectedLaws: LawId[]
   events: EventReference[]
-  actionCount: number
   over: boolean
   prngState: object
 }
 
 export const initialGame = {
+  currentDate: startDate,
   currentYear: startYear,
   values: defaultValues,
   acceptedLaws: [],
   proposedLaws: [],
   rejectedLaws: [],
   events: [],
-  actionCount: 0,
   over: false,
   prngState: {},
 }
@@ -48,13 +50,13 @@ export const initialGame = {
 export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
   return {
     id,
+    currentDate: game.currentDate,
     currentYear: game.currentYear,
     acceptedLaws: game.acceptedLaws,
     proposedLaws: game.proposedLaws,
     rejectedLaws: game.rejectedLaws,
     values: createBaseValues(game.values),
     events: game.events,
-    actionCount: game.actionCount,
     over: game.over,
     prngState: {},
   }
@@ -72,6 +74,28 @@ export type GameYear = number
 
 export const gameYears: GameYear[] = [...Array(endYear - startYear + 1).keys()].map((n) => n + startYear)
 
+export function acceptLaw(lawId: LawId, game: Game): Event | undefined {
+  const newLawRef = { lawId, effectiveSince: game.currentYear + 1 }
+  const newLaw = getAcceptedLaw(newLawRef)
+
+  const effort: Effort = newLaw.effort(game)
+  game.currentDate = date(game.currentDate).plus(effort.time).toJSON()
+
+  const removeLawsWithLabels = newLaw.removeLawsWithLabels
+  const filteredLawRefs = game.acceptedLaws
+    .map(getAcceptedLaw)
+    .filter((lawToCheck) => !removeLawsWithLabels?.some((labelToRemove) => lawToCheck.labels?.includes(labelToRemove)))
+    .map((law) => ({ lawId: law.id, effectiveSince: law.effectiveSince }))
+  game.acceptedLaws = [...filteredLawRefs, newLawRef]
+
+  return prepareNextStep(game)
+}
+
+export function sitOut(game: Game): Event | undefined {
+  game.currentDate = date(game.currentDate).plus(sitOutDuration).toJSON()
+  return prepareNextStep(game)
+}
+
 export function prepareNextStep(
   game: Game,
   laws: Law[] = allLaws,
@@ -85,7 +109,6 @@ export function prepareNextStep(
   }
   const newProposals = determineNewProposals(game, laws, event?.laws ? event.laws : [])
   game.proposedLaws = changeInPlace(game.proposedLaws, newProposals)
-  game.actionCount++
 
   return event
 }

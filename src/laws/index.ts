@@ -54,7 +54,7 @@ import ForschungEmissionsfreieZementproduktion from "./ForschungEmissionsfreieZe
 import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugung"
 import Test from "./Test"
 
-import { LawDefinition } from "./LawsTypes"
+import { defaultEffort, EffortFunc, LawDefinition } from "./LawsTypes"
 import { BaseParams, ParamKey, paramKeys } from "../params"
 import { objectToArrayWithId } from "../lib/utils"
 
@@ -152,6 +152,7 @@ export const lawIds = Object.keys(allLawsObj) as LawId[]
 
 export type Law = LawDefinition & {
   id: LawId
+  effort: EffortFunc
 }
 
 export type LawReference = {
@@ -160,10 +161,13 @@ export type LawReference = {
 }
 
 export type AcceptedLaw = Law & { effectiveSince: number }
-export type LawView = Law & { pos: number; zIndex: number }
+export type LawView = Law & { pos: number; zIndex: number; effortComment: string }
 
 export function lawList(modules: Record<LawId, LawDefinition>): Law[] {
-  return objectToArrayWithId(modules)
+  return objectToArrayWithId(modules).map((l) => ({
+    ...l,
+    effort: l.effort || defaultEffort,
+  }))
 }
 
 export const allLaws: Law[] = lawList(allLawsObj)

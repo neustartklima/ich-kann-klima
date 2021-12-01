@@ -6,25 +6,22 @@ import { Event } from "../src/events"
 import should from "should"
 import { probabilityThatEventOccurs } from "../src/constants"
 import { shuffleNumbers, random } from "../src/lib/random"
+import { defaultEffort } from "../src/laws/LawsTypes"
 
 function priority(): number {
   return 1
 }
 
+const defaultLaw = { description: "", effort: defaultEffort, effects: () => [], priority }
+
 const allLaws: Law[] = [
-  { id: "AbschaffungDerMineraloelsteuer", title: "law 1", description: "", effects: () => [], priority },
-  { id: "AbstandsregelnFuerWindkraftAbschaffen", title: "law 2", description: "", effects: () => [], priority },
-  { id: "AbstandsregelnFuerWindkraftLockern", title: "law 3", description: "", effects: () => [], priority },
-  { id: "AbstandsregelnFuerWindkraftVerschaerfen", title: "law 4", description: "", effects: () => [], priority },
-  { id: "AllesBleibtBeimAlten", title: "law 5", description: "", effects: () => [], priority },
-  { id: "AusbauVonStrassen", title: "law 6", description: "", effects: () => [], priority },
-  {
-    id: "AusschreibungsverfahrenfuerWindkraftVerachtfachen",
-    title: "law 7",
-    description: "",
-    effects: () => [],
-    priority,
-  },
+  { ...defaultLaw, id: "AbschaffungDerMineraloelsteuer", title: "law 1" },
+  { ...defaultLaw, id: "AbstandsregelnFuerWindkraftAbschaffen", title: "law 2" },
+  { ...defaultLaw, id: "AbstandsregelnFuerWindkraftLockern", title: "law 3" },
+  { ...defaultLaw, id: "AbstandsregelnFuerWindkraftVerschaerfen", title: "law 4" },
+  { ...defaultLaw, id: "AllesBleibtBeimAlten", title: "law 5" },
+  { ...defaultLaw, id: "AusbauVonStrassen", title: "law 6" },
+  { ...defaultLaw, id: "AusschreibungsverfahrenfuerWindkraftVerachtfachen", title: "law 7" },
 ]
 
 describe("game", () => {
