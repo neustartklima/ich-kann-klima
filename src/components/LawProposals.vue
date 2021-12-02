@@ -23,14 +23,20 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters(["proposedLaws", "game"]),
+    ...mapGetters(["proposedLaws"]),
 
+    game(): Game | undefined {
+      return this.store.state.game
+    },
     lawsToShow(): LawView[] {
       if (!this.zIndexes.length) {
         this.zIndexes = getZIndexes(this.proposedLaws.length, 0)
       }
 
-      const game: Game = this.game
+      const game = this.game
+      if (game === undefined) {
+        return []
+      }
       return this.proposedLaws.map((law: Law, pos: number) => ({
         ...law,
         zIndex: this.zIndexes[pos],
