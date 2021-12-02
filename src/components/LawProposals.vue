@@ -5,6 +5,7 @@ import { mapGetters } from "vuex"
 import LawCard from "./LawCard.vue"
 import { getZIndexes } from "../lib/utils"
 import { useStore } from "../store"
+import { Game } from "../game"
 
 export default defineComponent({
   components: { LawCard },
@@ -22,16 +23,19 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters(["proposedLaws"]),
+    ...mapGetters(["proposedLaws", "game"]),
 
     lawsToShow(): LawView[] {
       if (!this.zIndexes.length) {
         this.zIndexes = getZIndexes(this.proposedLaws.length, 0)
       }
+
+      const game: Game = this.game
       return this.proposedLaws.map((law: Law, pos: number) => ({
         ...law,
         zIndex: this.zIndexes[pos],
         pos,
+        effortComment: law.effort(game).text,
       }))
     },
   },

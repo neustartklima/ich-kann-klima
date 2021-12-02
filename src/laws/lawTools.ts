@@ -1,6 +1,6 @@
-import { allLaws, LawId, LawReference } from "./laws"
-import { Game } from "./game"
-import { Percent } from "./types"
+import { allLaws, LawId, LawReference } from "."
+import { Game } from "../game"
+import { Percent } from "../types"
 
 /**
  * Create a function, which may be used in laws to check change values to obey boundaries.

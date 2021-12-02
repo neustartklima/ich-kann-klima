@@ -1,5 +1,5 @@
-import { defineLaw } from "../Factory"
-import { lawIsAccepted, linear } from "../lawTools"
+import { defineLaw } from "./LawsTypes"
+import { lawIsAccepted, linear } from "./lawTools"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
 import { paramDefinitions } from "../params/Params"
@@ -19,7 +19,9 @@ export default defineLaw({
       modify("stateDebt").byValue(1).if(hasEffect),
       modify("electricityGridQuality").byValue(2).if(hasEffect),
       modify("electricityGridQuality").byValue(2).if(isBoosted),
-      modify("electricityGridQuality").byValue(2).if(hasEffect && isBoosted),
+      modify("electricityGridQuality")
+        .byValue(2)
+        .if(hasEffect && isBoosted),
     ]
   },
 

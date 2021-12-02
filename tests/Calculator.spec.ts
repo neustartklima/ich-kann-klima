@@ -3,9 +3,11 @@ import { Change, createBaseValues, defaultValues, modify } from "../src/params"
 import { AcceptedLaw, LawId } from "../src/laws"
 import { BaseParams } from "../src/params"
 import { Game, initGame } from "../src/game"
-import { EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
+import { defaultEffort, EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
 import { MioPsgrKm } from "../src/types"
 import "should"
+import { startDate, startYear } from "../src/constants"
+import { date } from "../src/lib/Temporal"
 
 function agriEffects(): Change[] {
   return [modify("co2emissionsAgriculture").byValue(-29)]
@@ -27,6 +29,7 @@ function mockAcceptedLaw(
     description: id,
     labels,
     treatAfterLabels,
+    effort: defaultEffort,
     effects: effects,
     priority,
     effectiveSince: 2021,
@@ -99,9 +102,9 @@ const initialGame: Game = {
   acceptedLaws: [],
   proposedLaws: [],
   rejectedLaws: [],
-  currentYear: 2021,
+  currentDate: startDate,
+  currentYear: startYear,
   events: [],
-  actionCount: 0,
   over: false,
   prngState: {},
 }

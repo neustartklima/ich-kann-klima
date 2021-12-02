@@ -1,4 +1,4 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { random } from "../lib/random"
 
 export default defineLaw({

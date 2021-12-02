@@ -1,4 +1,4 @@
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 import { idsToLaws } from "../laws"
 import { markdown } from "../lib/utils"
 import { dispatch } from "../params"
@@ -12,11 +12,10 @@ export default defineEvent({
   },
 
   probability(game) {
-    const law =  idsToLaws(game.acceptedLaws.map(ref => ref.lawId))
-      .find((law) => law.title.match(/tierwohl/i))
+    const law = idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))
 
     // Kann passieren, wenn es keine Investitionen in bessere Tierhaltung gab
-    return law ? 0 : .5
+    return law ? 0 : 0.5
   },
 
   laws: [],

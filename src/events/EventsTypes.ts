@@ -42,6 +42,10 @@ export type EventDefinition = {
   internals?: Internals // TODO #79: Make mandatory
 }
 
+export function defineEvent(event: EventDefinition): EventDefinition {
+  return event
+}
+
 /** The used special return values of {@link EventDefinition.probability} > 1.
  *
  * @remarks

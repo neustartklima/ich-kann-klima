@@ -1,5 +1,5 @@
-import { defineLaw } from "../Factory"
-import { lawIsAccepted, linear, renewablePercentage } from "../lawTools"
+import { defineLaw } from "./LawsTypes"
+import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 import { Percent } from "../types"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"

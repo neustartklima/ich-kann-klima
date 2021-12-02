@@ -1,5 +1,5 @@
 import should from "should"
-import { changeBy, getActiveLaw, linear } from "../src/lawTools"
+import { changeBy, getActiveLaw, linear } from "../src/laws/lawTools"
 import { LawReference } from "../src/laws"
 
 describe("lawTools", () => {

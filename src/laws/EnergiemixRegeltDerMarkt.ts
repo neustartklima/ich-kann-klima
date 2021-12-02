@@ -1,12 +1,21 @@
 import { endYear, startYear } from "../constants"
-import { linear } from "../lawTools"
-import { defineLaw } from "../Factory"
+import { linear } from "./lawTools"
+import { defineLaw, Effort } from "./LawsTypes"
 import { MrdEuro, TWh } from "../types"
 import { Change, modify } from "../params"
+import { duration } from "../lib/Temporal"
 
 export default defineLaw({
   title: "Energiemix regelt der Markt",
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
+
+  effort(game): Effort {
+    if (game.values.popularity >= 50) {
+      return { time: duration("P3M"), text: "Normal dauert das 6 Monate, aber bei Deiner Beliebtheit nur 3." }
+    } else {
+      return { time: duration("P6M"), text: "Dauert 6 Monate." }
+    }
+  },
 
   effects(): Change[] {
     return [

@@ -1,7 +1,7 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
-import { linear } from "../lawTools"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Erforschung und Umsetzung dezentraler Stromerzeugung fördern",

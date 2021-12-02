@@ -1,4 +1,4 @@
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 import { defaultValues, dispatch } from "../params"
 import { specialEventProbs } from "./EventsTypes"
 

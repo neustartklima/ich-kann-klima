@@ -1,4 +1,4 @@
-import { defineEvent } from "../Factory"
+import { defineEvent } from "./EventsTypes"
 import { markdown } from "../lib/utils"
 //import { uba2020DeutscheTreibhausgasEmissionen } from "../citations"
 

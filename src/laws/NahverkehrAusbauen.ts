@@ -1,6 +1,6 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { MrdEuro, Percent } from "../types"
-import { linear } from "../lawTools"
+import { linear } from "./lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { bmvi2020OePNVFoerderungDesBundes, cite } from "../citations"

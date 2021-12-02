@@ -24,8 +24,6 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapGetters(["proposedLaws"]),
-
     zIndex(): number {
       return this.law.zIndex
     },
@@ -62,6 +60,8 @@ export default defineComponent({
       <div>
         <h3>{{ law.title }}</h3>
         <div>{{ law.description }}</div>
+        <br />
+        <div>{{ law.effortComment }}</div>
 
         <div class="button-bar" v-if="selectable">
           <button class="accept" @click="accept">✓</button>

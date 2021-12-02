@@ -1,5 +1,5 @@
 import { EventId } from "../events"
-import { Game, GameId } from "../game"
+import { Game, GameDefinition, GameId } from "../game"
 import { LawId } from "../laws"
 import { FetchQueue } from "./FetchQueue"
 

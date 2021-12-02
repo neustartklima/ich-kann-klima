@@ -1,5 +1,5 @@
-import { defineLaw } from "../Factory"
-import { lawIsAccepted, linearPopChange, renewablePercentage } from "../lawTools"
+import { defineLaw } from "./LawsTypes"
+import { lawIsAccepted, linearPopChange, renewablePercentage } from "./lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { ucl2021EconomicCostSixTimesHigher } from "../citations"

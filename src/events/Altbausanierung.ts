@@ -1,5 +1,5 @@
-import { defineEvent } from "../Factory"
-import { linear } from "../lawTools"
+import { defineEvent } from "./EventsTypes"
+import { linear } from "../laws/lawTools"
 
 export default defineEvent({
   title: "Gesetzesinitiative zur Sanierung von Altbauten",

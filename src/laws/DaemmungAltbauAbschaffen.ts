@@ -1,6 +1,6 @@
-import { defineLaw } from "../Factory"
+import { defineLaw } from "./LawsTypes"
 import { MrdEuro } from "../types"
-import { getActiveLaw, linear } from "../lawTools"
+import { getActiveLaw, linear } from "./lawTools"
 import { Change, modify } from "../params"
 
 export default defineLaw({
