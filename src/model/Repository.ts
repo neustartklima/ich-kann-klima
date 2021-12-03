@@ -25,7 +25,7 @@ export default function RepositoryFactory({
   storage?: Storage
 }) {
   return {
-    async createGame(game: Game): Promise<Game> {
+    createGame(game: Game): void {
       seedWithGame(game)
       storage.setItem("game", JSON.stringify(game))
 
@@ -35,8 +35,6 @@ export default function RepositoryFactory({
         // If the API finally errors, no message to the users are sent, they can play nevertheless.
         logger.warn("Cannot save new game - trying again later", error)
       }
-
-      return game
     },
 
     async loadGame(id: GameId): Promise<Game> {
@@ -54,7 +52,7 @@ export default function RepositoryFactory({
       return initGame(storedGame, id)
     },
 
-    async saveGame(game: Game): Promise<void> {
+    saveGame(game: Game): void {
       game.prngState = getState()
       storage.setItem("game", JSON.stringify(game))
       try {
@@ -68,11 +66,11 @@ export default function RepositoryFactory({
       }
     },
 
-    async decisionMade(game: Game, lawId: LawId | "sitOut", accepted: boolean): Promise<void> {
+    decisionMade(game: Game, lawId: LawId | "sitOut", accepted: boolean): void {
       api.decisionMade(game.id, lawId, accepted)
     },
 
-    async eventOccurred(game: Game, event: Event): Promise<void> {
+    eventOccurred(game: Game, event: Event): void {
       api.eventOccurred(game.id, event.id)
     },
   }

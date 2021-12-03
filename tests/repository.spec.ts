@@ -27,8 +27,9 @@ describe("repository", () => {
     const createGame = sinon.stub().rejects(undefined)
     const api = { createGame } as unknown as API
     const repository = Repository({ api, logger, storage })
-    const result = await repository.createGame(initGame())
-    result.id.should.match(uuidPattern)
+    const iniGame = initGame()
+    repository.createGame(iniGame)
+    iniGame.id.should.match(uuidPattern)
     promise.should.be.resolvedWith("Cannot save new game - trying again later")
   })
 
