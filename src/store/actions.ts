@@ -16,14 +16,15 @@ export function ActionFactory(router: Router, repository: Repository) {
   return {
     async startGame(context: Context) {
       const game = newGame()
-      await repository.createGame(game)
       const event = prepareNextStep(game)
+      await repository.createGame(game)
       context.commit("setGameState", { game })
       context.dispatch("applyEvent", { event })
       router.push("/games/" + game.id)
     },
 
     async loadGame(context: Context, payload: { gameId: GameId }) {
+      if (context.state.game?.id === payload.gameId) return
       try {
         const game = await repository.loadGame(payload.gameId)
         await repository.saveGame(game)
