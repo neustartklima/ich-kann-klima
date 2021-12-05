@@ -47,7 +47,7 @@ export default ({
       relevantListeners.forEach((listener) => listener(event))
     } catch (error) {
       logger.error(error)
-      logger.debug(error.stack)
+      logger.debug((error as Error).stack)
     }
   }
 
