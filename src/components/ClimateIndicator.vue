@@ -1,39 +1,25 @@
-<script lang="ts">
-import { defineComponent } from "vue"
+<script setup lang="ts">
+import { computed, defineProps } from "vue"
 import healthy from "../assets/plant-healthy.png"
 import sick from "../assets/plant-sick.png"
 import withered from "../assets/plant-withered.png"
 import IndicatorBar from "./IndicatorBar.vue"
 
-export default defineComponent({
-  data() {
-    return {
-      levels: { healthy, sick, withered } as Record<string, string>,
-    }
-  },
+const levels = { healthy, sick, withered } as Record<string, string>
 
-  props: {
-    value: { type: Number, required: true },
-  },
+const props = defineProps<{ value: number }>()
 
-  components: { IndicatorBar },
-
-  computed: {
-    status(): string {
-      if (this.value > 66) {
-        return "healthy"
-      } else if (this.value > 33) {
-        return "sick"
-      } else {
-        return "withered"
-      }
-    },
-
-    imgSrc(): string {
-      return this.levels[this.status]
-    },
-  },
+const status = computed((): string => {
+  if (props.value > 66) {
+    return "healthy"
+  } else if (props.value > 33) {
+    return "sick"
+  } else {
+    return "withered"
+  }
 })
+
+const imgSrc = computed(() => levels[status.value])
 </script>
 
 <template>
