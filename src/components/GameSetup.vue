@@ -93,7 +93,7 @@ export default defineComponent({
       <div id="wall-right" />
     </div>
 
-    <Calendar :year="currentYear" :month="11" />
+    <Calendar :year="currentYear" :month="currentMonth" />
     <Heater />
     <PopularityIndicator :value="popularity" />
     <TVSet :with-news="!!eventText" />
