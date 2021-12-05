@@ -19,7 +19,7 @@ export default function RequestFactory(baseUrl: string, fetch: FetchFunction, lo
       }
       throw Error(result.message || result)
     } catch (error) {
-      logger.error(error)
+      logger.error(error as Error)
       throw error
     }
   }

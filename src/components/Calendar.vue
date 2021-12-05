@@ -1,15 +1,23 @@
-<script lang="ts">
-import { defineComponent } from "@vue/runtime-core"
+<script setup lang="ts">
+import { computed } from "vue"
 
-export default defineComponent({
-  props: {
-    year: Number,
-  },
+const props = defineProps<{
+  year: number
+  month: number
+}>()
+
+const pos = computed(() => {
+  const top = Math.floor((props.month - 1) / 4) * 18 + 27 + "%"
+  const left = ((props.month - 1) % 4) * 21 + 12 + "%"
+  return { top, left }
 })
 </script>
 
 <template>
-  <div id="calendar">{{ year }}</div>
+  <div id="calendar">
+    {{ year }}
+    <span id="month-indicator" :style="pos" />
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -23,5 +31,13 @@ export default defineComponent({
   background-size: contain;
   width: 100px;
   height: 40px;
+
+  #month-indicator {
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    background: red;
+    border-radius: 50%;
+  }
 }
 </style>

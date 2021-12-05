@@ -1,32 +1,14 @@
-<script lang="ts">
-import { defineComponent } from "vue"
+<script setup lang="ts">
+import { computed, defineProps } from "vue"
 import IndicatorBar from "./IndicatorBar.vue"
 
-export default defineComponent({
-  props: {
-    value: { type: Number, required: true },
-  },
+const props = defineProps<{ value: number }>()
 
-  components: { IndicatorBar },
-
-  computed: {
-    isShort(): boolean {
-      return this.value < 20
-    },
-
-    isLess(): boolean {
-      return this.value >= 20 && this.value < 50
-    },
-
-    isMore(): boolean {
-      return this.value >= 50 && this.value < 80
-    },
-
-    isMuch(): boolean {
-      return this.value >= 80
-    },
-  },
-})
+const value = computed(() => props.value)
+const isShort = computed(() => props.value < 20)
+const isLess = computed(() => props.value >= 20 && props.value < 50)
+const isMore = computed(() => props.value >= 50 && props.value < 80)
+const isMuch = computed(() => props.value >= 80)
 </script>
 
 <template>

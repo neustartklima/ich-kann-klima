@@ -13,6 +13,7 @@ import Tour from "./Tour.vue"
 import { allEvents, Event, EventReference } from "../events"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
+import { date } from "../lib/Temporal"
 
 export default defineComponent({
   components: {
@@ -56,6 +57,10 @@ export default defineComponent({
       return this.store.state.game?.currentYear || 2021
     },
 
+    currentMonth(): number {
+      return date(this.store.state.game?.currentDate as string).lux.month
+    },
+
     finance(): number {
       const game = this.store.state.game
       return game ? financeRating(game) : 0
@@ -88,7 +93,7 @@ export default defineComponent({
       <div id="wall-right" />
     </div>
 
-    <Calendar :year="currentYear" />
+    <Calendar :year="currentYear" :month="currentMonth" />
     <Heater />
     <PopularityIndicator :value="popularity" />
     <TVSet :with-news="!!eventText" />

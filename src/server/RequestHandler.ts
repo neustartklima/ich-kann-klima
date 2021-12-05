@@ -5,11 +5,11 @@ const isProduction = process.env.NODE_ENV === "production"
 type HandlerFunc = (req: Request) => unknown
 
 export function json(func: HandlerFunc) {
-  return async function(req: Request, res: Response, next: NextFunction): Promise<void> {
+  return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.json(await func(req))
     } catch (error) {
-      error.httpStatus = error.httpStatus || 500
+      ;(error as { httpStatus: number }).httpStatus = (error as { httpStatus: number }).httpStatus || 500
       next(error)
     }
   }

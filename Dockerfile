@@ -1,4 +1,4 @@
-FROM node:14-alpine as build
+FROM node:16-alpine as build
 WORKDIR /app
 ADD . /app
 RUN npm ci && \
@@ -8,7 +8,7 @@ RUN npm ci && \
     mkdir /build && \
     mv /app/node_modules /app/dist/* /build
 
-FROM node:14-alpine
+FROM node:16-alpine
 COPY --from=build /build /app
 
 WORKDIR /app
