@@ -1,29 +1,20 @@
-<script lang="ts">
-import { defineComponent, PropType } from "@vue/runtime-core"
+<script setup lang="ts">
+import { ref, getCurrentInstance } from "vue"
 import { Event } from "../events"
 
-export default defineComponent({
-  props: {
-    event: {
-      type: Object as PropType<Event>,
-      required: true,
-    },
-  },
+defineProps<{
+  event: Event
+}>()
 
-  data() {
-    return {
-      open: false,
-    }
-  },
+const open = ref(false)
 
-  methods: {
-    toggle() {
-      const p = this.$refs.p as HTMLParagraphElement
-      p.style.setProperty("--max-height", p.scrollHeight + "px")
-      this.open = !this.open
-    },
-  },
-})
+const instance = getCurrentInstance()
+
+function toggle() {
+  const p = instance?.refs.p as HTMLParagraphElement
+  p.style.setProperty("--max-height", p.scrollHeight + "px")
+  open.value = !open
+}
 </script>
 
 <template>

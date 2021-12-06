@@ -1,56 +1,34 @@
-<script lang="ts">
-import { defineComponent, PropType } from "vue"
+<script setup lang="ts">
+import { computed, ref } from "vue"
 import { LawView } from "../laws"
-import { useStore } from "../store"
-import { mapGetters } from "vuex"
 
-export default defineComponent({
-  props: {
-    law: { type: Object as PropType<LawView>, required: true },
-    selectable: { type: Boolean, required: true },
-    numCards: { type: Number, required: true },
-  },
+const props = defineProps<{
+  law: LawView
+  selectable: boolean
+  numCards: number
+}>()
 
-  setup() {
-    const store = useStore()
+const emit = defineEmits<{
+  (e: "selected"): void
+  (e: "accepted", id: string): void
+}>()
 
-    return { store }
-  },
+const accepted = ref(false)
+const zIndex = computed(() => props.law.zIndex)
 
-  data() {
-    return {
-      accepted: false,
-    }
-  },
+function select() {
+  emit("selected")
+}
 
-  computed: {
-    zIndex(): number {
-      return this.law.zIndex
-    },
+function accept() {
+  accepted.value = true
+}
 
-    transform(): string {
-      const rotation = 2 * (this.law.pos - this.numCards / 2)
-      const x = Math.abs(this.numCards / 2 - this.law.pos) * 20
-      return `rotate(${rotation}deg) translate(${x}px, -50%)`
-    },
-  },
-
-  methods: {
-    select() {
-      this.$emit("selected")
-    },
-
-    accept() {
-      this.accepted = true
-    },
-
-    sendAccept(event: AnimationEvent) {
-      if (event.animationName.match(/^twistOut-/)) {
-        this.$emit("accepted", this.law.id)
-      }
-    },
-  },
-})
+function sendAccept(event: AnimationEvent) {
+  if (event.animationName.match(/^twistOut-/)) {
+    emit("accepted", props.law.id)
+  }
+}
 </script>
 
 <template>

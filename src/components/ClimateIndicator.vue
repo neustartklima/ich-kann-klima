@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps } from "vue"
+import { computed } from "vue"
 import healthy from "../assets/plant-healthy.png"
 import sick from "../assets/plant-sick.png"
 import withered from "../assets/plant-withered.png"

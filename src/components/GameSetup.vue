@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent } from "@vue/runtime-core"
+<script setup lang="ts">
+import { computed } from "vue"
 import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import FinanceIndicator from "./FinanceIndicator.vue"
@@ -15,73 +15,33 @@ import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 import { date } from "../lib/Temporal"
 
-export default defineComponent({
-  components: {
-    Calendar,
-    ClimateIndicator,
-    Heater,
-    LawProposals,
-    SpeechBubble,
-    FinanceIndicator,
-    PopularityIndicator,
-    Table,
-    Tour,
-    TVSet,
-  },
+const store = useStore()
 
-  data() {
-    const store = useStore()
-    return {
-      store,
-    }
-  },
-
-  computed: {
-    eventToShow(): Event | undefined {
-      const eventRefs: EventReference[] = this.store.state.game?.events || []
-      if (eventRefs.length === 0) return undefined
-      const eventRef = eventRefs[0]
-      if (eventRef.acknowledged) return undefined
-      return allEvents.find((e) => e.id === eventRef.id)
-    },
-
-    eventTitle(): string {
-      return this.eventToShow?.title || ""
-    },
-
-    eventText(): string {
-      return this.eventToShow?.description || ""
-    },
-
-    currentYear(): number {
-      return this.store.state.game?.currentYear || 2021
-    },
-
-    currentMonth(): number {
-      return date(this.store.state.game?.currentDate as string).lux.month
-    },
-
-    finance(): number {
-      const game = this.store.state.game
-      return game ? financeRating(game) : 0
-    },
-
-    popularity(): number {
-      return this.store.state.game?.values.popularity || 100
-    },
-
-    climate(): number {
-      const game = this.store.state.game
-      return game ? co2Rating(game) : 0
-    },
-  },
-
-  methods: {
-    acknowledge(): void {
-      this.$store.dispatch("acknowledgeEvent", this.eventToShow)
-    },
-  },
+const eventToShow = computed(() => {
+  const eventRefs: EventReference[] = store.state.game?.events || []
+  if (eventRefs.length === 0) return undefined
+  const eventRef = eventRefs[0]
+  if (eventRef.acknowledged) return undefined
+  return allEvents.find((e) => e.id === eventRef.id)
 })
+
+const eventTitle = computed(() => eventToShow.value?.title || "")
+const eventText = computed(() => eventToShow.value?.description || "")
+const currentYear = computed(() => store.state.game?.currentYear || 2021)
+const currentMonth = computed(() => date(store.state.game?.currentDate as string).lux.month)
+const finance = computed(() => {
+  const game = store.state.game
+  return game ? financeRating(game) : 0
+})
+const popularity = computed(() => store.state.game?.values.popularity || 100)
+const climate = computed(() => {
+  const game = store.state.game
+  return game ? co2Rating(game) : 0
+})
+
+function acknowledge(): void {
+  store.dispatch("acknowledgeEvent", eventToShow.value)
+}
 </script>
 
 <template>
