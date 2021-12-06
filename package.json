@@ -28,9 +28,10 @@
   },
   "homepage": "https://github.com/neustartklima/ich-kann-klima#readme",
   "engines": {
-    "node": ">=14",
-    "npm": ">=6"
+    "node": ">=16",
+    "npm": ">=7"
   },
+  "enginesStrict": true,
   "dependencies": {
     "@types/seedrandom": "^3.0.1",
     "apexcharts": "^3.31.0",
