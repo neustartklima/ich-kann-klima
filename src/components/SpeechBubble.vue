@@ -1,17 +1,18 @@
-<script lang="ts">
-import { defineComponent } from "@vue/runtime-core"
-export default defineComponent({
-  props: {
-    title: String,
-    text: String,
-  },
+<script setup lang="ts">
+import { computed } from "@vue/runtime-core"
 
-  methods: {
-    acknowledge(): void {
-      this.$emit("acknowledge")
-    },
-  },
-})
+defineProps<{
+  title: string
+  text: string
+}>()
+
+const emit = defineEmits<{
+  (e: "acknowledge"): void
+}>()
+
+function acknowledge() {
+  emit("acknowledge")
+}
 </script>
 
 <template>

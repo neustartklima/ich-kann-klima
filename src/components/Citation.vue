@@ -4,7 +4,7 @@ import { Citation } from "../citations/CitationsTypes"
 
 const props = defineProps<{
   citation: Citation
-  showInternals: boolean
+  showInternals?: boolean
 }>()
 
 const href = computed(() => props.citation.url.toString())
