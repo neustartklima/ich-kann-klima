@@ -1,65 +1,44 @@
-<script lang="ts">
-import { defineComponent } from "vue"
-import { Law, LawId, LawView } from "../laws"
-import { mapGetters } from "vuex"
+<script setup lang="ts">
+import { ref, computed } from "vue"
+import { Law, LawId } from "../laws"
 import LawCard from "./LawCard.vue"
 import { getZIndexes } from "../lib/utils"
 import { useStore } from "../store"
-import { Game } from "../game"
 
-export default defineComponent({
-  components: { LawCard },
+const store = useStore()
+const zIndexes = ref([] as Array<number>)
+const poppedUp = ref(false)
 
-  setup() {
-    const store = useStore()
-    return { store }
-  },
+const proposedLaws = computed(() => store.getters.proposedLaws)
+const game = computed(() => store.state.game)
+const lawsToShow = computed(() => {
+  if (!zIndexes.value.length) {
+    zIndexes.value = getZIndexes(proposedLaws.value.length, 0)
+  }
 
-  data() {
-    return {
-      zIndexes: [] as Array<number>,
-      poppedUp: false,
-    }
-  },
+  if (game.value === undefined) {
+    return []
+  }
 
-  computed: {
-    ...mapGetters(["proposedLaws"]),
-
-    game(): Game | undefined {
-      return this.store.state.game
-    },
-    lawsToShow(): LawView[] {
-      if (!this.zIndexes.length) {
-        this.zIndexes = getZIndexes(this.proposedLaws.length, 0)
-      }
-
-      const game = this.game
-      if (game === undefined) {
-        return []
-      }
-      return this.proposedLaws.map((law: Law, pos: number) => ({
-        ...law,
-        zIndex: this.zIndexes[pos],
-        pos,
-        effortComment: law.effort(game).text,
-      }))
-    },
-  },
-
-  methods: {
-    accept(lawId: LawId) {
-      this.store.dispatch("acceptLaw", { lawId })
-    },
-
-    select(pos: number) {
-      this.zIndexes = getZIndexes(this.proposedLaws.length, pos)
-    },
-
-    sitOut() {
-      this.store.dispatch("sitOut")
-    },
-  },
+  return proposedLaws.value.map((law: Law, pos: number) => ({
+    ...law,
+    zIndex: zIndexes.value[pos],
+    pos,
+    effortComment: law.effort(game.value!).text,
+  }))
 })
+
+function accept(lawId: LawId) {
+  store.dispatch("acceptLaw", { lawId })
+}
+
+function select(pos: number) {
+  zIndexes.value = getZIndexes(proposedLaws.value.length, pos)
+}
+
+function sitOut() {
+  store.dispatch("sitOut")
+}
 </script>
 
 <template>

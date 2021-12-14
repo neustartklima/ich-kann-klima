@@ -1,21 +1,17 @@
-<script lang="ts">
-import { defineComponent } from "vue"
+<script setup lang="ts">
+import { computed } from "vue"
 
-export default defineComponent({
-  props: {
-    title: { type: String, required: true },
-    value: { type: Number, required: true },
-  },
+const props = defineProps<{
+  title: string
+  value: number
+}>()
 
-  computed: {
-    indicatorStyle(): Record<string, string> {
-      const backgroundColor = this.value > 40 ? "green" : this.value > 20 ? "goldenrod" : "red"
-      return {
-        width: this.value + "%",
-        backgroundColor,
-      }
-    },
-  },
+const indicatorStyle = computed(() => {
+  const backgroundColor = props.value > 40 ? "green" : props.value > 20 ? "goldenrod" : "red"
+  return {
+    width: props.value + "%",
+    backgroundColor,
+  }
 })
 </script>
 

@@ -1,39 +1,21 @@
-<script lang="ts">
-import { computed, defineComponent } from "vue"
+<script setup lang="ts">
+import { computed, ref } from "vue"
 import { allLaws, Law } from "../laws"
 import { useStore } from "../store"
 
-export default defineComponent({
-  setup() {
-    const store = useStore()
+const store = useStore()
+const acceptedLaws = computed(() => store.state.game?.acceptedLaws)
+const opened = ref(undefined as number | undefined)
 
-    return {
-      store,
-      acceptedLaws: computed(() => store.state.game?.acceptedLaws),
-    }
-  },
-
-  data() {
-    return {
-      opened: undefined as number | undefined,
-    }
-  },
-
-  computed: {
-    visibleAccepted(): Law[] {
-      return allLaws.filter((law) =>
-        this.acceptedLaws?.some((l) => l.lawId === law.id)
-        && !(law.labels?.includes("hidden"))
-      )
-    },
-  },
-
-  methods: {
-    toggleOpen(index: number): void {
-      this.opened = this.opened === index ? undefined : index
-    },
-  },
+const visibleAccepted = computed(() => {
+  return allLaws.filter((law) => {
+    return acceptedLaws.value?.some((l) => l.lawId === law.id) && !law.labels?.includes("hidden")
+  })
 })
+
+function toggleOpen(index: number): void {
+  opened.value = opened.value === index ? undefined : index
+}
 </script>
 
 <template>

@@ -1,21 +1,16 @@
-<script lang="ts">
-import { defineComponent, PropType } from "vue"
+<script setup lang="ts">
+import { computed } from "vue"
 import { Citation } from "../citations/CitationsTypes"
 
-export default defineComponent({
-  props: {
-    citation: { type: Object as PropType<Citation>, required: true },
-    showInternals: { type: Boolean, default: false },
-  },
-  computed: {
-    href(): string {
-      return this.citation.url.toString()
-    },
-    title(): string {
-      const title = this.citation.title
-      return title || this.citation.url.toString()
-    },
-  },
+const props = defineProps<{
+  citation: Citation
+  showInternals?: boolean
+}>()
+
+const href = computed(() => props.citation.url.toString())
+const title = computed(() => {
+  const title = props.citation.title
+  return title || props.citation.url.toString()
 })
 </script>
 

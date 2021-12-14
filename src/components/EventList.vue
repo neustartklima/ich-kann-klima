@@ -1,44 +1,27 @@
-<script lang="ts">
-import { computed, defineComponent } from "@vue/runtime-core"
+<script setup lang="ts">
+import { computed, ref } from "vue"
 import { allEvents, Event } from "../events"
 import { useStore } from "../store"
 import EventItem from "./EventItem.vue"
 
-export default defineComponent({
-  components: { EventItem },
+const store = useStore()
 
-  setup() {
-    const store = useStore()
+const eventRefs = computed(() => store.state.game?.events)
+const events = computed(
+  () =>
+    store.state.game?.events.map((r) => allEvents.find((e) => r.id === e.id)).filter((e) => e != undefined) as Event[]
+)
 
-    return {
-      store,
-      eventRefs: computed(() => store.state.game?.events),
-      events: computed(
-        () =>
-          store.state.game?.events
-            .map((r) => allEvents.find((e) => r.id === e.id))
-            .filter((e) => e != undefined) as Event[]
-      ),
-    }
-  },
+const visible = ref(false as boolean)
 
-  data() {
-    return {
-      visible: false as boolean,
-    }
-  },
+function close() {
+  visible.value = false
+  eventRefs.value?.filter((e) => !e.acknowledged).forEach((e) => (e.acknowledged = true))
+}
 
-  methods: {
-    close() {
-      this.visible = false
-      this.eventRefs?.filter((e) => !e.acknowledged).forEach((e) => (e.acknowledged = true))
-    },
-
-    show() {
-      this.visible = true
-    },
-  },
-})
+function show() {
+  visible.value = true
+}
 </script>
 
 <template>
