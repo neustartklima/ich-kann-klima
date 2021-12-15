@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "@vue/runtime-core"
 import { ApexOptions } from "apexcharts"
-import { VueApexChartsComponent } from "vue3-apexcharts"
+import VueApexCharts, { VueApexChartsComponent } from "vue3-apexcharts"
 import { GameYear, gameYears } from "../game"
 import { BaseParams, ParamKey } from "../params"
 
@@ -127,7 +127,7 @@ function click(
 <template>
   <div>
     <div>{{ paramId }}</div>
-    <component is="apexchart" ref="chart" type="bar" :options="chartOptions" :series="series" @click="click" />
+    <VueApexCharts ref="chart" type="bar" :options="chartOptions" :series="series" @click="click" />
   </div>
 </template>
 
