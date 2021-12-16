@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { linear, windPercentage } from "./lawTools"
-import { Change } from "../params"
 import { markdown } from "../lib/utils"
+import { Change } from "../params"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear, windPercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Windkraft vereinfachen",
   description: "Genehmigungen für Windkraftanlagen werden vereinfacht und beschleunigt.",
   labels: [],
   removeLawsWithLabels: [],
+
+  effort(game) {
+    return monthsEffort(4, "Die Bundesländer müssen mit ins Boot geholt werden. Das dauert {months}.")
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return []

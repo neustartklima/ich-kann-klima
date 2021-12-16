@@ -1,7 +1,7 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro, TWh } from "../types"
-import { linear } from "./lawTools"
 import { Change, createBaseValues, defaultValues, modify } from "../params"
+import { MrdEuro, TWh } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 const electricityGasAtStart: TWh = createBaseValues(defaultValues).electricityGas
 
@@ -9,6 +9,10 @@ export default defineLaw({
   title: "Kernenergienutzung verlängern",
   description: "Kernkraftwerke länger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],
+
+  effort(game) {
+    return monthsEffort(8)
+  },
 
   effects(): Change[] {
     return [

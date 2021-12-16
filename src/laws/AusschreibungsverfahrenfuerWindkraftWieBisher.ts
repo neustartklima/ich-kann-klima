@@ -1,7 +1,7 @@
-import { defineLaw } from "./LawsTypes"
-import { TWh } from "../types"
-import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 import { Change, modify } from "../params"
+import { TWh } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft wie zu Beginn",
@@ -10,6 +10,10 @@ export default defineLaw({
   labels: ["initial", "hidden", "WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
+
+  effort(game) {
+    return monthsEffort(8)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5

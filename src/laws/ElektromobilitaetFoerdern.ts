@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro } from "../types"
-import { lawIsAccepted, linear } from "./lawTools"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { MrdEuro } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear } from "./lawTools"
 
 export default defineLaw({
   title: "Elektromobilität Fördern",
   description: "Höhere Kaufprämien, Steuerbefreiung, günstiges Laden für E-Autos.",
+
+  effort(game) {
+    return monthsEffort(2)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     if (lawIsAccepted(game, "LadeinfrastrukturAusbauen")) {

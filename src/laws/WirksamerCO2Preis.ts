@@ -1,15 +1,19 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linearPopChange, renewablePercentage } from "./lawTools"
-import { Change, modify, transfer } from "../params"
-import { markdown } from "../lib/utils"
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
+import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
 import { Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linearPopChange, renewablePercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Wirksamer CO2 Preis",
   description: "Eine Tonne CO2 kostet ab jetzt 150 Euro.",
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
+
+  effort(game) {
+    return monthsEffort(8)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const electricityPopChange = linearPopChange(80, 50, renewablePercentage(game), -3)

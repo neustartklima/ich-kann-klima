@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro, TsdPeople } from "../types"
-import { linear } from "./lawTools"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { MrdEuro, TsdPeople } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
+
+  effort(game) {
+    return monthsEffort(11)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const yearsActive = currentYear - startYear

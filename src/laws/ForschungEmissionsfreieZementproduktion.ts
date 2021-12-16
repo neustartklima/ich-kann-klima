@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
-import { Percent } from "../types"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Forschung zur emissionsfreien Zementproduktion fördern",
   description:
     "Forschung und Entwicklung von Technologien zur Produktion von Zement mit stark reduzierten CO2-Emissionen wird stark gefördert. 10 Mrd € über 5 Jahre.",
+
+  effort(game) {
+    return monthsEffort(3)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const inGrantPeriod = currentYear < startYear + 5

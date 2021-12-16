@@ -1,9 +1,9 @@
-import { Game } from "../game"
-import { Change } from "../params"
 import { Citations } from "../citations"
-import { Details, Internals, Percent } from "../types"
-import { Duration } from "../lib/Temporal"
 import { defaultEffortDuration } from "../constants"
+import { Game } from "../game"
+import { Duration, months } from "../lib/Temporal"
+import { Change } from "../params"
+import { Details, Internals, Percent } from "../types"
 
 export type LawLabel =
   | "hidden"
@@ -25,6 +25,12 @@ export const defaultEffort: EffortFunc = (g: Game): Effort => {
     time: defaultEffortDuration,
     text: `Braucht ${defaultEffortDuration.toMonthsString()}.`,
   }
+}
+
+export function monthsEffort(inMonths: number, format: string = "Braucht {months}."): Effort {
+  const time = months(inMonths)
+  const text = format.replace(/{months}/g, time.toMonthsString())
+  return { time, text }
 }
 
 export type LawDefinition = {

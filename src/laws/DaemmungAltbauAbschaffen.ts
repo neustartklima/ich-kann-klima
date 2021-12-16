@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro } from "../types"
-import { getActiveLaw, linear } from "./lawTools"
 import { Change, modify } from "../params"
+import { MrdEuro } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { getActiveLaw, linear } from "./lawTools"
 
 export default defineLaw({
   title: "Dämmung von Wohngebäuden abschaffen",
   description:
     "Wir geben den Bürgern die Freiheit zurück, selbst zu entscheiden, ob sie ihr Haus dämmen wollen und lassen die Förderung auslaufen",
+
+  effort(game) {
+    return monthsEffort(3)
+  },
 
   effects(): Change[] {
     return [

@@ -1,12 +1,14 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { MrdEuro, Percent } from "../types"
-import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { defineLaw, monthsEffort } from "./LawsTypes"
 
 export default defineLaw({
   title: "Test",
   description: "Unsinniges Gesetz zum Testen.",
+
+  effort(game) {
+    return monthsEffort(6)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

@@ -1,9 +1,10 @@
-import { defineLaw } from "./LawsTypes"
+import { defineLaw, monthsEffort } from "./LawsTypes"
 import { lawIsAccepted, linearPopChange, renewablePercentage } from "./lawTools"
 import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
 import { Percent } from "../types"
+import { months } from "../lib/Temporal"
 
 export default defineLaw({
   title: "CO2 Preis Erhöhen",
@@ -11,6 +12,10 @@ export default defineLaw({
     "Die Preise werden schneller erhöht, als bisher geplant. Eine Tonne CO2 kostet in 2 Jahren 70 Euro und in 4 Jahren 100 Euro.",
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
+
+  effort(game) {
+    return monthsEffort(6)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1)

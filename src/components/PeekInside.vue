@@ -24,6 +24,7 @@ import { Event, allEvents, EventId } from "../events"
 import { directive as clickaway } from "vue3-click-away"
 import { vueSimulationObjects } from "./PeekSimulator"
 import Menu from "./Menu.vue"
+import { Effort } from "../laws/LawsTypes"
 
 export default defineComponent({
   directives: {
@@ -172,6 +173,11 @@ export default defineComponent({
 
     selectedLaw(): Law | undefined {
       return allLaws.find((law) => law.id === this.lawSelected)
+    },
+
+    lawEffort(): Effort | undefined {
+      if (!this.game) return undefined
+      return this.selectedLaw?.effort(this.game)
     },
 
     selectedEvent(): Event | undefined {
@@ -323,6 +329,8 @@ export default defineComponent({
     <div v-if="lastSelected === 'law' && selectedLaw && showDetails" class="Details sidebyside">
       <div class="Title">{{ selectedLaw.title }}</div>
       <div class="Description">{{ selectedLaw.description }}</div>
+      <div class="SectionHead">Aufwand: {{ lawEffort?.time.toMonthsString() }}</div>
+      <div class="Section">{{ lawEffort?.text }}</div>
       <div class="SectionHead">Details:</div>
       <div class="Section" v-html="selectedLaw.details" />
       <div class="SectionHead">Internes:</div>

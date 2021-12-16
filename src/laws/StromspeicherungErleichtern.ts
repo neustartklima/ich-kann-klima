@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Stromspeicherung erleichtern",
   description:
     "Bürokratische Hürden für den Bau von Speicheranlagen und Einspeisung von gespeichertem Strom werden abgeschafft.",
+
+  effort(game) {
+    return monthsEffort(3)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [modify("electricityGridQuality").byValue(0.2)]

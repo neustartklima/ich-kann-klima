@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { Percent } from "../types"
 import { Change, modify, transfer } from "../params"
+import { Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Autos in Innenstädten verbieten",
   description:
     "Die Innenstädte der großen Städte werden zu Autofreien Zonen erklärt und begrünt, sowie Fahrrad und Fußgängerzonen eingerichtet.",
+
+  effort(game) {
+    return monthsEffort(12)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     var popularityChange = -2

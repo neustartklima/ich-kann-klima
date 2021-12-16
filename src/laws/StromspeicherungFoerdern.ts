@@ -1,13 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear } from "./lawTools"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
-import { paramDefinitions } from "../params/Params"
+import { Change, modify } from "../params"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear } from "./lawTools"
 
 export default defineLaw({
   title: "Stromspeicherung fördern",
   description:
     "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln fördern. 2 Mrd € pro Jahr.",
+
+  effort(game) {
+    return monthsEffort(7)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const delay = lawIsAccepted(game, "StromspeicherungErleichtern") ? 0 : 5

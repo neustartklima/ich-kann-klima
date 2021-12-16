@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear, windPercentage } from "./lawTools"
-import { TWh } from "../types"
 import { Change, modify } from "../params"
+import { TWh } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear, windPercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft wie zu Beginn",
   description: "Das Land / Die Kommune bestimmem über Abstände zwischen den Windkraftanlagen und Wohngebäuden.",
   labels: ["initial", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+
+  effort(game) {
+    return monthsEffort(3, "Wie aussitzen: {months}.")
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5

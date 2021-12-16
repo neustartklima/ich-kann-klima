@@ -1,8 +1,8 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear, windPercentage } from "./lawTools"
-import { Percent, TWh } from "../types"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { TWh } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear, windPercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft lockern",
@@ -10,6 +10,10 @@ export default defineLaw({
     "Bundesweite gelockerte Abstandsregeln für Windkraftanlagen sowie Bauerlaubniss in Wäldern. Ja auch Bayern wird jetzt gezwungen Windkraftanlagen zuzulassen, sowie andere nicht bauwillige Kommunen.",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+
+  effort(game) {
+    return monthsEffort(6, "Das schaffst Du in {months}n.")
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5

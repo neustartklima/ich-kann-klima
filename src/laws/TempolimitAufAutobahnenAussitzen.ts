@@ -1,7 +1,7 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear } from "./lawTools"
-import { Percent } from "../types"
 import { Change, modify } from "../params"
+import { Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear } from "./lawTools"
 
 export default defineLaw({
   title: "Generelles Tempolimit nicht umsetzen",
@@ -9,6 +9,10 @@ export default defineLaw({
     "Die EU hat das generelle Tempolkmit zwar beschlossen, wir setzen es aber nicht um. Das könnte zwar Strafen oder gar Zwangsmaßnahmen bewirken, aber das Risiko der gefährdeten Wiederwahl ist zu groß.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
+
+  effort(game) {
+    return monthsEffort(3, "Wie aussitzen: {months}.")
+  },
 
   effects(): Change[] {
     return [
