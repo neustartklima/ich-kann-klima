@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { MrdEuro, Percent } from "../types"
-import { Change, modify, transfer } from "../params"
-import { markdown } from "../lib/utils"
 import { cite, duh2020Dienstwagenprivileg, welt2016SteuervorteileKosten18Mrd } from "../citations"
+import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
+import { MrdEuro, Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Dienstwagen Privileg abgeschaffen",
   description: "Steuererleichterungen für Dienstwagen werden abgeschafft.",
+
+  effort(game) {
+    return monthsEffort(6)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

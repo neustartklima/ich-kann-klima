@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { MrdEuro, Percent } from "../types"
-import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
+import { MrdEuro, Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",
   description: "Der Ausbau des öffentlichen Fernverkehrs wird bundesweit stärker Bezuschusst und Vorangetrieben",
+
+  effort(game) {
+    return monthsEffort(12)
+  },
 
   effects(game): Change[] {
     const relCapacity = (game.values.publicNationalCapacity / game.values.publicNationalUsage) * 100

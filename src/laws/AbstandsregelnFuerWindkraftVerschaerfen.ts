@@ -1,7 +1,7 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear, windPercentage } from "./lawTools"
-import { Percent, TWh } from "../types"
 import { Change, modify } from "../params"
+import { TWh } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear, windPercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft verschärfen",
@@ -9,6 +9,10 @@ export default defineLaw({
     "Der Mindestabstand zwischen Wind Energie Anlagen und Wohngebäuden im Innenbereich muss das Zehnfache der Gesamthöhe der Wind Energie Anlagen betragen (10H-Regel)",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+
+  effort(game) {
+    return monthsEffort(1, "Dauert nur einen Monat.")
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

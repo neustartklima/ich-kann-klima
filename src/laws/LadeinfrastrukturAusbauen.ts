@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro } from "../types"
-import { linear } from "./lawTools"
-import { Change, modify } from "../params"
-import { markdown } from "../lib/utils"
 import { vdvDatenFakten } from "../citations"
+import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { MrdEuro } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Ladeinfrastruktur ausbauen",
   description: "Ausbau der Ladeinfrastruktur wird mit Steuermitteln stark gefördert.",
+
+  effort(game) {
+    return monthsEffort(4)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

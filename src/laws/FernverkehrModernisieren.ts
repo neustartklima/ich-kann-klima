@@ -1,4 +1,4 @@
-import { defineLaw } from "./LawsTypes"
+import { defineLaw, monthsEffort } from "./LawsTypes"
 import { MrdEuro } from "../types"
 import { linear } from "./lawTools"
 import { Change, modify, transfer } from "../params"
@@ -7,6 +7,10 @@ import { markdown } from "../lib/utils"
 export default defineLaw({
   title: "Fernverkehr Modernisieren",
   description: "Moderne, bequeme und weniger anfällige Züge werden für den Fernverkehr angeschafft.",
+
+  effort(game) {
+    return monthsEffort(4)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

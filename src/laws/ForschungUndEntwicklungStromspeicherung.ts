@@ -1,12 +1,16 @@
-import { defineLaw } from "./LawsTypes"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { defineLaw, monthsEffort } from "./LawsTypes"
 import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Forschung und Entwicklung zur Stromspeicherung fördern",
   description:
     "Ein Förderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd € über 5 Jahre.",
+
+  effort(game) {
+    return monthsEffort(1)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const inGrantPeriod = currentYear < startYear + 5

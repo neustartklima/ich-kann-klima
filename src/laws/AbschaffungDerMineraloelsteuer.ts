@@ -1,13 +1,28 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
 import { cite, welt2018BundKassiertMineraloelsteuer } from "../citations"
-import { MrdEuro, Percent } from "../types"
-import { Change, modify, transfer } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
+import { MrdEuro, Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Abschaffung der Mineralölsteuer",
   description: "Die Steuer auf sämtliche erdölbasierten Treibstoffe wird abgeschafft.",
+
+  effort(game) {
+    // At start of game yearsTillUp is 9 years.
+    const yearsTillUp = Math.ceil(game.values.co2budget / game.values.co2emissions)
+    if (yearsTillUp >= 15) {
+      return monthsEffort(
+        2,
+        `Die derzeitigen CO2 Emissionen würden das Budget
+        in ${yearsTillUp} Jahren verbrauchen.
+        Nicht schlecht! Bei der Stimmung bekommst Dus in {months}n durch.`
+      )
+    } else {
+      return monthsEffort(9, "Nicht beliebt! Sowas dauert {months}.")
+    }
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

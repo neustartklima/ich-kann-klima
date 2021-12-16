@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro, Percent } from "../types"
-import { linear } from "./lawTools"
-import { Change, modify, transfer } from "../params"
-import { markdown } from "../lib/utils"
 import { bmvi2020OePNVFoerderungDesBundes, cite } from "../citations"
+import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
+import { MrdEuro, Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit stärker bezuschusst.",
+
+  effort(game) {
+    return monthsEffort(5, "Komplexe Verhandlungen mit den Bundesländern dauern {months}.")
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const relCapacity = (game.values.publicLocalCapacity / game.values.publicLocalUsage) * 100

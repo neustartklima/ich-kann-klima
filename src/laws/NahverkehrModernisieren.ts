@@ -1,13 +1,17 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro } from "../types"
-import { lawIsAccepted, linear } from "./lawTools"
-import { Change, modify, transfer } from "../params"
-import { markdown } from "../lib/utils"
 import { vdvDatenFakten } from "../citations"
+import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
+import { MrdEuro } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear } from "./lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Modernisieren",
   description: "Anschaffung Moderner, bequemer, emissionsfreier Fahrzeuge für den Nahverkehr wird gefördert.",
+
+  effort(game) {
+    return monthsEffort(4)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

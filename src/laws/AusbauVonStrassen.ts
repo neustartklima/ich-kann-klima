@@ -1,11 +1,15 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { MrdEuro, Percent } from "../types"
 import { modify, transfer } from "../params"
+import { MrdEuro, Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Ausbau von Straßen",
   description: "Autobahnen und Straßen werden intensiver ausgebaut.",
+
+  effort(game) {
+    return monthsEffort(9)
+  },
 
   effects(game) {
     return [

@@ -1,9 +1,8 @@
 import { endYear, startYear } from "../constants"
-import { linear } from "./lawTools"
-import { defineLaw, Effort } from "./LawsTypes"
-import { MrdEuro, TWh } from "../types"
 import { Change, modify } from "../params"
-import { duration } from "../lib/Temporal"
+import { MrdEuro, TWh } from "../types"
+import { defineLaw, Effort, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Energiemix regelt der Markt",
@@ -11,9 +10,9 @@ export default defineLaw({
 
   effort(game): Effort {
     if (game.values.popularity >= 50) {
-      return { time: duration("P3M"), text: "Normal dauert das 6 Monate, aber bei Deiner Beliebtheit nur 3." }
+      return monthsEffort(6, "Normal dauert das 12 Monate, aber bei Deiner Beliebtheit nur {months}.")
     } else {
-      return { time: duration("P6M"), text: "Dauert 6 Monate." }
+      return monthsEffort(12)
     }
   },
 

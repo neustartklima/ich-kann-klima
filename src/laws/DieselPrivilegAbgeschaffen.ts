@@ -1,11 +1,15 @@
-import { defineLaw } from "./LawsTypes"
-import { linear } from "./lawTools"
-import { MrdEuro, Percent } from "../types"
 import { Change, modify } from "../params"
+import { MrdEuro, Percent } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Diesel Privileg abgeschaffen",
   description: "Diesel wird jetzt genauso besteuert wie Benzin.",
+
+  effort(game) {
+    return monthsEffort(6)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [

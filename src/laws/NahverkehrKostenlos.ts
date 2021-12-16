@@ -1,14 +1,18 @@
-import { defineLaw } from "./LawsTypes"
-import { MrdEuro, Percent, TsdPeople } from "../types"
-import { lawIsAccepted, linear } from "./lawTools"
-import { Change, modify, transfer } from "../params"
-import { markdown } from "../lib/utils"
 import { cite, vdvDatenFakten } from "../citations"
+import { markdown } from "../lib/utils"
+import { Change, modify, transfer } from "../params"
+import { MrdEuro, Percent, TsdPeople } from "../types"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { linear } from "./lawTools"
 
 export default defineLaw({
   title: "Nahverkehr Kostenlos",
   description:
     "Die Kosten für den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr benötigt werden.",
+
+  effort(game) {
+    return monthsEffort(7, "Die Haushaltsverhandlungen dauern {months}.")
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const percentage = startYear === currentYear ? 10 : 1

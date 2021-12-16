@@ -1,4 +1,4 @@
-import { defineLaw } from "./LawsTypes"
+import { defineLaw, monthsEffort } from "./LawsTypes"
 import { MrdEuro } from "../types"
 import { linear } from "./lawTools"
 import { Change, modify } from "../params"
@@ -6,6 +6,10 @@ import { Change, modify } from "../params"
 export default defineLaw({
   title: "Dämmung von Wohngebäuden fördern",
   description: "Die nachträgliche Dämmung von Wohngebäuden wird mit vergünstigten Krediten gefördert.",
+
+  effort(game) {
+    return monthsEffort(3)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     const costsPerYear: MrdEuro = 0.5

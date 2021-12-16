@@ -78,3 +78,7 @@ export function duration(isoString: string): Duration {
 export function durationBetween(start: Date, end: Date): Duration {
   return Date.durationBetween(start, end)
 }
+
+export function months(month: number): Duration {
+  return new Duration(LuxDuration.fromDurationLike({ month }))
+}

@@ -1,11 +1,15 @@
-import { defineLaw } from "./LawsTypes"
-import { lawIsAccepted, linear, windPercentage } from "./lawTools"
-import { Change, modify } from "../params"
 import { markdown } from "../lib/utils"
+import { Change, modify } from "../params"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { lawIsAccepted, linear, windPercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Netzausbau fördern",
   description: "Ausbau des Stromnetzes mit Steuermitteln fördern",
+
+  effort(game) {
+    return monthsEffort(3)
+  },
 
   effects(game, startYear, currentYear): Change[] {
     return [
