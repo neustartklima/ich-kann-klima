@@ -20318,6 +20318,659 @@ var require_express2 = __commonJS({
   }
 });
 
+// node_modules/seedrandom/lib/alea.js
+var require_alea = __commonJS({
+  "node_modules/seedrandom/lib/alea.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function Alea(seed) {
+        var me = this, mash = Mash();
+        me.next = function() {
+          var t = 2091639 * me.s0 + me.c * 23283064365386963e-26;
+          me.s0 = me.s1;
+          me.s1 = me.s2;
+          return me.s2 = t - (me.c = t | 0);
+        };
+        me.c = 1;
+        me.s0 = mash(" ");
+        me.s1 = mash(" ");
+        me.s2 = mash(" ");
+        me.s0 -= mash(seed);
+        if (me.s0 < 0) {
+          me.s0 += 1;
+        }
+        me.s1 -= mash(seed);
+        if (me.s1 < 0) {
+          me.s1 += 1;
+        }
+        me.s2 -= mash(seed);
+        if (me.s2 < 0) {
+          me.s2 += 1;
+        }
+        mash = null;
+      }
+      function copy(f, t) {
+        t.c = f.c;
+        t.s0 = f.s0;
+        t.s1 = f.s1;
+        t.s2 = f.s2;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new Alea(seed), state = opts && opts.state, prng = xg.next;
+        prng.int32 = function() {
+          return xg.next() * 4294967296 | 0;
+        };
+        prng.double = function() {
+          return prng() + (prng() * 2097152 | 0) * 11102230246251565e-32;
+        };
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      function Mash() {
+        var n = 4022871197;
+        var mash = function(data) {
+          data = String(data);
+          for (var i = 0; i < data.length; i++) {
+            n += data.charCodeAt(i);
+            var h = 0.02519603282416938 * n;
+            n = h >>> 0;
+            h -= n;
+            h *= n;
+            n = h >>> 0;
+            h -= n;
+            n += h * 4294967296;
+          }
+          return (n >>> 0) * 23283064365386963e-26;
+        };
+        return mash;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.alea = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xor128.js
+var require_xor128 = __commonJS({
+  "node_modules/seedrandom/lib/xor128.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.x = 0;
+        me.y = 0;
+        me.z = 0;
+        me.w = 0;
+        me.next = function() {
+          var t = me.x ^ me.x << 11;
+          me.x = me.y;
+          me.y = me.z;
+          me.z = me.w;
+          return me.w ^= me.w >>> 19 ^ t ^ t >>> 8;
+        };
+        if (seed === (seed | 0)) {
+          me.x = seed;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 64; k++) {
+          me.x ^= strseed.charCodeAt(k) | 0;
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.x = f.x;
+        t.y = f.y;
+        t.z = f.z;
+        t.w = f.w;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xor128 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xorwow.js
+var require_xorwow = __commonJS({
+  "node_modules/seedrandom/lib/xorwow.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.next = function() {
+          var t = me.x ^ me.x >>> 2;
+          me.x = me.y;
+          me.y = me.z;
+          me.z = me.w;
+          me.w = me.v;
+          return (me.d = me.d + 362437 | 0) + (me.v = me.v ^ me.v << 4 ^ (t ^ t << 1)) | 0;
+        };
+        me.x = 0;
+        me.y = 0;
+        me.z = 0;
+        me.w = 0;
+        me.v = 0;
+        if (seed === (seed | 0)) {
+          me.x = seed;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 64; k++) {
+          me.x ^= strseed.charCodeAt(k) | 0;
+          if (k == strseed.length) {
+            me.d = me.x << 10 ^ me.x >>> 4;
+          }
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.x = f.x;
+        t.y = f.y;
+        t.z = f.z;
+        t.w = f.w;
+        t.v = f.v;
+        t.d = f.d;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xorwow = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xorshift7.js
+var require_xorshift7 = __commonJS({
+  "node_modules/seedrandom/lib/xorshift7.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this;
+        me.next = function() {
+          var X = me.x, i = me.i, t, v, w;
+          t = X[i];
+          t ^= t >>> 7;
+          v = t ^ t << 24;
+          t = X[i + 1 & 7];
+          v ^= t ^ t >>> 10;
+          t = X[i + 3 & 7];
+          v ^= t ^ t >>> 3;
+          t = X[i + 4 & 7];
+          v ^= t ^ t << 7;
+          t = X[i + 7 & 7];
+          t = t ^ t << 13;
+          v ^= t ^ t << 9;
+          X[i] = v;
+          me.i = i + 1 & 7;
+          return v;
+        };
+        function init(me2, seed2) {
+          var j, w, X = [];
+          if (seed2 === (seed2 | 0)) {
+            w = X[0] = seed2;
+          } else {
+            seed2 = "" + seed2;
+            for (j = 0; j < seed2.length; ++j) {
+              X[j & 7] = X[j & 7] << 15 ^ seed2.charCodeAt(j) + X[j + 1 & 7] << 13;
+            }
+          }
+          while (X.length < 8)
+            X.push(0);
+          for (j = 0; j < 8 && X[j] === 0; ++j)
+            ;
+          if (j == 8)
+            w = X[7] = -1;
+          else
+            w = X[j];
+          me2.x = X;
+          me2.i = 0;
+          for (j = 256; j > 0; --j) {
+            me2.next();
+          }
+        }
+        init(me, seed);
+      }
+      function copy(f, t) {
+        t.x = f.x.slice();
+        t.i = f.i;
+        return t;
+      }
+      function impl(seed, opts) {
+        if (seed == null)
+          seed = +new Date();
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (state.x)
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xorshift7 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xor4096.js
+var require_xor4096 = __commonJS({
+  "node_modules/seedrandom/lib/xor4096.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this;
+        me.next = function() {
+          var w = me.w, X = me.X, i = me.i, t, v;
+          me.w = w = w + 1640531527 | 0;
+          v = X[i + 34 & 127];
+          t = X[i = i + 1 & 127];
+          v ^= v << 13;
+          t ^= t << 17;
+          v ^= v >>> 15;
+          t ^= t >>> 12;
+          v = X[i] = v ^ t;
+          me.i = i;
+          return v + (w ^ w >>> 16) | 0;
+        };
+        function init(me2, seed2) {
+          var t, v, i, j, w, X = [], limit = 128;
+          if (seed2 === (seed2 | 0)) {
+            v = seed2;
+            seed2 = null;
+          } else {
+            seed2 = seed2 + "\0";
+            v = 0;
+            limit = Math.max(limit, seed2.length);
+          }
+          for (i = 0, j = -32; j < limit; ++j) {
+            if (seed2)
+              v ^= seed2.charCodeAt((j + 32) % seed2.length);
+            if (j === 0)
+              w = v;
+            v ^= v << 10;
+            v ^= v >>> 15;
+            v ^= v << 4;
+            v ^= v >>> 13;
+            if (j >= 0) {
+              w = w + 1640531527 | 0;
+              t = X[j & 127] ^= v + w;
+              i = t == 0 ? i + 1 : 0;
+            }
+          }
+          if (i >= 128) {
+            X[(seed2 && seed2.length || 0) & 127] = -1;
+          }
+          i = 127;
+          for (j = 4 * 128; j > 0; --j) {
+            v = X[i + 34 & 127];
+            t = X[i = i + 1 & 127];
+            v ^= v << 13;
+            t ^= t << 17;
+            v ^= v >>> 15;
+            t ^= t >>> 12;
+            X[i] = v ^ t;
+          }
+          me2.w = w;
+          me2.X = X;
+          me2.i = i;
+        }
+        init(me, seed);
+      }
+      function copy(f, t) {
+        t.i = f.i;
+        t.w = f.w;
+        t.X = f.X.slice();
+        return t;
+      }
+      ;
+      function impl(seed, opts) {
+        if (seed == null)
+          seed = +new Date();
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (state.X)
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xor4096 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/tychei.js
+var require_tychei = __commonJS({
+  "node_modules/seedrandom/lib/tychei.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.next = function() {
+          var b = me.b, c = me.c, d = me.d, a = me.a;
+          b = b << 25 ^ b >>> 7 ^ c;
+          c = c - d | 0;
+          d = d << 24 ^ d >>> 8 ^ a;
+          a = a - b | 0;
+          me.b = b = b << 20 ^ b >>> 12 ^ c;
+          me.c = c = c - d | 0;
+          me.d = d << 16 ^ c >>> 16 ^ a;
+          return me.a = a - b | 0;
+        };
+        me.a = 0;
+        me.b = 0;
+        me.c = 2654435769 | 0;
+        me.d = 1367130551;
+        if (seed === Math.floor(seed)) {
+          me.a = seed / 4294967296 | 0;
+          me.b = seed | 0;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 20; k++) {
+          me.b ^= strseed.charCodeAt(k) | 0;
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.a = f.a;
+        t.b = f.b;
+        t.c = f.c;
+        t.d = f.d;
+        return t;
+      }
+      ;
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.tychei = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/seedrandom.js
+var require_seedrandom = __commonJS({
+  "node_modules/seedrandom/seedrandom.js"(exports2, module2) {
+    (function(global2, pool, math) {
+      var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
+      function seedrandom2(seed, options, callback) {
+        var key = [];
+        options = options == true ? { entropy: true } : options || {};
+        var shortseed = mixkey(flatten(options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed, 3), key);
+        var arc4 = new ARC4(key);
+        var prng = function() {
+          var n = arc4.g(chunks), d = startdenom, x = 0;
+          while (n < significance) {
+            n = (n + x) * width;
+            d *= width;
+            x = arc4.g(1);
+          }
+          while (n >= overflow) {
+            n /= 2;
+            d /= 2;
+            x >>>= 1;
+          }
+          return (n + x) / d;
+        };
+        prng.int32 = function() {
+          return arc4.g(4) | 0;
+        };
+        prng.quick = function() {
+          return arc4.g(4) / 4294967296;
+        };
+        prng.double = prng;
+        mixkey(tostring(arc4.S), pool);
+        return (options.pass || callback || function(prng2, seed2, is_math_call, state) {
+          if (state) {
+            if (state.S) {
+              copy(state, arc4);
+            }
+            prng2.state = function() {
+              return copy(arc4, {});
+            };
+          }
+          if (is_math_call) {
+            math[rngname] = prng2;
+            return seed2;
+          } else
+            return prng2;
+        })(prng, shortseed, "global" in options ? options.global : this == math, options.state);
+      }
+      function ARC4(key) {
+        var t, keylen = key.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
+        if (!keylen) {
+          key = [keylen++];
+        }
+        while (i < width) {
+          s[i] = i++;
+        }
+        for (i = 0; i < width; i++) {
+          s[i] = s[j = mask & j + key[i % keylen] + (t = s[i])];
+          s[j] = t;
+        }
+        (me.g = function(count) {
+          var t2, r = 0, i2 = me.i, j2 = me.j, s2 = me.S;
+          while (count--) {
+            t2 = s2[i2 = mask & i2 + 1];
+            r = r * width + s2[mask & (s2[i2] = s2[j2 = mask & j2 + t2]) + (s2[j2] = t2)];
+          }
+          me.i = i2;
+          me.j = j2;
+          return r;
+        })(width);
+      }
+      function copy(f, t) {
+        t.i = f.i;
+        t.j = f.j;
+        t.S = f.S.slice();
+        return t;
+      }
+      ;
+      function flatten(obj, depth) {
+        var result = [], typ = typeof obj, prop;
+        if (depth && typ == "object") {
+          for (prop in obj) {
+            try {
+              result.push(flatten(obj[prop], depth - 1));
+            } catch (e) {
+            }
+          }
+        }
+        return result.length ? result : typ == "string" ? obj : obj + "\0";
+      }
+      function mixkey(seed, key) {
+        var stringseed = seed + "", smear, j = 0;
+        while (j < stringseed.length) {
+          key[mask & j] = mask & (smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++);
+        }
+        return tostring(key);
+      }
+      function autoseed() {
+        try {
+          var out;
+          if (nodecrypto && (out = nodecrypto.randomBytes)) {
+            out = out(width);
+          } else {
+            out = new Uint8Array(width);
+            (global2.crypto || global2.msCrypto).getRandomValues(out);
+          }
+          return tostring(out);
+        } catch (e) {
+          var browser = global2.navigator, plugins = browser && browser.plugins;
+          return [+new Date(), global2, plugins, global2.screen, tostring(pool)];
+        }
+      }
+      function tostring(a) {
+        return String.fromCharCode.apply(0, a);
+      }
+      mixkey(math.random(), pool);
+      if (typeof module2 == "object" && module2.exports) {
+        module2.exports = seedrandom2;
+        try {
+          nodecrypto = require("crypto");
+        } catch (ex) {
+        }
+      } else if (typeof define == "function" && define.amd) {
+        define(function() {
+          return seedrandom2;
+        });
+      } else {
+        math["seed" + rngname] = seedrandom2;
+      }
+    })(typeof self !== "undefined" ? self : exports2, [], Math);
+  }
+});
+
+// node_modules/seedrandom/index.js
+var require_seedrandom2 = __commonJS({
+  "node_modules/seedrandom/index.js"(exports2, module2) {
+    var alea = require_alea();
+    var xor128 = require_xor128();
+    var xorwow = require_xorwow();
+    var xorshift7 = require_xorshift7();
+    var xor4096 = require_xor4096();
+    var tychei = require_tychei();
+    var sr = require_seedrandom();
+    sr.alea = alea;
+    sr.xor128 = xor128;
+    sr.xorwow = xorwow;
+    sr.xorshift7 = xorshift7;
+    sr.xor4096 = xor4096;
+    sr.tychei = tychei;
+    module2.exports = sr;
+  }
+});
+
 // node_modules/luxon/build/node/luxon.js
 var require_luxon = __commonJS({
   "node_modules/luxon/build/node/luxon.js"(exports2) {
@@ -20693,7 +21346,7 @@ var require_luxon = __commonJS({
     var monthsLong = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     var monthsShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var monthsNarrow = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
-    function months(length) {
+    function months2(length) {
       switch (length) {
         case "narrow":
           return [...monthsNarrow];
@@ -20749,7 +21402,7 @@ var require_luxon = __commonJS({
       return weekdays(length)[dt.weekday - 1];
     }
     function monthForDateTime(dt, length) {
-      return months(length)[dt.month - 1];
+      return months2(length)[dt.month - 1];
     }
     function eraForDateTime(dt, length) {
       return eras(length)[dt.year < 0 ? 0 : 1];
@@ -21745,7 +22398,7 @@ var require_luxon = __commonJS({
         });
       }
       months(length, format = false, defaultOK = true) {
-        return listStuff(this, length, defaultOK, months, () => {
+        return listStuff(this, length, defaultOK, months2, () => {
           const intl = format ? {
             month: length,
             day: "numeric"
@@ -22096,7 +22749,7 @@ var require_luxon = __commonJS({
         loc: dur.loc.clone(alts.loc),
         conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
       };
-      return new Duration2(conf);
+      return new Duration3(conf);
     }
     function antiTrunc(n2) {
       return n2 < 0 ? Math.floor(n2) : Math.ceil(n2);
@@ -22118,7 +22771,7 @@ var require_luxon = __commonJS({
         }
       }, null);
     }
-    var Duration2 = class {
+    var Duration3 = class {
       constructor(config) {
         const accurate = config.conversionAccuracy === "longterm" || false;
         this.values = config.values;
@@ -22129,7 +22782,7 @@ var require_luxon = __commonJS({
         this.isLuxonDuration = true;
       }
       static fromMillis(count, opts) {
-        return Duration2.fromObject({
+        return Duration3.fromObject({
           milliseconds: count
         }, opts);
       }
@@ -22137,19 +22790,19 @@ var require_luxon = __commonJS({
         if (obj == null || typeof obj !== "object") {
           throw new InvalidArgumentError(`Duration.fromObject: argument expected to be an object, got ${obj === null ? "null" : typeof obj}`);
         }
-        return new Duration2({
-          values: normalizeObject(obj, Duration2.normalizeUnit),
+        return new Duration3({
+          values: normalizeObject(obj, Duration3.normalizeUnit),
           loc: Locale.fromObject(opts),
           conversionAccuracy: opts.conversionAccuracy
         });
       }
       static fromDurationLike(durationLike) {
         if (isNumber(durationLike)) {
-          return Duration2.fromMillis(durationLike);
-        } else if (Duration2.isDuration(durationLike)) {
+          return Duration3.fromMillis(durationLike);
+        } else if (Duration3.isDuration(durationLike)) {
           return durationLike;
         } else if (typeof durationLike === "object") {
-          return Duration2.fromObject(durationLike);
+          return Duration3.fromObject(durationLike);
         } else {
           throw new InvalidArgumentError(`Unknown duration argument ${durationLike} of type ${typeof durationLike}`);
         }
@@ -22157,17 +22810,17 @@ var require_luxon = __commonJS({
       static fromISO(text, opts) {
         const [parsed] = parseISODuration(text);
         if (parsed) {
-          return Duration2.fromObject(parsed, opts);
+          return Duration3.fromObject(parsed, opts);
         } else {
-          return Duration2.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+          return Duration3.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
         }
       }
       static fromISOTime(text, opts) {
         const [parsed] = parseISOTimeOnly(text);
         if (parsed) {
-          return Duration2.fromObject(parsed, opts);
+          return Duration3.fromObject(parsed, opts);
         } else {
-          return Duration2.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+          return Duration3.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
         }
       }
       static invalid(reason, explanation = null) {
@@ -22178,7 +22831,7 @@ var require_luxon = __commonJS({
         if (Settings.throwOnInvalid) {
           throw new InvalidDurationError(invalid);
         } else {
-          return new Duration2({
+          return new Duration3({
             invalid
           });
         }
@@ -22297,7 +22950,7 @@ var require_luxon = __commonJS({
       plus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration2.fromDurationLike(duration2), result = {};
+        const dur = Duration3.fromDurationLike(duration2), result = {};
         for (const k of orderedUnits$1) {
           if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
             result[k] = dur.get(k) + this.get(k);
@@ -22310,7 +22963,7 @@ var require_luxon = __commonJS({
       minus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration2.fromDurationLike(duration2);
+        const dur = Duration3.fromDurationLike(duration2);
         return this.plus(dur.negate());
       }
       mapUnits(fn2) {
@@ -22325,14 +22978,14 @@ var require_luxon = __commonJS({
         }, true);
       }
       get(unit) {
-        return this[Duration2.normalizeUnit(unit)];
+        return this[Duration3.normalizeUnit(unit)];
       }
       set(values) {
         if (!this.isValid)
           return this;
         const mixed = {
           ...this.values,
-          ...normalizeObject(values, Duration2.normalizeUnit)
+          ...normalizeObject(values, Duration3.normalizeUnit)
         };
         return clone$1(this, {
           values: mixed
@@ -22372,7 +23025,7 @@ var require_luxon = __commonJS({
         if (units.length === 0) {
           return this;
         }
-        units = units.map((u) => Duration2.normalizeUnit(u));
+        units = units.map((u) => Duration3.normalizeUnit(u));
         const built = {}, accumulated = {}, vals = this.toObject();
         let lastUnit;
         for (const k of orderedUnits$1) {
@@ -22519,11 +23172,11 @@ var require_luxon = __commonJS({
         }
       }
       static after(start, duration2) {
-        const dur = Duration2.fromDurationLike(duration2), dt = friendlyDateTime(start);
+        const dur = Duration3.fromDurationLike(duration2), dt = friendlyDateTime(start);
         return Interval.fromDateTimes(dt, dt.plus(dur));
       }
       static before(end, duration2) {
-        const dur = Duration2.fromDurationLike(duration2), dt = friendlyDateTime(end);
+        const dur = Duration3.fromDurationLike(duration2), dt = friendlyDateTime(end);
         return Interval.fromDateTimes(dt.minus(dur), dt);
       }
       static fromISO(text, opts) {
@@ -22547,12 +23200,12 @@ var require_luxon = __commonJS({
             return Interval.fromDateTimes(start, end);
           }
           if (startIsValid) {
-            const dur = Duration2.fromISO(e, opts);
+            const dur = Duration3.fromISO(e, opts);
             if (dur.isValid) {
               return Interval.after(start, dur);
             }
           } else if (endIsValid) {
-            const dur = Duration2.fromISO(s2, opts);
+            const dur = Duration3.fromISO(s2, opts);
             if (dur.isValid) {
               return Interval.before(end, dur);
             }
@@ -22632,7 +23285,7 @@ var require_luxon = __commonJS({
         return results;
       }
       splitBy(duration2) {
-        const dur = Duration2.fromDurationLike(duration2);
+        const dur = Duration3.fromDurationLike(duration2);
         if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
           return [];
         }
@@ -22763,7 +23416,7 @@ var require_luxon = __commonJS({
       }
       toDuration(unit, opts) {
         if (!this.isValid) {
-          return Duration2.invalid(this.invalidReason);
+          return Duration3.invalid(this.invalidReason);
         }
         return this.e.diff(this.s, unit, opts);
       }
@@ -22836,7 +23489,7 @@ var require_luxon = __commonJS({
       const utcDayStart = (dt) => dt.toUTC(0, {
         keepLocalTime: true
       }).startOf("day").valueOf(), ms = utcDayStart(later) - utcDayStart(earlier);
-      return Math.floor(Duration2.fromMillis(ms).as("days"));
+      return Math.floor(Duration3.fromMillis(ms).as("days"));
     }
     function highOrderDiffs(cursor, later, units) {
       const differs = [["years", (a, b) => b.year - a.year], ["quarters", (a, b) => b.quarter - a.quarter], ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12], ["weeks", (a, b) => {
@@ -22879,9 +23532,9 @@ var require_luxon = __commonJS({
           results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
         }
       }
-      const duration2 = Duration2.fromObject(results, opts);
+      const duration2 = Duration3.fromObject(results, opts);
       if (lowerOrderUnits.length > 0) {
-        return Duration2.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration2);
+        return Duration3.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration2);
       } else {
         return duration2;
       }
@@ -23531,7 +24184,7 @@ var require_luxon = __commonJS({
         year,
         month,
         day: Math.min(inst.c.day, daysInMonth(year, month)) + Math.trunc(dur.days) + Math.trunc(dur.weeks) * 7
-      }, millisToAdd = Duration2.fromObject({
+      }, millisToAdd = Duration3.fromObject({
         years: dur.years - Math.trunc(dur.years),
         quarters: dur.quarters - Math.trunc(dur.quarters),
         months: dur.months - Math.trunc(dur.months),
@@ -24150,19 +24803,19 @@ var require_luxon = __commonJS({
       plus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration2.fromDurationLike(duration2);
+        const dur = Duration3.fromDurationLike(duration2);
         return clone(this, adjustTime(this, dur));
       }
       minus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration2.fromDurationLike(duration2).negate();
+        const dur = Duration3.fromDurationLike(duration2).negate();
         return clone(this, adjustTime(this, dur));
       }
       startOf(unit) {
         if (!this.isValid)
           return this;
-        const o = {}, normalizedUnit = Duration2.normalizeUnit(unit);
+        const o = {}, normalizedUnit = Duration3.normalizeUnit(unit);
         switch (normalizedUnit) {
           case "years":
             o.month = 1;
@@ -24297,14 +24950,14 @@ var require_luxon = __commonJS({
       }
       diff(otherDateTime, unit = "milliseconds", opts = {}) {
         if (!this.isValid || !otherDateTime.isValid) {
-          return Duration2.invalid("created by diffing an invalid DateTime");
+          return Duration3.invalid("created by diffing an invalid DateTime");
         }
         const durOpts = {
           locale: this.locale,
           numberingSystem: this.numberingSystem,
           ...opts
         };
-        const units = maybeArray(unit).map(Duration2.normalizeUnit), otherIsLater = otherDateTime.valueOf() > this.valueOf(), earlier = otherIsLater ? this : otherDateTime, later = otherIsLater ? otherDateTime : this, diffed = diff(earlier, later, units, durOpts);
+        const units = maybeArray(unit).map(Duration3.normalizeUnit), otherIsLater = otherDateTime.valueOf() > this.valueOf(), earlier = otherIsLater ? this : otherDateTime, later = otherIsLater ? otherDateTime : this, diffed = diff(earlier, later, units, durOpts);
         return otherIsLater ? diffed.negate() : diffed;
       }
       diffNow(unit = "milliseconds", opts = {}) {
@@ -24462,7 +25115,7 @@ var require_luxon = __commonJS({
     }
     var VERSION = "2.1.1";
     exports2.DateTime = DateTime;
-    exports2.Duration = Duration2;
+    exports2.Duration = Duration3;
     exports2.FixedOffsetZone = FixedOffsetZone;
     exports2.IANAZone = IANAZone;
     exports2.Info = Info;
@@ -24472,659 +25125,6 @@ var require_luxon = __commonJS({
     exports2.SystemZone = SystemZone;
     exports2.VERSION = VERSION;
     exports2.Zone = Zone;
-  }
-});
-
-// node_modules/seedrandom/lib/alea.js
-var require_alea = __commonJS({
-  "node_modules/seedrandom/lib/alea.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function Alea(seed) {
-        var me = this, mash = Mash();
-        me.next = function() {
-          var t = 2091639 * me.s0 + me.c * 23283064365386963e-26;
-          me.s0 = me.s1;
-          me.s1 = me.s2;
-          return me.s2 = t - (me.c = t | 0);
-        };
-        me.c = 1;
-        me.s0 = mash(" ");
-        me.s1 = mash(" ");
-        me.s2 = mash(" ");
-        me.s0 -= mash(seed);
-        if (me.s0 < 0) {
-          me.s0 += 1;
-        }
-        me.s1 -= mash(seed);
-        if (me.s1 < 0) {
-          me.s1 += 1;
-        }
-        me.s2 -= mash(seed);
-        if (me.s2 < 0) {
-          me.s2 += 1;
-        }
-        mash = null;
-      }
-      function copy(f, t) {
-        t.c = f.c;
-        t.s0 = f.s0;
-        t.s1 = f.s1;
-        t.s2 = f.s2;
-        return t;
-      }
-      function impl(seed, opts) {
-        var xg = new Alea(seed), state = opts && opts.state, prng = xg.next;
-        prng.int32 = function() {
-          return xg.next() * 4294967296 | 0;
-        };
-        prng.double = function() {
-          return prng() + (prng() * 2097152 | 0) * 11102230246251565e-32;
-        };
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      function Mash() {
-        var n = 4022871197;
-        var mash = function(data) {
-          data = String(data);
-          for (var i = 0; i < data.length; i++) {
-            n += data.charCodeAt(i);
-            var h = 0.02519603282416938 * n;
-            n = h >>> 0;
-            h -= n;
-            h *= n;
-            n = h >>> 0;
-            h -= n;
-            n += h * 4294967296;
-          }
-          return (n >>> 0) * 23283064365386963e-26;
-        };
-        return mash;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.alea = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xor128.js
-var require_xor128 = __commonJS({
-  "node_modules/seedrandom/lib/xor128.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.x = 0;
-        me.y = 0;
-        me.z = 0;
-        me.w = 0;
-        me.next = function() {
-          var t = me.x ^ me.x << 11;
-          me.x = me.y;
-          me.y = me.z;
-          me.z = me.w;
-          return me.w ^= me.w >>> 19 ^ t ^ t >>> 8;
-        };
-        if (seed === (seed | 0)) {
-          me.x = seed;
-        } else {
-          strseed += seed;
-        }
-        for (var k = 0; k < strseed.length + 64; k++) {
-          me.x ^= strseed.charCodeAt(k) | 0;
-          me.next();
-        }
-      }
-      function copy(f, t) {
-        t.x = f.x;
-        t.y = f.y;
-        t.z = f.z;
-        t.w = f.w;
-        return t;
-      }
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xor128 = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xorwow.js
-var require_xorwow = __commonJS({
-  "node_modules/seedrandom/lib/xorwow.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.next = function() {
-          var t = me.x ^ me.x >>> 2;
-          me.x = me.y;
-          me.y = me.z;
-          me.z = me.w;
-          me.w = me.v;
-          return (me.d = me.d + 362437 | 0) + (me.v = me.v ^ me.v << 4 ^ (t ^ t << 1)) | 0;
-        };
-        me.x = 0;
-        me.y = 0;
-        me.z = 0;
-        me.w = 0;
-        me.v = 0;
-        if (seed === (seed | 0)) {
-          me.x = seed;
-        } else {
-          strseed += seed;
-        }
-        for (var k = 0; k < strseed.length + 64; k++) {
-          me.x ^= strseed.charCodeAt(k) | 0;
-          if (k == strseed.length) {
-            me.d = me.x << 10 ^ me.x >>> 4;
-          }
-          me.next();
-        }
-      }
-      function copy(f, t) {
-        t.x = f.x;
-        t.y = f.y;
-        t.z = f.z;
-        t.w = f.w;
-        t.v = f.v;
-        t.d = f.d;
-        return t;
-      }
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xorwow = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xorshift7.js
-var require_xorshift7 = __commonJS({
-  "node_modules/seedrandom/lib/xorshift7.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this;
-        me.next = function() {
-          var X = me.x, i = me.i, t, v, w;
-          t = X[i];
-          t ^= t >>> 7;
-          v = t ^ t << 24;
-          t = X[i + 1 & 7];
-          v ^= t ^ t >>> 10;
-          t = X[i + 3 & 7];
-          v ^= t ^ t >>> 3;
-          t = X[i + 4 & 7];
-          v ^= t ^ t << 7;
-          t = X[i + 7 & 7];
-          t = t ^ t << 13;
-          v ^= t ^ t << 9;
-          X[i] = v;
-          me.i = i + 1 & 7;
-          return v;
-        };
-        function init(me2, seed2) {
-          var j, w, X = [];
-          if (seed2 === (seed2 | 0)) {
-            w = X[0] = seed2;
-          } else {
-            seed2 = "" + seed2;
-            for (j = 0; j < seed2.length; ++j) {
-              X[j & 7] = X[j & 7] << 15 ^ seed2.charCodeAt(j) + X[j + 1 & 7] << 13;
-            }
-          }
-          while (X.length < 8)
-            X.push(0);
-          for (j = 0; j < 8 && X[j] === 0; ++j)
-            ;
-          if (j == 8)
-            w = X[7] = -1;
-          else
-            w = X[j];
-          me2.x = X;
-          me2.i = 0;
-          for (j = 256; j > 0; --j) {
-            me2.next();
-          }
-        }
-        init(me, seed);
-      }
-      function copy(f, t) {
-        t.x = f.x.slice();
-        t.i = f.i;
-        return t;
-      }
-      function impl(seed, opts) {
-        if (seed == null)
-          seed = +new Date();
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (state.x)
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xorshift7 = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xor4096.js
-var require_xor4096 = __commonJS({
-  "node_modules/seedrandom/lib/xor4096.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this;
-        me.next = function() {
-          var w = me.w, X = me.X, i = me.i, t, v;
-          me.w = w = w + 1640531527 | 0;
-          v = X[i + 34 & 127];
-          t = X[i = i + 1 & 127];
-          v ^= v << 13;
-          t ^= t << 17;
-          v ^= v >>> 15;
-          t ^= t >>> 12;
-          v = X[i] = v ^ t;
-          me.i = i;
-          return v + (w ^ w >>> 16) | 0;
-        };
-        function init(me2, seed2) {
-          var t, v, i, j, w, X = [], limit = 128;
-          if (seed2 === (seed2 | 0)) {
-            v = seed2;
-            seed2 = null;
-          } else {
-            seed2 = seed2 + "\0";
-            v = 0;
-            limit = Math.max(limit, seed2.length);
-          }
-          for (i = 0, j = -32; j < limit; ++j) {
-            if (seed2)
-              v ^= seed2.charCodeAt((j + 32) % seed2.length);
-            if (j === 0)
-              w = v;
-            v ^= v << 10;
-            v ^= v >>> 15;
-            v ^= v << 4;
-            v ^= v >>> 13;
-            if (j >= 0) {
-              w = w + 1640531527 | 0;
-              t = X[j & 127] ^= v + w;
-              i = t == 0 ? i + 1 : 0;
-            }
-          }
-          if (i >= 128) {
-            X[(seed2 && seed2.length || 0) & 127] = -1;
-          }
-          i = 127;
-          for (j = 4 * 128; j > 0; --j) {
-            v = X[i + 34 & 127];
-            t = X[i = i + 1 & 127];
-            v ^= v << 13;
-            t ^= t << 17;
-            v ^= v >>> 15;
-            t ^= t >>> 12;
-            X[i] = v ^ t;
-          }
-          me2.w = w;
-          me2.X = X;
-          me2.i = i;
-        }
-        init(me, seed);
-      }
-      function copy(f, t) {
-        t.i = f.i;
-        t.w = f.w;
-        t.X = f.X.slice();
-        return t;
-      }
-      ;
-      function impl(seed, opts) {
-        if (seed == null)
-          seed = +new Date();
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (state.X)
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xor4096 = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/tychei.js
-var require_tychei = __commonJS({
-  "node_modules/seedrandom/lib/tychei.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.next = function() {
-          var b = me.b, c = me.c, d = me.d, a = me.a;
-          b = b << 25 ^ b >>> 7 ^ c;
-          c = c - d | 0;
-          d = d << 24 ^ d >>> 8 ^ a;
-          a = a - b | 0;
-          me.b = b = b << 20 ^ b >>> 12 ^ c;
-          me.c = c = c - d | 0;
-          me.d = d << 16 ^ c >>> 16 ^ a;
-          return me.a = a - b | 0;
-        };
-        me.a = 0;
-        me.b = 0;
-        me.c = 2654435769 | 0;
-        me.d = 1367130551;
-        if (seed === Math.floor(seed)) {
-          me.a = seed / 4294967296 | 0;
-          me.b = seed | 0;
-        } else {
-          strseed += seed;
-        }
-        for (var k = 0; k < strseed.length + 20; k++) {
-          me.b ^= strseed.charCodeAt(k) | 0;
-          me.next();
-        }
-      }
-      function copy(f, t) {
-        t.a = f.a;
-        t.b = f.b;
-        t.c = f.c;
-        t.d = f.d;
-        return t;
-      }
-      ;
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.tychei = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/seedrandom.js
-var require_seedrandom = __commonJS({
-  "node_modules/seedrandom/seedrandom.js"(exports2, module2) {
-    (function(global2, pool, math) {
-      var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
-      function seedrandom2(seed, options, callback) {
-        var key = [];
-        options = options == true ? { entropy: true } : options || {};
-        var shortseed = mixkey(flatten(options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed, 3), key);
-        var arc4 = new ARC4(key);
-        var prng = function() {
-          var n = arc4.g(chunks), d = startdenom, x = 0;
-          while (n < significance) {
-            n = (n + x) * width;
-            d *= width;
-            x = arc4.g(1);
-          }
-          while (n >= overflow) {
-            n /= 2;
-            d /= 2;
-            x >>>= 1;
-          }
-          return (n + x) / d;
-        };
-        prng.int32 = function() {
-          return arc4.g(4) | 0;
-        };
-        prng.quick = function() {
-          return arc4.g(4) / 4294967296;
-        };
-        prng.double = prng;
-        mixkey(tostring(arc4.S), pool);
-        return (options.pass || callback || function(prng2, seed2, is_math_call, state) {
-          if (state) {
-            if (state.S) {
-              copy(state, arc4);
-            }
-            prng2.state = function() {
-              return copy(arc4, {});
-            };
-          }
-          if (is_math_call) {
-            math[rngname] = prng2;
-            return seed2;
-          } else
-            return prng2;
-        })(prng, shortseed, "global" in options ? options.global : this == math, options.state);
-      }
-      function ARC4(key) {
-        var t, keylen = key.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
-        if (!keylen) {
-          key = [keylen++];
-        }
-        while (i < width) {
-          s[i] = i++;
-        }
-        for (i = 0; i < width; i++) {
-          s[i] = s[j = mask & j + key[i % keylen] + (t = s[i])];
-          s[j] = t;
-        }
-        (me.g = function(count) {
-          var t2, r = 0, i2 = me.i, j2 = me.j, s2 = me.S;
-          while (count--) {
-            t2 = s2[i2 = mask & i2 + 1];
-            r = r * width + s2[mask & (s2[i2] = s2[j2 = mask & j2 + t2]) + (s2[j2] = t2)];
-          }
-          me.i = i2;
-          me.j = j2;
-          return r;
-        })(width);
-      }
-      function copy(f, t) {
-        t.i = f.i;
-        t.j = f.j;
-        t.S = f.S.slice();
-        return t;
-      }
-      ;
-      function flatten(obj, depth) {
-        var result = [], typ = typeof obj, prop;
-        if (depth && typ == "object") {
-          for (prop in obj) {
-            try {
-              result.push(flatten(obj[prop], depth - 1));
-            } catch (e) {
-            }
-          }
-        }
-        return result.length ? result : typ == "string" ? obj : obj + "\0";
-      }
-      function mixkey(seed, key) {
-        var stringseed = seed + "", smear, j = 0;
-        while (j < stringseed.length) {
-          key[mask & j] = mask & (smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++);
-        }
-        return tostring(key);
-      }
-      function autoseed() {
-        try {
-          var out;
-          if (nodecrypto && (out = nodecrypto.randomBytes)) {
-            out = out(width);
-          } else {
-            out = new Uint8Array(width);
-            (global2.crypto || global2.msCrypto).getRandomValues(out);
-          }
-          return tostring(out);
-        } catch (e) {
-          var browser = global2.navigator, plugins = browser && browser.plugins;
-          return [+new Date(), global2, plugins, global2.screen, tostring(pool)];
-        }
-      }
-      function tostring(a) {
-        return String.fromCharCode.apply(0, a);
-      }
-      mixkey(math.random(), pool);
-      if (typeof module2 == "object" && module2.exports) {
-        module2.exports = seedrandom2;
-        try {
-          nodecrypto = require("crypto");
-        } catch (ex) {
-        }
-      } else if (typeof define == "function" && define.amd) {
-        define(function() {
-          return seedrandom2;
-        });
-      } else {
-        math["seed" + rngname] = seedrandom2;
-      }
-    })(typeof self !== "undefined" ? self : exports2, [], Math);
-  }
-});
-
-// node_modules/seedrandom/index.js
-var require_seedrandom2 = __commonJS({
-  "node_modules/seedrandom/index.js"(exports2, module2) {
-    var alea = require_alea();
-    var xor128 = require_xor128();
-    var xorwow = require_xorwow();
-    var xorshift7 = require_xorshift7();
-    var xor4096 = require_xor4096();
-    var tychei = require_tychei();
-    var sr = require_seedrandom();
-    sr.alea = alea;
-    sr.xor128 = xor128;
-    sr.xorwow = xorwow;
-    sr.xorshift7 = xorshift7;
-    sr.xor4096 = xor4096;
-    sr.tychei = tychei;
-    module2.exports = sr;
   }
 });
 
@@ -29450,6 +29450,11 @@ function GameController_default({ eventStore: eventStore2, models: models2 }) {
   };
 }
 
+// src/lib/random.ts
+var import_seedrandom = __toModule(require_seedrandom2());
+var rnd = (0, import_seedrandom.default)("", { state: true });
+var random = () => Math.abs(rnd());
+
 // src/lib/Temporal.ts
 var import_luxon = __toModule(require_luxon());
 var fullDateTimeOps = {
@@ -29499,11 +29504,11 @@ var Duration = class {
     }
   }
   toMonthsString() {
-    const months = this.lux.as("months");
-    if (months === 1) {
+    const months2 = this.lux.as("months");
+    if (months2 === 1) {
       return "1 Monat";
     } else {
-      return months + " Monate";
+      return months2 + " Monate";
     }
   }
 };
@@ -29512,6 +29517,9 @@ function date(isoString) {
 }
 function duration(isoString) {
   return new Duration(isoString);
+}
+function months(month) {
+  return new Duration(import_luxon.Duration.fromDurationLike({ month }));
 }
 
 // src/constants.ts
@@ -29527,19 +29535,22 @@ var defaultEffort = (g) => {
     text: `Braucht ${defaultEffortDuration.toMonthsString()}.`
   };
 };
+function monthsEffort(inMonths, format = "Braucht {months}.") {
+  const time = months(inMonths);
+  const text = format.replace(/{months}/g, time.toMonthsString());
+  return { time, text };
+}
 function defineLaw(law) {
   return law;
 }
-
-// src/lib/random.ts
-var import_seedrandom = __toModule(require_seedrandom2());
-var rnd = (0, import_seedrandom.default)("", { state: true });
-var random = () => Math.abs(rnd());
 
 // src/laws/AllesBleibtBeimAlten.ts
 var AllesBleibtBeimAlten_default = defineLaw({
   title: "Alles bleibt wie es ist",
   description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sie sind.",
+  effort(game) {
+    return monthsEffort(3, "Wie aussitzen: {months}.");
+  },
   effects() {
     return [];
   },
@@ -29547,36 +29558,6 @@ var AllesBleibtBeimAlten_default = defineLaw({
     return random();
   }
 });
-
-// src/laws/lawTools.ts
-function linear(zero, hundred, actual) {
-  const shifted = actual - zero;
-  const shiftedH = hundred - zero;
-  if (shiftedH === 0)
-    throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero);
-  return shifted / shiftedH * 100;
-}
-function linearPopChange(noChangeVal, fullChangeVal, actualVal, fullPopChange) {
-  const frustrationOrPraise = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal));
-  return frustrationOrPraise / 100 * fullPopChange;
-}
-function lawIsAccepted(game, lawId, minActiveYears = 0) {
-  if (!allLaws.map((l) => l.id).includes(lawId))
-    throw new Error("Unknown law ID " + lawId + " used in a law.");
-  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears);
-}
-function getActiveLaw(lawRefs, matcher) {
-  const lawRef = lawRefs.sort((law1, law2) => law2.effectiveSince - law1.effectiveSince).find((law) => matcher.test(law.lawId));
-  return lawRef?.lawId;
-}
-function windPercentage(game) {
-  const v = game.values;
-  return v.electricityWindUsable / v.electricityDemand * 100;
-}
-function renewablePercentage(game) {
-  const electricityRenewable = game.values.electricityWindUsable + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
-  return electricityRenewable / game.values.electricityDemand * 100;
-}
 
 // src/lib/utils.ts
 var import_showdown = __toModule(require_showdown());
@@ -30757,10 +30738,43 @@ function transfer(to, from) {
   };
 }
 
+// src/laws/lawTools.ts
+function linear(zero, hundred, actual) {
+  const shifted = actual - zero;
+  const shiftedH = hundred - zero;
+  if (shiftedH === 0)
+    throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero);
+  return shifted / shiftedH * 100;
+}
+function linearPopChange(noChangeVal, fullChangeVal, actualVal, fullPopChange) {
+  const frustrationOrPraise = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal));
+  return frustrationOrPraise / 100 * fullPopChange;
+}
+function lawIsAccepted(game, lawId, minActiveYears = 0) {
+  if (!allLaws.map((l) => l.id).includes(lawId))
+    throw new Error("Unknown law ID " + lawId + " used in a law.");
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears);
+}
+function getActiveLaw(lawRefs, matcher) {
+  const lawRef = lawRefs.sort((law1, law2) => law2.effectiveSince - law1.effectiveSince).find((law) => matcher.test(law.lawId));
+  return lawRef?.lawId;
+}
+function windPercentage(game) {
+  const v = game.values;
+  return v.electricityWindUsable / v.electricityDemand * 100;
+}
+function renewablePercentage(game) {
+  const electricityRenewable = game.values.electricityWindUsable + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+  return electricityRenewable / game.values.electricityDemand * 100;
+}
+
 // src/laws/KohleverstromungEinstellen.ts
 var KohleverstromungEinstellen_default = defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
+  effort(game) {
+    return monthsEffort(11);
+  },
   effects(game, startYear2, currentYear) {
     const yearsActive = currentYear - startYear2;
     const compensation = yearsActive < 18 ? 4.3 / 18 : 0;
@@ -30826,9 +30840,9 @@ var EnergiemixRegeltDerMarkt_default = defineLaw({
   description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
   effort(game) {
     if (game.values.popularity >= 50) {
-      return { time: duration("P3M"), text: "Normal dauert das 6 Monate, aber bei Deiner Beliebtheit nur 3." };
+      return monthsEffort(6, "Normal dauert das 12 Monate, aber bei Deiner Beliebtheit nur {months}.");
     } else {
-      return { time: duration("P6M"), text: "Dauert 6 Monate." };
+      return monthsEffort(12);
     }
   },
   effects() {
@@ -30852,6 +30866,9 @@ var KernenergienutzungVerlaengern_default = defineLaw({
   title: "Kernenergienutzung verl\xE4ngern",
   description: "Kernkraftwerke l\xE4nger nutzen, wieder in Betrieb nehmen und neu bauen.",
   removeLawsWithLabels: ["Kernenergie"],
+  effort(game) {
+    return monthsEffort(8);
+  },
   effects() {
     return [
       modify("electricityNuclear").setValue(104.3),
@@ -30886,6 +30903,9 @@ var InitialAtomausstieg_default = defineLaw({
 var NetzausbauErleichtern_default = defineLaw({
   title: "Netzausbau erleichtern",
   description: "Vereinfachung und Beschleunigung von Planungsverfahren f\xFCr den Ausbau des Stromnetzes",
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
@@ -30923,6 +30943,9 @@ var NetzausbauErleichtern_default = defineLaw({
 var NetzausbauFoerdern_default = defineLaw({
   title: "Netzausbau f\xF6rdern",
   description: "Ausbau des Stromnetzes mit Steuermitteln f\xF6rdern",
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
@@ -30962,6 +30985,9 @@ var NetzausbauFoerdern_default = defineLaw({
 var StromspeicherungErleichtern_default = defineLaw({
   title: "Stromspeicherung erleichtern",
   description: "B\xFCrokratische H\xFCrden f\xFCr den Bau von Speicheranlagen und Einspeisung von gespeichertem Strom werden abgeschafft.",
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game, startYear2, currentYear) {
     return [modify("electricityGridQuality").byValue(0.2)];
   },
@@ -31001,6 +31027,9 @@ var StromspeicherungErleichtern_default = defineLaw({
 var StromspeicherungFoerdern_default = defineLaw({
   title: "Stromspeicherung f\xF6rdern",
   description: "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln f\xF6rdern. 2 Mrd \u20AC pro Jahr.",
+  effort(game) {
+    return monthsEffort(7);
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "StromspeicherungErleichtern") ? 0 : 5;
     const hasEffect = currentYear >= startYear2 + delay;
@@ -31058,6 +31087,9 @@ var StromspeicherungFoerdern_default = defineLaw({
 var DaemmungAltbau1Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
   description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit verg\xFCnstigten Krediten gef\xF6rdert.",
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game, startYear2, currentYear) {
     const costsPerYear = 0.5;
     const inEffect = currentYear - startYear2 > 2;
@@ -31079,6 +31111,9 @@ var DaemmungAltbau1Percent_default = defineLaw({
 var DaemmungAltbau2Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
   description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit einem zinslosen Kredit und einem Zuschuss von 20% der Kosten gef\xF6rdert.",
+  effort(game) {
+    return monthsEffort(5);
+  },
   effects(game, startYear2, currentYear) {
     const costsPerYear = 1;
     const inEffect = currentYear - startYear2 > 2;
@@ -31101,6 +31136,9 @@ var DaemmungAltbau2Percent_default = defineLaw({
 var DaemmungAltbau4Percent_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden sehr stark f\xF6rdern",
   description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungspl\xE4tze im Handwerk geschaffen durch einen Zuschuss von 500\u20AC pro Monat, damit der zu erwartende Bauboom bew\xE4ltigt werden kann.",
+  effort(game) {
+    return monthsEffort(7);
+  },
   effects(game, startYear2, currentYear) {
     const costsPerYear = 3;
     const yearsActive = currentYear - startYear2;
@@ -31138,6 +31176,9 @@ var DaemmungAltbau4Percent_default = defineLaw({
 var DaemmungAltbauAbschaffen_default = defineLaw({
   title: "D\xE4mmung von Wohngeb\xE4uden abschaffen",
   description: "Wir geben den B\xFCrgern die Freiheit zur\xFCck, selbst zu entscheiden, ob sie ihr Haus d\xE4mmen wollen und lassen die F\xF6rderung auslaufen",
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects() {
     return [
       modify("stateDebt").byValue(-0.5),
@@ -31160,6 +31201,9 @@ var DaemmungAltbauAbschaffen_default = defineLaw({
 var NahverkehrAusbauen_default = defineLaw({
   title: "Nahverkehr Ausbauen",
   description: "Der Ausbau des Nahverkehrs wird bundesweit st\xE4rker bezuschusst.",
+  effort(game) {
+    return monthsEffort(5, "Komplexe Verhandlungen mit den Bundesl\xE4ndern dauern {months}.");
+  },
   effects(game, startYear2, currentYear) {
     const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
     const yearsActive = currentYear - startYear2;
@@ -31211,6 +31255,9 @@ var NahverkehrAusbauen_default = defineLaw({
 var NahverkehrModernisieren_default = defineLaw({
   title: "Nahverkehr Modernisieren",
   description: "Anschaffung Moderner, bequemer, emissionsfreier Fahrzeuge f\xFCr den Nahverkehr wird gef\xF6rdert.",
+  effort(game) {
+    return monthsEffort(4);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(3),
@@ -31261,6 +31308,9 @@ var NahverkehrModernisieren_default = defineLaw({
 var FoerderungFuerTierhaltungAbschaffen_default = defineLaw({
   title: "F\xF6rderung f\xFCr Tierhaltung abschaffen",
   description: "Subventionen f\xFCr Tierhaltung werden ersatzlos gestrichen",
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(-10),
@@ -31277,6 +31327,9 @@ var FoerderungFuerTierhaltungAbschaffen_default = defineLaw({
 var NahverkehrKostenlos_default = defineLaw({
   title: "Nahverkehr Kostenlos",
   description: "Die Kosten f\xFCr den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr ben\xF6tigt werden.",
+  effort(game) {
+    return monthsEffort(7, "Die Haushaltsverhandlungen dauern {months}.");
+  },
   effects(game, startYear2, currentYear) {
     const percentage = startYear2 === currentYear ? 10 : 1;
     return [
@@ -31330,6 +31383,9 @@ var NahverkehrKostenlos_default = defineLaw({
 var AutosInInnenstaedtenVerbieten_default = defineLaw({
   title: "Autos in Innenst\xE4dten verbieten",
   description: "Die Innenst\xE4dte der gro\xDFen St\xE4dte werden zu Autofreien Zonen erkl\xE4rt und begr\xFCnt, sowie Fahrrad und Fu\xDFg\xE4ngerzonen eingerichtet.",
+  effort(game) {
+    return monthsEffort(12);
+  },
   effects(game, startYear2, currentYear) {
     var popularityChange = -2;
     if (game.values.publicLocalCapacity > game.values.publicLocalUsage * 1.2) {
@@ -31353,6 +31409,9 @@ var AutosInInnenstaedtenVerbieten_default = defineLaw({
 var FernverkehrVerbindungenAusbauen_default = defineLaw({
   title: "Fernverkehr Verbindungen ausbauen",
   description: "Der Ausbau des \xF6ffentlichen Fernverkehrs wird bundesweit st\xE4rker Bezuschusst und Vorangetrieben",
+  effort(game) {
+    return monthsEffort(12);
+  },
   effects(game) {
     const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
     return [
@@ -31405,6 +31464,9 @@ var FernverkehrVerbindungenAusbauen_default = defineLaw({
 var FernverkehrModernisieren_default = defineLaw({
   title: "Fernverkehr Modernisieren",
   description: "Moderne, bequeme und weniger anf\xE4llige Z\xFCge werden f\xFCr den Fernverkehr angeschafft.",
+  effort(game) {
+    return monthsEffort(4);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(3),
@@ -31452,6 +31514,9 @@ var FernverkehrModernisieren_default = defineLaw({
 var WasserstofftechnologieFoerdern_default = defineLaw({
   title: "Wasserstofftechnologie f\xF6rdern",
   description: "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie und zur effizienten Wasserstoffgewinnung wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(1);
+  },
   effects(game, startYear2, currentYear) {
     const inGrantPeriod = currentYear < startYear2 + 5;
     const effective = currentYear >= startYear2 + 5;
@@ -31497,6 +31562,9 @@ var WasserstofftechnologieFoerdern_default = defineLaw({
 var WasserstoffmobilitaetFoerdern_default = defineLaw({
   title: "Wasserstoffmobilit\xE4t f\xF6rdern",
   description: "Wasserstoffbasierte Fahrzeuge werden gef\xF6rdert.",
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     if (lawIsAccepted(game, "WasserstofftechnologieFoerdern")) {
       return [
@@ -31545,6 +31613,16 @@ var WasserstoffmobilitaetFoerdern_default = defineLaw({
 var AbschaffungDerMineraloelsteuer_default = defineLaw({
   title: "Abschaffung der Mineral\xF6lsteuer",
   description: "Die Steuer auf s\xE4mtliche erd\xF6lbasierten Treibstoffe wird abgeschafft.",
+  effort(game) {
+    const yearsTillUp = Math.ceil(game.values.co2budget / game.values.co2emissions);
+    if (yearsTillUp >= 15) {
+      return monthsEffort(2, `Die derzeitigen CO2 Emissionen w\xFCrden das Budget
+        in ${yearsTillUp} Jahren verbrauchen.
+        Nicht schlecht! Bei der Stimmung bekommst Dus in {months}n durch.`);
+    } else {
+      return monthsEffort(9, "Nicht beliebt! Sowas dauert {months}.");
+    }
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(41),
@@ -31585,6 +31663,9 @@ var AbschaffungDerMineraloelsteuer_default = defineLaw({
 var AusbauVonStrassen_default = defineLaw({
   title: "Ausbau von Stra\xDFen",
   description: "Autobahnen und Stra\xDFen werden intensiver ausgebaut.",
+  effort(game) {
+    return monthsEffort(9);
+  },
   effects(game) {
     return [
       modify("stateDebt").byValue(5),
@@ -31604,6 +31685,9 @@ var AusbauVonStrassen_default = defineLaw({
 var DieselPrivilegAbgeschaffen_default = defineLaw({
   title: "Diesel Privileg abgeschaffen",
   description: "Diesel wird jetzt genauso besteuert wie Benzin.",
+  effort(game) {
+    return monthsEffort(6);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(-7.35),
@@ -31622,6 +31706,9 @@ var DieselPrivilegAbgeschaffen_default = defineLaw({
 var DienstwagenPrivilegAbgeschaffen_default = defineLaw({
   title: "Dienstwagen Privileg abgeschaffen",
   description: "Steuererleichterungen f\xFCr Dienstwagen werden abgeschafft.",
+  effort(game) {
+    return monthsEffort(6);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(-18),
@@ -31671,6 +31758,9 @@ var Tempolimit130AufAutobahnen_default = defineLaw({
   description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 130 km/h.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game) {
     const emissionModifier = modify("carEmissionFactor").setValue(157.9);
     const emissionChange = emissionModifier.getChange(game.values);
@@ -31694,6 +31784,9 @@ var Tempolimit120AufAutobahnen_default = defineLaw({
   description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 120 km/h.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
+  effort(game) {
+    return monthsEffort(4);
+  },
   effects(game) {
     const emissionModifier = modify("carEmissionFactor").setValue(157.1);
     const emissionChange = emissionModifier.getChange(game.values);
@@ -31717,6 +31810,9 @@ var Tempolimit100AufAutobahnen_default = defineLaw({
   description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 100 km/h.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
+  effort(game) {
+    return monthsEffort(5);
+  },
   effects(game) {
     const emissionModifier = modify("carEmissionFactor").setValue(154.1);
     const emissionChange = emissionModifier.getChange(game.values);
@@ -31740,6 +31836,9 @@ var TempolimitAufAutobahnenAussitzen_default = defineLaw({
   description: "Die EU hat das generelle Tempolkmit zwar beschlossen, wir setzen es aber nicht um. Das k\xF6nnte zwar Strafen oder gar Zwangsma\xDFnahmen bewirken, aber das Risiko der gef\xE4hrdeten Wiederwahl ist zu gro\xDF.",
   labels: ["TempolimitAutobahn"],
   removeLawsWithLabels: ["TempolimitAutobahn"],
+  effort(game) {
+    return monthsEffort(3, "Wie aussitzen: {months}.");
+  },
   effects() {
     return [
       modify("stateDebt").byValue(-10),
@@ -31759,6 +31858,9 @@ var TempolimitAufAutobahnenAussitzen_default = defineLaw({
 var ElektromobilitaetFoerdern_default = defineLaw({
   title: "Elektromobilit\xE4t F\xF6rdern",
   description: "H\xF6here Kaufpr\xE4mien, Steuerbefreiung, g\xFCnstiges Laden f\xFCr E-Autos.",
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     if (lawIsAccepted(game, "LadeinfrastrukturAusbauen")) {
       return [
@@ -31810,6 +31912,9 @@ var ElektromobilitaetFoerdern_default = defineLaw({
 var LadeinfrastrukturAusbauen_default = defineLaw({
   title: "Ladeinfrastruktur ausbauen",
   description: "Ausbau der Ladeinfrastruktur wird mit Steuermitteln stark gef\xF6rdert.",
+  effort(game) {
+    return monthsEffort(4);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("stateDebt").byValue(5),
@@ -31855,6 +31960,9 @@ var WindkraftVereinfachen_default = defineLaw({
   description: "Genehmigungen f\xFCr Windkraftanlagen werden vereinfacht und beschleunigt.",
   labels: [],
   removeLawsWithLabels: [],
+  effort(game) {
+    return monthsEffort(4, "Die Bundesl\xE4nder m\xFCssen mit ins Boot geholt werden. Das dauert {months}.");
+  },
   effects(game, startYear2, currentYear) {
     return [];
   },
@@ -31888,6 +31996,9 @@ var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
   description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
   labels: ["initial", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(3, "Wie aussitzen: {months}.");
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     return [
@@ -31911,6 +32022,9 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
   description: "Bundesweite gelockerte Abstandsregeln f\xFCr Windkraftanlagen sowie Bauerlaubniss in W\xE4ldern. Ja auch Bayern wird jetzt gezwungen Windkraftanlagen zuzulassen, sowie andere nicht bauwillige Kommunen.",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(6, "Das schaffst Du in {months}n.");
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     return [
@@ -31955,6 +32069,9 @@ var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
   description: "Jeder der Land besitzt kann seine Windkraftanlage dahin bauen wo er will.",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(12, "BIs werden es Dir schwer machen. {months}!");
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     return [
@@ -31976,6 +32093,9 @@ var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
   description: "Der Mindestabstand zwischen Wind Energie Anlagen und Wohngeb\xE4uden im Innenbereich muss das Zehnfache der Gesamth\xF6he der Wind Energie Anlagen betragen (10H-Regel)",
   labels: ["WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(1, "Dauert nur einen Monat.");
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(5).if(startYear2 === currentYear),
@@ -31997,6 +32117,9 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
   labels: ["initial", "hidden", "WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(8);
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(6.9, game.values.electricityWindOnshoreMaxNew);
@@ -32020,6 +32143,9 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(13.8, game.values.electricityWindOnshoreMaxNew);
@@ -32048,6 +32174,9 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(4);
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(27.6, game.values.electricityWindOnshoreMaxNew);
@@ -32109,6 +32238,9 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(5);
+  },
   effects(game, startYear2, currentYear) {
     const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
     const onshoreNew = Math.min(55.2, game.values.electricityWindOnshoreMaxNew);
@@ -32133,6 +32265,9 @@ var CO2PreisErhoehen_default = defineLaw({
   description: "Die Preise werden schneller erh\xF6ht, als bisher geplant. Eine Tonne CO2 kostet in 2 Jahren 70 Euro und in 4 Jahren 100 Euro.",
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
+  effort(game) {
+    return monthsEffort(6);
+  },
   effects(game, startYear2, currentYear) {
     const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1);
     const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1);
@@ -32211,6 +32346,9 @@ var WirksamerCO2Preis_default = defineLaw({
   description: "Eine Tonne CO2 kostet ab jetzt 150 Euro.",
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
+  effort(game) {
+    return monthsEffort(8);
+  },
   effects(game, startYear2, currentYear) {
     const electricityPopChange = linearPopChange(80, 50, renewablePercentage(game), -3);
     const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3);
@@ -32291,6 +32429,9 @@ var VollerCO2Preis_default = defineLaw({
   description: "Eine Tonne CO2 kostet ab jetzt 3000 Euro. Das deckt die derzeit prognostizierten Klimafolgekosten.",
   labels: ["CO2Preis"],
   removeLawsWithLabels: ["CO2Preis"],
+  effort(game) {
+    return monthsEffort(10);
+  },
   effects(game, startYear2, currentYear) {
     const electricityPopChange = linearPopChange(90, 50, renewablePercentage(game), -10);
     const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10);
@@ -32370,6 +32511,9 @@ var SolarstromFoerderungAbschaffen_default = defineLaw({
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(5);
+  },
   effects() {
     return [modify("electricitySolar").byValue(2)];
   },
@@ -32391,6 +32535,9 @@ var SolarstromFoerderungWieZuBeginn_default = defineLaw({
   labels: ["initial", "SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(9);
+  },
   effects() {
     return [modify("electricitySolar").byValue(5)];
   },
@@ -32412,7 +32559,9 @@ var SolarstromFoerdernx2_default = defineLaw({
   description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verdoppeln",
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
-  treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(4);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(10).if(startYear2 === currentYear),
@@ -32438,7 +32587,9 @@ var SolarstromFoerdernx4_default = defineLaw({
   description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen vervierfachen",
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
-  treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(20).if(startYear2 === currentYear),
@@ -32472,6 +32623,9 @@ var SolarstromFoerdernx8_default = defineLaw({
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-10).if(startYear2 === currentYear),
@@ -32500,6 +32654,9 @@ var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
@@ -32532,6 +32689,9 @@ var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
 var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
   title: "Forschung und Entwicklung zur Stromspeicherung f\xF6rdern",
   description: "Ein F\xF6rderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(1);
+  },
   effects(game, startYear2, currentYear) {
     const inGrantPeriod = currentYear < startYear2 + 5;
     const effective = currentYear >= startYear2 + 3;
@@ -32577,6 +32737,9 @@ var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
 var ForschungEmissionsfreieStahlproduktion_default = defineLaw({
   title: "Forschung zur emissionsfreien Stahlproduktion f\xF6rdern",
   description: "Forschung und Entwicklung von Technologien zur Produktion von Stahl mit stark reduzierten CO2-Emissionen wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(2);
+  },
   effects(game, startYear2, currentYear) {
     const inGrantPeriod = currentYear < startYear2 + 5;
     const effective = currentYear >= startYear2 + 3;
@@ -32634,6 +32797,9 @@ var ForschungEmissionsfreieStahlproduktion_default = defineLaw({
 var ForschungEmissionsfreieZementproduktion_default = defineLaw({
   title: "Forschung zur emissionsfreien Zementproduktion f\xF6rdern",
   description: "Forschung und Entwicklung von Technologien zur Produktion von Zement mit stark reduzierten CO2-Emissionen wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(3);
+  },
   effects(game, startYear2, currentYear) {
     const inGrantPeriod = currentYear < startYear2 + 5;
     const effective = currentYear >= startYear2 + 3;
@@ -32691,6 +32857,9 @@ var ForschungEmissionsfreieZementproduktion_default = defineLaw({
 var ForschungDezentraleStromerzeugung_default = defineLaw({
   title: "Erforschung und Umsetzung dezentraler Stromerzeugung f\xF6rdern",
   description: "Ein F\xF6rderprogramm zur Erfoschung und Umsetzung der notwendigen Anpassungen von Netz und Infrastruktur f\xFCr die denzentrale Stromerzeugung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(1);
+  },
   effects(game, startYear2, currentYear) {
     const inGrantPeriod = currentYear < startYear2 + 5;
     const effective = currentYear >= startYear2 + 1;
@@ -32733,6 +32902,9 @@ var ForschungDezentraleStromerzeugung_default = defineLaw({
 var Test_default = defineLaw({
   title: "Test",
   description: "Unsinniges Gesetz zum Testen.",
+  effort(game) {
+    return monthsEffort(6);
+  },
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byPercent(50).if((currentYear - startYear2) % 3 != 0),
