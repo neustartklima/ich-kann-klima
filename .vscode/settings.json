@@ -6,16 +6,16 @@
   "files.associations": {
     "*.json": "ndjson"
   },
-  "svg.preview.background": "transparent"
-  "githubIssues.queries": [ 
-        {
-            "label": "My Issues",
-            "query": "default"
-        },
-        {
-            "label": "Suggested",
-            "query": "state:open repo:${owner}/${repository} -label:later no:assignee sort:updated-desc"
-
-        }
-    ],
+  "githubIssues.queries": [
+    {
+      "label": "My Issues",
+      "query": "default"
+    },
+    {
+      "label": "Suggested",
+      "query": "state:open repo:${owner}/${repository} -label:later no:assignee sort:updated-desc"
+    }
+  ],
+  "mochaExplorer.files": "tests/**/*.spec.ts",
+  "mochaExplorer.require": "ts-node/register"
 }
