@@ -1,33 +1,7 @@
 import { allLaws, LawId, LawReference } from "."
-import { Game } from "../game"
-import { Percent } from "../types"
-
-/**
- * Create a function, which may be used in laws to check change values to obey boundaries.
- *
- * Example: For a given type `Percent`, a useful function may be generated with
- * ```
- * const changePercentBy = changeBy<Percent>(0, 100)
- * ```
- * It can then be used within the return value of a law as follows:
- * ```
- * return {
- *   popularity: changePercentBy(data.popularity, -10),
- * }
- * ```
- *
- * @param min The minimum the changed value has to obey or undefined, if none.
- * @param max The maximum the changed value has to obey or undefined, if none.
- * @returns Function to be used in laws.
- */
-export function changeBy<T extends number>(min?: T, max?: T): (val: T, by: T) => T {
-  const minF: (val: T, by: T) => T =
-    min === undefined ? (_val: T, by: T) => by : (val: T, by: T) => Math.max(by, min - val) as T
-  const maxF: (val: T, by: T) => T =
-    max === undefined ? (_val: T, by: T) => by : (val: T, by: T) => Math.min(by, max - val) as T
-
-  return (val: T, by: T) => (by > 0 ? maxF(val, by) : minF(val, by))
-}
+import { Game, GameYear } from "../game"
+import { Change, modify } from "../params"
+import { Percent, TWh } from "../types"
 
 /**
  * Linear interpolation returning a percentage to be used in priority-functions in laws.
