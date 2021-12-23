@@ -29579,6 +29579,14 @@ function objectToArrayWithId(modules) {
     id: key
   }));
 }
+function linearFunction(a, b) {
+  const divisor = a.value - b.value;
+  return (value) => {
+    const aTerm = a.result * (value - b.value) / divisor;
+    const bTerm = b.result * (value - a.value) / divisor;
+    return aTerm - bTerm;
+  };
+}
 
 // src/citations/CitationsTypes.ts
 var dateFormatter = new Intl.DateTimeFormat("de-DE");
@@ -29906,7 +29914,7 @@ var WritableParam = class extends ParamDefinition {
   constructor(input) {
     super(input);
     this.initialValue = input.initialValue;
-    this.applyBounds = applyBoundsPerUnit[input.unit];
+    this.applyBounds = input.applyBounds || applyBoundsPerUnit[input.unit];
   }
 };
 var ComputedParam = class extends ParamDefinition {
@@ -30138,32 +30146,6 @@ var electricityWind = new WritableParam({
 
   `
 });
-function linearFunction(a, b) {
-  const divisor = a.value - b.value;
-  return (value) => {
-    const aTerm = a.result * (value - b.value) / divisor;
-    const bTerm = b.result * (value - a.value) / divisor;
-    return aTerm - bTerm;
-  };
-}
-var electricityWindUsable = new ComputedParam({
-  unit: "TWh",
-  valueGetter(data) {
-    const baseVal = electricityWind.initialValue;
-    const quality = data.electricityGridQuality;
-    const maxVal = data.electricityDemand;
-    const gridMax = linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality);
-    return Math.min(gridMax, data.electricityWind);
-  },
-  shouldInitiallyBe: electricityWind.initialValue,
-  citations: [],
-  details: markdown`
-The electrical energy produced by wind and not impaired by poor quality of the grid.
-  `,
-  internals: markdown`
-
-  `
-});
 var electricityWindOnshoreMaxNew = new WritableParam({
   unit: "TWh",
   initialValue: 6,
@@ -30253,7 +30235,7 @@ var electricityCoal = new ComputedParam({
 var electricityGas = new ComputedParam({
   unit: "TWh",
   valueGetter(data) {
-    return data.electricityDemand - data.electricitySolar - data.electricityWindUsable - data.electricityWater - data.electricityHardCoal - data.electricityBrownCoal - data.electricityBiomass - data.electricityNuclear;
+    return data.electricityDemand - data.electricitySolar - data.electricityWind - data.electricityWater - data.electricityHardCoal - data.electricityBrownCoal - data.electricityBiomass - data.electricityNuclear;
   },
   details: markdown`
 
@@ -30545,7 +30527,6 @@ var paramDefinitions = {
   electricityGridQuality,
   electricitySolar,
   electricityWind,
-  electricityWindUsable,
   electricityWindOnshoreMaxNew,
   electricityWindEfficiency,
   electricityWater,
@@ -30746,9 +30727,15 @@ function linear(zero, hundred, actual) {
     throw new Error("Linear interpolation requested with the same value for zero and hundred: " + zero);
   return shifted / shiftedH * 100;
 }
-function linearPopChange(noChangeVal, fullChangeVal, actualVal, fullPopChange) {
-  const frustrationOrPraise = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal));
-  return frustrationOrPraise / 100 * fullPopChange;
+function linearPopChange(basePoint, refPoint) {
+  const dir = refPoint.value - basePoint.value;
+  const sign = dir / Math.abs(dir);
+  const comp = sign * basePoint.value;
+  return (value) => {
+    if (dir === 0 || sign * value <= comp)
+      return basePoint.result;
+    return linearFunction(basePoint, refPoint)(value);
+  };
 }
 function lawIsAccepted(game, lawId, minActiveYears = 0) {
   if (!allLaws.map((l) => l.id).includes(lawId))
@@ -30761,11 +30748,57 @@ function getActiveLaw(lawRefs, matcher) {
 }
 function windPercentage(game) {
   const v = game.values;
-  return v.electricityWindUsable / v.electricityDemand * 100;
+  return v.electricityWind / v.electricityDemand * 100;
 }
 function renewablePercentage(game) {
-  const electricityRenewable = game.values.electricityWindUsable + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
+  const electricityRenewable = game.values.electricityWind + game.values.electricitySolar + game.values.electricityWater + game.values.electricityBiomass;
   return electricityRenewable / game.values.electricityDemand * 100;
+}
+function maxDueToGridQuality(game, paramKey) {
+  const values = game.values;
+  const baseVal = paramDefinitions[paramKey].initialValue;
+  const quality = values.electricityGridQuality;
+  const maxVal = values.electricityDemand;
+  return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality);
+}
+function windPowerExpansion(game, onshoreNewMax, offshoreNew, startYear2) {
+  const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
+  if (game.currentYear < startYear2 + delay)
+    return [];
+  const values = game.values;
+  const onshoreNew = Math.min(onshoreNewMax, values.electricityWindOnshoreMaxNew);
+  const maxIncrease = (onshoreNew + offshoreNew) * values.electricityWindEfficiency / 100;
+  const old = values.electricityWind;
+  const maxNew = Math.min(old + maxIncrease, maxDueToGridQuality(game, "electricityWind")) - old;
+  const coalGas = values.electricityCoal + values.electricityGas;
+  if (coalGas <= 0)
+    return [];
+  const hardCoalFraction = values.electricityHardCoal / coalGas;
+  const brownCoalFraction = values.electricityBrownCoal / coalGas;
+  const gasFraction = values.electricityGas / coalGas;
+  return [
+    transfer("electricityWind", "electricityHardCoal").if(hardCoalFraction > 0).byValue(hardCoalFraction * maxNew),
+    transfer("electricityWind", "electricityBrownCoal").if(brownCoalFraction > 0).byValue(brownCoalFraction * maxNew),
+    modify("electricityWind").if(gasFraction > 0).byValue(gasFraction * maxNew)
+  ];
+}
+function co2PricingEffects(game, price, relReduction, popChangeFunc) {
+  const electricityPopChange = popChangeFunc(renewablePercentage(game));
+  const carPopChange = popChangeFunc(game.values.carRenewablePercentage);
+  return [
+    modify("stateDebt").byValue((25 - price) / 1e3 * game.values.co2emissions),
+    modify("popularity").byValue(electricityPopChange + carPopChange),
+    modify("co2emissionsIndustry").byPercent(relReduction),
+    modify("co2emissionsAgriculture").byPercent(relReduction),
+    modify("co2emissionsOthers").byPercent(relReduction),
+    transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
+    transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
+    transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
+    transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
+    transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
+    transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
+    transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
+  ];
 }
 
 // src/laws/KohleverstromungEinstellen.ts
@@ -32121,12 +32154,7 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
     return monthsEffort(8);
   },
   effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    const onshoreNew = Math.min(6.9, game.values.electricityWindOnshoreMaxNew);
-    const offshoreNew = 1.2;
-    return [
-      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
-    ];
+    return [...windPowerExpansion(game, 6.9, 1.2, startYear2)];
   },
   priority(game) {
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
@@ -32147,13 +32175,10 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
     return monthsEffort(2);
   },
   effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    const onshoreNew = Math.min(13.8, game.values.electricityWindOnshoreMaxNew);
-    const offshoreNew = 2.4;
     return [
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
       modify("unemployment").byValue(-20).if(startYear2 === currentYear),
-      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
+      ...windPowerExpansion(game, 13.8, 2.4, startYear2)
     ];
   },
   priority(game) {
@@ -32178,13 +32203,10 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
     return monthsEffort(4);
   },
   effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    const onshoreNew = Math.min(27.6, game.values.electricityWindOnshoreMaxNew);
-    const offshoreNew = 4.8;
     return [
       modify("popularity").byValue(-2).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
+      ...windPowerExpansion(game, 27.6, 4.8, startYear2)
     ];
   },
   priority(game) {
@@ -32242,13 +32264,10 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
     return monthsEffort(5);
   },
   effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    const onshoreNew = Math.min(55.2, game.values.electricityWindOnshoreMaxNew);
-    const offshoreNew = 9.6;
     return [
       modify("popularity").byValue(-20).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      modify("electricityWind").byValue((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency / 100).if(currentYear >= startYear2 + delay)
+      ...windPowerExpansion(game, 55.2, 9.6, startYear2)
     ];
   },
   priority(game) {
@@ -32269,23 +32288,9 @@ var CO2PreisErhoehen_default = defineLaw({
     return monthsEffort(6);
   },
   effects(game, startYear2, currentYear) {
-    const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1);
-    const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1);
-    const relReduction = -0.5;
+    const price = currentYear >= startYear2 + 2 ? currentYear >= startYear2 + 4 ? 100 : 70 : 0;
     return [
-      modify("stateDebt").byValue(-45 / 1e3 * game.values.co2emissions).if(currentYear >= startYear2 + 2),
-      modify("stateDebt").byValue(-30 / 1e3 * game.values.co2emissions).if(currentYear >= startYear2 + 4),
-      modify("popularity").byValue(electricityPopChange + carPopChange),
-      modify("co2emissionsIndustry").byPercent(relReduction),
-      modify("co2emissionsAgriculture").byPercent(relReduction),
-      modify("co2emissionsOthers").byPercent(relReduction),
-      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
-      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
-      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
+      ...co2PricingEffects(game, price, -0.5, linearPopChange({ value: 50, result: 0 }, { value: 0, result: -1 }))
     ];
   },
   priority(game) {
@@ -32350,23 +32355,7 @@ var WirksamerCO2Preis_default = defineLaw({
     return monthsEffort(8);
   },
   effects(game, startYear2, currentYear) {
-    const electricityPopChange = linearPopChange(80, 50, renewablePercentage(game), -3);
-    const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3);
-    const relReduction = -2;
-    return [
-      modify("stateDebt").byValue(-125 / 1e3 * game.values.co2emissions),
-      modify("popularity").byValue(electricityPopChange + carPopChange),
-      modify("co2emissionsIndustry").byPercent(relReduction),
-      modify("co2emissionsAgriculture").byPercent(relReduction),
-      modify("co2emissionsOthers").byPercent(relReduction),
-      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
-      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
-      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
-    ];
+    return [...co2PricingEffects(game, 150, -2, linearPopChange({ value: 80, result: 0 }, { value: 50, result: -3 }))];
   },
   priority(game) {
     if (!lawIsAccepted(game, "CO2PreisErhoehen"))
@@ -32433,23 +32422,7 @@ var VollerCO2Preis_default = defineLaw({
     return monthsEffort(10);
   },
   effects(game, startYear2, currentYear) {
-    const electricityPopChange = linearPopChange(90, 50, renewablePercentage(game), -10);
-    const carPopChange = linearPopChange(90, 50, game.values.carRenewablePercentage, -10);
-    const relReduction = -5;
-    return [
-      modify("stateDebt").byValue(-3 * game.values.co2emissions),
-      modify("popularity").byValue(electricityPopChange + carPopChange),
-      modify("co2emissionsIndustry").byPercent(relReduction),
-      modify("co2emissionsAgriculture").byPercent(relReduction),
-      modify("co2emissionsOthers").byPercent(relReduction),
-      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction),
-      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
-      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction)
-    ];
+    return [...co2PricingEffects(game, 3e3, -5, linearPopChange({ value: 90, result: 0 }, { value: 50, result: -10 }))];
   },
   priority(game) {
     if (!lawIsAccepted(game, "WirksamerCO2Preis"))
