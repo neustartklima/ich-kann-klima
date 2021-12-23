@@ -44,7 +44,7 @@ export function objectToArrayWithId<K extends string, T extends Object>(modules:
   }))
 }
 
-type RefPoint = { value: number; result: number }
+export type RefPoint = { value: number; result: number }
 
 /** Linear function connecting two points.
  *

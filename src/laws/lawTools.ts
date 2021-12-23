@@ -1,6 +1,6 @@
 import { allLaws, LawId, LawReference } from "."
 import { Game, GameYear } from "../game"
-import { linearFunction } from "../lib/utils"
+import { linearFunction, RefPoint } from "../lib/utils"
 import { BaseParams, Change, modify, transfer, WritableParamKey } from "../params"
 import { paramDefinitions } from "../params/Params"
 import { Percent, TWh } from "../types"
@@ -21,25 +21,35 @@ export function linear<T extends number>(zero: T, hundred: T, actual: T): Percen
 }
 
 /**
- * Linear interpolation returning a popularity change.
+ * Linear function starting at a point suitable for determining popularity changes.
  *
- * In contrast to {@link linear} values beyond `noChangeVal` will return zero.
+ * In contrast to {@link linearFunction} values beyond `basePoint` will not
+ * use linear interpolation, but return `basePoint.result`. Beyond `refPoint`
+ * the linear function continues as usual.
  *
- * @param noChangeVal Value for which no popularity change is returned.
- * @param fullChangeVal Value for which {@link fullPopChange} is returned.
- * @param actualVal The actural value for which to calculate the change.
- * @param fullPopChange Return value, if `actualVal == fullChangeVal`.
- * @return Calculated popularity change.
+ * Example:
+ *
+ * `linearPopChange({ value: 50, result: 0 }, { value: 0, result: -1 })` is a function
+ * which will
+ * - return 0 for 50 and greater,
+ * - return -1 for 0, and
+ * - otherwise will return a linear interpolation.
+ *
+ * E.g. 25 will return -0.5 and -50 will return .2.
+ *
+ * @param basePoint First value and result.
+ * @param refPoint Second value and result.
+ * @return Linear function connecting the two.
  *
  */
-export function linearPopChange<T extends number>(
-  noChangeVal: T,
-  fullChangeVal: T,
-  actualVal: T,
-  fullPopChange: Percent
-): Percent {
-  const frustrationOrPraise: Percent = Math.max(0, linear(noChangeVal, fullChangeVal, actualVal))
-  return (frustrationOrPraise / 100) * fullPopChange
+export function linearPopChange(basePoint: RefPoint, refPoint: RefPoint) {
+  const dir = refPoint.value - basePoint.value
+  const sign = dir / Math.abs(dir)
+  const comp = sign * basePoint.value
+  return (value: number) => {
+    if (dir === 0 || sign * value <= comp) return basePoint.result
+    return linearFunction(basePoint, refPoint)(value)
+  }
 }
 
 /**
@@ -86,7 +96,7 @@ export function renewablePercentage(game: Game): Percent {
   return (electricityRenewable / game.values.electricityDemand) * 100
 }
 
-function maxDueToGridQuality(game: Game, paramKey: WritableParamKey): TWh {
+export function maxDueToGridQuality(game: Game, paramKey: WritableParamKey): TWh {
   const values: BaseParams = game.values
   const baseVal = paramDefinitions[paramKey].initialValue
   const quality = values.electricityGridQuality
@@ -130,5 +140,45 @@ export function windPowerExpansion(game: Game, onshoreNewMax: TWh, offshoreNew: 
     modify("electricityWind")
       .if(gasFraction > 0)
       .byValue(gasFraction * maxNew),
+  ]
+}
+
+/** Changes due to change in CO2 pricing.
+ *
+ * @param game The game.
+ * @param price Price for one ton CO2e [EUR].
+ * @param relReduction Relative reduction of fossile energy sources.
+ * @param popChangeFunc: A function applied to two percentage of renewable
+ * sources (car, electricity). The result is added/deduced to/from the popularity.
+ * @returns The changes to return by the law.
+ */
+export function co2PricingEffects(
+  game: Game,
+  price: number,
+  relReduction: Percent,
+  popChangeFunc: (value: number) => number
+): Change[] {
+  const electricityPopChange = popChangeFunc(renewablePercentage(game))
+
+  const carPopChange = popChangeFunc(game.values.carRenewablePercentage)
+
+  return [
+    modify("stateDebt").byValue(((25 - price) / 1000) * game.values.co2emissions),
+
+    modify("popularity").byValue(electricityPopChange + carPopChange),
+
+    modify("co2emissionsIndustry").byPercent(relReduction),
+    modify("co2emissionsAgriculture").byPercent(relReduction),
+    modify("co2emissionsOthers").byPercent(relReduction),
+
+    transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
+    transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
+    transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
+    transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
+
+    transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction), // TODO #78: What about other regernative sources?
+
+    transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
+    transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction),
   ]
 }

@@ -1,9 +1,7 @@
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
 import { markdown } from "../lib/utils"
-import { Change, modify, transfer } from "../params"
-import { Percent } from "../types"
 import { defineLaw, monthsEffort } from "./LawsTypes"
-import { lawIsAccepted, linearPopChange, renewablePercentage } from "./lawTools"
+import { co2PricingEffects, lawIsAccepted, linearPopChange } from "./lawTools"
 
 export default defineLaw({
   title: "Wirksamer CO2 Preis",
@@ -15,32 +13,8 @@ export default defineLaw({
     return monthsEffort(8)
   },
 
-  effects(game, startYear, currentYear): Change[] {
-    const electricityPopChange = linearPopChange(80, 50, renewablePercentage(game), -3)
-
-    const carPopChange = linearPopChange(80, 50, game.values.carRenewablePercentage, -3)
-
-    const relReduction: Percent = -2
-
-    return [
-      modify("stateDebt").byValue((-125 / 1000) * game.values.co2emissions),
-
-      modify("popularity").byValue(electricityPopChange + carPopChange),
-
-      modify("co2emissionsIndustry").byPercent(relReduction),
-      modify("co2emissionsAgriculture").byPercent(relReduction),
-      modify("co2emissionsOthers").byPercent(relReduction),
-
-      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
-
-      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction), // TODO #78: What about other regernative sources?
-
-      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
-      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction),
-    ]
+  effects(game, startYear, currentYear) {
+    return [...co2PricingEffects(game, 150, -2, linearPopChange({ value: 80, result: 0 }, { value: 50, result: -3 }))]
   },
 
   priority(game) {
