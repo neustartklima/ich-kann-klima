@@ -8,11 +8,12 @@ import {
   linear,
   linearPopChange,
   maxDueToGridQuality,
+  powerTransfer,
   renewablePercentage,
   windPercentage,
 } from "../src/laws/lawTools"
 import { RefPoint } from "../src/lib/utils"
-import { BaseParams } from "../src/params"
+import { BaseParams, Change } from "../src/params"
 
 describe("lawTools", () => {
   describe("linear()", () => {
@@ -177,6 +178,40 @@ describe("lawTools", () => {
     })
     it("should return the electricity demand if the grid quality is at 100%.", function () {
       maxDueToGridQuality(mockGame(100), "electricityBiomass").should.equal(200)
+    })
+  })
+
+  describe("powerTransfer()", function () {
+    function mockGame() {
+      return {
+        values: {
+          electricityBrownCoal: 50,
+          electricityHardCoal: 50,
+          electricityCoal: 100,
+          electricityGas: 100,
+          electricityWater: 100,
+        },
+      } as Game
+    }
+    const changes: Change[] = powerTransfer(mockGame(), "electricityWater", 10)
+
+    it("should return transfer changes for coal.", function () {
+      changes.some((c) => c.type === "transfer" && c.from === "electricityHardCoal").should.be.true
+      changes.some((c) => c.type === "transfer" && c.from === "electricityBrownCoal").should.be.true
+    })
+    it("should return a modify change for water power.", function () {
+      changes.some((c) => c.type === "modify" && c.name === "electricityWater").should.be.true
+    })
+    it("shoud return changes for wind power adding up to the specified total amount.", function () {
+      console.log(changes)
+      changes
+        .filter(
+          (c) =>
+            (c.type === "transfer" && c.to === "electricityWater") ||
+            (c.type === "modify" && c.name === "electricityWater")
+        )
+        .reduce((sum, c) => sum + (c.type !== "dispatch" ? c.value : 0), 0)
+        .should.equal(10)
     })
   })
 
