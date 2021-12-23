@@ -1,6 +1,8 @@
 import { allLaws, LawId, LawReference } from "."
 import { Game, GameYear } from "../game"
-import { Change, modify, transfer } from "../params"
+import { linearFunction } from "../lib/utils"
+import { BaseParams, Change, modify, transfer, WritableParamKey } from "../params"
+import { paramDefinitions } from "../params/Params"
 import { Percent, TWh } from "../types"
 
 /**
@@ -67,7 +69,7 @@ export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | 
  */
 export function windPercentage(game: Game): Percent {
   const v = game.values
-  return (v.electricityWindUsable / v.electricityDemand) * 100
+  return (v.electricityWind / v.electricityDemand) * 100
 }
 
 /** Amount of electrical power produced with renewable sources relative to total demand.
@@ -77,11 +79,20 @@ export function windPercentage(game: Game): Percent {
  */
 export function renewablePercentage(game: Game): Percent {
   const electricityRenewable =
-    game.values.electricityWindUsable +
+    game.values.electricityWind +
     game.values.electricitySolar +
     game.values.electricityWater +
     game.values.electricityBiomass
   return (electricityRenewable / game.values.electricityDemand) * 100
+}
+
+function maxDueToGridQuality(game: Game, paramKey: WritableParamKey): TWh {
+  const values: BaseParams = game.values
+  const baseVal = paramDefinitions[paramKey].initialValue
+  const quality = values.electricityGridQuality
+  const maxVal = values.electricityDemand
+
+  return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality)
 }
 
 /** Changes due to wind power expansion.
@@ -96,15 +107,19 @@ export function windPowerExpansion(game: Game, onshoreNewMax: TWh, offshoreNew: 
   const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
   if (game.currentYear < startYear + delay) return []
 
-  const onshoreNew: TWh = Math.min(onshoreNewMax, game.values.electricityWindOnshoreMaxNew)
-  const maxNew = ((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100
+  const values: BaseParams = game.values
 
-  const coalGas = game.values.electricityCoal + game.values.electricityGas
+  const onshoreNew: TWh = Math.min(onshoreNewMax, values.electricityWindOnshoreMaxNew)
+  const maxIncrease = ((onshoreNew + offshoreNew) * values.electricityWindEfficiency) / 100
+  const old = values.electricityWind
+  const maxNew = Math.min(old + maxIncrease, maxDueToGridQuality(game, "electricityWind")) - old
+
+  const coalGas = values.electricityCoal + values.electricityGas
   if (coalGas <= 0) return []
 
-  const hardCoalFraction = game.values.electricityHardCoal / coalGas
-  const brownCoalFraction = game.values.electricityBrownCoal / coalGas
-  const gasFraction = game.values.electricityGas / coalGas
+  const hardCoalFraction = values.electricityHardCoal / coalGas
+  const brownCoalFraction = values.electricityBrownCoal / coalGas
+  const gasFraction = values.electricityGas / coalGas
   return [
     transfer("electricityWind", "electricityHardCoal")
       .if(hardCoalFraction > 0)
