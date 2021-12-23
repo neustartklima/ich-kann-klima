@@ -1,8 +1,8 @@
-import { Game, GameId, initGame } from "../game"
-import { API } from "./api"
-import { LawId } from "../laws"
 import { Event } from "../events"
+import { Game, GameId, initGame } from "../game"
+import { LawId } from "../laws"
 import { getState, seedWithGame } from "../lib/random"
+import { API } from "./api"
 
 interface Logger {
   warn: (msg: string, details?: unknown) => void
@@ -29,12 +29,11 @@ export default function RepositoryFactory({
       seedWithGame(game)
       storage.setItem("game", JSON.stringify(game))
 
-      try {
-        api.createGame(game) // We don't await here - creating the game on the server is done in the background
-      } catch (error) {
+      // We don't await here - creating the game on the server is done in the background
+      api.createGame(game).catch((reason) => {
         // If the API finally errors, no message to the users are sent, they can play nevertheless.
-        logger.warn("Cannot save new game - trying again later", error)
-      }
+        logger.warn("Cannot save new game - trying again later", reason)
+      })
     },
 
     async loadGame(id: GameId): Promise<Game> {
@@ -55,15 +54,15 @@ export default function RepositoryFactory({
     saveGame(game: Game): void {
       game.prngState = getState()
       storage.setItem("game", JSON.stringify(game))
-      try {
-        api.saveGame(game) // We don't await here, b/c saving could take place in the background and can even be retried later
-      } catch (error) {
+
+      // We don't await here, b/c saving could take place in the background and can even be retried later
+      api.saveGame(game).catch((reason) => {
         // Errors, however, cannot be shown to the user other than in the log
         logger.warn(
           "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time",
-          error
+          reason
         )
-      }
+      })
     },
 
     decisionMade(game: Game, lawId: LawId | "sitOut", accepted: boolean): void {

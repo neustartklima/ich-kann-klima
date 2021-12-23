@@ -18,7 +18,7 @@ type FetechQueueOptions = {
 
 export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: FetechQueueOptions) {
   let fetchQueue = [] as QueueEntry[]
-  let fetchQueueTimer: NodeJS.Timeout | undefined
+  let fetchQueueTimer: ReturnType<typeof setTimeout> | undefined
 
   async function process() {
     if (fetchQueueTimer) {
@@ -26,7 +26,8 @@ export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: Fetech
       fetchQueueTimer = undefined
     }
     if (fetchQueue.length) {
-      const { method, path, data, retry, resolve, reject } = fetchQueue[0]
+      const queueEntry: QueueEntry = fetchQueue[0]
+      const { method, path, data, retry, resolve, reject } = queueEntry
       try {
         if (options?.navigator && !options?.navigator.onLine) {
           throw Error("Browser is offline")
@@ -36,7 +37,7 @@ export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: Fetech
         resolve(result)
       } catch (error) {
         if (retry) {
-          fetchQueue[0].retry = Math.max(-1, retry - 1)
+          queueEntry.retry = Math.max(-1, retry - 1)
         } else {
           fetchQueue.shift()
           reject(error)
@@ -66,6 +67,6 @@ export default function FetchQueueFactory(fetchFunc: FetchFunc, options?: Fetech
 
     callsPending(): boolean {
       return fetchQueue.length > 0
-    }
+    },
   }
 }

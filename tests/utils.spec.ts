@@ -1,3 +1,4 @@
+import "should"
 import { getZIndexes, markdown } from "../src/lib/utils"
 
 describe("utils", () => {
@@ -47,8 +48,9 @@ Some text
     it("should work with code snippets inside indented markdown", () => {
       markdown`
         # title
-        
+
             const a = "this is code"
+
       `.should.equal(`<h1 id="title">title</h1>\n<pre><code>const a = "this is code"\n</code></pre>`)
     })
 
