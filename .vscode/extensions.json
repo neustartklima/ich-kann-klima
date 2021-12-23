@@ -14,6 +14,7 @@
     "github.vscode-pull-request-github",
     "tobermory.es6-string-html",
     "hediet.vscode-drawio",
-    "johnsoncodehk.vscode-typescript-vue-plugin"
+    "johnsoncodehk.vscode-typescript-vue-plugin",
+    "stevencl.adddoccomments"
   ]
 }
