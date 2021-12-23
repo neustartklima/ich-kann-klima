@@ -1,5 +1,5 @@
-import { Details, GramPerPsgrKm, Internals, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh, Unit } from "../types"
 import { Citations, citationsDescription } from "../citations"
+import { Details, GramPerPsgrKm, Internals, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh, Unit } from "../types"
 
 type ParamInput = {
   unit: Unit
@@ -30,7 +30,7 @@ export type ParamsBase = Record<string, number>
 
 type ValueMapper = (newVal: number) => number
 
-const applyBoundsPerUnit = {
+const applyBoundsPerUnit: Record<Unit, ValueMapper> = {
   MioTons: (newVal: MioTons) => (newVal < 0 ? 0 : newVal),
   TWh: (newVal: TWh) => (newVal < 0 ? 0 : newVal),
   MrdEuro: (newVal: MrdEuro) => newVal,
@@ -44,10 +44,10 @@ export class WritableParam extends ParamDefinition {
   writable = true
   initialValue: number
   applyBounds: ValueMapper
-  constructor(input: ParamInput & { initialValue: number }) {
+  constructor(input: ParamInput & { initialValue: number; applyBounds?: ValueMapper }) {
     super(input)
     this.initialValue = input.initialValue
-    this.applyBounds = applyBoundsPerUnit[input.unit]
+    this.applyBounds = input.applyBounds || applyBoundsPerUnit[input.unit]
   }
 }
 
