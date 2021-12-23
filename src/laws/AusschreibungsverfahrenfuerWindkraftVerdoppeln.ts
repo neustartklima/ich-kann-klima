@@ -1,7 +1,7 @@
 import { Change, modify } from "../params"
-import { TsdPeople, TWh } from "../types"
+import { TsdPeople } from "../types"
 import { defineLaw, monthsEffort } from "./LawsTypes"
-import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
+import { lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "./lawTools"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft verdoppeln",
@@ -15,10 +15,6 @@ export default defineLaw({
   },
 
   effects(game, startYear, currentYear): Change[] {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
-
-    const onshoreNew: TWh = Math.min(13.8 as TWh, game.values.electricityWindOnshoreMaxNew)
-    const offshoreNew: TWh = 2.4
     return [
       modify("popularity")
         .byValue(-1)
@@ -26,9 +22,7 @@ export default defineLaw({
       modify("unemployment")
         .byValue(-20 as TsdPeople)
         .if(startYear === currentYear),
-      modify("electricityWind")
-        .byValue(((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100)
-        .if(currentYear >= startYear + delay),
+      ...windPowerExpansion(game, 13.8, 2.4, startYear),
     ]
   },
 

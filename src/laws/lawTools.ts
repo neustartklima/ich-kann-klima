@@ -83,3 +83,21 @@ export function renewablePercentage(game: Game): Percent {
     game.values.electricityBiomass
   return (electricityRenewable / game.values.electricityDemand) * 100
 }
+
+/** Changes due to wind power expansion.
+ *
+ * @param game The game.
+ * @param onshoreNewMax Maximum new onshore wind power per year [TWh].
+ * @param offshoreNew new offshore wind power per year [TWh].
+ * @param startYear Start year of the law - used for delayed effect.
+ * @returns The changes to return by the law.
+ */
+export function windPowerExpansion(game: Game, onshoreNewMax: TWh, offshoreNew: TWh, startYear: GameYear): Change[] {
+  const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
+  const onshoreNew: TWh = Math.min(onshoreNewMax, game.values.electricityWindOnshoreMaxNew)
+  return [
+    modify("electricityWind")
+      .byValue(((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100)
+      .if(game.currentYear >= startYear + delay),
+  ]
+}
