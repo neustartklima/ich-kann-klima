@@ -1,6 +1,6 @@
 import { allLaws, LawId, LawReference } from "."
 import { Game, GameYear } from "../game"
-import { Change, modify } from "../params"
+import { Change, modify, transfer } from "../params"
 import { Percent, TWh } from "../types"
 
 /**
@@ -94,10 +94,26 @@ export function renewablePercentage(game: Game): Percent {
  */
 export function windPowerExpansion(game: Game, onshoreNewMax: TWh, offshoreNew: TWh, startYear: GameYear): Change[] {
   const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5
+  if (game.currentYear < startYear + delay) return []
+
   const onshoreNew: TWh = Math.min(onshoreNewMax, game.values.electricityWindOnshoreMaxNew)
+  const maxNew = ((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100
+
+  const coalGas = game.values.electricityCoal + game.values.electricityGas
+  if (coalGas <= 0) return []
+
+  const hardCoalFraction = game.values.electricityHardCoal / coalGas
+  const brownCoalFraction = game.values.electricityBrownCoal / coalGas
+  const gasFraction = game.values.electricityGas / coalGas
   return [
+    transfer("electricityWind", "electricityHardCoal")
+      .if(hardCoalFraction > 0)
+      .byValue(hardCoalFraction * maxNew),
+    transfer("electricityWind", "electricityBrownCoal")
+      .if(brownCoalFraction > 0)
+      .byValue(brownCoalFraction * maxNew),
     modify("electricityWind")
-      .byValue(((onshoreNew + offshoreNew) * game.values.electricityWindEfficiency) / 100)
-      .if(game.currentYear >= startYear + delay),
+      .if(gasFraction > 0)
+      .byValue(gasFraction * maxNew),
   ]
 }
