@@ -133,11 +133,13 @@ export function vueSimulationObjects(game: Ref<Game | undefined>) {
 function createSimulation(laws: Ref<LawReference[]>) {
   return computed(() => {
     const g: Game = newGame()
-    const accLaws = laws.value.map((l) => getAcceptedLaw(l))
+    g.acceptedLaws = [...laws.value]
 
     const res = gameYears.map((y) => {
       while (y > g.currentYear) {
         g.currentYear++
+        g.acceptedLaws = performRemoveLawsWithLabels(g.acceptedLaws, g.currentYear)
+        const accLaws = g.acceptedLaws.map((l) => getAcceptedLaw(l))
         const { values, effectsOfLaws } = calculateNextYearWithLaws(g, accLaws, g.currentYear)
         g.values = values
         if (y === g.currentYear) {
@@ -148,4 +150,12 @@ function createSimulation(laws: Ref<LawReference[]>) {
     })
     return res
   })
+}
+
+function performRemoveLawsWithLabels(lawRefs: LawReference[], year: number): LawReference[] {
+  const accLaws = lawRefs.map((l) => getAcceptedLaw(l))
+  const labelsToRemove = accLaws.filter((l) => l.effectiveSince === year).flatMap((l) => l.removeLawsWithLabels || [])
+  return accLaws
+    .filter((l) => l.effectiveSince >= year || !labelsToRemove.some((label) => l.labels?.includes(label)))
+    .map((l) => ({ lawId: l.id, effectiveSince: l.effectiveSince }))
 }

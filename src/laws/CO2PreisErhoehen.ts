@@ -1,10 +1,7 @@
-import { defineLaw, monthsEffort } from "./LawsTypes"
-import { lawIsAccepted, linearPopChange, renewablePercentage } from "./lawTools"
-import { Change, modify, transfer } from "../params"
-import { markdown } from "../lib/utils"
 import { wdr2021KlimaschutzMitCO2Preis } from "../citations"
-import { Percent } from "../types"
-import { months } from "../lib/Temporal"
+import { markdown } from "../lib/utils"
+import { defineLaw, monthsEffort } from "./LawsTypes"
+import { co2PricingEffects, lawIsAccepted, linearPopChange } from "./lawTools"
 
 export default defineLaw({
   title: "CO2 Preis Erhöhen",
@@ -17,36 +14,10 @@ export default defineLaw({
     return monthsEffort(6)
   },
 
-  effects(game, startYear, currentYear): Change[] {
-    const electricityPopChange = linearPopChange(50, 0, renewablePercentage(game), -1)
-
-    const carPopChange = linearPopChange(50, 0, game.values.carRenewablePercentage, -1)
-
-    const relReduction: Percent = -0.5
-
+  effects(game, startYear, currentYear) {
+    const price = currentYear >= startYear + 2 ? (currentYear >= startYear + 4 ? 100 : 70) : 0
     return [
-      modify("stateDebt")
-        .byValue((-45 / 1000) * game.values.co2emissions)
-        .if(currentYear >= startYear + 2),
-      modify("stateDebt")
-        .byValue((-30 / 1000) * game.values.co2emissions)
-        .if(currentYear >= startYear + 4),
-
-      modify("popularity").byValue(electricityPopChange + carPopChange),
-
-      modify("co2emissionsIndustry").byPercent(relReduction),
-      modify("co2emissionsAgriculture").byPercent(relReduction),
-      modify("co2emissionsOthers").byPercent(relReduction),
-
-      transfer("electricityBrownCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityHardCoal", "electricityWind").byPercent(0.7 * relReduction),
-      transfer("electricityBrownCoal", "electricitySolar").byPercent(0.3 * relReduction),
-      transfer("electricityHardCoal", "electricitySolar").byPercent(0.3 * relReduction),
-
-      transfer("buildingsSourceOil", "buildingsSourceBio").byPercent(relReduction), // TODO #78: What about other regernative sources?
-
-      transfer("carUsage", "publicNationalUsage").byPercent(0.5 * relReduction),
-      transfer("carUsage", "publicLocalUsage").byPercent(0.5 * relReduction),
+      ...co2PricingEffects(game, price, -0.5, linearPopChange({ value: 50, result: 0 }, { value: 0, result: -1 })),
     ]
   },
 

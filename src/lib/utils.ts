@@ -43,3 +43,24 @@ export function objectToArrayWithId<K extends string, T extends Object>(modules:
     id: key,
   }))
 }
+
+export type RefPoint = { value: number; result: number }
+
+/** Linear function connecting two points.
+ *
+ * Implementation:
+ * - If `value == a.value`, `bTerm` is zero and `aTerm == a.result`.
+ * - If `value == b.value`, `aTerm` is zero and `bTerm == - b.result`.
+ *
+ * @param a First point.
+ * @param b Second point.
+ * @returns Function.
+ */
+export function linearFunction(a: RefPoint, b: RefPoint): (value: number) => number {
+  const divisor = a.value - b.value
+  return (value: number) => {
+    const aTerm = (a.result * (value - b.value)) / divisor
+    const bTerm = (b.result * (value - a.value)) / divisor
+    return aTerm - bTerm
+  }
+}

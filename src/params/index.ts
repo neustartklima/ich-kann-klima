@@ -1,8 +1,7 @@
-import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
-import { paramDefinitions } from "./Params"
 import { Citations } from "../citations"
 import { Details, Internals, Percent, Unit } from "../types"
-import { assert } from "../server/models/EventStore"
+import { paramDefinitions } from "./Params"
+import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 
 type EffectableContext = {
   values: BaseParams
@@ -37,7 +36,7 @@ const computedParamDefinitions = Object.entries(paramDefinitions)
     return newObj
   }, {} as Record<string, ComputedParam>) as ComputedParamDefinitions
 
-type WritableParamKey = keyof WritableParamDefinitions
+export type WritableParamKey = keyof WritableParamDefinitions
 type WritableParams = Record<WritableParamKey, number>
 export type WritableBaseParams = WritableParams
 

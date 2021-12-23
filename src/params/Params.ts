@@ -1,4 +1,3 @@
-import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 import {
   ageb2020AuswertungstabellenEnergiebilanz,
   ba2020Arbeitslosenzahlen,
@@ -19,8 +18,9 @@ import {
   vdv2019Statistik,
   wikipediaBetz,
 } from "../citations"
-import { GramPerPsgrKm, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh } from "../types"
 import { markdown } from "../lib/utils"
+import { GramPerPsgrKm, MioPsgrKm, MioTons, MrdEuro, Percent, TsdPeople, TWh } from "../types"
+import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 
 const co2budget = new WritableParam({
   unit: "MioTons",
@@ -289,47 +289,6 @@ const electricityWind = new WritableParam({
   `,
 })
 
-type RefPoint = { value: number; result: number }
-
-/** Linear function connecting two points.
- *
- * Implementation:
- * - If `value == a.value`, `bTerm` is zero and `aTerm == a.result`.
- * - If `value == b.value`, `aTerm` is zero and `bTerm == - b.result`.
- *
- * @param a First point.
- * @param b Second point.
- * @returns Function.
- */
-function linearFunction(a: RefPoint, b: RefPoint): (value: number) => number {
-  const divisor = a.value - b.value
-  return (value: number) => {
-    const aTerm = (a.result * (value - b.value)) / divisor
-    const bTerm = (b.result * (value - a.value)) / divisor
-    return aTerm - bTerm
-  }
-}
-
-const electricityWindUsable = new ComputedParam({
-  unit: "TWh",
-  valueGetter(data: ParamsBase): MioTons {
-    const baseVal = electricityWind.initialValue
-    const quality = data.electricityGridQuality
-    const maxVal = data.electricityDemand
-
-    const gridMax = linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality)
-    return Math.min(gridMax, data.electricityWind)
-  },
-  shouldInitiallyBe: electricityWind.initialValue,
-  citations: [],
-  details: markdown`
-The electrical energy produced by wind and not impaired by poor quality of the grid.
-  `,
-  internals: markdown`
-
-  `,
-})
-
 const electricityWindOnshoreMaxNew = new WritableParam({
   unit: "TWh",
   initialValue: 6.0,
@@ -430,7 +389,7 @@ const electricityGas = new ComputedParam({
     return (
       data.electricityDemand -
       data.electricitySolar -
-      data.electricityWindUsable -
+      data.electricityWind -
       data.electricityWater -
       data.electricityHardCoal -
       data.electricityBrownCoal -
@@ -755,7 +714,6 @@ export const paramDefinitions = {
 
   electricitySolar,
   electricityWind,
-  electricityWindUsable,
   electricityWindOnshoreMaxNew,
   electricityWindEfficiency,
   electricityWater,
