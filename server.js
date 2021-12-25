@@ -30761,6 +30761,20 @@ function maxDueToGridQuality(game, paramKey) {
   const maxVal = values.electricityDemand;
   return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality);
 }
+function powerTransfer(game, toParam, amount) {
+  const values = game.values;
+  const coalGas = values.electricityCoal + values.electricityGas;
+  if (coalGas <= 0)
+    return [];
+  const hardCoalFraction = values.electricityHardCoal / coalGas;
+  const brownCoalFraction = values.electricityBrownCoal / coalGas;
+  const gasFraction = values.electricityGas / coalGas;
+  return [
+    transfer(toParam, "electricityHardCoal").if(hardCoalFraction > 0).byValue(hardCoalFraction * amount),
+    transfer(toParam, "electricityBrownCoal").if(brownCoalFraction > 0).byValue(brownCoalFraction * amount),
+    modify(toParam).if(gasFraction > 0).byValue(gasFraction * amount)
+  ];
+}
 function windPowerExpansion(game, onshoreNewMax, offshoreNew, startYear2) {
   const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
   if (game.currentYear < startYear2 + delay)
@@ -30770,17 +30784,7 @@ function windPowerExpansion(game, onshoreNewMax, offshoreNew, startYear2) {
   const maxIncrease = (onshoreNew + offshoreNew) * values.electricityWindEfficiency / 100;
   const old = values.electricityWind;
   const maxNew = Math.min(old + maxIncrease, maxDueToGridQuality(game, "electricityWind")) - old;
-  const coalGas = values.electricityCoal + values.electricityGas;
-  if (coalGas <= 0)
-    return [];
-  const hardCoalFraction = values.electricityHardCoal / coalGas;
-  const brownCoalFraction = values.electricityBrownCoal / coalGas;
-  const gasFraction = values.electricityGas / coalGas;
-  return [
-    transfer("electricityWind", "electricityHardCoal").if(hardCoalFraction > 0).byValue(hardCoalFraction * maxNew),
-    transfer("electricityWind", "electricityBrownCoal").if(brownCoalFraction > 0).byValue(brownCoalFraction * maxNew),
-    modify("electricityWind").if(gasFraction > 0).byValue(gasFraction * maxNew)
-  ];
+  return powerTransfer(game, "electricityWind", maxNew);
 }
 function co2PricingEffects(game, price, relReduction, popChangeFunc) {
   const electricityPopChange = popChangeFunc(renewablePercentage(game));
@@ -32487,8 +32491,8 @@ var SolarstromFoerderungAbschaffen_default = defineLaw({
   effort(game) {
     return monthsEffort(5);
   },
-  effects() {
-    return [modify("electricitySolar").byValue(2)];
+  effects(game, startYear2, currentYear) {
+    return [...powerTransfer(game, "electricitySolar", 2)];
   },
   priority(game) {
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
@@ -32511,8 +32515,8 @@ var SolarstromFoerderungWieZuBeginn_default = defineLaw({
   effort(game) {
     return monthsEffort(9);
   },
-  effects() {
-    return [modify("electricitySolar").byValue(5)];
+  effects(game, startYear2, currentYear) {
+    return [...powerTransfer(game, "electricitySolar", 5)];
   },
   priority(game) {
     if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
@@ -32539,7 +32543,7 @@ var SolarstromFoerdernx2_default = defineLaw({
     return [
       modify("popularity").byValue(10).if(startYear2 === currentYear),
       modify("unemployment").byValue(-31e3).if(startYear2 === currentYear),
-      modify("electricitySolar").byValue(10)
+      ...powerTransfer(game, "electricitySolar", 10)
     ];
   },
   priority(game) {
@@ -32567,7 +32571,7 @@ var SolarstromFoerdernx4_default = defineLaw({
     return [
       modify("popularity").byValue(20).if(startYear2 === currentYear),
       modify("unemployment").byValue(-89e3).if(startYear2 === currentYear),
-      modify("electricitySolar").byValue(20)
+      ...powerTransfer(game, "electricitySolar", 20)
     ];
   },
   priority(game) {
@@ -32603,7 +32607,7 @@ var SolarstromFoerdernx8_default = defineLaw({
     return [
       modify("popularity").byValue(-10).if(startYear2 === currentYear),
       modify("unemployment").byValue(-209e3).if(startYear2 === currentYear),
-      modify("electricitySolar").byValue(40)
+      ...powerTransfer(game, "electricitySolar", 40)
     ];
   },
   priority(game) {
@@ -32633,7 +32637,7 @@ var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
   effects(game, startYear2, currentYear) {
     return [
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
-      modify("electricitySolar").byValue(2)
+      ...powerTransfer(game, "electricitySolar", 2)
     ];
   },
   priority(game) {
