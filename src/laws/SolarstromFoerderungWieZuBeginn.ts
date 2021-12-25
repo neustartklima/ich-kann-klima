@@ -1,7 +1,7 @@
 import { markdown } from "../lib/utils"
-import { Change, modify } from "../params"
+import { Change } from "../params"
 import { defineLaw, monthsEffort } from "./LawsTypes"
-import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
+import { lawIsAccepted, linear, powerTransfer, renewablePercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Solarstrom Förderung wie zu Beginn",
@@ -14,8 +14,8 @@ export default defineLaw({
     return monthsEffort(9)
   },
 
-  effects(): Change[] {
-    return [modify("electricitySolar").byValue(5)]
+  effects(game, startYear, currentYear): Change[] {
+    return [...powerTransfer(game, "electricitySolar", 5)]
   },
 
   priority(game) {

@@ -105,6 +105,35 @@ export function maxDueToGridQuality(game: Game, paramKey: WritableParamKey): TWh
   return linearFunction({ value: 50, result: baseVal }, { value: 100, result: maxVal })(quality)
 }
 
+/** Transfer electricity from gas and coal to another param.
+ *
+ * @param  {Game} game The game.
+ * @param  {WritableParamKey} toParam Param key to transfer the amount to.
+ * @param  {TWh} amount Amount to transfer.
+ * @returns The changes to return by the law.
+ */
+export function powerTransfer(game: Game, toParam: WritableParamKey, amount: TWh): Change[] {
+  const values: BaseParams = game.values
+
+  const coalGas = values.electricityCoal + values.electricityGas
+  if (coalGas <= 0) return []
+
+  const hardCoalFraction = values.electricityHardCoal / coalGas
+  const brownCoalFraction = values.electricityBrownCoal / coalGas
+  const gasFraction = values.electricityGas / coalGas
+  return [
+    transfer(toParam, "electricityHardCoal")
+      .if(hardCoalFraction > 0)
+      .byValue(hardCoalFraction * amount),
+    transfer(toParam, "electricityBrownCoal")
+      .if(brownCoalFraction > 0)
+      .byValue(brownCoalFraction * amount),
+    modify(toParam)
+      .if(gasFraction > 0)
+      .byValue(gasFraction * amount),
+  ]
+}
+
 /** Changes due to wind power expansion.
  *
  * @param game The game.
@@ -124,23 +153,7 @@ export function windPowerExpansion(game: Game, onshoreNewMax: TWh, offshoreNew: 
   const old = values.electricityWind
   const maxNew = Math.min(old + maxIncrease, maxDueToGridQuality(game, "electricityWind")) - old
 
-  const coalGas = values.electricityCoal + values.electricityGas
-  if (coalGas <= 0) return []
-
-  const hardCoalFraction = values.electricityHardCoal / coalGas
-  const brownCoalFraction = values.electricityBrownCoal / coalGas
-  const gasFraction = values.electricityGas / coalGas
-  return [
-    transfer("electricityWind", "electricityHardCoal")
-      .if(hardCoalFraction > 0)
-      .byValue(hardCoalFraction * maxNew),
-    transfer("electricityWind", "electricityBrownCoal")
-      .if(brownCoalFraction > 0)
-      .byValue(brownCoalFraction * maxNew),
-    modify("electricityWind")
-      .if(gasFraction > 0)
-      .byValue(gasFraction * maxNew),
-  ]
+  return powerTransfer(game, "electricityWind", maxNew)
 }
 
 /** Changes due to change in CO2 pricing.

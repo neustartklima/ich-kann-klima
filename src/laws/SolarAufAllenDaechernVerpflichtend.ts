@@ -1,7 +1,7 @@
 import { markdown } from "../lib/utils"
 import { Change, modify } from "../params"
 import { defineLaw, monthsEffort } from "./LawsTypes"
-import { lawIsAccepted, linear, renewablePercentage } from "./lawTools"
+import { lawIsAccepted, linear, powerTransfer, renewablePercentage } from "./lawTools"
 
 export default defineLaw({
   title: "Solar auf neuen Dächern verpflichtend",
@@ -19,7 +19,7 @@ export default defineLaw({
       modify("popularity")
         .byValue(-3)
         .if(startYear === currentYear),
-      modify("electricitySolar").byValue(2),
+      ...powerTransfer(game, "electricitySolar", 2),
     ]
   },
 

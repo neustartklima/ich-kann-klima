@@ -113,7 +113,7 @@ export function copyValues(values: Params): Params {
 
 export function dispatch(actionName: string, payload?: unknown) {
   return {
-    type: "dispatch",
+    type: "dispatch" as const,
     condition: true as boolean,
 
     if(condition: boolean) {
@@ -131,7 +131,7 @@ export function dispatch(actionName: string, payload?: unknown) {
 
 export function modify(name: keyof WritableBaseParams) {
   return {
-    type: "modify",
+    type: "modify" as const,
     name,
     value: 0 as number,
     percent: 0 as Percent,
@@ -193,7 +193,7 @@ export function transfer(to: keyof WritableBaseParams, from: keyof WritableBaseP
   if (paramDefinitions[to].unit != paramDefinitions[from].unit)
     throw new Error("Change 'transfer' can only be used for parameters with the same unit.")
   return {
-    type: "transfer",
+    type: "transfer" as const,
     to,
     from,
     value: 0 as number,
