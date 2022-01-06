@@ -203,7 +203,6 @@ describe("lawTools", () => {
       changes.some((c) => c.type === "modify" && c.name === "electricityWater").should.be.true
     })
     it("shoud return changes for wind power adding up to the specified total amount.", function () {
-      console.log(changes)
       changes
         .filter(
           (c) =>
