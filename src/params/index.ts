@@ -39,6 +39,7 @@ const computedParamDefinitions = Object.entries(paramDefinitions)
 export type WritableParamKey = keyof WritableParamDefinitions
 type WritableParams = Record<WritableParamKey, number>
 export type WritableBaseParams = WritableParams
+export const writableParamKeys = Object.keys(writableParamDefinitions) as WritableParamKey[]
 
 type ComputedParamKey = keyof ComputedParamDefinitions
 

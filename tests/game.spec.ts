@@ -1,12 +1,12 @@
 import "should"
-import { newGame, prepareNextStep } from "../src/game"
-import Sinon from "sinon"
-import { Law, LawId } from "../src/laws"
-import { Event } from "../src/events"
 import should from "should"
+import Sinon from "sinon"
 import { probabilityThatEventOccurs } from "../src/constants"
-import { shuffleNumbers, random } from "../src/lib/random"
+import { Event } from "../src/events"
+import { newGame, prepareNextStep } from "../src/game"
+import { Law, LawId } from "../src/laws"
 import { defaultEffort } from "../src/laws/LawsTypes"
+import { shuffleNumbers } from "../src/lib/random"
 
 function priority(): number {
   return 1

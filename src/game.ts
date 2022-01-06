@@ -1,17 +1,25 @@
+import { v1 as getUUID } from "uuid"
 import { endYear, maxProposedLaws, probabilityThatEventOccurs, sitOutDuration, startDate, startYear } from "./constants"
 import { allEvents, Event, EventReference } from "./events"
 import { allLaws, getAcceptedLaw, Law, LawId, LawReference } from "./laws"
-import { BaseParams, createBaseValues, defaultValues, WritableBaseParams } from "./params"
-import { v1 as getUUID } from "uuid"
-import { Percent } from "./types"
-import { not } from "./lib/utils"
-import { random as libRandom } from "./lib/random"
-import { date, Date, duration } from "./lib/Temporal"
 import { Effort } from "./laws/LawsTypes"
+import { getState, random as libRandom, seedWithGame } from "./lib/random"
+import { date } from "./lib/Temporal"
+import { not } from "./lib/utils"
+import {
+  BaseParams,
+  createBaseValues,
+  defaultValues,
+  WritableBaseParams,
+  writableParamKeys,
+  writableParamList,
+} from "./params"
+import { Percent } from "./types"
 
 export type GameId = string
 
 export type GameDefinition = {
+  id: GameId
   currentDate: string
   currentYear: number
   values: WritableBaseParams
@@ -20,22 +28,15 @@ export type GameDefinition = {
   rejectedLaws: LawId[]
   events: EventReference[]
   over: boolean
+  prngState: object | true
 }
 
-export type Game = {
-  id: GameId
-  currentDate: string
-  currentYear: number
+export type Game = GameDefinition & {
   values: BaseParams
-  acceptedLaws: LawReference[]
-  proposedLaws: LawId[]
-  rejectedLaws: LawId[]
-  events: EventReference[]
-  over: boolean
-  prngState: object
 }
 
-export const initialGame = {
+export const initialGame: GameDefinition = {
+  id: "",
   currentDate: startDate,
   currentYear: startYear,
   values: defaultValues,
@@ -44,11 +45,11 @@ export const initialGame = {
   rejectedLaws: [],
   events: [],
   over: false,
-  prngState: {},
+  prngState: true,
 }
 
 export function initGame(game: GameDefinition = initialGame, id = getUUID()): Game {
-  return {
+  const theGame: Game = {
     id,
     currentDate: game.currentDate,
     currentYear: game.currentYear,
@@ -58,8 +59,28 @@ export function initGame(game: GameDefinition = initialGame, id = getUUID()): Ga
     values: createBaseValues(game.values),
     events: game.events,
     over: game.over,
-    prngState: {},
+    prngState: game.prngState,
   }
+  seedWithGame(theGame)
+  return theGame
+}
+
+const gameDefinitionKeys = Object.keys(initialGame) as (keyof GameDefinition)[]
+
+export function getGameDefinition(game: Game): GameDefinition {
+  return Object.fromEntries(
+    gameDefinitionKeys.map((k) => {
+      if (k === "prngState") {
+        return [k, getState()]
+      } else if (k === "values") {
+        const baseParams = game[k] as BaseParams
+        const wpArray = writableParamKeys.map((pk) => [pk, baseParams[pk]])
+        return [k, Object.fromEntries(wpArray) as WritableBaseParams]
+      } else {
+        return [k, game[k]]
+      }
+    })
+  ) as GameDefinition
 }
 
 export function newGame(laws: Law[] = allLaws, initialData: GameDefinition = initialGame): Game {
