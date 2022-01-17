@@ -1,6 +1,6 @@
-import { defineEvent } from "./EventsTypes"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
+import { defineEvent } from "./EventsTypes"
 
 export default defineEvent({
   title: "Klimaflüchtlinge",
@@ -10,7 +10,7 @@ export default defineEvent({
     return [modify("stateDebt").byValue(10)]
   },
 
-  probability(game) {
+  probability(game, event) {
     return game.values.co2budget < 500 ? 0.2 : 0
   },
 

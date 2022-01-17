@@ -1,7 +1,7 @@
-import { defineEvent } from "./EventsTypes"
 import { linear } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
+import { defineEvent } from "./EventsTypes"
 
 export default defineEvent({
   title: "Dürreperiode",
@@ -11,7 +11,7 @@ export default defineEvent({
     return [modify("gdp").byValue(-100), modify("popularity").byValue(-10)]
   },
 
-  probability(game) {
+  probability(game, event) {
     return Math.min(1, linear(400, 0, game.values.co2budget) / 100)
   },
 

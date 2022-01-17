@@ -1,7 +1,8 @@
-import { defineEvent } from "./EventsTypes"
 import { idsToLaws } from "../laws"
+import { linear } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 import { dispatch } from "../params"
+import { defineEvent, durationWithoutEvents } from "./EventsTypes"
 
 export default defineEvent({
   title: "Staatsoberhaupt verstorben",
@@ -11,11 +12,12 @@ export default defineEvent({
     return [dispatch("gameOver")]
   },
 
-  probability(game) {
-    const law = idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))
+  probability(game, event): number {
+    if (idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))) {
+      return 0
+    }
 
-    // Kann passieren, wenn es keine Investitionen in bessere Tierhaltung gab
-    return law ? 0 : 0.5
+    return Math.min(1, linear(5, 10, durationWithoutEvents(game, [event.id]).lux.as("years")) / 100)
   },
 
   laws: [],
@@ -24,6 +26,8 @@ export default defineEvent({
 
   `,
   internals: markdown`
+    # Voraussetzungen
 
+    Kann passieren, wenn es 5 Jahre keine Investitionen in bessere Tierhaltung gab.
   `,
 })

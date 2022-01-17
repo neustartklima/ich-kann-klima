@@ -125,7 +125,7 @@ export function prepareNextStep(
 ): Event | undefined {
   const event = checkForEvent(game, events, random)
   if (event) {
-    const eventRef: EventReference = { id: event.id, occuredIn: game.currentYear, acknowledged: false }
+    const eventRef: EventReference = { id: event.id, occuredIn: game.currentDate, acknowledged: false }
     game.events.unshift(eventRef)
   }
   const newProposals = determineNewProposals(game, laws, event?.laws ? event.laws : [])
@@ -147,7 +147,7 @@ function checkForEvent(game: Game, events: Event[], random: () => number): Event
 type ProbEvent = Event & { prob: number }
 
 function prepareProbEvents(game: Game, events: Event[]): ProbEvent[] {
-  return events.map((event) => ({ ...event, prob: event.probability(game) })).filter((event) => event.prob > 0)
+  return events.map((event) => ({ ...event, prob: event.probability(game, event) })).filter((event) => event.prob > 0)
 }
 
 function checkCertainEvent(probEvents: ProbEvent[]): ProbEvent | undefined {
@@ -158,6 +158,9 @@ function checkCertainEvent(probEvents: ProbEvent[]): ProbEvent | undefined {
 
 function correctProbs(probEvents: ProbEvent[]): ProbEvent[] {
   const probSum = probEvents.map((e) => e.prob).reduce((sum, p) => sum + p, 0)
+  if (probSum <= probabilityThatEventOccurs) {
+    return probEvents
+  }
   const correctionFactor = probabilityThatEventOccurs / probSum
   return probEvents.map((event) => ({ ...event, prob: event.prob * correctionFactor }))
 }

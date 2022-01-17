@@ -1,7 +1,7 @@
-import { defineEvent } from "./EventsTypes"
 import { lawIsAccepted } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Autobatterie explodiert",
@@ -11,9 +11,12 @@ export default defineEvent({
     return [modify("popularity").byValue(-2), modify("stateDebt").byValue(10)]
   },
 
-  probability(game) {
-    if (lawIsAccepted(game, "ElektromobilitaetFoerdern")) {
-      return 0.2
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 5, months: 5 })) {
+      return 0
+    }
+    if (lawIsAccepted(game, "ElektromobilitaetFoerdern", 5)) {
+      return 0.1
     } else {
       return 0
     }

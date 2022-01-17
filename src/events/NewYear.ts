@@ -1,7 +1,6 @@
-import { defineEvent } from "./EventsTypes"
-import { dispatch } from "../params"
-import { specialEventProbs } from "./EventsTypes"
 import { date } from "../lib/Temporal"
+import { dispatch } from "../params"
+import { defineEvent, specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Happy New Year!",
@@ -14,7 +13,7 @@ export default defineEvent({
     return [dispatch("advanceYear")]
   },
 
-  probability(game) {
+  probability(game, event) {
     if (date(game.currentDate).getYear() > game.currentYear) {
       return specialEventProbs.newYear
     }

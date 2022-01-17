@@ -1,6 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { markdown } from "../lib/utils"
-//import { uba2020DeutscheTreibhausgasEmissionen } from "../citations"
+import { defineEvent } from "./EventsTypes"
 
 export default defineEvent({
   title: "Abstimmung zur Ausschreibung von Windkraftanlagen",

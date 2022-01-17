@@ -116,7 +116,7 @@ describe("game", () => {
         { id: "Hitzehoelle", title: "e2", description: "", apply: () => [], probability: () => 0.9, count: 0 },
         { id: "SocialMedia", title: "e3", description: "", apply: () => [], probability: () => 0.5, count: 0 },
       ]
-      const probSum = events.map((e) => e.probability(game)).reduce((a, b) => a + b)
+      const probSum = events.map((e) => e.probability(game, e)).reduce((a, b) => a + b)
 
       const NUM_CALLS = 100
       const precision = 1
@@ -133,7 +133,7 @@ describe("game", () => {
       eventCount.should.be.approximately(NUM_CALLS * probabilityThatEventOccurs, precision)
 
       events.forEach((e) =>
-        counts[e.id].should.be.approximately((eventCount * e.probability(game)) / probSum, precision)
+        counts[e.id].should.be.approximately((eventCount * e.probability(game, e)) / probSum, precision)
       )
     })
   })

@@ -1,6 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { defaultValues, dispatch } from "../params"
-import { specialEventProbs } from "./EventsTypes"
+import { defineEvent, specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Zusammenbruch des Finanzsystems",
@@ -13,7 +12,7 @@ export default defineEvent({
     return [dispatch("gameOver")]
   },
 
-  probability(game) {
+  probability(game, event) {
     return game.values.stateDebt > defaultValues.stateDebt * 2 ? specialEventProbs.finanzKollaps : 0
   },
 })

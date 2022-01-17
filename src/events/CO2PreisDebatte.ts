@@ -1,5 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { lawIsAccepted, linear } from "../laws/lawTools"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Debatte über CO2-Preise",
@@ -11,7 +11,10 @@ export default defineEvent({
     return []
   },
 
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 1, months: 4 })) {
+      return 0
+    }
     const count =
       (lawIsAccepted(game, "AutosInInnenstaedtenVerbieten") ? 1 : 0) +
       (lawIsAccepted(game, "KohleverstromungEinstellen") ? 1 : 0) +

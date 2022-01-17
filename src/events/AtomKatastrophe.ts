@@ -1,6 +1,6 @@
-import { defineEvent } from "./EventsTypes"
 import { markdown } from "../lib/utils"
 import { dispatch } from "../params"
+import { defineEvent } from "./EventsTypes"
 
 export default defineEvent({
   title: "Atom-Katastrophe",

@@ -1,6 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { dispatch } from "../params"
-import { specialEventProbs } from "./EventsTypes"
+import { defineEvent, specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Du hast durchgehalten",
