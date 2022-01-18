@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from "@vue/runtime-core"
-
 defineProps<{
   title: string
   text: string
@@ -24,11 +22,11 @@ function acknowledge() {
 
 <style lang="scss" scoped>
 div {
-  max-width: 400px;
+  max-width: 250px;
   position: absolute;
-  top: 20%;
-  left: 25%;
-  transform: translateY(-50%);
+  top: 45%;
+  left: -5%;
+  //transform: translateY(-50%);
   z-index: 999;
   border: 1px solid black;
   border-radius: 2rem;
@@ -49,17 +47,17 @@ div {
   &::before {
     border-width: 10px;
     border-style: solid;
-    border-color: black transparent transparent black;
-    left: 29px;
-    bottom: -21px;
+    border-color: transparent black black transparent;
+    right: 29px;
+    top: -21px;
   }
 
   &::after {
     border-width: 9px;
     border-style: solid;
-    border-color: #fff transparent transparent #fff;
-    left: 30px;
-    bottom: -18px;
+    border-color: transparent #fff #fff transparent;
+    right: 30px;
+    top: -18px;
   }
 
   h2 {
