@@ -25,9 +25,10 @@ export default defineComponent({
       document.documentElement.style.setProperty("--translateX", `${translateX}px`)
     },
   },
-
+  beforeMount() {
+    this.updateStyle()
+  },
   mounted() {
-    setTimeout(this.updateStyle, 0)
     window.addEventListener("resize", this.updateStyle)
   },
 })
