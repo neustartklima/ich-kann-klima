@@ -14,8 +14,8 @@ function acknowledge() {
 </script>
 
 <template>
-  <div v-if="text" @click="acknowledge">
-    <h2 v-if="title">{{ title }}</h2>
+  <div @click="acknowledge">
+    <h2>{{ title }}</h2>
     <p>{{ text }}</p>
   </div>
 </template>
