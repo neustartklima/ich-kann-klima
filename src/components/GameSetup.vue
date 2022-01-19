@@ -14,6 +14,7 @@ import { allEvents, Event, EventReference } from "../events"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 import { date } from "../lib/Temporal"
+import GameOver from "./GameOver.vue"
 
 const store = useStore()
 
@@ -37,6 +38,10 @@ const popularity = computed(() => store.state.game?.values.popularity || 100)
 const climate = computed(() => {
   const game = store.state.game
   return game ? co2Rating(game) : 0
+})
+const over = computed(() => {
+  const game = store.state.game
+  return game ? game.over : false
 })
 
 function acknowledge(): void {
@@ -64,6 +69,7 @@ function acknowledge(): void {
 
     <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
     <Tour />
+    <GameOver v-if="over" />
   </div>
 </template>
 

@@ -28,7 +28,7 @@ export function ActionFactory(router: Router, repository: Repository) {
       try {
         const game = await repository.loadGame(payload.gameId)
         repository.saveGame(game)
-        router.push("/games/" + game.id + (game.over ? "/over" : ""))
+        router.push("/games/" + game.id)
         context.commit("setGameState", { game })
       } catch (error) {
         // Game cannot be found locally, and the API doesn't know about that game or could not be reached, game cannot be started
@@ -38,7 +38,6 @@ export function ActionFactory(router: Router, repository: Repository) {
 
     gameOver(context: Context) {
       context.commit("gameOver", undefined)
-      router.push("/games/" + context.state.game?.id + "/over")
     },
 
     acceptLaw(context: Context, payload: { lawId: LawId }) {
