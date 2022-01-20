@@ -3,11 +3,11 @@ describe("GameOver", () => {
     cy.visit("http://localhost:3000/")
     cy.contains("Tour beenden").click()
     cy.get("#calendar").contains("2021")
-    Array.from({ length: 32 }).forEach((_) => {
+    Array.from({ length: 40 }).forEach((_) => {
       cy.contains("Aussitzen").click()
       cy.wait(100)
     })
-    cy.get("#calendar").contains("2029")
+    cy.get("#calendar").contains("2031")
     cy.get("h2").contains("Das Spiel ist leider zu Ende").should("be.visible")
     cy.contains("Neuer Versuch").should("be.visible").click()
   })
