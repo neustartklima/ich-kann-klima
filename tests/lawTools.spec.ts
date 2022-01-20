@@ -64,9 +64,9 @@ describe("lawTools", () => {
       )
     })
 
-    it("should return the second result for the second value.", function () {
+    it("should return the second result for the second value, if values are different.", function () {
       fc.assert(
-        fc.property(linFunc, (f) => {
+        fc.property(nonDegFunc, (f) => {
           linearPopChange(...f)(f[1].value).should.be.approximately(f[1].result, precision)
         })
       )
