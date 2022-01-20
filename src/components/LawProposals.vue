@@ -42,7 +42,7 @@ function sitOut() {
 </script>
 
 <template>
-  <div class="ProposedLaws" :class="{ poppedUp }" @click="poppedUp = true">
+  <div class="ProposedLaws" :class="{ poppedUp }" @click="poppedUp = !poppedUp">
     <LawCard
       v-for="(law, pos) in lawsToShow"
       :key="law.id"
@@ -53,7 +53,7 @@ function sitOut() {
       @selected="() => select(pos)"
     />
   </div>
-  <div class="sitOutButton" @click="() => sitOut()">Aussitzen</div>
+  <div class="sitOutButton" v-if="poppedUp" @click="() => sitOut()">Aussitzen</div>
 </template>
 
 <style lang="scss" scoped>
