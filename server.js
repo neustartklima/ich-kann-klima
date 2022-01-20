@@ -32822,11 +32822,10 @@ function modify(name) {
       return newVal - oldVal;
     },
     apply(context) {
-      if (this.condition) {
+      if (context.values != void 0 && this.condition) {
         const { newVal } = this.getOldNew(context.values);
         context.values[this.name] = newVal;
       }
-      return this;
     }
   };
 }
@@ -32868,12 +32867,11 @@ function transfer(to, from) {
       return { oldTo, newTo, oldFrom, newFrom };
     },
     apply(context) {
-      if (this.condition) {
+      if (context.values != void 0 && this.condition) {
         const { newTo, newFrom } = this.getEffect(context.values);
         context.values[this.to] = newTo;
         context.values[this.from] = newFrom;
       }
-      return this;
     }
   };
 }
@@ -35063,6 +35061,42 @@ var Test_default = defineLaw({
   `
 });
 
+// src/laws/AutomatischeSektoren.ts
+var AutomatischeSektoren_default = defineLaw({
+  title: "Automatische Anpassungen einiger Sektoren",
+  description: "Mobilit\xE4t, Industrie, Geb\xE4ude und Landwirtschaft nutzen automatisch regenerative Energiequellen, sobald sie zur Verf\xFCgung stehen.",
+  labels: ["initial"],
+  effects(game, startYear2, currentYear) {
+    if (renewablePercentage(game) < 70)
+      return [];
+    paramDefinitions.co2emissionsOthers;
+    const industryCo2Red = modify("co2emissionsIndustry").byPercent(-20);
+    const industryCo2RedVal = industryCo2Red.getChange(game.values);
+    const industryElectrDemandIncrease = industryCo2RedVal / -0.835;
+    return [
+      modify("carRenewablePercentage").byValue(10),
+      modify("electricityDemand").byValue(22),
+      industryCo2Red,
+      modify("electricityDemand").byValue(industryElectrDemandIncrease),
+      transfer("buildingsSourceBio", "buildingsSourceOil").byValue(10),
+      transfer("electricityDemand", "buildingsSourceOil").byValue(10),
+      transfer("buildingsSourceBio", "buildingsSourceTele").byValue(5),
+      modify("co2emissionsAgriculture").byValue(-10),
+      modify("co2emissionsOthers").byValue(-1)
+    ];
+  },
+  priority(game) {
+    return 0;
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Dieses Gesetz läuft dauerhaft mit und soll kompensieren, dass es für diese Sektoren noch nicht genügend Gesetze gibt.
+  `
+});
+
 // src/laws/index.ts
 var allLawsObj = {
   AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
@@ -35119,7 +35153,8 @@ var allLawsObj = {
   VollerCO2Preis: VollerCO2Preis_default,
   ForschungEmissionsfreieStahlproduktion: ForschungEmissionsfreieStahlproduktion_default,
   ForschungEmissionsfreieZementproduktion: ForschungEmissionsfreieZementproduktion_default,
-  Test: Test_default
+  Test: Test_default,
+  AutomatischeSektoren: AutomatischeSektoren_default
 };
 var lawIds = Object.keys(allLawsObj);
 function lawList(modules) {
