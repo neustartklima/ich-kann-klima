@@ -1,5 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { modify } from "../params"
+import { defineEvent } from "./EventsTypes"
 
 export default defineEvent({
   title: "Social Media Alarm!",

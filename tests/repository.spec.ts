@@ -1,5 +1,5 @@
 import sinon from "sinon"
-import { Game, initGame } from "../src/game"
+import { Game, getGameDefinition, initGame, initialGame } from "../src/game"
 import { API } from "../src/model/api"
 import Repository from "../src/model/Repository"
 
@@ -31,14 +31,14 @@ describe("repository", function () {
     promise.should.be.resolvedWith("Cannot save new game - trying again later")
   })
 
-  it("should save a game", function () {
+  it("should save the game definition", function () {
     const game = initGame()
     const saveGame = sinon.stub().resolves(game)
     const api = { saveGame } as unknown as API
     const repository = Repository({ api, storage })
     repository.saveGame(game)
     saveGame.callCount.should.equal(1)
-    Object.keys(saveGame.firstCall.args[0]).should.deepEqual(Object.keys(game))
+    saveGame.firstCall.args[0].should.deepEqual(getGameDefinition(game))
   })
 
   it("should load a previously locally saved game without accessing the server", async function () {
@@ -79,7 +79,7 @@ describe("repository", function () {
     const repository = Repository({ api, storage, logger })
     repository.saveGame(game)
     saveGame.callCount.should.equal(1)
-    Object.keys(saveGame.firstCall.args[0]).should.deepEqual(Object.keys(game))
+    saveGame.firstCall.args[0].should.deepEqual(getGameDefinition(game))
     promise.should.be.resolvedWith(
       "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time"
     )

@@ -17,6 +17,5 @@ describe("GameOverAction", () => {
     const repository = {} as Repository
     ActionFactory(router, repository).gameOver({ state, commit } as Context)
     events.should.deepEqual([{ type: "gameOver", payload: undefined }])
-    paths.should.deepEqual(["/games/game-id/over"])
   })
 })

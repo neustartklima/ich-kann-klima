@@ -14,15 +14,21 @@ import { allEvents, Event, EventReference } from "../events"
 import { useStore } from "../store"
 import { co2Rating, financeRating } from "../Calculator"
 import { date } from "../lib/Temporal"
+import GameOver from "./GameOver.vue"
 
 const store = useStore()
 
+const eventRefToShow = computed(() => {
+  const game = store.state.game
+  if (!game) return undefined
+  const currDate = game.currentDate
+  return game.events.filter((er) => er.occuredIn === currDate && !er.acknowledged)[0]
+})
+
 const eventToShow = computed(() => {
-  const eventRefs: EventReference[] = store.state.game?.events || []
-  if (eventRefs.length === 0) return undefined
-  const eventRef = eventRefs[0]
-  if (eventRef.acknowledged) return undefined
-  return allEvents.find((e) => e.id === eventRef.id)
+  const er = eventRefToShow.value
+  if (er === undefined) return undefined
+  return allEvents.find((e) => e.id === er.id)
 })
 
 const eventTitle = computed(() => eventToShow.value?.title || "")
@@ -37,6 +43,10 @@ const popularity = computed(() => store.state.game?.values.popularity || 100)
 const climate = computed(() => {
   const game = store.state.game
   return game ? co2Rating(game) : 0
+})
+const over = computed(() => {
+  const game = store.state.game
+  return game ? game.over : false
 })
 
 function acknowledge(): void {
@@ -56,14 +66,15 @@ function acknowledge(): void {
     <Calendar :year="currentYear" :month="currentMonth" />
     <Heater />
     <PopularityIndicator :value="popularity" />
-    <TVSet :with-news="!!eventText" />
+    <TVSet :with-news="!!eventRefToShow" />
     <ClimateIndicator :value="climate" />
     <Table />
     <FinanceIndicator :value="finance" />
     <LawProposals />
 
-    <SpeechBubble :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
+    <SpeechBubble v-if="eventRefToShow" :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
     <Tour />
+    <GameOver v-if="over" />
   </div>
 </template>
 

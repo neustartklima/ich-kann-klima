@@ -1,6 +1,6 @@
-import { defineEvent } from "./EventsTypes"
 import { idsToLaws, Law } from "../laws"
 import { dispatch } from "../params"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 // if proposed laws contain at least one with the words 'subvention' and 'abbau', this event might occur
 function getFirstMatchingLaw(proposedLaws: Law[]) {
@@ -24,7 +24,10 @@ export default defineEvent({
     return []
   },
 
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 3, months: 8 })) {
+      return 0
+    }
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws))
     return law ? 0.5 : 0
   },

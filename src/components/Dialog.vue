@@ -14,7 +14,7 @@
 .dialog {
   position: absolute;
   top: 10vh;
-  left: 0;
+  left: 20vh;
   right: 0;
   margin: 0 auto;
   width: 600px;

@@ -1,12 +1,12 @@
 import "should"
-import { newGame, prepareNextStep } from "../src/game"
-import Sinon from "sinon"
-import { Law, LawId } from "../src/laws"
-import { Event } from "../src/events"
 import should from "should"
+import Sinon from "sinon"
 import { probabilityThatEventOccurs } from "../src/constants"
-import { shuffleNumbers, random } from "../src/lib/random"
+import { Event } from "../src/events"
+import { newGame, prepareNextStep } from "../src/game"
+import { Law, LawId } from "../src/laws"
 import { defaultEffort } from "../src/laws/LawsTypes"
+import { shuffleNumbers } from "../src/lib/random"
 
 function priority(): number {
   return 1
@@ -116,7 +116,7 @@ describe("game", () => {
         { id: "Hitzehoelle", title: "e2", description: "", apply: () => [], probability: () => 0.9, count: 0 },
         { id: "SocialMedia", title: "e3", description: "", apply: () => [], probability: () => 0.5, count: 0 },
       ]
-      const probSum = events.map((e) => e.probability(game)).reduce((a, b) => a + b)
+      const probSum = events.map((e) => e.probability(game, e)).reduce((a, b) => a + b)
 
       const NUM_CALLS = 100
       const precision = 1
@@ -133,7 +133,7 @@ describe("game", () => {
       eventCount.should.be.approximately(NUM_CALLS * probabilityThatEventOccurs, precision)
 
       events.forEach((e) =>
-        counts[e.id].should.be.approximately((eventCount * e.probability(game)) / probSum, precision)
+        counts[e.id].should.be.approximately((eventCount * e.probability(game, e)) / probSum, precision)
       )
     })
   })

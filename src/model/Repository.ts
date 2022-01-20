@@ -1,7 +1,6 @@
 import { Event } from "../events"
-import { Game, GameId, initGame } from "../game"
+import { Game, GameDefinition, GameId, getGameDefinition, initGame } from "../game"
 import { LawId } from "../laws"
-import { getState, seedWithGame } from "../lib/random"
 import { API } from "./api"
 
 interface Logger {
@@ -26,11 +25,11 @@ export default function RepositoryFactory({
 }) {
   return {
     createGame(game: Game): void {
-      seedWithGame(game)
-      storage.setItem("game", JSON.stringify(game))
+      const gameDef = getGameDefinition(game)
+      storage.setItem("game", JSON.stringify(gameDef))
 
       // We don't await here - creating the game on the server is done in the background
-      api.createGame(game).catch((reason) => {
+      api.createGame(gameDef).catch((reason) => {
         // If the API finally errors, no message to the users are sent, they can play nevertheless.
         logger.warn("Cannot save new game - trying again later", reason)
       })
@@ -39,24 +38,22 @@ export default function RepositoryFactory({
     async loadGame(id: GameId): Promise<Game> {
       const storedItem = storage.getItem("game")
       if (storedItem) {
-        const storedGame = JSON.parse(storedItem)
+        const storedGame: GameDefinition = JSON.parse(storedItem)
         if (storedGame.id === id) {
-          seedWithGame(storedGame)
           return initGame(storedGame, id)
         }
       }
 
-      const storedGame = await api.loadGame(id)
-      seedWithGame(storedGame)
+      const storedGame: GameDefinition = await api.loadGame(id)
       return initGame(storedGame, id)
     },
 
     saveGame(game: Game): void {
-      game.prngState = getState()
-      storage.setItem("game", JSON.stringify(game))
+      const gameDef = getGameDefinition(game)
+      storage.setItem("game", JSON.stringify(gameDef))
 
       // We don't await here, b/c saving could take place in the background and can even be retried later
-      api.saveGame(game).catch((reason) => {
+      api.saveGame(gameDef).catch((reason) => {
         // Errors, however, cannot be shown to the user other than in the log
         logger.warn(
           "save on server failed - at least the game is saved in localStorage, so you can save it maybe next time",

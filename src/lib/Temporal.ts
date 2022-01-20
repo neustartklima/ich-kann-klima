@@ -1,4 +1,6 @@
-import { DateTime as LuxDateTime, Duration as LuxDuration } from "luxon"
+import { DateTime as LuxDateTime, Duration as LuxDuration, DurationLikeObject as LuxDLO } from "luxon"
+
+export type DurationLikeObject = LuxDLO
 
 const fullDateTimeOps: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -49,11 +51,13 @@ export class Date {
 export class Duration {
   lux: LuxDuration
 
-  constructor(input: LuxDuration | string) {
+  constructor(input: LuxDuration | DurationLikeObject | string) {
     if (input instanceof LuxDuration) {
       this.lux = input
-    } else {
+    } else if (typeof input === "string") {
       this.lux = LuxDuration.fromISO(input, { locale: "de-DE" })
+    } else {
+      this.lux = LuxDuration.fromObject(input)
     }
   }
 
@@ -65,14 +69,18 @@ export class Duration {
       return months + " Monate"
     }
   }
+
+  lessThan(other: Duration): boolean {
+    return this.lux < other.lux
+  }
 }
 
 export function date(isoString: string): Date {
   return new Date(isoString)
 }
 
-export function duration(isoString: string): Duration {
-  return new Duration(isoString)
+export function duration(input: string | DurationLikeObject): Duration {
+  return new Duration(input)
 }
 
 export function durationBetween(start: Date, end: Date): Duration {
@@ -81,4 +89,12 @@ export function durationBetween(start: Date, end: Date): Duration {
 
 export function months(month: number): Duration {
   return new Duration(LuxDuration.fromDurationLike({ month }))
+}
+
+export function laterOf(a: Date, b: Date): Date {
+  return a.lux < b.lux ? b : a
+}
+
+export function earlierOf(a: Date, b: Date): Date {
+  return a.lux > b.lux ? b : a
 }

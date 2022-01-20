@@ -67,7 +67,7 @@ function sitOut() {
   transition: all var(--transitiontime);
 
   &.poppedUp {
-    transform: translate3d(320px, -30px, 400px) scale(0.6);
+    transform: translate3d(320px, -100px, 400px) scale(0.6);
 
     @media (max-width: 800px) and (orientation: portrait) {
       margin-top: 100px;
@@ -81,7 +81,7 @@ function sitOut() {
   padding: 4pt;
   border: 1px solid;
   border-radius: 6pt;
-  transform: translate3d(250px, 350px, 400px);
+  transform: translate3d(500px, 390px, 400px);
   transition-duration: 0.1s;
 }
 
@@ -90,6 +90,6 @@ function sitOut() {
 }
 
 .sitOutButton:active {
-  transform: translate3d(250px, 350px, 400px) scale(1.1);
+  transform: translate3d(500px, 390px, 400px) scale(1.1);
 }
 </style>

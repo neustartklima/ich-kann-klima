@@ -91,7 +91,7 @@ export type EventCol = keyof EventRow
 
 export function getSortedEvents(game: Game, sortCol: EventCol, sortDir: number, allEvents: Event[]): EventRow[] {
   return allEvents
-    .map((event) => ({ id: event.id, probability: event.probability(game) }))
+    .map((event) => ({ id: event.id, probability: event.probability(game, event) }))
     .sort((a, b) => rowCompare(a, b, sortCol, "id") * sortDir)
     .map((row) => ({ ...row, probability: (row.probability * 100).toFixed(2) }))
 }

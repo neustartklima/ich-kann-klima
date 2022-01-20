@@ -1,8 +1,7 @@
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core"
-import Dialog from "../components/Dialog.vue"
 import { useStore } from "../store"
-import { GameId } from "../game"
+import Dialog from "./Dialog.vue"
 
 export default defineComponent({
   components: { Dialog },
@@ -58,20 +57,9 @@ export default defineComponent({
   },
 
   methods: {
-    loadGame(gameId: GameId) {
-      this.store.dispatch("loadGame", { gameId })
-    },
-
     newGame() {
-      this.$router.push("/games")
+      this.store.dispatch("startGame")
     },
-  },
-
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      const component = (vm as unknown) as { loadGame: (gameId: GameId) => void }
-      component.loadGame(to.params.id as GameId)
-    })
   },
 })
 </script>

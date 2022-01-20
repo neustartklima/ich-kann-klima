@@ -1,7 +1,7 @@
 import { cite, fraunhoferISE2020InstalledPower } from "../citations"
-import { defineEvent } from "./EventsTypes"
 import { lawIsAccepted } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Bürgerinitiative fordert stärkere Solarförderung",
@@ -18,7 +18,10 @@ export default defineEvent({
     return []
   },
 
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+      return 0
+    }
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")
     const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2")

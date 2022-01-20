@@ -20,7 +20,7 @@ import Klimafluechtlinge from "./Klimafluechtlinge"
 import Plagiatsaffaere from "./Plagiatsaffaere"
 import CO2PreisDebatte from "./CO2PreisDebatte"
 
-import { EventDefinition } from "./EventsTypes"
+import { EventDefinition, lessTimeHasPassed } from "./EventsTypes"
 import { Game } from "../game"
 import { Ratio } from "../types"
 import { objectToArrayWithId } from "../lib/utils"
@@ -49,18 +49,23 @@ const allEventsObj = {
   CO2PreisDebatte,
 }
 
-const defaultProbability = () => 0.5
+function defaultProbability(game: Game, event: Event): Ratio {
+  if (lessTimeHasPassed(game, event, { years: 3 })) {
+    return 0
+  }
+  return 0.05
+}
 
 export type EventId = keyof typeof allEventsObj
 
 export type Event = EventDefinition & {
   id: EventId
-  probability(game: Game): Ratio
+  probability(game: Game, event: Event): Ratio
 }
 
 export type EventReference = {
   id: EventId
-  occuredIn: number
+  occuredIn: string
   acknowledged: boolean
 }
 

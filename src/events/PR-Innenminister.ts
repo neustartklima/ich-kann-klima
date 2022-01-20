@@ -1,6 +1,6 @@
-import { defineEvent } from "./EventsTypes"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "PR-Skandal",
@@ -10,7 +10,10 @@ export default defineEvent({
     return [modify("popularity").byValue(-2)]
   },
 
-  probability() {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 2, months: 11 })) {
+      return 0
+    }
     return 0.3
   },
 

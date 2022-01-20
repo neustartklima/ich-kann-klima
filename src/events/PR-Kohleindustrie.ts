@@ -1,7 +1,7 @@
-import { defineEvent } from "./EventsTypes"
 import { lawIsAccepted } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 import { modify } from "../params"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "PR-Skandal",
@@ -11,12 +11,18 @@ export default defineEvent({
     return [modify("popularity").byValue(-2)]
   },
 
-  probability(game) {
-    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { months: 11 })) {
       return 0
     }
-    // - viele Investitionen in Kohlekraft getätigt
-    // - Ablehnung von Gesetzen für erneuerbare Energien
+    if (
+      lawIsAccepted(game, "WirksamerCO2Preis") ||
+      lawIsAccepted(game, "VollerCO2Preis") ||
+      lawIsAccepted(game, "KohleverstromungEinstellen")
+    ) {
+      return 0
+    }
+
     return 0.3
   },
 

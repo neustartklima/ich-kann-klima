@@ -1,6 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { dispatch } from "../params"
-import { specialEventProbs } from "./EventsTypes"
+import { defineEvent, specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
   title: "Hitzehölle",
@@ -13,7 +12,7 @@ export default defineEvent({
     return [dispatch("gameOver")]
   },
 
-  probability(game) {
+  probability(game, event) {
     return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0
   },
 })

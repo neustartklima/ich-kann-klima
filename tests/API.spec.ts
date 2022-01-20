@@ -1,7 +1,8 @@
 import "should"
+import should from "should"
 import Sinon from "sinon"
-import APIFactory, { API } from "../src/model/api"
 import { Game, initGame } from "../src/game"
+import APIFactory, { API } from "../src/model/api"
 
 describe("API", () => {
   const mockQuque = () => ({ add: Sinon.stub(), remove: Sinon.stub(), callsPending: Sinon.stub() })
@@ -59,9 +60,9 @@ describe("API", () => {
     })
 
     it("should resolve the game", async () => {
-      fetchQueue.add.withArgs("put", "/games/" + game.id, game).resolves(game)
+      fetchQueue.add.withArgs("put", "/games/" + game.id, game).resolves(undefined)
       const result = await api.saveGame(game)
-      result.should.deepEqual(game)
+      should(result).is.equal(undefined)
     })
   })
 

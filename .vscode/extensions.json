@@ -15,6 +15,7 @@
     "tobermory.es6-string-html",
     "hediet.vscode-drawio",
     "johnsoncodehk.vscode-typescript-vue-plugin",
-    "stevencl.adddoccomments"
+    "stevencl.adddoccomments",
+    "ryanluker.vscode-coverage-gutters"
   ]
 }

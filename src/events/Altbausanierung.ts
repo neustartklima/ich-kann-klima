@@ -1,5 +1,5 @@
-import { defineEvent } from "./EventsTypes"
 import { linear } from "../laws/lawTools"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Gesetzesinitiative zur Sanierung von Altbauten",
@@ -17,7 +17,10 @@ export default defineEvent({
     return []
   },
 
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 2, months: 2 })) {
+      return 0
+    }
     const buildingsPercentage = (game.values.co2emissionsBuildings / game.values.co2emissions) * 100
     return Math.min(1, linear(15, 30, buildingsPercentage) / 100)
   },
