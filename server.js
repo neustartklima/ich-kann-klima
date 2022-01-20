@@ -24834,7 +24834,7 @@ var require_luxon = __commonJS({
         loc: dur.loc.clone(alts.loc),
         conversionAccuracy: alts.conversionAccuracy || dur.conversionAccuracy
       };
-      return new Duration3(conf);
+      return new Duration4(conf);
     }
     function antiTrunc(n2) {
       return n2 < 0 ? Math.floor(n2) : Math.ceil(n2);
@@ -24856,7 +24856,7 @@ var require_luxon = __commonJS({
         }
       }, null);
     }
-    var Duration3 = class {
+    var Duration4 = class {
       constructor(config) {
         const accurate = config.conversionAccuracy === "longterm" || false;
         this.values = config.values;
@@ -24867,7 +24867,7 @@ var require_luxon = __commonJS({
         this.isLuxonDuration = true;
       }
       static fromMillis(count, opts) {
-        return Duration3.fromObject({
+        return Duration4.fromObject({
           milliseconds: count
         }, opts);
       }
@@ -24875,19 +24875,19 @@ var require_luxon = __commonJS({
         if (obj == null || typeof obj !== "object") {
           throw new InvalidArgumentError(`Duration.fromObject: argument expected to be an object, got ${obj === null ? "null" : typeof obj}`);
         }
-        return new Duration3({
-          values: normalizeObject(obj, Duration3.normalizeUnit),
+        return new Duration4({
+          values: normalizeObject(obj, Duration4.normalizeUnit),
           loc: Locale.fromObject(opts),
           conversionAccuracy: opts.conversionAccuracy
         });
       }
       static fromDurationLike(durationLike) {
         if (isNumber(durationLike)) {
-          return Duration3.fromMillis(durationLike);
-        } else if (Duration3.isDuration(durationLike)) {
+          return Duration4.fromMillis(durationLike);
+        } else if (Duration4.isDuration(durationLike)) {
           return durationLike;
         } else if (typeof durationLike === "object") {
-          return Duration3.fromObject(durationLike);
+          return Duration4.fromObject(durationLike);
         } else {
           throw new InvalidArgumentError(`Unknown duration argument ${durationLike} of type ${typeof durationLike}`);
         }
@@ -24895,17 +24895,17 @@ var require_luxon = __commonJS({
       static fromISO(text, opts) {
         const [parsed] = parseISODuration(text);
         if (parsed) {
-          return Duration3.fromObject(parsed, opts);
+          return Duration4.fromObject(parsed, opts);
         } else {
-          return Duration3.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+          return Duration4.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
         }
       }
       static fromISOTime(text, opts) {
         const [parsed] = parseISOTimeOnly(text);
         if (parsed) {
-          return Duration3.fromObject(parsed, opts);
+          return Duration4.fromObject(parsed, opts);
         } else {
-          return Duration3.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
+          return Duration4.invalid("unparsable", `the input "${text}" can't be parsed as ISO 8601`);
         }
       }
       static invalid(reason, explanation = null) {
@@ -24916,7 +24916,7 @@ var require_luxon = __commonJS({
         if (Settings.throwOnInvalid) {
           throw new InvalidDurationError(invalid);
         } else {
-          return new Duration3({
+          return new Duration4({
             invalid
           });
         }
@@ -25054,7 +25054,7 @@ var require_luxon = __commonJS({
       plus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration3.fromDurationLike(duration2), result = {};
+        const dur = Duration4.fromDurationLike(duration2), result = {};
         for (const k of orderedUnits$1) {
           if (hasOwnProperty(dur.values, k) || hasOwnProperty(this.values, k)) {
             result[k] = dur.get(k) + this.get(k);
@@ -25067,7 +25067,7 @@ var require_luxon = __commonJS({
       minus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration3.fromDurationLike(duration2);
+        const dur = Duration4.fromDurationLike(duration2);
         return this.plus(dur.negate());
       }
       mapUnits(fn2) {
@@ -25082,14 +25082,14 @@ var require_luxon = __commonJS({
         }, true);
       }
       get(unit) {
-        return this[Duration3.normalizeUnit(unit)];
+        return this[Duration4.normalizeUnit(unit)];
       }
       set(values) {
         if (!this.isValid)
           return this;
         const mixed = {
           ...this.values,
-          ...normalizeObject(values, Duration3.normalizeUnit)
+          ...normalizeObject(values, Duration4.normalizeUnit)
         };
         return clone$1(this, {
           values: mixed
@@ -25129,7 +25129,7 @@ var require_luxon = __commonJS({
         if (units.length === 0) {
           return this;
         }
-        units = units.map((u) => Duration3.normalizeUnit(u));
+        units = units.map((u) => Duration4.normalizeUnit(u));
         const built = {}, accumulated = {}, vals = this.toObject();
         let lastUnit;
         for (const k of orderedUnits$1) {
@@ -25276,11 +25276,11 @@ var require_luxon = __commonJS({
         }
       }
       static after(start, duration2) {
-        const dur = Duration3.fromDurationLike(duration2), dt = friendlyDateTime(start);
+        const dur = Duration4.fromDurationLike(duration2), dt = friendlyDateTime(start);
         return Interval.fromDateTimes(dt, dt.plus(dur));
       }
       static before(end, duration2) {
-        const dur = Duration3.fromDurationLike(duration2), dt = friendlyDateTime(end);
+        const dur = Duration4.fromDurationLike(duration2), dt = friendlyDateTime(end);
         return Interval.fromDateTimes(dt.minus(dur), dt);
       }
       static fromISO(text, opts) {
@@ -25304,12 +25304,12 @@ var require_luxon = __commonJS({
             return Interval.fromDateTimes(start, end);
           }
           if (startIsValid) {
-            const dur = Duration3.fromISO(e, opts);
+            const dur = Duration4.fromISO(e, opts);
             if (dur.isValid) {
               return Interval.after(start, dur);
             }
           } else if (endIsValid) {
-            const dur = Duration3.fromISO(s2, opts);
+            const dur = Duration4.fromISO(s2, opts);
             if (dur.isValid) {
               return Interval.before(end, dur);
             }
@@ -25389,7 +25389,7 @@ var require_luxon = __commonJS({
         return results;
       }
       splitBy(duration2) {
-        const dur = Duration3.fromDurationLike(duration2);
+        const dur = Duration4.fromDurationLike(duration2);
         if (!this.isValid || !dur.isValid || dur.as("milliseconds") === 0) {
           return [];
         }
@@ -25520,7 +25520,7 @@ var require_luxon = __commonJS({
       }
       toDuration(unit, opts) {
         if (!this.isValid) {
-          return Duration3.invalid(this.invalidReason);
+          return Duration4.invalid(this.invalidReason);
         }
         return this.e.diff(this.s, unit, opts);
       }
@@ -25593,7 +25593,7 @@ var require_luxon = __commonJS({
       const utcDayStart = (dt) => dt.toUTC(0, {
         keepLocalTime: true
       }).startOf("day").valueOf(), ms = utcDayStart(later) - utcDayStart(earlier);
-      return Math.floor(Duration3.fromMillis(ms).as("days"));
+      return Math.floor(Duration4.fromMillis(ms).as("days"));
     }
     function highOrderDiffs(cursor, later, units) {
       const differs = [["years", (a, b) => b.year - a.year], ["quarters", (a, b) => b.quarter - a.quarter], ["months", (a, b) => b.month - a.month + (b.year - a.year) * 12], ["weeks", (a, b) => {
@@ -25636,9 +25636,9 @@ var require_luxon = __commonJS({
           results[lowestOrder] = (results[lowestOrder] || 0) + remainingMillis / (highWater - cursor);
         }
       }
-      const duration2 = Duration3.fromObject(results, opts);
+      const duration2 = Duration4.fromObject(results, opts);
       if (lowerOrderUnits.length > 0) {
-        return Duration3.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration2);
+        return Duration4.fromMillis(remainingMillis, opts).shiftTo(...lowerOrderUnits).plus(duration2);
       } else {
         return duration2;
       }
@@ -26293,7 +26293,7 @@ var require_luxon = __commonJS({
         year,
         month,
         day: Math.min(inst.c.day, daysInMonth(year, month)) + Math.trunc(dur.days) + Math.trunc(dur.weeks) * 7
-      }, millisToAdd = Duration3.fromObject({
+      }, millisToAdd = Duration4.fromObject({
         years: dur.years - Math.trunc(dur.years),
         quarters: dur.quarters - Math.trunc(dur.quarters),
         months: dur.months - Math.trunc(dur.months),
@@ -26935,19 +26935,19 @@ var require_luxon = __commonJS({
       plus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration3.fromDurationLike(duration2);
+        const dur = Duration4.fromDurationLike(duration2);
         return clone(this, adjustTime(this, dur));
       }
       minus(duration2) {
         if (!this.isValid)
           return this;
-        const dur = Duration3.fromDurationLike(duration2).negate();
+        const dur = Duration4.fromDurationLike(duration2).negate();
         return clone(this, adjustTime(this, dur));
       }
       startOf(unit) {
         if (!this.isValid)
           return this;
-        const o = {}, normalizedUnit = Duration3.normalizeUnit(unit);
+        const o = {}, normalizedUnit = Duration4.normalizeUnit(unit);
         switch (normalizedUnit) {
           case "years":
             o.month = 1;
@@ -27096,14 +27096,14 @@ var require_luxon = __commonJS({
       }
       diff(otherDateTime, unit = "milliseconds", opts = {}) {
         if (!this.isValid || !otherDateTime.isValid) {
-          return Duration3.invalid("created by diffing an invalid DateTime");
+          return Duration4.invalid("created by diffing an invalid DateTime");
         }
         const durOpts = {
           locale: this.locale,
           numberingSystem: this.numberingSystem,
           ...opts
         };
-        const units = maybeArray(unit).map(Duration3.normalizeUnit), otherIsLater = otherDateTime.valueOf() > this.valueOf(), earlier = otherIsLater ? this : otherDateTime, later = otherIsLater ? otherDateTime : this, diffed = diff(earlier, later, units, durOpts);
+        const units = maybeArray(unit).map(Duration4.normalizeUnit), otherIsLater = otherDateTime.valueOf() > this.valueOf(), earlier = otherIsLater ? this : otherDateTime, later = otherIsLater ? otherDateTime : this, diffed = diff(earlier, later, units, durOpts);
         return otherIsLater ? diffed.negate() : diffed;
       }
       diffNow(unit = "milliseconds", opts = {}) {
@@ -27261,7 +27261,7 @@ var require_luxon = __commonJS({
     }
     var VERSION = "2.3.0";
     exports2.DateTime = DateTime;
-    exports2.Duration = Duration3;
+    exports2.Duration = Duration4;
     exports2.FixedOffsetZone = FixedOffsetZone;
     exports2.IANAZone = IANAZone;
     exports2.Info = Info;
@@ -31645,8 +31645,10 @@ var Duration = class {
   constructor(input) {
     if (input instanceof import_luxon.Duration) {
       this.lux = input;
-    } else {
+    } else if (typeof input === "string") {
       this.lux = import_luxon.Duration.fromISO(input, { locale: "de-DE" });
+    } else {
+      this.lux = import_luxon.Duration.fromObject(input);
     }
   }
   toMonthsString() {
@@ -31657,19 +31659,29 @@ var Duration = class {
       return months2 + " Monate";
     }
   }
+  lessThan(other) {
+    return this.lux < other.lux;
+  }
 };
 function date(isoString) {
   return new Date2(isoString);
 }
-function duration(isoString) {
-  return new Duration(isoString);
+function duration(input) {
+  return new Duration(input);
+}
+function durationBetween(start, end) {
+  return Date2.durationBetween(start, end);
 }
 function months(month) {
   return new Duration(import_luxon.Duration.fromDurationLike({ month }));
 }
+function laterOf(a, b) {
+  return a.lux < b.lux ? b : a;
+}
 
 // src/constants.ts
 var startYear = 2021;
+var startDate = "2021-01-01";
 var endYear = 2050;
 var defaultEffortDuration = duration("P3M");
 var sitOutDuration = duration("P3M");
@@ -32715,6 +32727,7 @@ var computedParamDefinitions = Object.entries(paramDefinitions).filter((e) => e[
   newObj[e[0]] = e[1];
   return newObj;
 }, {});
+var writableParamKeys = Object.keys(writableParamDefinitions);
 var paramKeys = Object.keys(paramDefinitions);
 var WritableParamEntry = class extends WritableParam {
   name;
@@ -35154,6 +35167,13 @@ var specialEventProbs = {
   wahlVerloren: 5,
   hitzehoelle: 6
 };
+function durationWithoutEvents(game, eventsToConsider) {
+  const lastOccurrence = game.events.filter((eventRef) => eventsToConsider.includes(eventRef.id)).reduce((yearSoFar, eventRef) => laterOf(yearSoFar, date(eventRef.occuredIn)), date(startDate));
+  return durationBetween(lastOccurrence, date(game.currentDate));
+}
+function lessTimeHasPassed(game, event, time) {
+  return durationWithoutEvents(game, [event.id]).lessThan(duration(time));
+}
 
 // src/events/AbstandsregelnWindkraft.ts
 var AbstandsregelnWindkraft_default = defineEvent({
@@ -35184,7 +35204,10 @@ var Altbausanierung_default = defineEvent({
   apply() {
     return [];
   },
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 2, months: 2 })) {
+      return 0;
+    }
     const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
     return Math.min(1, linear(15, 30, buildingsPercentage) / 100);
   }
@@ -35209,7 +35232,10 @@ var Bestechung_default = defineEvent({
     }
     return [];
   },
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 3, months: 8 })) {
+      return 0;
+    }
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
     return law ? 0.5 : 0;
   }
@@ -35235,7 +35261,7 @@ var Finanzkollaps_default = defineEvent({
   apply() {
     return [dispatch("gameOver")];
   },
-  probability(game) {
+  probability(game, event) {
     return game.values.stateDebt > defaultValues.stateDebt * 2 ? specialEventProbs.finanzKollaps : 0;
   }
 });
@@ -35250,7 +35276,7 @@ var Hitzeh_lle_default = defineEvent({
   apply() {
     return [dispatch("gameOver")];
   },
-  probability(game) {
+  probability(game, event) {
     return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0;
   }
 });
@@ -35265,7 +35291,7 @@ var NewYear_default = defineEvent({
   apply() {
     return [dispatch("advanceYear")];
   },
-  probability(game) {
+  probability(game, event) {
     if (date(game.currentDate).getYear() > game.currentYear) {
       return specialEventProbs.newYear;
     }
@@ -35377,7 +35403,10 @@ var SolarstromFoerderung_default = defineEvent({
   apply() {
     return [];
   },
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+      return 0;
+    }
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
     const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn");
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
@@ -35422,9 +35451,11 @@ var BSE_default = defineEvent({
   apply() {
     return [dispatch("gameOver")];
   },
-  probability(game) {
-    const law = idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law2) => law2.title.match(/tierwohl/i));
-    return law ? 0 : 0.5;
+  probability(game, event) {
+    if (idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))) {
+      return 0;
+    }
+    return Math.min(1, linear(5, 10, durationWithoutEvents(game, [event.id]).lux.as("years")) / 100);
   },
   laws: [],
   citations: [],
@@ -35432,7 +35463,9 @@ var BSE_default = defineEvent({
 
   `,
   internals: markdown`
+    # Voraussetzungen
 
+    Kann passieren, wenn es 5 Jahre keine Investitionen in bessere Tierhaltung gab.
   `
 });
 
@@ -35443,7 +35476,7 @@ var Duerrewelle_default = defineEvent({
   apply() {
     return [modify("gdp").byValue(-100), modify("popularity").byValue(-10)];
   },
-  probability(game) {
+  probability(game, event) {
     return Math.min(1, linear(400, 0, game.values.co2budget) / 100);
   },
   laws: [],
@@ -35463,8 +35496,11 @@ var PR_Kohleindustrie_default = defineEvent({
   apply() {
     return [modify("popularity").byValue(-2)];
   },
-  probability(game) {
-    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { months: 11 })) {
+      return 0;
+    }
+    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "VollerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
       return 0;
     }
     return 0.3;
@@ -35486,7 +35522,10 @@ var PR_Innenminister_default = defineEvent({
   apply() {
     return [modify("popularity").byValue(-2)];
   },
-  probability() {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 2, months: 11 })) {
+      return 0;
+    }
     return 0.3;
   },
   laws: [],
@@ -35506,7 +35545,7 @@ var Klimafluechtlinge_default = defineEvent({
   apply() {
     return [modify("stateDebt").byValue(10)];
   },
-  probability(game) {
+  probability(game, event) {
     return game.values.co2budget < 500 ? 0.2 : 0;
   },
   laws: [],
@@ -35526,7 +35565,10 @@ var Plagiatsaffaere_default = defineEvent({
   apply() {
     return [modify("popularity").byValue(-10)];
   },
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 3, months: 10 })) {
+      return 0;
+    }
     return 0.5;
   },
   laws: [],
@@ -35547,7 +35589,10 @@ var CO2PreisDebatte_default = defineEvent({
   apply() {
     return [];
   },
-  probability(game) {
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 1, months: 4 })) {
+      return 0;
+    }
     const count = (lawIsAccepted(game, "AutosInInnenstaedtenVerbieten") ? 1 : 0) + (lawIsAccepted(game, "KohleverstromungEinstellen") ? 1 : 0) + (lawIsAccepted(game, "SolarAufAllenDaechernVerpflichtend") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit130AufAutobahnen") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit120AufAutobahnen") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit100AufAutobahnen") ? 1 : 0);
     return linear(1, 3, count) / 100;
   }
@@ -35577,7 +35622,12 @@ var allEventsObj = {
   Plagiatsaffaere: Plagiatsaffaere_default,
   CO2PreisDebatte: CO2PreisDebatte_default
 };
-var defaultProbability = () => 0.5;
+function defaultProbability(game, event) {
+  if (lessTimeHasPassed(game, event, { years: 3 })) {
+    return 0;
+  }
+  return 0.05;
+}
 var allEvents = objectToArrayWithId(allEventsObj).map((event) => ({
   ...event,
   probability: event.probability || defaultProbability
