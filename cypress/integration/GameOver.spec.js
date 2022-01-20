@@ -3,6 +3,7 @@ describe("GameOver", () => {
     cy.visit("http://localhost:3000/")
     cy.contains("Tour beenden").click()
     cy.get("#calendar").contains("2021")
+    cy.get(".ProposedLaws").click({ force: true })
     Array.from({ length: 38 }).forEach((_) => {
       cy.contains("Aussitzen").click()
       cy.wait(100)
