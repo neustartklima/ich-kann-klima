@@ -4,7 +4,7 @@ import { paramDefinitions } from "./Params"
 import { ComputedParam, ParamsBase, WritableParam } from "./ParamsTypes"
 
 type EffectableContext = {
-  values: BaseParams
+  values?: BaseParams
   dispatch: (actionName: string, payload?: unknown) => void
 }
 
@@ -180,12 +180,11 @@ export function modify(name: keyof WritableBaseParams) {
       return newVal - oldVal
     },
 
-    apply(context: EffectableContext) {
-      if (this.condition) {
+    apply(context: EffectableContext): void {
+      if (context.values != undefined && this.condition) {
         const { newVal } = this.getOldNew(context.values)
         context.values[this.name] = newVal
       }
-      return this
     },
   }
 }
@@ -232,13 +231,12 @@ export function transfer(to: keyof WritableBaseParams, from: keyof WritableBaseP
       return { oldTo, newTo, oldFrom, newFrom }
     },
 
-    apply(context: EffectableContext) {
-      if (this.condition) {
+    apply(context: EffectableContext): void {
+      if (context.values != undefined && this.condition) {
         const { newTo, newFrom } = this.getEffect(context.values)
         context.values[this.to] = newTo
         context.values[this.from] = newFrom
       }
-      return this
     },
   }
 }

@@ -91,11 +91,16 @@ export function ActionFactory(router: Router, repository: Repository) {
     },
 
     applyEffects(context: Context, payload: { changes: Change[] }) {
-      const affectedContext = { dispatch: context.dispatch, values: createBaseValues(context.state.game!.values) }
-      applyEffects(affectedContext, payload.changes)
-      const game = { ...context.state.game, values: affectedContext.values } as Game
+      // First do only the `modify()` changes and commit state change: (see #180)
+      const contextForModify = { dispatch: () => undefined, values: createBaseValues(context.state.game!.values) }
+      applyEffects(contextForModify, payload.changes)
+      const game = { ...context.state.game, values: contextForModify.values } as Game
       repository.saveGame(game)
       context.commit("setGameState", { game })
+
+      // Then do only the `dispatch()` changes, which might do their own state changes:
+      const contextForDispatch = { dispatch: context.dispatch }
+      applyEffects(contextForDispatch, payload.changes)
     },
 
     setupTour(context: Context) {
