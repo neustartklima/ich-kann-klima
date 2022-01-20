@@ -53,6 +53,7 @@ import ForschungEmissionsfreieStahlproduktion from "./ForschungEmissionsfreieSta
 import ForschungEmissionsfreieZementproduktion from "./ForschungEmissionsfreieZementproduktion"
 import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugung"
 import Test from "./Test"
+import AutomatischeSektoren from "./AutomatischeSektoren"
 
 import { defaultEffort, EffortFunc, LawDefinition } from "./LawsTypes"
 import { BaseParams, ParamKey, paramKeys } from "../params"
@@ -145,6 +146,7 @@ const allLawsObj = {
   ForschungEmissionsfreieZementproduktion,
 
   Test,
+  AutomatischeSektoren,
 }
 
 export type LawId = keyof typeof allLawsObj
