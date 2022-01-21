@@ -128,18 +128,6 @@ function sendAccept(event: AnimationEvent) {
   }
 }
 
-.ProposedLaws.poppedUp .Law {
-  &:not(:first-of-type) {
-    margin-top: -300px;
-  }
-
-  // @media (max-width: 800px) and (orientation: portrait) {
-  //   font-size: 3vw;
-  //   width: 100%;
-  //   margin-top: -110px;
-  // }
-}
-
 @keyframes twistIn {
   0% {
     transform: perspective(1000px) rotateX(0deg) rotateY(-90deg);

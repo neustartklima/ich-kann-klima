@@ -54,6 +54,7 @@ function transEnd(event: TransitionEvent) {
       :law="law"
       :selectable="poppedUp"
       :numCards="lawsToShow.length"
+      class="singleLaw"
       @accepted="() => accept(law.id)"
       @selected="() => select(pos)"
     />
@@ -75,6 +76,15 @@ function transEnd(event: TransitionEvent) {
 
   &.poppedUp {
     transform: translate3d(320px, -100px, 400px) scale(0.6);
+  }
+}
+
+.singleLaw {
+  transition: margin-top var(--transitiontime);
+}
+.ProposedLaws.poppedUp .singleLaw {
+  &:not(:first-of-type) {
+    margin-top: -300px;
   }
 }
 
