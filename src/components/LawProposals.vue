@@ -6,20 +6,16 @@ import { getZIndexes } from "../lib/utils"
 import { useStore } from "../store"
 
 const store = useStore()
-const zIndexes = ref([] as Array<number>)
+const frontPos = ref(0)
 const poppedUp = ref(false)
+const sitOutShown = ref(false)
+
+const zIndexes = computed(() => getZIndexes(proposedLaws.value.length, frontPos.value))
 
 const proposedLaws = computed(() => store.getters.proposedLaws)
 const game = computed(() => store.state.game)
 const lawsToShow = computed(() => {
-  if (!zIndexes.value.length) {
-    zIndexes.value = getZIndexes(proposedLaws.value.length, 0)
-  }
-
-  if (game.value === undefined) {
-    return []
-  }
-
+  if (game.value === undefined) return []
   return proposedLaws.value.map((law: Law, pos: number) => ({
     ...law,
     zIndex: zIndexes.value[pos],
@@ -33,16 +29,25 @@ function accept(lawId: LawId) {
 }
 
 function select(pos: number) {
-  zIndexes.value = getZIndexes(proposedLaws.value.length, pos)
+  if (frontPos.value != pos) {
+    frontPos.value = pos
+  } else {
+    poppedUp.value = !poppedUp.value
+    if (!poppedUp.value) sitOutShown.value = false
+  }
 }
 
 function sitOut() {
   store.dispatch("sitOut")
 }
+
+function transEnd(event: TransitionEvent) {
+  if (poppedUp.value) sitOutShown.value = true
+}
 </script>
 
 <template>
-  <div class="ProposedLaws" :class="{ poppedUp }" @click="poppedUp = !poppedUp">
+  <div class="ProposedLaws" :class="{ poppedUp }" @transitionend="transEnd">
     <LawCard
       v-for="(law, pos) in lawsToShow"
       :key="law.id"
@@ -53,7 +58,9 @@ function sitOut() {
       @selected="() => select(pos)"
     />
   </div>
-  <div class="sitOutButton" v-if="poppedUp" @click="() => sitOut()">Aussitzen</div>
+  <transition name="fade">
+    <div class="sitOutButton" v-show="sitOutShown" @click="() => sitOut()">Aussitzen</div>
+  </transition>
 </template>
 
 <style lang="scss" scoped>
@@ -68,10 +75,6 @@ function sitOut() {
 
   &.poppedUp {
     transform: translate3d(320px, -100px, 400px) scale(0.6);
-
-    @media (max-width: 800px) and (orientation: portrait) {
-      margin-top: 100px;
-    }
   }
 }
 
@@ -81,15 +84,25 @@ function sitOut() {
   padding: 4pt;
   border: 1px solid;
   border-radius: 6pt;
-  transform: translate3d(500px, 390px, 400px);
-  transition-duration: 0.1s;
+  transform: translate3d(400px, 390px, 400px);
+  transition: transform 0.1s, background 0.3s;
+
+  &:hover {
+    background: lightgrey;
+  }
+
+  &:active {
+    transform: translate3d(400px, 390px, 400px) scale(1.1);
+  }
 }
 
-.sitOutButton:hover {
-  background: lightgrey;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
 }
 
-.sitOutButton:active {
-  transform: translate3d(500px, 390px, 400px) scale(1.1);
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
