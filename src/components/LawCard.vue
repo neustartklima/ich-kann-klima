@@ -32,20 +32,17 @@ function sendAccept(event: AnimationEvent) {
 </script>
 
 <template>
-  <div class="Law" :class="{ accepted }" :style="{ zIndex }" @click="select" @animationend="sendAccept">
-    <label>
-      <input type="radio" v-if="selectable" />
-      <div>
-        <h3>{{ law.title }}</h3>
-        <div>{{ law.description }}</div>
-        <br />
-        <div>{{ law.effortComment }}</div>
+  <div class="Law" :class="{ accepted }" :style="{ zIndex }" @click.stop="select" @animationend="sendAccept">
+    <div>
+      <h3>{{ law.title }}</h3>
+      <div>{{ law.description }}</div>
+      <br />
+      <div>{{ law.effortComment }}</div>
 
-        <div class="button-bar" v-if="selectable">
-          <button class="accept" @click="accept">✓</button>
-        </div>
+      <div class="button-bar" v-if="selectable">
+        <button class="accept" @click.stop="accept">✓</button>
       </div>
-    </label>
+    </div>
   </div>
 </template>
 
@@ -96,15 +93,11 @@ function sendAccept(event: AnimationEvent) {
     animation-name: twistOut;
   }
 
-  input {
-    display: none;
-  }
-
   h3 {
     margin-top: 0;
   }
 
-  > label > div {
+  > div {
     height: 100%;
     position: relative;
 
@@ -133,18 +126,6 @@ function sendAccept(event: AnimationEvent) {
       }
     }
   }
-}
-
-.ProposedLaws.poppedUp .Law {
-  &:not(:first-of-type) {
-    margin-top: -300px;
-  }
-
-  // @media (max-width: 800px) and (orientation: portrait) {
-  //   font-size: 3vw;
-  //   width: 100%;
-  //   margin-top: -110px;
-  // }
 }
 
 @keyframes twistIn {
