@@ -1,24 +1,27 @@
 import AbstandsregelnWindkraft from "./AbstandsregelnWindkraft"
 import Altbausanierung from "./Altbausanierung"
+import AtomKatastrophe from "./AtomKatastrophe"
+import BatteryExplosion from "./BatteryExplosion"
 import Bestechung from "./Bestechung"
+import BSE from "./BSE"
+import CO2PreisDebatte from "./CO2PreisDebatte"
+import Duerrewelle from "./Duerrewelle"
 import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
 import Hitzehoelle from "./Hitzehölle"
+import Klimafluechtlinge from "./Klimafluechtlinge"
 import NewYear from "./NewYear"
+import Plagiatsaffaere from "./Plagiatsaffaere"
+import PRInnenminister from "./PR-Innenminister"
+import PRKohleindustrie from "./PR-Kohleindustrie"
 import SocialMedia from "./SocialMedia"
+import SolarstromFoerderung from "./SolarstromFoerderung"
+import SolarstromFoerderung2 from "./SolarstromFoerderung2"
 import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
 import TimesUp from "./TimesUp"
 import WahlVerloren from "./WahlVerloren"
 import WindkraftAusschreibung from "./WindkraftAusschreibung"
-import SolarstromFoerderung from "./SolarstromFoerderung"
-import AtomKatastrophe from "./AtomKatastrophe"
-import BSE from "./BSE"
-import Duerrewelle from "./Duerrewelle"
-import PRKohleindustrie from "./PR-Kohleindustrie"
-import PRInnenminister from "./PR-Innenminister"
-import Klimafluechtlinge from "./Klimafluechtlinge"
-import Plagiatsaffaere from "./Plagiatsaffaere"
-import CO2PreisDebatte from "./CO2PreisDebatte"
+import WindkraftForschung from "./WindkraftForschung"
 
 import { EventDefinition, lessTimeHasPassed } from "./EventsTypes"
 import { Game } from "../game"
@@ -28,25 +31,28 @@ import { objectToArrayWithId } from "../lib/utils"
 const allEventsObj = {
   AbstandsregelnWindkraft,
   Altbausanierung,
+  AtomKatastrophe,
+  BatteryExplosion,
   Bestechung,
+  BSE,
+  CO2PreisDebatte,
+  Duerrewelle,
   EnergieStrategie,
   FinanzKollaps,
   Hitzehoelle,
+  Klimafluechtlinge,
   NewYear,
+  Plagiatsaffaere,
+  PRInnenminister,
+  PRKohleindustrie,
   SocialMedia,
+  SolarstromFoerderung,
+  SolarstromFoerderung2,
   TempolimitAufAutobahnen,
   TimesUp,
   WahlVerloren,
   WindkraftAusschreibung,
-  SolarstromFoerderung,
-  AtomKatastrophe,
-  BSE,
-  Duerrewelle,
-  PRKohleindustrie,
-  PRInnenminister,
-  Klimafluechtlinge,
-  Plagiatsaffaere,
-  CO2PreisDebatte,
+  WindkraftForschung,
 }
 
 function defaultProbability(game: Game, event: Event): Ratio {
