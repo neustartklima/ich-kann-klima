@@ -17,5 +17,6 @@
     }
   ],
   "mochaExplorer.files": "tests/**/*.spec.ts",
-  "mochaExplorer.require": "ts-node/register"
+  "mochaExplorer.require": "ts-node/register",
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }
