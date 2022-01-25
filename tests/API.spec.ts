@@ -68,10 +68,8 @@ describe("API", () => {
 
   describe("decisionMade", () => {
     it("should add a call to the fetch queue", async () => {
-      await api.decisionMade("4711", "NahverkehrAusbauen", true)
-      fetchQueue.add
-        .calledOnceWith("post", "/games/4711/decisions/NahverkehrAusbauen", { accepted: true })
-        .should.be.true()
+      await api.decisionMade("4711", "Test", true)
+      fetchQueue.add.calledOnceWith("post", "/games/4711/decisions/Test", { accepted: true }).should.be.true()
       fetchQueue.remove.getCalls().length.should.equal(0)
     })
   })

@@ -4,7 +4,7 @@ import { defineLaw, monthsEffort } from "../LawsTypes"
 
 export default defineLaw({
   title: "Test",
-  description: "Unsinniges Gesetz zum Testen.",
+  description: "Gesetz zum Testen. Wird in automatischen Tests verwendet.",
 
   effort(game) {
     return monthsEffort(6)

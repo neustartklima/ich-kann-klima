@@ -107,17 +107,17 @@ describe("lawTools", () => {
 
   describe("lawIsAccepted()", () => {
     const game: Partial<Game> = {
-      acceptedLaws: [{ lawId: "AbschaffungDerMineraloelsteuer", effectiveSince: 2222 }],
+      acceptedLaws: [{ lawId: "Test", effectiveSince: 2222 }],
       currentYear: 2222,
     }
     it("should return true, if the given law was accepted.", () => {
-      lawIsAccepted(game as Game, "AbschaffungDerMineraloelsteuer").should.be.true
+      lawIsAccepted(game as Game, "Test").should.be.true
     })
     it("should return false, if the given law was not accepted.", () => {
       lawIsAccepted(game as Game, "AllesBleibtBeimAlten").should.be.false
     })
     it("should return false, it the given law was accepted less than given years ago.", () => {
-      lawIsAccepted(game as Game, "AbschaffungDerMineraloelsteuer", 1).should.be.false
+      lawIsAccepted(game as Game, "Test", 1).should.be.false
     })
     it("should throw an error, if the given law ID does not exist.", () => {
       ;(() => lawIsAccepted(game as Game, "abcde" as LawId)).should.throw(Error)
@@ -127,16 +127,16 @@ describe("lawTools", () => {
   describe("getActiveLaw()", () => {
     it("find the most current active law matching the pattern", () => {
       const refs: LawReference[] = [
-        { lawId: "DaemmungAltbau1Percent", effectiveSince: 2020 },
-        { lawId: "NahverkehrAusbauen", effectiveSince: 2024 },
-        { lawId: "DaemmungAltbau2Percent", effectiveSince: 2021 },
-        { lawId: "DaemmungAltbau4Percent", effectiveSince: 2023 },
-        { lawId: "DaemmungAltbauAbschaffen", effectiveSince: 2022 },
+        { lawId: "AbstandsregelnFuerWindkraftAbschaffen", effectiveSince: 2020 },
+        { lawId: "Test", effectiveSince: 2024 },
+        { lawId: "AbstandsregelnFuerWindkraftVerschaerfen", effectiveSince: 2021 },
+        { lawId: "AbstandsregelnFuerWindkraftLockern", effectiveSince: 2023 },
+        { lawId: "AbstandsregelnFuerWindkraftWieBisher", effectiveSince: 2022 },
       ]
 
-      const result = getActiveLaw(refs, /^Daemmung/)
+      const result = getActiveLaw(refs, /^AbstandsregelnFuerWindkraft/)
       should(result).not.be.undefined()
-      result?.should.equal("DaemmungAltbau4Percent")
+      result?.should.equal("AbstandsregelnFuerWindkraftLockern")
     })
   })
 
