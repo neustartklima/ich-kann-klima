@@ -1,10 +1,10 @@
 import AbstandsregelnWindkraft from "./AbstandsregelnWindkraft"
-import Altbausanierung from "./Altbausanierung"
+// import Altbausanierung from "./Altbausanierung"
 import AtomKatastrophe from "./AtomKatastrophe"
-import BatteryExplosion from "./BatteryExplosion"
+// import BatteryExplosion from "./BatteryExplosion"
 import Bestechung from "./Bestechung"
 import BSE from "./BSE"
-import CO2PreisDebatte from "./CO2PreisDebatte"
+// import CO2PreisDebatte from "./CO2PreisDebatte"
 import Duerrewelle from "./Duerrewelle"
 import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
@@ -17,7 +17,7 @@ import PRKohleindustrie from "./PR-Kohleindustrie"
 import SocialMedia from "./SocialMedia"
 import SolarstromFoerderung from "./SolarstromFoerderung"
 import SolarstromFoerderung2 from "./SolarstromFoerderung2"
-import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
+// import TempolimitAufAutobahnen from "./TempolimitAufAutobahnen"
 import TimesUp from "./TimesUp"
 import WahlVerloren from "./WahlVerloren"
 import WindkraftAusschreibung from "./WindkraftAusschreibung"
@@ -30,12 +30,12 @@ import { objectToArrayWithId } from "../lib/utils"
 
 const allEventsObj = {
   AbstandsregelnWindkraft,
-  Altbausanierung,
+  // Altbausanierung,
   AtomKatastrophe,
-  BatteryExplosion,
+  // BatteryExplosion,
   Bestechung,
   BSE,
-  CO2PreisDebatte,
+  // CO2PreisDebatte,
   Duerrewelle,
   EnergieStrategie,
   FinanzKollaps,
@@ -48,7 +48,7 @@ const allEventsObj = {
   SocialMedia,
   SolarstromFoerderung,
   SolarstromFoerderung2,
-  TempolimitAufAutobahnen,
+  // TempolimitAufAutobahnen,
   TimesUp,
   WahlVerloren,
   WindkraftAusschreibung,

@@ -1,20 +1,20 @@
 import { objectToArrayWithId } from "../lib/utils"
 import { BaseParams, ParamKey, paramKeys } from "../params"
-import { agricultureLaws } from "./agriculture"
-import { buildingsLaws } from "./buildings"
+//import { agricultureLaws } from "./agriculture"
+//import { buildingsLaws } from "./buildings"
 import { energyLaws } from "./energy"
 import { generalLaws } from "./general"
-import { industryLaws } from "./industry"
+//import { industryLaws } from "./industry"
 import { defaultEffort, EffortFunc, LawDefinition } from "./LawsTypes"
-import { mobilityLaws } from "./mobility"
+//import { mobilityLaws } from "./mobility"
 
 const allLawsObj = {
   ...generalLaws,
   ...energyLaws,
-  ...mobilityLaws,
-  ...industryLaws,
-  ...buildingsLaws,
-  ...agricultureLaws,
+  // ...mobilityLaws,
+  // ...industryLaws,
+  // ...buildingsLaws,
+  // ...agricultureLaws,
 }
 
 export type LawId = keyof typeof allLawsObj
