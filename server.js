@@ -22385,656 +22385,3590 @@ var require_express2 = __commonJS({
   }
 });
 
-// node_modules/seedrandom/lib/alea.js
-var require_alea = __commonJS({
-  "node_modules/seedrandom/lib/alea.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function Alea(seed) {
-        var me = this, mash = Mash();
-        me.next = function() {
-          var t = 2091639 * me.s0 + me.c * 23283064365386963e-26;
-          me.s0 = me.s1;
-          me.s1 = me.s2;
-          return me.s2 = t - (me.c = t | 0);
-        };
-        me.c = 1;
-        me.s0 = mash(" ");
-        me.s1 = mash(" ");
-        me.s2 = mash(" ");
-        me.s0 -= mash(seed);
-        if (me.s0 < 0) {
-          me.s0 += 1;
-        }
-        me.s1 -= mash(seed);
-        if (me.s1 < 0) {
-          me.s1 += 1;
-        }
-        me.s2 -= mash(seed);
-        if (me.s2 < 0) {
-          me.s2 += 1;
-        }
-        mash = null;
-      }
-      function copy(f, t) {
-        t.c = f.c;
-        t.s0 = f.s0;
-        t.s1 = f.s1;
-        t.s2 = f.s2;
-        return t;
-      }
-      function impl(seed, opts) {
-        var xg = new Alea(seed), state = opts && opts.state, prng = xg.next;
-        prng.int32 = function() {
-          return xg.next() * 4294967296 | 0;
-        };
-        prng.double = function() {
-          return prng() + (prng() * 2097152 | 0) * 11102230246251565e-32;
-        };
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      function Mash() {
-        var n = 4022871197;
-        var mash = function(data) {
-          data = String(data);
-          for (var i = 0; i < data.length; i++) {
-            n += data.charCodeAt(i);
-            var h = 0.02519603282416938 * n;
-            n = h >>> 0;
-            h -= n;
-            h *= n;
-            n = h >>> 0;
-            h -= n;
-            n += h * 4294967296;
+// node_modules/showdown/dist/showdown.js
+var require_showdown = __commonJS({
+  "node_modules/showdown/dist/showdown.js"(exports2, module2) {
+    (function() {
+      function getDefaultOpts(simple) {
+        "use strict";
+        var defaultOptions = {
+          omitExtraWLInCodeBlocks: {
+            defaultValue: false,
+            describe: "Omit the default extra whiteline added to code blocks",
+            type: "boolean"
+          },
+          noHeaderId: {
+            defaultValue: false,
+            describe: "Turn on/off generated header id",
+            type: "boolean"
+          },
+          prefixHeaderId: {
+            defaultValue: false,
+            describe: "Add a prefix to the generated header ids. Passing a string will prefix that string to the header id. Setting to true will add a generic 'section-' prefix",
+            type: "string"
+          },
+          rawPrefixHeaderId: {
+            defaultValue: false,
+            describe: 'Setting this option to true will prevent showdown from modifying the prefix. This might result in malformed IDs (if, for instance, the " char is used in the prefix)',
+            type: "boolean"
+          },
+          ghCompatibleHeaderId: {
+            defaultValue: false,
+            describe: "Generate header ids compatible with github style (spaces are replaced with dashes, a bunch of non alphanumeric chars are removed)",
+            type: "boolean"
+          },
+          rawHeaderId: {
+            defaultValue: false,
+            describe: `Remove only spaces, ' and " from generated header ids (including prefixes), replacing them with dashes (-). WARNING: This might result in malformed ids`,
+            type: "boolean"
+          },
+          headerLevelStart: {
+            defaultValue: false,
+            describe: "The header blocks level start",
+            type: "integer"
+          },
+          parseImgDimensions: {
+            defaultValue: false,
+            describe: "Turn on/off image dimension parsing",
+            type: "boolean"
+          },
+          simplifiedAutoLink: {
+            defaultValue: false,
+            describe: "Turn on/off GFM autolink style",
+            type: "boolean"
+          },
+          excludeTrailingPunctuationFromURLs: {
+            defaultValue: false,
+            describe: "Excludes trailing punctuation from links generated with autoLinking",
+            type: "boolean"
+          },
+          literalMidWordUnderscores: {
+            defaultValue: false,
+            describe: "Parse midword underscores as literal underscores",
+            type: "boolean"
+          },
+          literalMidWordAsterisks: {
+            defaultValue: false,
+            describe: "Parse midword asterisks as literal asterisks",
+            type: "boolean"
+          },
+          strikethrough: {
+            defaultValue: false,
+            describe: "Turn on/off strikethrough support",
+            type: "boolean"
+          },
+          tables: {
+            defaultValue: false,
+            describe: "Turn on/off tables support",
+            type: "boolean"
+          },
+          tablesHeaderId: {
+            defaultValue: false,
+            describe: "Add an id to table headers",
+            type: "boolean"
+          },
+          ghCodeBlocks: {
+            defaultValue: true,
+            describe: "Turn on/off GFM fenced code blocks support",
+            type: "boolean"
+          },
+          tasklists: {
+            defaultValue: false,
+            describe: "Turn on/off GFM tasklist support",
+            type: "boolean"
+          },
+          smoothLivePreview: {
+            defaultValue: false,
+            describe: "Prevents weird effects in live previews due to incomplete input",
+            type: "boolean"
+          },
+          smartIndentationFix: {
+            defaultValue: false,
+            description: "Tries to smartly fix indentation in es6 strings",
+            type: "boolean"
+          },
+          disableForced4SpacesIndentedSublists: {
+            defaultValue: false,
+            description: "Disables the requirement of indenting nested sublists by 4 spaces",
+            type: "boolean"
+          },
+          simpleLineBreaks: {
+            defaultValue: false,
+            description: "Parses simple line breaks as <br> (GFM Style)",
+            type: "boolean"
+          },
+          requireSpaceBeforeHeadingText: {
+            defaultValue: false,
+            description: "Makes adding a space between `#` and the header text mandatory (GFM Style)",
+            type: "boolean"
+          },
+          ghMentions: {
+            defaultValue: false,
+            description: "Enables github @mentions",
+            type: "boolean"
+          },
+          ghMentionsLink: {
+            defaultValue: "https://github.com/{u}",
+            description: "Changes the link generated by @mentions. Only applies if ghMentions option is enabled.",
+            type: "string"
+          },
+          encodeEmails: {
+            defaultValue: true,
+            description: "Encode e-mail addresses through the use of Character Entities, transforming ASCII e-mail addresses into its equivalent decimal entities",
+            type: "boolean"
+          },
+          openLinksInNewWindow: {
+            defaultValue: false,
+            description: "Open all links in new windows",
+            type: "boolean"
+          },
+          backslashEscapesHTMLTags: {
+            defaultValue: false,
+            description: "Support for HTML Tag escaping. ex: <div>foo</div>",
+            type: "boolean"
+          },
+          emoji: {
+            defaultValue: false,
+            description: "Enable emoji support. Ex: `this is a :smile: emoji`",
+            type: "boolean"
+          },
+          underline: {
+            defaultValue: false,
+            description: "Enable support for underline. Syntax is double or triple underscores: `__underline word__`. With this option enabled, underscores no longer parses into `<em>` and `<strong>`",
+            type: "boolean"
+          },
+          completeHTMLDocument: {
+            defaultValue: false,
+            description: "Outputs a complete html document, including `<html>`, `<head>` and `<body>` tags",
+            type: "boolean"
+          },
+          metadata: {
+            defaultValue: false,
+            description: "Enable support for document metadata (defined at the top of the document between `\xAB\xAB\xAB` and `\xBB\xBB\xBB` or between `---` and `---`).",
+            type: "boolean"
+          },
+          splitAdjacentBlockquotes: {
+            defaultValue: false,
+            description: "Split adjacent blockquote blocks",
+            type: "boolean"
           }
-          return (n >>> 0) * 23283064365386963e-26;
         };
-        return mash;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.alea = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xor128.js
-var require_xor128 = __commonJS({
-  "node_modules/seedrandom/lib/xor128.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.x = 0;
-        me.y = 0;
-        me.z = 0;
-        me.w = 0;
-        me.next = function() {
-          var t = me.x ^ me.x << 11;
-          me.x = me.y;
-          me.y = me.z;
-          me.z = me.w;
-          return me.w ^= me.w >>> 19 ^ t ^ t >>> 8;
-        };
-        if (seed === (seed | 0)) {
-          me.x = seed;
-        } else {
-          strseed += seed;
+        if (simple === false) {
+          return JSON.parse(JSON.stringify(defaultOptions));
         }
-        for (var k = 0; k < strseed.length + 64; k++) {
-          me.x ^= strseed.charCodeAt(k) | 0;
-          me.next();
-        }
-      }
-      function copy(f, t) {
-        t.x = f.x;
-        t.y = f.y;
-        t.z = f.z;
-        t.w = f.w;
-        return t;
-      }
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xor128 = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xorwow.js
-var require_xorwow = __commonJS({
-  "node_modules/seedrandom/lib/xorwow.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.next = function() {
-          var t = me.x ^ me.x >>> 2;
-          me.x = me.y;
-          me.y = me.z;
-          me.z = me.w;
-          me.w = me.v;
-          return (me.d = me.d + 362437 | 0) + (me.v = me.v ^ me.v << 4 ^ (t ^ t << 1)) | 0;
-        };
-        me.x = 0;
-        me.y = 0;
-        me.z = 0;
-        me.w = 0;
-        me.v = 0;
-        if (seed === (seed | 0)) {
-          me.x = seed;
-        } else {
-          strseed += seed;
-        }
-        for (var k = 0; k < strseed.length + 64; k++) {
-          me.x ^= strseed.charCodeAt(k) | 0;
-          if (k == strseed.length) {
-            me.d = me.x << 10 ^ me.x >>> 4;
+        var ret = {};
+        for (var opt in defaultOptions) {
+          if (defaultOptions.hasOwnProperty(opt)) {
+            ret[opt] = defaultOptions[opt].defaultValue;
           }
-          me.next();
         }
+        return ret;
       }
-      function copy(f, t) {
-        t.x = f.x;
-        t.y = f.y;
-        t.z = f.z;
-        t.w = f.w;
-        t.v = f.v;
-        t.d = f.d;
-        return t;
-      }
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
+      function allOptionsOn() {
+        "use strict";
+        var options = getDefaultOpts(true), ret = {};
+        for (var opt in options) {
+          if (options.hasOwnProperty(opt)) {
+            ret[opt] = true;
+          }
         }
-        return prng;
+        return ret;
       }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xorwow = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xorshift7.js
-var require_xorshift7 = __commonJS({
-  "node_modules/seedrandom/lib/xorshift7.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this;
-        me.next = function() {
-          var X = me.x, i = me.i, t, v, w;
-          t = X[i];
-          t ^= t >>> 7;
-          v = t ^ t << 24;
-          t = X[i + 1 & 7];
-          v ^= t ^ t >>> 10;
-          t = X[i + 3 & 7];
-          v ^= t ^ t >>> 3;
-          t = X[i + 4 & 7];
-          v ^= t ^ t << 7;
-          t = X[i + 7 & 7];
-          t = t ^ t << 13;
-          v ^= t ^ t << 9;
-          X[i] = v;
-          me.i = i + 1 & 7;
-          return v;
-        };
-        function init(me2, seed2) {
-          var j, w, X = [];
-          if (seed2 === (seed2 | 0)) {
-            w = X[0] = seed2;
+      var showdown = {}, parsers = {}, extensions = {}, globalOptions = getDefaultOpts(true), setFlavor = "vanilla", flavor = {
+        github: {
+          omitExtraWLInCodeBlocks: true,
+          simplifiedAutoLink: true,
+          excludeTrailingPunctuationFromURLs: true,
+          literalMidWordUnderscores: true,
+          strikethrough: true,
+          tables: true,
+          tablesHeaderId: true,
+          ghCodeBlocks: true,
+          tasklists: true,
+          disableForced4SpacesIndentedSublists: true,
+          simpleLineBreaks: true,
+          requireSpaceBeforeHeadingText: true,
+          ghCompatibleHeaderId: true,
+          ghMentions: true,
+          backslashEscapesHTMLTags: true,
+          emoji: true,
+          splitAdjacentBlockquotes: true
+        },
+        original: {
+          noHeaderId: true,
+          ghCodeBlocks: false
+        },
+        ghost: {
+          omitExtraWLInCodeBlocks: true,
+          parseImgDimensions: true,
+          simplifiedAutoLink: true,
+          excludeTrailingPunctuationFromURLs: true,
+          literalMidWordUnderscores: true,
+          strikethrough: true,
+          tables: true,
+          tablesHeaderId: true,
+          ghCodeBlocks: true,
+          tasklists: true,
+          smoothLivePreview: true,
+          simpleLineBreaks: true,
+          requireSpaceBeforeHeadingText: true,
+          ghMentions: false,
+          encodeEmails: true
+        },
+        vanilla: getDefaultOpts(true),
+        allOn: allOptionsOn()
+      };
+      showdown.helper = {};
+      showdown.extensions = {};
+      showdown.setOption = function(key, value) {
+        "use strict";
+        globalOptions[key] = value;
+        return this;
+      };
+      showdown.getOption = function(key) {
+        "use strict";
+        return globalOptions[key];
+      };
+      showdown.getOptions = function() {
+        "use strict";
+        return globalOptions;
+      };
+      showdown.resetOptions = function() {
+        "use strict";
+        globalOptions = getDefaultOpts(true);
+      };
+      showdown.setFlavor = function(name) {
+        "use strict";
+        if (!flavor.hasOwnProperty(name)) {
+          throw Error(name + " flavor was not found");
+        }
+        showdown.resetOptions();
+        var preset = flavor[name];
+        setFlavor = name;
+        for (var option in preset) {
+          if (preset.hasOwnProperty(option)) {
+            globalOptions[option] = preset[option];
+          }
+        }
+      };
+      showdown.getFlavor = function() {
+        "use strict";
+        return setFlavor;
+      };
+      showdown.getFlavorOptions = function(name) {
+        "use strict";
+        if (flavor.hasOwnProperty(name)) {
+          return flavor[name];
+        }
+      };
+      showdown.getDefaultOptions = function(simple) {
+        "use strict";
+        return getDefaultOpts(simple);
+      };
+      showdown.subParser = function(name, func) {
+        "use strict";
+        if (showdown.helper.isString(name)) {
+          if (typeof func !== "undefined") {
+            parsers[name] = func;
           } else {
-            seed2 = "" + seed2;
-            for (j = 0; j < seed2.length; ++j) {
-              X[j & 7] = X[j & 7] << 15 ^ seed2.charCodeAt(j) + X[j + 1 & 7] << 13;
+            if (parsers.hasOwnProperty(name)) {
+              return parsers[name];
+            } else {
+              throw Error("SubParser named " + name + " not registered!");
             }
           }
-          while (X.length < 8)
-            X.push(0);
-          for (j = 0; j < 8 && X[j] === 0; ++j)
-            ;
-          if (j == 8)
-            w = X[7] = -1;
-          else
-            w = X[j];
-          me2.x = X;
-          me2.i = 0;
-          for (j = 256; j > 0; --j) {
-            me2.next();
-          }
         }
-        init(me, seed);
-      }
-      function copy(f, t) {
-        t.x = f.x.slice();
-        t.i = f.i;
-        return t;
-      }
-      function impl(seed, opts) {
-        if (seed == null)
-          seed = +new Date();
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (state.x)
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
+      };
+      showdown.extension = function(name, ext) {
+        "use strict";
+        if (!showdown.helper.isString(name)) {
+          throw Error("Extension 'name' must be a string");
         }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xorshift7 = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/xor4096.js
-var require_xor4096 = __commonJS({
-  "node_modules/seedrandom/lib/xor4096.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this;
-        me.next = function() {
-          var w = me.w, X = me.X, i = me.i, t, v;
-          me.w = w = w + 1640531527 | 0;
-          v = X[i + 34 & 127];
-          t = X[i = i + 1 & 127];
-          v ^= v << 13;
-          t ^= t << 17;
-          v ^= v >>> 15;
-          t ^= t >>> 12;
-          v = X[i] = v ^ t;
-          me.i = i;
-          return v + (w ^ w >>> 16) | 0;
-        };
-        function init(me2, seed2) {
-          var t, v, i, j, w, X = [], limit = 128;
-          if (seed2 === (seed2 | 0)) {
-            v = seed2;
-            seed2 = null;
-          } else {
-            seed2 = seed2 + "\0";
-            v = 0;
-            limit = Math.max(limit, seed2.length);
+        name = showdown.helper.stdExtName(name);
+        if (showdown.helper.isUndefined(ext)) {
+          if (!extensions.hasOwnProperty(name)) {
+            throw Error("Extension named " + name + " is not registered!");
           }
-          for (i = 0, j = -32; j < limit; ++j) {
-            if (seed2)
-              v ^= seed2.charCodeAt((j + 32) % seed2.length);
-            if (j === 0)
-              w = v;
-            v ^= v << 10;
-            v ^= v >>> 15;
-            v ^= v << 4;
-            v ^= v >>> 13;
-            if (j >= 0) {
-              w = w + 1640531527 | 0;
-              t = X[j & 127] ^= v + w;
-              i = t == 0 ? i + 1 : 0;
-            }
-          }
-          if (i >= 128) {
-            X[(seed2 && seed2.length || 0) & 127] = -1;
-          }
-          i = 127;
-          for (j = 4 * 128; j > 0; --j) {
-            v = X[i + 34 & 127];
-            t = X[i = i + 1 & 127];
-            v ^= v << 13;
-            t ^= t << 17;
-            v ^= v >>> 15;
-            t ^= t >>> 12;
-            X[i] = v ^ t;
-          }
-          me2.w = w;
-          me2.X = X;
-          me2.i = i;
-        }
-        init(me, seed);
-      }
-      function copy(f, t) {
-        t.i = f.i;
-        t.w = f.w;
-        t.X = f.X.slice();
-        return t;
-      }
-      ;
-      function impl(seed, opts) {
-        if (seed == null)
-          seed = +new Date();
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (state.X)
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
-          };
-        }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.xor4096 = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/lib/tychei.js
-var require_tychei = __commonJS({
-  "node_modules/seedrandom/lib/tychei.js"(exports2, module2) {
-    (function(global2, module3, define2) {
-      function XorGen(seed) {
-        var me = this, strseed = "";
-        me.next = function() {
-          var b = me.b, c = me.c, d = me.d, a = me.a;
-          b = b << 25 ^ b >>> 7 ^ c;
-          c = c - d | 0;
-          d = d << 24 ^ d >>> 8 ^ a;
-          a = a - b | 0;
-          me.b = b = b << 20 ^ b >>> 12 ^ c;
-          me.c = c = c - d | 0;
-          me.d = d << 16 ^ c >>> 16 ^ a;
-          return me.a = a - b | 0;
-        };
-        me.a = 0;
-        me.b = 0;
-        me.c = 2654435769 | 0;
-        me.d = 1367130551;
-        if (seed === Math.floor(seed)) {
-          me.a = seed / 4294967296 | 0;
-          me.b = seed | 0;
+          return extensions[name];
         } else {
-          strseed += seed;
+          if (typeof ext === "function") {
+            ext = ext();
+          }
+          if (!showdown.helper.isArray(ext)) {
+            ext = [ext];
+          }
+          var validExtension = validate(ext, name);
+          if (validExtension.valid) {
+            extensions[name] = ext;
+          } else {
+            throw Error(validExtension.error);
+          }
         }
-        for (var k = 0; k < strseed.length + 20; k++) {
-          me.b ^= strseed.charCodeAt(k) | 0;
-          me.next();
+      };
+      showdown.getAllExtensions = function() {
+        "use strict";
+        return extensions;
+      };
+      showdown.removeExtension = function(name) {
+        "use strict";
+        delete extensions[name];
+      };
+      showdown.resetExtensions = function() {
+        "use strict";
+        extensions = {};
+      };
+      function validate(extension, name) {
+        "use strict";
+        var errMsg = name ? "Error in " + name + " extension->" : "Error in unnamed extension", ret = {
+          valid: true,
+          error: ""
+        };
+        if (!showdown.helper.isArray(extension)) {
+          extension = [extension];
         }
+        for (var i = 0; i < extension.length; ++i) {
+          var baseMsg = errMsg + " sub-extension " + i + ": ", ext = extension[i];
+          if (typeof ext !== "object") {
+            ret.valid = false;
+            ret.error = baseMsg + "must be an object, but " + typeof ext + " given";
+            return ret;
+          }
+          if (!showdown.helper.isString(ext.type)) {
+            ret.valid = false;
+            ret.error = baseMsg + 'property "type" must be a string, but ' + typeof ext.type + " given";
+            return ret;
+          }
+          var type = ext.type = ext.type.toLowerCase();
+          if (type === "language") {
+            type = ext.type = "lang";
+          }
+          if (type === "html") {
+            type = ext.type = "output";
+          }
+          if (type !== "lang" && type !== "output" && type !== "listener") {
+            ret.valid = false;
+            ret.error = baseMsg + "type " + type + ' is not recognized. Valid values: "lang/language", "output/html" or "listener"';
+            return ret;
+          }
+          if (type === "listener") {
+            if (showdown.helper.isUndefined(ext.listeners)) {
+              ret.valid = false;
+              ret.error = baseMsg + '. Extensions of type "listener" must have a property called "listeners"';
+              return ret;
+            }
+          } else {
+            if (showdown.helper.isUndefined(ext.filter) && showdown.helper.isUndefined(ext.regex)) {
+              ret.valid = false;
+              ret.error = baseMsg + type + ' extensions must define either a "regex" property or a "filter" method';
+              return ret;
+            }
+          }
+          if (ext.listeners) {
+            if (typeof ext.listeners !== "object") {
+              ret.valid = false;
+              ret.error = baseMsg + '"listeners" property must be an object but ' + typeof ext.listeners + " given";
+              return ret;
+            }
+            for (var ln in ext.listeners) {
+              if (ext.listeners.hasOwnProperty(ln)) {
+                if (typeof ext.listeners[ln] !== "function") {
+                  ret.valid = false;
+                  ret.error = baseMsg + '"listeners" property must be an hash of [event name]: [callback]. listeners.' + ln + " must be a function but " + typeof ext.listeners[ln] + " given";
+                  return ret;
+                }
+              }
+            }
+          }
+          if (ext.filter) {
+            if (typeof ext.filter !== "function") {
+              ret.valid = false;
+              ret.error = baseMsg + '"filter" must be a function, but ' + typeof ext.filter + " given";
+              return ret;
+            }
+          } else if (ext.regex) {
+            if (showdown.helper.isString(ext.regex)) {
+              ext.regex = new RegExp(ext.regex, "g");
+            }
+            if (!(ext.regex instanceof RegExp)) {
+              ret.valid = false;
+              ret.error = baseMsg + '"regex" property must either be a string or a RegExp object, but ' + typeof ext.regex + " given";
+              return ret;
+            }
+            if (showdown.helper.isUndefined(ext.replace)) {
+              ret.valid = false;
+              ret.error = baseMsg + '"regex" extensions must implement a replace string or function';
+              return ret;
+            }
+          }
+        }
+        return ret;
       }
-      function copy(f, t) {
-        t.a = f.a;
-        t.b = f.b;
-        t.c = f.c;
-        t.d = f.d;
-        return t;
+      showdown.validateExtension = function(ext) {
+        "use strict";
+        var validateExtension = validate(ext, null);
+        if (!validateExtension.valid) {
+          console.warn(validateExtension.error);
+          return false;
+        }
+        return true;
+      };
+      if (!showdown.hasOwnProperty("helper")) {
+        showdown.helper = {};
       }
-      ;
-      function impl(seed, opts) {
-        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
-          return (xg.next() >>> 0) / 4294967296;
-        };
-        prng.double = function() {
-          do {
-            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
-          } while (result === 0);
-          return result;
-        };
-        prng.int32 = xg.next;
-        prng.quick = prng;
-        if (state) {
-          if (typeof state == "object")
-            copy(state, xg);
-          prng.state = function() {
-            return copy(xg, {});
+      showdown.helper.isString = function(a) {
+        "use strict";
+        return typeof a === "string" || a instanceof String;
+      };
+      showdown.helper.isFunction = function(a) {
+        "use strict";
+        var getType = {};
+        return a && getType.toString.call(a) === "[object Function]";
+      };
+      showdown.helper.isArray = function(a) {
+        "use strict";
+        return Array.isArray(a);
+      };
+      showdown.helper.isUndefined = function(value) {
+        "use strict";
+        return typeof value === "undefined";
+      };
+      showdown.helper.forEach = function(obj, callback) {
+        "use strict";
+        if (showdown.helper.isUndefined(obj)) {
+          throw new Error("obj param is required");
+        }
+        if (showdown.helper.isUndefined(callback)) {
+          throw new Error("callback param is required");
+        }
+        if (!showdown.helper.isFunction(callback)) {
+          throw new Error("callback param must be a function/closure");
+        }
+        if (typeof obj.forEach === "function") {
+          obj.forEach(callback);
+        } else if (showdown.helper.isArray(obj)) {
+          for (var i = 0; i < obj.length; i++) {
+            callback(obj[i], i, obj);
+          }
+        } else if (typeof obj === "object") {
+          for (var prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+              callback(obj[prop], prop, obj);
+            }
+          }
+        } else {
+          throw new Error("obj does not seem to be an array or an iterable object");
+        }
+      };
+      showdown.helper.stdExtName = function(s) {
+        "use strict";
+        return s.replace(/[_?*+\/\\.^-]/g, "").replace(/\s/g, "").toLowerCase();
+      };
+      function escapeCharactersCallback(wholeMatch, m1) {
+        "use strict";
+        var charCodeToEscape = m1.charCodeAt(0);
+        return "\xA8E" + charCodeToEscape + "E";
+      }
+      showdown.helper.escapeCharactersCallback = escapeCharactersCallback;
+      showdown.helper.escapeCharacters = function(text, charsToEscape, afterBackslash) {
+        "use strict";
+        var regexString = "([" + charsToEscape.replace(/([\[\]\\])/g, "\\$1") + "])";
+        if (afterBackslash) {
+          regexString = "\\\\" + regexString;
+        }
+        var regex = new RegExp(regexString, "g");
+        text = text.replace(regex, escapeCharactersCallback);
+        return text;
+      };
+      showdown.helper.unescapeHTMLEntities = function(txt) {
+        "use strict";
+        return txt.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+      };
+      var rgxFindMatchPos = function(str, left, right, flags) {
+        "use strict";
+        var f = flags || "", g = f.indexOf("g") > -1, x = new RegExp(left + "|" + right, "g" + f.replace(/g/g, "")), l = new RegExp(left, f.replace(/g/g, "")), pos = [], t, s, m, start, end;
+        do {
+          t = 0;
+          while (m = x.exec(str)) {
+            if (l.test(m[0])) {
+              if (!t++) {
+                s = x.lastIndex;
+                start = s - m[0].length;
+              }
+            } else if (t) {
+              if (!--t) {
+                end = m.index + m[0].length;
+                var obj = {
+                  left: { start, end: s },
+                  match: { start: s, end: m.index },
+                  right: { start: m.index, end },
+                  wholeMatch: { start, end }
+                };
+                pos.push(obj);
+                if (!g) {
+                  return pos;
+                }
+              }
+            }
+          }
+        } while (t && (x.lastIndex = s));
+        return pos;
+      };
+      showdown.helper.matchRecursiveRegExp = function(str, left, right, flags) {
+        "use strict";
+        var matchPos = rgxFindMatchPos(str, left, right, flags), results = [];
+        for (var i = 0; i < matchPos.length; ++i) {
+          results.push([
+            str.slice(matchPos[i].wholeMatch.start, matchPos[i].wholeMatch.end),
+            str.slice(matchPos[i].match.start, matchPos[i].match.end),
+            str.slice(matchPos[i].left.start, matchPos[i].left.end),
+            str.slice(matchPos[i].right.start, matchPos[i].right.end)
+          ]);
+        }
+        return results;
+      };
+      showdown.helper.replaceRecursiveRegExp = function(str, replacement, left, right, flags) {
+        "use strict";
+        if (!showdown.helper.isFunction(replacement)) {
+          var repStr = replacement;
+          replacement = function() {
+            return repStr;
           };
         }
-        return prng;
-      }
-      if (module3 && module3.exports) {
-        module3.exports = impl;
-      } else if (define2 && define2.amd) {
-        define2(function() {
-          return impl;
-        });
-      } else {
-        this.tychei = impl;
-      }
-    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
-  }
-});
-
-// node_modules/seedrandom/seedrandom.js
-var require_seedrandom = __commonJS({
-  "node_modules/seedrandom/seedrandom.js"(exports2, module2) {
-    (function(global2, pool, math) {
-      var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
-      function seedrandom2(seed, options, callback) {
-        var key = [];
-        options = options == true ? { entropy: true } : options || {};
-        var shortseed = mixkey(flatten(options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed, 3), key);
-        var arc4 = new ARC4(key);
-        var prng = function() {
-          var n = arc4.g(chunks), d = startdenom, x = 0;
-          while (n < significance) {
-            n = (n + x) * width;
-            d *= width;
-            x = arc4.g(1);
+        var matchPos = rgxFindMatchPos(str, left, right, flags), finalStr = str, lng = matchPos.length;
+        if (lng > 0) {
+          var bits = [];
+          if (matchPos[0].wholeMatch.start !== 0) {
+            bits.push(str.slice(0, matchPos[0].wholeMatch.start));
           }
-          while (n >= overflow) {
-            n /= 2;
-            d /= 2;
-            x >>>= 1;
-          }
-          return (n + x) / d;
-        };
-        prng.int32 = function() {
-          return arc4.g(4) | 0;
-        };
-        prng.quick = function() {
-          return arc4.g(4) / 4294967296;
-        };
-        prng.double = prng;
-        mixkey(tostring(arc4.S), pool);
-        return (options.pass || callback || function(prng2, seed2, is_math_call, state) {
-          if (state) {
-            if (state.S) {
-              copy(state, arc4);
-            }
-            prng2.state = function() {
-              return copy(arc4, {});
-            };
-          }
-          if (is_math_call) {
-            math[rngname] = prng2;
-            return seed2;
-          } else
-            return prng2;
-        })(prng, shortseed, "global" in options ? options.global : this == math, options.state);
-      }
-      function ARC4(key) {
-        var t, keylen = key.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
-        if (!keylen) {
-          key = [keylen++];
-        }
-        while (i < width) {
-          s[i] = i++;
-        }
-        for (i = 0; i < width; i++) {
-          s[i] = s[j = mask & j + key[i % keylen] + (t = s[i])];
-          s[j] = t;
-        }
-        (me.g = function(count) {
-          var t2, r = 0, i2 = me.i, j2 = me.j, s2 = me.S;
-          while (count--) {
-            t2 = s2[i2 = mask & i2 + 1];
-            r = r * width + s2[mask & (s2[i2] = s2[j2 = mask & j2 + t2]) + (s2[j2] = t2)];
-          }
-          me.i = i2;
-          me.j = j2;
-          return r;
-        })(width);
-      }
-      function copy(f, t) {
-        t.i = f.i;
-        t.j = f.j;
-        t.S = f.S.slice();
-        return t;
-      }
-      ;
-      function flatten(obj, depth) {
-        var result = [], typ = typeof obj, prop;
-        if (depth && typ == "object") {
-          for (prop in obj) {
-            try {
-              result.push(flatten(obj[prop], depth - 1));
-            } catch (e) {
+          for (var i = 0; i < lng; ++i) {
+            bits.push(replacement(str.slice(matchPos[i].wholeMatch.start, matchPos[i].wholeMatch.end), str.slice(matchPos[i].match.start, matchPos[i].match.end), str.slice(matchPos[i].left.start, matchPos[i].left.end), str.slice(matchPos[i].right.start, matchPos[i].right.end)));
+            if (i < lng - 1) {
+              bits.push(str.slice(matchPos[i].wholeMatch.end, matchPos[i + 1].wholeMatch.start));
             }
           }
+          if (matchPos[lng - 1].wholeMatch.end < str.length) {
+            bits.push(str.slice(matchPos[lng - 1].wholeMatch.end));
+          }
+          finalStr = bits.join("");
         }
-        return result.length ? result : typ == "string" ? obj : obj + "\0";
-      }
-      function mixkey(seed, key) {
-        var stringseed = seed + "", smear, j = 0;
-        while (j < stringseed.length) {
-          key[mask & j] = mask & (smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++);
+        return finalStr;
+      };
+      showdown.helper.regexIndexOf = function(str, regex, fromIndex) {
+        "use strict";
+        if (!showdown.helper.isString(str)) {
+          throw "InvalidArgumentError: first parameter of showdown.helper.regexIndexOf function must be a string";
         }
-        return tostring(key);
-      }
-      function autoseed() {
-        try {
-          var out;
-          if (nodecrypto && (out = nodecrypto.randomBytes)) {
-            out = out(width);
+        if (regex instanceof RegExp === false) {
+          throw "InvalidArgumentError: second parameter of showdown.helper.regexIndexOf function must be an instance of RegExp";
+        }
+        var indexOf = str.substring(fromIndex || 0).search(regex);
+        return indexOf >= 0 ? indexOf + (fromIndex || 0) : indexOf;
+      };
+      showdown.helper.splitAtIndex = function(str, index) {
+        "use strict";
+        if (!showdown.helper.isString(str)) {
+          throw "InvalidArgumentError: first parameter of showdown.helper.regexIndexOf function must be a string";
+        }
+        return [str.substring(0, index), str.substring(index)];
+      };
+      showdown.helper.encodeEmailAddress = function(mail) {
+        "use strict";
+        var encode = [
+          function(ch) {
+            return "&#" + ch.charCodeAt(0) + ";";
+          },
+          function(ch) {
+            return "&#x" + ch.charCodeAt(0).toString(16) + ";";
+          },
+          function(ch) {
+            return ch;
+          }
+        ];
+        mail = mail.replace(/./g, function(ch) {
+          if (ch === "@") {
+            ch = encode[Math.floor(Math.random() * 2)](ch);
           } else {
-            out = new Uint8Array(width);
-            (global2.crypto || global2.msCrypto).getRandomValues(out);
+            var r = Math.random();
+            ch = r > 0.9 ? encode[2](ch) : r > 0.45 ? encode[1](ch) : encode[0](ch);
           }
-          return tostring(out);
-        } catch (e) {
-          var browser = global2.navigator, plugins = browser && browser.plugins;
-          return [+new Date(), global2, plugins, global2.screen, tostring(pool)];
+          return ch;
+        });
+        return mail;
+      };
+      showdown.helper.padEnd = function padEnd(str, targetLength, padString) {
+        "use strict";
+        targetLength = targetLength >> 0;
+        padString = String(padString || " ");
+        if (str.length > targetLength) {
+          return String(str);
+        } else {
+          targetLength = targetLength - str.length;
+          if (targetLength > padString.length) {
+            padString += padString.repeat(targetLength / padString.length);
+          }
+          return String(str) + padString.slice(0, targetLength);
         }
+      };
+      if (typeof console === "undefined") {
+        console = {
+          warn: function(msg) {
+            "use strict";
+            alert(msg);
+          },
+          log: function(msg) {
+            "use strict";
+            alert(msg);
+          },
+          error: function(msg) {
+            "use strict";
+            throw msg;
+          }
+        };
       }
-      function tostring(a) {
-        return String.fromCharCode.apply(0, a);
-      }
-      mixkey(math.random(), pool);
-      if (typeof module2 == "object" && module2.exports) {
-        module2.exports = seedrandom2;
-        try {
-          nodecrypto = require("crypto");
-        } catch (ex) {
+      showdown.helper.regexes = {
+        asteriskDashAndColon: /([*_:~])/g
+      };
+      showdown.helper.emojis = {
+        "+1": "\u{1F44D}",
+        "-1": "\u{1F44E}",
+        "100": "\u{1F4AF}",
+        "1234": "\u{1F522}",
+        "1st_place_medal": "\u{1F947}",
+        "2nd_place_medal": "\u{1F948}",
+        "3rd_place_medal": "\u{1F949}",
+        "8ball": "\u{1F3B1}",
+        "a": "\u{1F170}\uFE0F",
+        "ab": "\u{1F18E}",
+        "abc": "\u{1F524}",
+        "abcd": "\u{1F521}",
+        "accept": "\u{1F251}",
+        "aerial_tramway": "\u{1F6A1}",
+        "airplane": "\u2708\uFE0F",
+        "alarm_clock": "\u23F0",
+        "alembic": "\u2697\uFE0F",
+        "alien": "\u{1F47D}",
+        "ambulance": "\u{1F691}",
+        "amphora": "\u{1F3FA}",
+        "anchor": "\u2693\uFE0F",
+        "angel": "\u{1F47C}",
+        "anger": "\u{1F4A2}",
+        "angry": "\u{1F620}",
+        "anguished": "\u{1F627}",
+        "ant": "\u{1F41C}",
+        "apple": "\u{1F34E}",
+        "aquarius": "\u2652\uFE0F",
+        "aries": "\u2648\uFE0F",
+        "arrow_backward": "\u25C0\uFE0F",
+        "arrow_double_down": "\u23EC",
+        "arrow_double_up": "\u23EB",
+        "arrow_down": "\u2B07\uFE0F",
+        "arrow_down_small": "\u{1F53D}",
+        "arrow_forward": "\u25B6\uFE0F",
+        "arrow_heading_down": "\u2935\uFE0F",
+        "arrow_heading_up": "\u2934\uFE0F",
+        "arrow_left": "\u2B05\uFE0F",
+        "arrow_lower_left": "\u2199\uFE0F",
+        "arrow_lower_right": "\u2198\uFE0F",
+        "arrow_right": "\u27A1\uFE0F",
+        "arrow_right_hook": "\u21AA\uFE0F",
+        "arrow_up": "\u2B06\uFE0F",
+        "arrow_up_down": "\u2195\uFE0F",
+        "arrow_up_small": "\u{1F53C}",
+        "arrow_upper_left": "\u2196\uFE0F",
+        "arrow_upper_right": "\u2197\uFE0F",
+        "arrows_clockwise": "\u{1F503}",
+        "arrows_counterclockwise": "\u{1F504}",
+        "art": "\u{1F3A8}",
+        "articulated_lorry": "\u{1F69B}",
+        "artificial_satellite": "\u{1F6F0}",
+        "astonished": "\u{1F632}",
+        "athletic_shoe": "\u{1F45F}",
+        "atm": "\u{1F3E7}",
+        "atom_symbol": "\u269B\uFE0F",
+        "avocado": "\u{1F951}",
+        "b": "\u{1F171}\uFE0F",
+        "baby": "\u{1F476}",
+        "baby_bottle": "\u{1F37C}",
+        "baby_chick": "\u{1F424}",
+        "baby_symbol": "\u{1F6BC}",
+        "back": "\u{1F519}",
+        "bacon": "\u{1F953}",
+        "badminton": "\u{1F3F8}",
+        "baggage_claim": "\u{1F6C4}",
+        "baguette_bread": "\u{1F956}",
+        "balance_scale": "\u2696\uFE0F",
+        "balloon": "\u{1F388}",
+        "ballot_box": "\u{1F5F3}",
+        "ballot_box_with_check": "\u2611\uFE0F",
+        "bamboo": "\u{1F38D}",
+        "banana": "\u{1F34C}",
+        "bangbang": "\u203C\uFE0F",
+        "bank": "\u{1F3E6}",
+        "bar_chart": "\u{1F4CA}",
+        "barber": "\u{1F488}",
+        "baseball": "\u26BE\uFE0F",
+        "basketball": "\u{1F3C0}",
+        "basketball_man": "\u26F9\uFE0F",
+        "basketball_woman": "\u26F9\uFE0F&zwj;\u2640\uFE0F",
+        "bat": "\u{1F987}",
+        "bath": "\u{1F6C0}",
+        "bathtub": "\u{1F6C1}",
+        "battery": "\u{1F50B}",
+        "beach_umbrella": "\u{1F3D6}",
+        "bear": "\u{1F43B}",
+        "bed": "\u{1F6CF}",
+        "bee": "\u{1F41D}",
+        "beer": "\u{1F37A}",
+        "beers": "\u{1F37B}",
+        "beetle": "\u{1F41E}",
+        "beginner": "\u{1F530}",
+        "bell": "\u{1F514}",
+        "bellhop_bell": "\u{1F6CE}",
+        "bento": "\u{1F371}",
+        "biking_man": "\u{1F6B4}",
+        "bike": "\u{1F6B2}",
+        "biking_woman": "\u{1F6B4}&zwj;\u2640\uFE0F",
+        "bikini": "\u{1F459}",
+        "biohazard": "\u2623\uFE0F",
+        "bird": "\u{1F426}",
+        "birthday": "\u{1F382}",
+        "black_circle": "\u26AB\uFE0F",
+        "black_flag": "\u{1F3F4}",
+        "black_heart": "\u{1F5A4}",
+        "black_joker": "\u{1F0CF}",
+        "black_large_square": "\u2B1B\uFE0F",
+        "black_medium_small_square": "\u25FE\uFE0F",
+        "black_medium_square": "\u25FC\uFE0F",
+        "black_nib": "\u2712\uFE0F",
+        "black_small_square": "\u25AA\uFE0F",
+        "black_square_button": "\u{1F532}",
+        "blonde_man": "\u{1F471}",
+        "blonde_woman": "\u{1F471}&zwj;\u2640\uFE0F",
+        "blossom": "\u{1F33C}",
+        "blowfish": "\u{1F421}",
+        "blue_book": "\u{1F4D8}",
+        "blue_car": "\u{1F699}",
+        "blue_heart": "\u{1F499}",
+        "blush": "\u{1F60A}",
+        "boar": "\u{1F417}",
+        "boat": "\u26F5\uFE0F",
+        "bomb": "\u{1F4A3}",
+        "book": "\u{1F4D6}",
+        "bookmark": "\u{1F516}",
+        "bookmark_tabs": "\u{1F4D1}",
+        "books": "\u{1F4DA}",
+        "boom": "\u{1F4A5}",
+        "boot": "\u{1F462}",
+        "bouquet": "\u{1F490}",
+        "bowing_man": "\u{1F647}",
+        "bow_and_arrow": "\u{1F3F9}",
+        "bowing_woman": "\u{1F647}&zwj;\u2640\uFE0F",
+        "bowling": "\u{1F3B3}",
+        "boxing_glove": "\u{1F94A}",
+        "boy": "\u{1F466}",
+        "bread": "\u{1F35E}",
+        "bride_with_veil": "\u{1F470}",
+        "bridge_at_night": "\u{1F309}",
+        "briefcase": "\u{1F4BC}",
+        "broken_heart": "\u{1F494}",
+        "bug": "\u{1F41B}",
+        "building_construction": "\u{1F3D7}",
+        "bulb": "\u{1F4A1}",
+        "bullettrain_front": "\u{1F685}",
+        "bullettrain_side": "\u{1F684}",
+        "burrito": "\u{1F32F}",
+        "bus": "\u{1F68C}",
+        "business_suit_levitating": "\u{1F574}",
+        "busstop": "\u{1F68F}",
+        "bust_in_silhouette": "\u{1F464}",
+        "busts_in_silhouette": "\u{1F465}",
+        "butterfly": "\u{1F98B}",
+        "cactus": "\u{1F335}",
+        "cake": "\u{1F370}",
+        "calendar": "\u{1F4C6}",
+        "call_me_hand": "\u{1F919}",
+        "calling": "\u{1F4F2}",
+        "camel": "\u{1F42B}",
+        "camera": "\u{1F4F7}",
+        "camera_flash": "\u{1F4F8}",
+        "camping": "\u{1F3D5}",
+        "cancer": "\u264B\uFE0F",
+        "candle": "\u{1F56F}",
+        "candy": "\u{1F36C}",
+        "canoe": "\u{1F6F6}",
+        "capital_abcd": "\u{1F520}",
+        "capricorn": "\u2651\uFE0F",
+        "car": "\u{1F697}",
+        "card_file_box": "\u{1F5C3}",
+        "card_index": "\u{1F4C7}",
+        "card_index_dividers": "\u{1F5C2}",
+        "carousel_horse": "\u{1F3A0}",
+        "carrot": "\u{1F955}",
+        "cat": "\u{1F431}",
+        "cat2": "\u{1F408}",
+        "cd": "\u{1F4BF}",
+        "chains": "\u26D3",
+        "champagne": "\u{1F37E}",
+        "chart": "\u{1F4B9}",
+        "chart_with_downwards_trend": "\u{1F4C9}",
+        "chart_with_upwards_trend": "\u{1F4C8}",
+        "checkered_flag": "\u{1F3C1}",
+        "cheese": "\u{1F9C0}",
+        "cherries": "\u{1F352}",
+        "cherry_blossom": "\u{1F338}",
+        "chestnut": "\u{1F330}",
+        "chicken": "\u{1F414}",
+        "children_crossing": "\u{1F6B8}",
+        "chipmunk": "\u{1F43F}",
+        "chocolate_bar": "\u{1F36B}",
+        "christmas_tree": "\u{1F384}",
+        "church": "\u26EA\uFE0F",
+        "cinema": "\u{1F3A6}",
+        "circus_tent": "\u{1F3AA}",
+        "city_sunrise": "\u{1F307}",
+        "city_sunset": "\u{1F306}",
+        "cityscape": "\u{1F3D9}",
+        "cl": "\u{1F191}",
+        "clamp": "\u{1F5DC}",
+        "clap": "\u{1F44F}",
+        "clapper": "\u{1F3AC}",
+        "classical_building": "\u{1F3DB}",
+        "clinking_glasses": "\u{1F942}",
+        "clipboard": "\u{1F4CB}",
+        "clock1": "\u{1F550}",
+        "clock10": "\u{1F559}",
+        "clock1030": "\u{1F565}",
+        "clock11": "\u{1F55A}",
+        "clock1130": "\u{1F566}",
+        "clock12": "\u{1F55B}",
+        "clock1230": "\u{1F567}",
+        "clock130": "\u{1F55C}",
+        "clock2": "\u{1F551}",
+        "clock230": "\u{1F55D}",
+        "clock3": "\u{1F552}",
+        "clock330": "\u{1F55E}",
+        "clock4": "\u{1F553}",
+        "clock430": "\u{1F55F}",
+        "clock5": "\u{1F554}",
+        "clock530": "\u{1F560}",
+        "clock6": "\u{1F555}",
+        "clock630": "\u{1F561}",
+        "clock7": "\u{1F556}",
+        "clock730": "\u{1F562}",
+        "clock8": "\u{1F557}",
+        "clock830": "\u{1F563}",
+        "clock9": "\u{1F558}",
+        "clock930": "\u{1F564}",
+        "closed_book": "\u{1F4D5}",
+        "closed_lock_with_key": "\u{1F510}",
+        "closed_umbrella": "\u{1F302}",
+        "cloud": "\u2601\uFE0F",
+        "cloud_with_lightning": "\u{1F329}",
+        "cloud_with_lightning_and_rain": "\u26C8",
+        "cloud_with_rain": "\u{1F327}",
+        "cloud_with_snow": "\u{1F328}",
+        "clown_face": "\u{1F921}",
+        "clubs": "\u2663\uFE0F",
+        "cocktail": "\u{1F378}",
+        "coffee": "\u2615\uFE0F",
+        "coffin": "\u26B0\uFE0F",
+        "cold_sweat": "\u{1F630}",
+        "comet": "\u2604\uFE0F",
+        "computer": "\u{1F4BB}",
+        "computer_mouse": "\u{1F5B1}",
+        "confetti_ball": "\u{1F38A}",
+        "confounded": "\u{1F616}",
+        "confused": "\u{1F615}",
+        "congratulations": "\u3297\uFE0F",
+        "construction": "\u{1F6A7}",
+        "construction_worker_man": "\u{1F477}",
+        "construction_worker_woman": "\u{1F477}&zwj;\u2640\uFE0F",
+        "control_knobs": "\u{1F39B}",
+        "convenience_store": "\u{1F3EA}",
+        "cookie": "\u{1F36A}",
+        "cool": "\u{1F192}",
+        "policeman": "\u{1F46E}",
+        "copyright": "\xA9\uFE0F",
+        "corn": "\u{1F33D}",
+        "couch_and_lamp": "\u{1F6CB}",
+        "couple": "\u{1F46B}",
+        "couple_with_heart_woman_man": "\u{1F491}",
+        "couple_with_heart_man_man": "\u{1F468}&zwj;\u2764\uFE0F&zwj;\u{1F468}",
+        "couple_with_heart_woman_woman": "\u{1F469}&zwj;\u2764\uFE0F&zwj;\u{1F469}",
+        "couplekiss_man_man": "\u{1F468}&zwj;\u2764\uFE0F&zwj;\u{1F48B}&zwj;\u{1F468}",
+        "couplekiss_man_woman": "\u{1F48F}",
+        "couplekiss_woman_woman": "\u{1F469}&zwj;\u2764\uFE0F&zwj;\u{1F48B}&zwj;\u{1F469}",
+        "cow": "\u{1F42E}",
+        "cow2": "\u{1F404}",
+        "cowboy_hat_face": "\u{1F920}",
+        "crab": "\u{1F980}",
+        "crayon": "\u{1F58D}",
+        "credit_card": "\u{1F4B3}",
+        "crescent_moon": "\u{1F319}",
+        "cricket": "\u{1F3CF}",
+        "crocodile": "\u{1F40A}",
+        "croissant": "\u{1F950}",
+        "crossed_fingers": "\u{1F91E}",
+        "crossed_flags": "\u{1F38C}",
+        "crossed_swords": "\u2694\uFE0F",
+        "crown": "\u{1F451}",
+        "cry": "\u{1F622}",
+        "crying_cat_face": "\u{1F63F}",
+        "crystal_ball": "\u{1F52E}",
+        "cucumber": "\u{1F952}",
+        "cupid": "\u{1F498}",
+        "curly_loop": "\u27B0",
+        "currency_exchange": "\u{1F4B1}",
+        "curry": "\u{1F35B}",
+        "custard": "\u{1F36E}",
+        "customs": "\u{1F6C3}",
+        "cyclone": "\u{1F300}",
+        "dagger": "\u{1F5E1}",
+        "dancer": "\u{1F483}",
+        "dancing_women": "\u{1F46F}",
+        "dancing_men": "\u{1F46F}&zwj;\u2642\uFE0F",
+        "dango": "\u{1F361}",
+        "dark_sunglasses": "\u{1F576}",
+        "dart": "\u{1F3AF}",
+        "dash": "\u{1F4A8}",
+        "date": "\u{1F4C5}",
+        "deciduous_tree": "\u{1F333}",
+        "deer": "\u{1F98C}",
+        "department_store": "\u{1F3EC}",
+        "derelict_house": "\u{1F3DA}",
+        "desert": "\u{1F3DC}",
+        "desert_island": "\u{1F3DD}",
+        "desktop_computer": "\u{1F5A5}",
+        "male_detective": "\u{1F575}\uFE0F",
+        "diamond_shape_with_a_dot_inside": "\u{1F4A0}",
+        "diamonds": "\u2666\uFE0F",
+        "disappointed": "\u{1F61E}",
+        "disappointed_relieved": "\u{1F625}",
+        "dizzy": "\u{1F4AB}",
+        "dizzy_face": "\u{1F635}",
+        "do_not_litter": "\u{1F6AF}",
+        "dog": "\u{1F436}",
+        "dog2": "\u{1F415}",
+        "dollar": "\u{1F4B5}",
+        "dolls": "\u{1F38E}",
+        "dolphin": "\u{1F42C}",
+        "door": "\u{1F6AA}",
+        "doughnut": "\u{1F369}",
+        "dove": "\u{1F54A}",
+        "dragon": "\u{1F409}",
+        "dragon_face": "\u{1F432}",
+        "dress": "\u{1F457}",
+        "dromedary_camel": "\u{1F42A}",
+        "drooling_face": "\u{1F924}",
+        "droplet": "\u{1F4A7}",
+        "drum": "\u{1F941}",
+        "duck": "\u{1F986}",
+        "dvd": "\u{1F4C0}",
+        "e-mail": "\u{1F4E7}",
+        "eagle": "\u{1F985}",
+        "ear": "\u{1F442}",
+        "ear_of_rice": "\u{1F33E}",
+        "earth_africa": "\u{1F30D}",
+        "earth_americas": "\u{1F30E}",
+        "earth_asia": "\u{1F30F}",
+        "egg": "\u{1F95A}",
+        "eggplant": "\u{1F346}",
+        "eight_pointed_black_star": "\u2734\uFE0F",
+        "eight_spoked_asterisk": "\u2733\uFE0F",
+        "electric_plug": "\u{1F50C}",
+        "elephant": "\u{1F418}",
+        "email": "\u2709\uFE0F",
+        "end": "\u{1F51A}",
+        "envelope_with_arrow": "\u{1F4E9}",
+        "euro": "\u{1F4B6}",
+        "european_castle": "\u{1F3F0}",
+        "european_post_office": "\u{1F3E4}",
+        "evergreen_tree": "\u{1F332}",
+        "exclamation": "\u2757\uFE0F",
+        "expressionless": "\u{1F611}",
+        "eye": "\u{1F441}",
+        "eye_speech_bubble": "\u{1F441}&zwj;\u{1F5E8}",
+        "eyeglasses": "\u{1F453}",
+        "eyes": "\u{1F440}",
+        "face_with_head_bandage": "\u{1F915}",
+        "face_with_thermometer": "\u{1F912}",
+        "fist_oncoming": "\u{1F44A}",
+        "factory": "\u{1F3ED}",
+        "fallen_leaf": "\u{1F342}",
+        "family_man_woman_boy": "\u{1F46A}",
+        "family_man_boy": "\u{1F468}&zwj;\u{1F466}",
+        "family_man_boy_boy": "\u{1F468}&zwj;\u{1F466}&zwj;\u{1F466}",
+        "family_man_girl": "\u{1F468}&zwj;\u{1F467}",
+        "family_man_girl_boy": "\u{1F468}&zwj;\u{1F467}&zwj;\u{1F466}",
+        "family_man_girl_girl": "\u{1F468}&zwj;\u{1F467}&zwj;\u{1F467}",
+        "family_man_man_boy": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F466}",
+        "family_man_man_boy_boy": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F466}&zwj;\u{1F466}",
+        "family_man_man_girl": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F467}",
+        "family_man_man_girl_boy": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F467}&zwj;\u{1F466}",
+        "family_man_man_girl_girl": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F467}&zwj;\u{1F467}",
+        "family_man_woman_boy_boy": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F466}&zwj;\u{1F466}",
+        "family_man_woman_girl": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F467}",
+        "family_man_woman_girl_boy": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F466}",
+        "family_man_woman_girl_girl": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F467}",
+        "family_woman_boy": "\u{1F469}&zwj;\u{1F466}",
+        "family_woman_boy_boy": "\u{1F469}&zwj;\u{1F466}&zwj;\u{1F466}",
+        "family_woman_girl": "\u{1F469}&zwj;\u{1F467}",
+        "family_woman_girl_boy": "\u{1F469}&zwj;\u{1F467}&zwj;\u{1F466}",
+        "family_woman_girl_girl": "\u{1F469}&zwj;\u{1F467}&zwj;\u{1F467}",
+        "family_woman_woman_boy": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F466}",
+        "family_woman_woman_boy_boy": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F466}&zwj;\u{1F466}",
+        "family_woman_woman_girl": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F467}",
+        "family_woman_woman_girl_boy": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F466}",
+        "family_woman_woman_girl_girl": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F467}",
+        "fast_forward": "\u23E9",
+        "fax": "\u{1F4E0}",
+        "fearful": "\u{1F628}",
+        "feet": "\u{1F43E}",
+        "female_detective": "\u{1F575}\uFE0F&zwj;\u2640\uFE0F",
+        "ferris_wheel": "\u{1F3A1}",
+        "ferry": "\u26F4",
+        "field_hockey": "\u{1F3D1}",
+        "file_cabinet": "\u{1F5C4}",
+        "file_folder": "\u{1F4C1}",
+        "film_projector": "\u{1F4FD}",
+        "film_strip": "\u{1F39E}",
+        "fire": "\u{1F525}",
+        "fire_engine": "\u{1F692}",
+        "fireworks": "\u{1F386}",
+        "first_quarter_moon": "\u{1F313}",
+        "first_quarter_moon_with_face": "\u{1F31B}",
+        "fish": "\u{1F41F}",
+        "fish_cake": "\u{1F365}",
+        "fishing_pole_and_fish": "\u{1F3A3}",
+        "fist_raised": "\u270A",
+        "fist_left": "\u{1F91B}",
+        "fist_right": "\u{1F91C}",
+        "flags": "\u{1F38F}",
+        "flashlight": "\u{1F526}",
+        "fleur_de_lis": "\u269C\uFE0F",
+        "flight_arrival": "\u{1F6EC}",
+        "flight_departure": "\u{1F6EB}",
+        "floppy_disk": "\u{1F4BE}",
+        "flower_playing_cards": "\u{1F3B4}",
+        "flushed": "\u{1F633}",
+        "fog": "\u{1F32B}",
+        "foggy": "\u{1F301}",
+        "football": "\u{1F3C8}",
+        "footprints": "\u{1F463}",
+        "fork_and_knife": "\u{1F374}",
+        "fountain": "\u26F2\uFE0F",
+        "fountain_pen": "\u{1F58B}",
+        "four_leaf_clover": "\u{1F340}",
+        "fox_face": "\u{1F98A}",
+        "framed_picture": "\u{1F5BC}",
+        "free": "\u{1F193}",
+        "fried_egg": "\u{1F373}",
+        "fried_shrimp": "\u{1F364}",
+        "fries": "\u{1F35F}",
+        "frog": "\u{1F438}",
+        "frowning": "\u{1F626}",
+        "frowning_face": "\u2639\uFE0F",
+        "frowning_man": "\u{1F64D}&zwj;\u2642\uFE0F",
+        "frowning_woman": "\u{1F64D}",
+        "middle_finger": "\u{1F595}",
+        "fuelpump": "\u26FD\uFE0F",
+        "full_moon": "\u{1F315}",
+        "full_moon_with_face": "\u{1F31D}",
+        "funeral_urn": "\u26B1\uFE0F",
+        "game_die": "\u{1F3B2}",
+        "gear": "\u2699\uFE0F",
+        "gem": "\u{1F48E}",
+        "gemini": "\u264A\uFE0F",
+        "ghost": "\u{1F47B}",
+        "gift": "\u{1F381}",
+        "gift_heart": "\u{1F49D}",
+        "girl": "\u{1F467}",
+        "globe_with_meridians": "\u{1F310}",
+        "goal_net": "\u{1F945}",
+        "goat": "\u{1F410}",
+        "golf": "\u26F3\uFE0F",
+        "golfing_man": "\u{1F3CC}\uFE0F",
+        "golfing_woman": "\u{1F3CC}\uFE0F&zwj;\u2640\uFE0F",
+        "gorilla": "\u{1F98D}",
+        "grapes": "\u{1F347}",
+        "green_apple": "\u{1F34F}",
+        "green_book": "\u{1F4D7}",
+        "green_heart": "\u{1F49A}",
+        "green_salad": "\u{1F957}",
+        "grey_exclamation": "\u2755",
+        "grey_question": "\u2754",
+        "grimacing": "\u{1F62C}",
+        "grin": "\u{1F601}",
+        "grinning": "\u{1F600}",
+        "guardsman": "\u{1F482}",
+        "guardswoman": "\u{1F482}&zwj;\u2640\uFE0F",
+        "guitar": "\u{1F3B8}",
+        "gun": "\u{1F52B}",
+        "haircut_woman": "\u{1F487}",
+        "haircut_man": "\u{1F487}&zwj;\u2642\uFE0F",
+        "hamburger": "\u{1F354}",
+        "hammer": "\u{1F528}",
+        "hammer_and_pick": "\u2692",
+        "hammer_and_wrench": "\u{1F6E0}",
+        "hamster": "\u{1F439}",
+        "hand": "\u270B",
+        "handbag": "\u{1F45C}",
+        "handshake": "\u{1F91D}",
+        "hankey": "\u{1F4A9}",
+        "hatched_chick": "\u{1F425}",
+        "hatching_chick": "\u{1F423}",
+        "headphones": "\u{1F3A7}",
+        "hear_no_evil": "\u{1F649}",
+        "heart": "\u2764\uFE0F",
+        "heart_decoration": "\u{1F49F}",
+        "heart_eyes": "\u{1F60D}",
+        "heart_eyes_cat": "\u{1F63B}",
+        "heartbeat": "\u{1F493}",
+        "heartpulse": "\u{1F497}",
+        "hearts": "\u2665\uFE0F",
+        "heavy_check_mark": "\u2714\uFE0F",
+        "heavy_division_sign": "\u2797",
+        "heavy_dollar_sign": "\u{1F4B2}",
+        "heavy_heart_exclamation": "\u2763\uFE0F",
+        "heavy_minus_sign": "\u2796",
+        "heavy_multiplication_x": "\u2716\uFE0F",
+        "heavy_plus_sign": "\u2795",
+        "helicopter": "\u{1F681}",
+        "herb": "\u{1F33F}",
+        "hibiscus": "\u{1F33A}",
+        "high_brightness": "\u{1F506}",
+        "high_heel": "\u{1F460}",
+        "hocho": "\u{1F52A}",
+        "hole": "\u{1F573}",
+        "honey_pot": "\u{1F36F}",
+        "horse": "\u{1F434}",
+        "horse_racing": "\u{1F3C7}",
+        "hospital": "\u{1F3E5}",
+        "hot_pepper": "\u{1F336}",
+        "hotdog": "\u{1F32D}",
+        "hotel": "\u{1F3E8}",
+        "hotsprings": "\u2668\uFE0F",
+        "hourglass": "\u231B\uFE0F",
+        "hourglass_flowing_sand": "\u23F3",
+        "house": "\u{1F3E0}",
+        "house_with_garden": "\u{1F3E1}",
+        "houses": "\u{1F3D8}",
+        "hugs": "\u{1F917}",
+        "hushed": "\u{1F62F}",
+        "ice_cream": "\u{1F368}",
+        "ice_hockey": "\u{1F3D2}",
+        "ice_skate": "\u26F8",
+        "icecream": "\u{1F366}",
+        "id": "\u{1F194}",
+        "ideograph_advantage": "\u{1F250}",
+        "imp": "\u{1F47F}",
+        "inbox_tray": "\u{1F4E5}",
+        "incoming_envelope": "\u{1F4E8}",
+        "tipping_hand_woman": "\u{1F481}",
+        "information_source": "\u2139\uFE0F",
+        "innocent": "\u{1F607}",
+        "interrobang": "\u2049\uFE0F",
+        "iphone": "\u{1F4F1}",
+        "izakaya_lantern": "\u{1F3EE}",
+        "jack_o_lantern": "\u{1F383}",
+        "japan": "\u{1F5FE}",
+        "japanese_castle": "\u{1F3EF}",
+        "japanese_goblin": "\u{1F47A}",
+        "japanese_ogre": "\u{1F479}",
+        "jeans": "\u{1F456}",
+        "joy": "\u{1F602}",
+        "joy_cat": "\u{1F639}",
+        "joystick": "\u{1F579}",
+        "kaaba": "\u{1F54B}",
+        "key": "\u{1F511}",
+        "keyboard": "\u2328\uFE0F",
+        "keycap_ten": "\u{1F51F}",
+        "kick_scooter": "\u{1F6F4}",
+        "kimono": "\u{1F458}",
+        "kiss": "\u{1F48B}",
+        "kissing": "\u{1F617}",
+        "kissing_cat": "\u{1F63D}",
+        "kissing_closed_eyes": "\u{1F61A}",
+        "kissing_heart": "\u{1F618}",
+        "kissing_smiling_eyes": "\u{1F619}",
+        "kiwi_fruit": "\u{1F95D}",
+        "koala": "\u{1F428}",
+        "koko": "\u{1F201}",
+        "label": "\u{1F3F7}",
+        "large_blue_circle": "\u{1F535}",
+        "large_blue_diamond": "\u{1F537}",
+        "large_orange_diamond": "\u{1F536}",
+        "last_quarter_moon": "\u{1F317}",
+        "last_quarter_moon_with_face": "\u{1F31C}",
+        "latin_cross": "\u271D\uFE0F",
+        "laughing": "\u{1F606}",
+        "leaves": "\u{1F343}",
+        "ledger": "\u{1F4D2}",
+        "left_luggage": "\u{1F6C5}",
+        "left_right_arrow": "\u2194\uFE0F",
+        "leftwards_arrow_with_hook": "\u21A9\uFE0F",
+        "lemon": "\u{1F34B}",
+        "leo": "\u264C\uFE0F",
+        "leopard": "\u{1F406}",
+        "level_slider": "\u{1F39A}",
+        "libra": "\u264E\uFE0F",
+        "light_rail": "\u{1F688}",
+        "link": "\u{1F517}",
+        "lion": "\u{1F981}",
+        "lips": "\u{1F444}",
+        "lipstick": "\u{1F484}",
+        "lizard": "\u{1F98E}",
+        "lock": "\u{1F512}",
+        "lock_with_ink_pen": "\u{1F50F}",
+        "lollipop": "\u{1F36D}",
+        "loop": "\u27BF",
+        "loud_sound": "\u{1F50A}",
+        "loudspeaker": "\u{1F4E2}",
+        "love_hotel": "\u{1F3E9}",
+        "love_letter": "\u{1F48C}",
+        "low_brightness": "\u{1F505}",
+        "lying_face": "\u{1F925}",
+        "m": "\u24C2\uFE0F",
+        "mag": "\u{1F50D}",
+        "mag_right": "\u{1F50E}",
+        "mahjong": "\u{1F004}\uFE0F",
+        "mailbox": "\u{1F4EB}",
+        "mailbox_closed": "\u{1F4EA}",
+        "mailbox_with_mail": "\u{1F4EC}",
+        "mailbox_with_no_mail": "\u{1F4ED}",
+        "man": "\u{1F468}",
+        "man_artist": "\u{1F468}&zwj;\u{1F3A8}",
+        "man_astronaut": "\u{1F468}&zwj;\u{1F680}",
+        "man_cartwheeling": "\u{1F938}&zwj;\u2642\uFE0F",
+        "man_cook": "\u{1F468}&zwj;\u{1F373}",
+        "man_dancing": "\u{1F57A}",
+        "man_facepalming": "\u{1F926}&zwj;\u2642\uFE0F",
+        "man_factory_worker": "\u{1F468}&zwj;\u{1F3ED}",
+        "man_farmer": "\u{1F468}&zwj;\u{1F33E}",
+        "man_firefighter": "\u{1F468}&zwj;\u{1F692}",
+        "man_health_worker": "\u{1F468}&zwj;\u2695\uFE0F",
+        "man_in_tuxedo": "\u{1F935}",
+        "man_judge": "\u{1F468}&zwj;\u2696\uFE0F",
+        "man_juggling": "\u{1F939}&zwj;\u2642\uFE0F",
+        "man_mechanic": "\u{1F468}&zwj;\u{1F527}",
+        "man_office_worker": "\u{1F468}&zwj;\u{1F4BC}",
+        "man_pilot": "\u{1F468}&zwj;\u2708\uFE0F",
+        "man_playing_handball": "\u{1F93E}&zwj;\u2642\uFE0F",
+        "man_playing_water_polo": "\u{1F93D}&zwj;\u2642\uFE0F",
+        "man_scientist": "\u{1F468}&zwj;\u{1F52C}",
+        "man_shrugging": "\u{1F937}&zwj;\u2642\uFE0F",
+        "man_singer": "\u{1F468}&zwj;\u{1F3A4}",
+        "man_student": "\u{1F468}&zwj;\u{1F393}",
+        "man_teacher": "\u{1F468}&zwj;\u{1F3EB}",
+        "man_technologist": "\u{1F468}&zwj;\u{1F4BB}",
+        "man_with_gua_pi_mao": "\u{1F472}",
+        "man_with_turban": "\u{1F473}",
+        "tangerine": "\u{1F34A}",
+        "mans_shoe": "\u{1F45E}",
+        "mantelpiece_clock": "\u{1F570}",
+        "maple_leaf": "\u{1F341}",
+        "martial_arts_uniform": "\u{1F94B}",
+        "mask": "\u{1F637}",
+        "massage_woman": "\u{1F486}",
+        "massage_man": "\u{1F486}&zwj;\u2642\uFE0F",
+        "meat_on_bone": "\u{1F356}",
+        "medal_military": "\u{1F396}",
+        "medal_sports": "\u{1F3C5}",
+        "mega": "\u{1F4E3}",
+        "melon": "\u{1F348}",
+        "memo": "\u{1F4DD}",
+        "men_wrestling": "\u{1F93C}&zwj;\u2642\uFE0F",
+        "menorah": "\u{1F54E}",
+        "mens": "\u{1F6B9}",
+        "metal": "\u{1F918}",
+        "metro": "\u{1F687}",
+        "microphone": "\u{1F3A4}",
+        "microscope": "\u{1F52C}",
+        "milk_glass": "\u{1F95B}",
+        "milky_way": "\u{1F30C}",
+        "minibus": "\u{1F690}",
+        "minidisc": "\u{1F4BD}",
+        "mobile_phone_off": "\u{1F4F4}",
+        "money_mouth_face": "\u{1F911}",
+        "money_with_wings": "\u{1F4B8}",
+        "moneybag": "\u{1F4B0}",
+        "monkey": "\u{1F412}",
+        "monkey_face": "\u{1F435}",
+        "monorail": "\u{1F69D}",
+        "moon": "\u{1F314}",
+        "mortar_board": "\u{1F393}",
+        "mosque": "\u{1F54C}",
+        "motor_boat": "\u{1F6E5}",
+        "motor_scooter": "\u{1F6F5}",
+        "motorcycle": "\u{1F3CD}",
+        "motorway": "\u{1F6E3}",
+        "mount_fuji": "\u{1F5FB}",
+        "mountain": "\u26F0",
+        "mountain_biking_man": "\u{1F6B5}",
+        "mountain_biking_woman": "\u{1F6B5}&zwj;\u2640\uFE0F",
+        "mountain_cableway": "\u{1F6A0}",
+        "mountain_railway": "\u{1F69E}",
+        "mountain_snow": "\u{1F3D4}",
+        "mouse": "\u{1F42D}",
+        "mouse2": "\u{1F401}",
+        "movie_camera": "\u{1F3A5}",
+        "moyai": "\u{1F5FF}",
+        "mrs_claus": "\u{1F936}",
+        "muscle": "\u{1F4AA}",
+        "mushroom": "\u{1F344}",
+        "musical_keyboard": "\u{1F3B9}",
+        "musical_note": "\u{1F3B5}",
+        "musical_score": "\u{1F3BC}",
+        "mute": "\u{1F507}",
+        "nail_care": "\u{1F485}",
+        "name_badge": "\u{1F4DB}",
+        "national_park": "\u{1F3DE}",
+        "nauseated_face": "\u{1F922}",
+        "necktie": "\u{1F454}",
+        "negative_squared_cross_mark": "\u274E",
+        "nerd_face": "\u{1F913}",
+        "neutral_face": "\u{1F610}",
+        "new": "\u{1F195}",
+        "new_moon": "\u{1F311}",
+        "new_moon_with_face": "\u{1F31A}",
+        "newspaper": "\u{1F4F0}",
+        "newspaper_roll": "\u{1F5DE}",
+        "next_track_button": "\u23ED",
+        "ng": "\u{1F196}",
+        "no_good_man": "\u{1F645}&zwj;\u2642\uFE0F",
+        "no_good_woman": "\u{1F645}",
+        "night_with_stars": "\u{1F303}",
+        "no_bell": "\u{1F515}",
+        "no_bicycles": "\u{1F6B3}",
+        "no_entry": "\u26D4\uFE0F",
+        "no_entry_sign": "\u{1F6AB}",
+        "no_mobile_phones": "\u{1F4F5}",
+        "no_mouth": "\u{1F636}",
+        "no_pedestrians": "\u{1F6B7}",
+        "no_smoking": "\u{1F6AD}",
+        "non-potable_water": "\u{1F6B1}",
+        "nose": "\u{1F443}",
+        "notebook": "\u{1F4D3}",
+        "notebook_with_decorative_cover": "\u{1F4D4}",
+        "notes": "\u{1F3B6}",
+        "nut_and_bolt": "\u{1F529}",
+        "o": "\u2B55\uFE0F",
+        "o2": "\u{1F17E}\uFE0F",
+        "ocean": "\u{1F30A}",
+        "octopus": "\u{1F419}",
+        "oden": "\u{1F362}",
+        "office": "\u{1F3E2}",
+        "oil_drum": "\u{1F6E2}",
+        "ok": "\u{1F197}",
+        "ok_hand": "\u{1F44C}",
+        "ok_man": "\u{1F646}&zwj;\u2642\uFE0F",
+        "ok_woman": "\u{1F646}",
+        "old_key": "\u{1F5DD}",
+        "older_man": "\u{1F474}",
+        "older_woman": "\u{1F475}",
+        "om": "\u{1F549}",
+        "on": "\u{1F51B}",
+        "oncoming_automobile": "\u{1F698}",
+        "oncoming_bus": "\u{1F68D}",
+        "oncoming_police_car": "\u{1F694}",
+        "oncoming_taxi": "\u{1F696}",
+        "open_file_folder": "\u{1F4C2}",
+        "open_hands": "\u{1F450}",
+        "open_mouth": "\u{1F62E}",
+        "open_umbrella": "\u2602\uFE0F",
+        "ophiuchus": "\u26CE",
+        "orange_book": "\u{1F4D9}",
+        "orthodox_cross": "\u2626\uFE0F",
+        "outbox_tray": "\u{1F4E4}",
+        "owl": "\u{1F989}",
+        "ox": "\u{1F402}",
+        "package": "\u{1F4E6}",
+        "page_facing_up": "\u{1F4C4}",
+        "page_with_curl": "\u{1F4C3}",
+        "pager": "\u{1F4DF}",
+        "paintbrush": "\u{1F58C}",
+        "palm_tree": "\u{1F334}",
+        "pancakes": "\u{1F95E}",
+        "panda_face": "\u{1F43C}",
+        "paperclip": "\u{1F4CE}",
+        "paperclips": "\u{1F587}",
+        "parasol_on_ground": "\u26F1",
+        "parking": "\u{1F17F}\uFE0F",
+        "part_alternation_mark": "\u303D\uFE0F",
+        "partly_sunny": "\u26C5\uFE0F",
+        "passenger_ship": "\u{1F6F3}",
+        "passport_control": "\u{1F6C2}",
+        "pause_button": "\u23F8",
+        "peace_symbol": "\u262E\uFE0F",
+        "peach": "\u{1F351}",
+        "peanuts": "\u{1F95C}",
+        "pear": "\u{1F350}",
+        "pen": "\u{1F58A}",
+        "pencil2": "\u270F\uFE0F",
+        "penguin": "\u{1F427}",
+        "pensive": "\u{1F614}",
+        "performing_arts": "\u{1F3AD}",
+        "persevere": "\u{1F623}",
+        "person_fencing": "\u{1F93A}",
+        "pouting_woman": "\u{1F64E}",
+        "phone": "\u260E\uFE0F",
+        "pick": "\u26CF",
+        "pig": "\u{1F437}",
+        "pig2": "\u{1F416}",
+        "pig_nose": "\u{1F43D}",
+        "pill": "\u{1F48A}",
+        "pineapple": "\u{1F34D}",
+        "ping_pong": "\u{1F3D3}",
+        "pisces": "\u2653\uFE0F",
+        "pizza": "\u{1F355}",
+        "place_of_worship": "\u{1F6D0}",
+        "plate_with_cutlery": "\u{1F37D}",
+        "play_or_pause_button": "\u23EF",
+        "point_down": "\u{1F447}",
+        "point_left": "\u{1F448}",
+        "point_right": "\u{1F449}",
+        "point_up": "\u261D\uFE0F",
+        "point_up_2": "\u{1F446}",
+        "police_car": "\u{1F693}",
+        "policewoman": "\u{1F46E}&zwj;\u2640\uFE0F",
+        "poodle": "\u{1F429}",
+        "popcorn": "\u{1F37F}",
+        "post_office": "\u{1F3E3}",
+        "postal_horn": "\u{1F4EF}",
+        "postbox": "\u{1F4EE}",
+        "potable_water": "\u{1F6B0}",
+        "potato": "\u{1F954}",
+        "pouch": "\u{1F45D}",
+        "poultry_leg": "\u{1F357}",
+        "pound": "\u{1F4B7}",
+        "rage": "\u{1F621}",
+        "pouting_cat": "\u{1F63E}",
+        "pouting_man": "\u{1F64E}&zwj;\u2642\uFE0F",
+        "pray": "\u{1F64F}",
+        "prayer_beads": "\u{1F4FF}",
+        "pregnant_woman": "\u{1F930}",
+        "previous_track_button": "\u23EE",
+        "prince": "\u{1F934}",
+        "princess": "\u{1F478}",
+        "printer": "\u{1F5A8}",
+        "purple_heart": "\u{1F49C}",
+        "purse": "\u{1F45B}",
+        "pushpin": "\u{1F4CC}",
+        "put_litter_in_its_place": "\u{1F6AE}",
+        "question": "\u2753",
+        "rabbit": "\u{1F430}",
+        "rabbit2": "\u{1F407}",
+        "racehorse": "\u{1F40E}",
+        "racing_car": "\u{1F3CE}",
+        "radio": "\u{1F4FB}",
+        "radio_button": "\u{1F518}",
+        "radioactive": "\u2622\uFE0F",
+        "railway_car": "\u{1F683}",
+        "railway_track": "\u{1F6E4}",
+        "rainbow": "\u{1F308}",
+        "rainbow_flag": "\u{1F3F3}\uFE0F&zwj;\u{1F308}",
+        "raised_back_of_hand": "\u{1F91A}",
+        "raised_hand_with_fingers_splayed": "\u{1F590}",
+        "raised_hands": "\u{1F64C}",
+        "raising_hand_woman": "\u{1F64B}",
+        "raising_hand_man": "\u{1F64B}&zwj;\u2642\uFE0F",
+        "ram": "\u{1F40F}",
+        "ramen": "\u{1F35C}",
+        "rat": "\u{1F400}",
+        "record_button": "\u23FA",
+        "recycle": "\u267B\uFE0F",
+        "red_circle": "\u{1F534}",
+        "registered": "\xAE\uFE0F",
+        "relaxed": "\u263A\uFE0F",
+        "relieved": "\u{1F60C}",
+        "reminder_ribbon": "\u{1F397}",
+        "repeat": "\u{1F501}",
+        "repeat_one": "\u{1F502}",
+        "rescue_worker_helmet": "\u26D1",
+        "restroom": "\u{1F6BB}",
+        "revolving_hearts": "\u{1F49E}",
+        "rewind": "\u23EA",
+        "rhinoceros": "\u{1F98F}",
+        "ribbon": "\u{1F380}",
+        "rice": "\u{1F35A}",
+        "rice_ball": "\u{1F359}",
+        "rice_cracker": "\u{1F358}",
+        "rice_scene": "\u{1F391}",
+        "right_anger_bubble": "\u{1F5EF}",
+        "ring": "\u{1F48D}",
+        "robot": "\u{1F916}",
+        "rocket": "\u{1F680}",
+        "rofl": "\u{1F923}",
+        "roll_eyes": "\u{1F644}",
+        "roller_coaster": "\u{1F3A2}",
+        "rooster": "\u{1F413}",
+        "rose": "\u{1F339}",
+        "rosette": "\u{1F3F5}",
+        "rotating_light": "\u{1F6A8}",
+        "round_pushpin": "\u{1F4CD}",
+        "rowing_man": "\u{1F6A3}",
+        "rowing_woman": "\u{1F6A3}&zwj;\u2640\uFE0F",
+        "rugby_football": "\u{1F3C9}",
+        "running_man": "\u{1F3C3}",
+        "running_shirt_with_sash": "\u{1F3BD}",
+        "running_woman": "\u{1F3C3}&zwj;\u2640\uFE0F",
+        "sa": "\u{1F202}\uFE0F",
+        "sagittarius": "\u2650\uFE0F",
+        "sake": "\u{1F376}",
+        "sandal": "\u{1F461}",
+        "santa": "\u{1F385}",
+        "satellite": "\u{1F4E1}",
+        "saxophone": "\u{1F3B7}",
+        "school": "\u{1F3EB}",
+        "school_satchel": "\u{1F392}",
+        "scissors": "\u2702\uFE0F",
+        "scorpion": "\u{1F982}",
+        "scorpius": "\u264F\uFE0F",
+        "scream": "\u{1F631}",
+        "scream_cat": "\u{1F640}",
+        "scroll": "\u{1F4DC}",
+        "seat": "\u{1F4BA}",
+        "secret": "\u3299\uFE0F",
+        "see_no_evil": "\u{1F648}",
+        "seedling": "\u{1F331}",
+        "selfie": "\u{1F933}",
+        "shallow_pan_of_food": "\u{1F958}",
+        "shamrock": "\u2618\uFE0F",
+        "shark": "\u{1F988}",
+        "shaved_ice": "\u{1F367}",
+        "sheep": "\u{1F411}",
+        "shell": "\u{1F41A}",
+        "shield": "\u{1F6E1}",
+        "shinto_shrine": "\u26E9",
+        "ship": "\u{1F6A2}",
+        "shirt": "\u{1F455}",
+        "shopping": "\u{1F6CD}",
+        "shopping_cart": "\u{1F6D2}",
+        "shower": "\u{1F6BF}",
+        "shrimp": "\u{1F990}",
+        "signal_strength": "\u{1F4F6}",
+        "six_pointed_star": "\u{1F52F}",
+        "ski": "\u{1F3BF}",
+        "skier": "\u26F7",
+        "skull": "\u{1F480}",
+        "skull_and_crossbones": "\u2620\uFE0F",
+        "sleeping": "\u{1F634}",
+        "sleeping_bed": "\u{1F6CC}",
+        "sleepy": "\u{1F62A}",
+        "slightly_frowning_face": "\u{1F641}",
+        "slightly_smiling_face": "\u{1F642}",
+        "slot_machine": "\u{1F3B0}",
+        "small_airplane": "\u{1F6E9}",
+        "small_blue_diamond": "\u{1F539}",
+        "small_orange_diamond": "\u{1F538}",
+        "small_red_triangle": "\u{1F53A}",
+        "small_red_triangle_down": "\u{1F53B}",
+        "smile": "\u{1F604}",
+        "smile_cat": "\u{1F638}",
+        "smiley": "\u{1F603}",
+        "smiley_cat": "\u{1F63A}",
+        "smiling_imp": "\u{1F608}",
+        "smirk": "\u{1F60F}",
+        "smirk_cat": "\u{1F63C}",
+        "smoking": "\u{1F6AC}",
+        "snail": "\u{1F40C}",
+        "snake": "\u{1F40D}",
+        "sneezing_face": "\u{1F927}",
+        "snowboarder": "\u{1F3C2}",
+        "snowflake": "\u2744\uFE0F",
+        "snowman": "\u26C4\uFE0F",
+        "snowman_with_snow": "\u2603\uFE0F",
+        "sob": "\u{1F62D}",
+        "soccer": "\u26BD\uFE0F",
+        "soon": "\u{1F51C}",
+        "sos": "\u{1F198}",
+        "sound": "\u{1F509}",
+        "space_invader": "\u{1F47E}",
+        "spades": "\u2660\uFE0F",
+        "spaghetti": "\u{1F35D}",
+        "sparkle": "\u2747\uFE0F",
+        "sparkler": "\u{1F387}",
+        "sparkles": "\u2728",
+        "sparkling_heart": "\u{1F496}",
+        "speak_no_evil": "\u{1F64A}",
+        "speaker": "\u{1F508}",
+        "speaking_head": "\u{1F5E3}",
+        "speech_balloon": "\u{1F4AC}",
+        "speedboat": "\u{1F6A4}",
+        "spider": "\u{1F577}",
+        "spider_web": "\u{1F578}",
+        "spiral_calendar": "\u{1F5D3}",
+        "spiral_notepad": "\u{1F5D2}",
+        "spoon": "\u{1F944}",
+        "squid": "\u{1F991}",
+        "stadium": "\u{1F3DF}",
+        "star": "\u2B50\uFE0F",
+        "star2": "\u{1F31F}",
+        "star_and_crescent": "\u262A\uFE0F",
+        "star_of_david": "\u2721\uFE0F",
+        "stars": "\u{1F320}",
+        "station": "\u{1F689}",
+        "statue_of_liberty": "\u{1F5FD}",
+        "steam_locomotive": "\u{1F682}",
+        "stew": "\u{1F372}",
+        "stop_button": "\u23F9",
+        "stop_sign": "\u{1F6D1}",
+        "stopwatch": "\u23F1",
+        "straight_ruler": "\u{1F4CF}",
+        "strawberry": "\u{1F353}",
+        "stuck_out_tongue": "\u{1F61B}",
+        "stuck_out_tongue_closed_eyes": "\u{1F61D}",
+        "stuck_out_tongue_winking_eye": "\u{1F61C}",
+        "studio_microphone": "\u{1F399}",
+        "stuffed_flatbread": "\u{1F959}",
+        "sun_behind_large_cloud": "\u{1F325}",
+        "sun_behind_rain_cloud": "\u{1F326}",
+        "sun_behind_small_cloud": "\u{1F324}",
+        "sun_with_face": "\u{1F31E}",
+        "sunflower": "\u{1F33B}",
+        "sunglasses": "\u{1F60E}",
+        "sunny": "\u2600\uFE0F",
+        "sunrise": "\u{1F305}",
+        "sunrise_over_mountains": "\u{1F304}",
+        "surfing_man": "\u{1F3C4}",
+        "surfing_woman": "\u{1F3C4}&zwj;\u2640\uFE0F",
+        "sushi": "\u{1F363}",
+        "suspension_railway": "\u{1F69F}",
+        "sweat": "\u{1F613}",
+        "sweat_drops": "\u{1F4A6}",
+        "sweat_smile": "\u{1F605}",
+        "sweet_potato": "\u{1F360}",
+        "swimming_man": "\u{1F3CA}",
+        "swimming_woman": "\u{1F3CA}&zwj;\u2640\uFE0F",
+        "symbols": "\u{1F523}",
+        "synagogue": "\u{1F54D}",
+        "syringe": "\u{1F489}",
+        "taco": "\u{1F32E}",
+        "tada": "\u{1F389}",
+        "tanabata_tree": "\u{1F38B}",
+        "taurus": "\u2649\uFE0F",
+        "taxi": "\u{1F695}",
+        "tea": "\u{1F375}",
+        "telephone_receiver": "\u{1F4DE}",
+        "telescope": "\u{1F52D}",
+        "tennis": "\u{1F3BE}",
+        "tent": "\u26FA\uFE0F",
+        "thermometer": "\u{1F321}",
+        "thinking": "\u{1F914}",
+        "thought_balloon": "\u{1F4AD}",
+        "ticket": "\u{1F3AB}",
+        "tickets": "\u{1F39F}",
+        "tiger": "\u{1F42F}",
+        "tiger2": "\u{1F405}",
+        "timer_clock": "\u23F2",
+        "tipping_hand_man": "\u{1F481}&zwj;\u2642\uFE0F",
+        "tired_face": "\u{1F62B}",
+        "tm": "\u2122\uFE0F",
+        "toilet": "\u{1F6BD}",
+        "tokyo_tower": "\u{1F5FC}",
+        "tomato": "\u{1F345}",
+        "tongue": "\u{1F445}",
+        "top": "\u{1F51D}",
+        "tophat": "\u{1F3A9}",
+        "tornado": "\u{1F32A}",
+        "trackball": "\u{1F5B2}",
+        "tractor": "\u{1F69C}",
+        "traffic_light": "\u{1F6A5}",
+        "train": "\u{1F68B}",
+        "train2": "\u{1F686}",
+        "tram": "\u{1F68A}",
+        "triangular_flag_on_post": "\u{1F6A9}",
+        "triangular_ruler": "\u{1F4D0}",
+        "trident": "\u{1F531}",
+        "triumph": "\u{1F624}",
+        "trolleybus": "\u{1F68E}",
+        "trophy": "\u{1F3C6}",
+        "tropical_drink": "\u{1F379}",
+        "tropical_fish": "\u{1F420}",
+        "truck": "\u{1F69A}",
+        "trumpet": "\u{1F3BA}",
+        "tulip": "\u{1F337}",
+        "tumbler_glass": "\u{1F943}",
+        "turkey": "\u{1F983}",
+        "turtle": "\u{1F422}",
+        "tv": "\u{1F4FA}",
+        "twisted_rightwards_arrows": "\u{1F500}",
+        "two_hearts": "\u{1F495}",
+        "two_men_holding_hands": "\u{1F46C}",
+        "two_women_holding_hands": "\u{1F46D}",
+        "u5272": "\u{1F239}",
+        "u5408": "\u{1F234}",
+        "u55b6": "\u{1F23A}",
+        "u6307": "\u{1F22F}\uFE0F",
+        "u6708": "\u{1F237}\uFE0F",
+        "u6709": "\u{1F236}",
+        "u6e80": "\u{1F235}",
+        "u7121": "\u{1F21A}\uFE0F",
+        "u7533": "\u{1F238}",
+        "u7981": "\u{1F232}",
+        "u7a7a": "\u{1F233}",
+        "umbrella": "\u2614\uFE0F",
+        "unamused": "\u{1F612}",
+        "underage": "\u{1F51E}",
+        "unicorn": "\u{1F984}",
+        "unlock": "\u{1F513}",
+        "up": "\u{1F199}",
+        "upside_down_face": "\u{1F643}",
+        "v": "\u270C\uFE0F",
+        "vertical_traffic_light": "\u{1F6A6}",
+        "vhs": "\u{1F4FC}",
+        "vibration_mode": "\u{1F4F3}",
+        "video_camera": "\u{1F4F9}",
+        "video_game": "\u{1F3AE}",
+        "violin": "\u{1F3BB}",
+        "virgo": "\u264D\uFE0F",
+        "volcano": "\u{1F30B}",
+        "volleyball": "\u{1F3D0}",
+        "vs": "\u{1F19A}",
+        "vulcan_salute": "\u{1F596}",
+        "walking_man": "\u{1F6B6}",
+        "walking_woman": "\u{1F6B6}&zwj;\u2640\uFE0F",
+        "waning_crescent_moon": "\u{1F318}",
+        "waning_gibbous_moon": "\u{1F316}",
+        "warning": "\u26A0\uFE0F",
+        "wastebasket": "\u{1F5D1}",
+        "watch": "\u231A\uFE0F",
+        "water_buffalo": "\u{1F403}",
+        "watermelon": "\u{1F349}",
+        "wave": "\u{1F44B}",
+        "wavy_dash": "\u3030\uFE0F",
+        "waxing_crescent_moon": "\u{1F312}",
+        "wc": "\u{1F6BE}",
+        "weary": "\u{1F629}",
+        "wedding": "\u{1F492}",
+        "weight_lifting_man": "\u{1F3CB}\uFE0F",
+        "weight_lifting_woman": "\u{1F3CB}\uFE0F&zwj;\u2640\uFE0F",
+        "whale": "\u{1F433}",
+        "whale2": "\u{1F40B}",
+        "wheel_of_dharma": "\u2638\uFE0F",
+        "wheelchair": "\u267F\uFE0F",
+        "white_check_mark": "\u2705",
+        "white_circle": "\u26AA\uFE0F",
+        "white_flag": "\u{1F3F3}\uFE0F",
+        "white_flower": "\u{1F4AE}",
+        "white_large_square": "\u2B1C\uFE0F",
+        "white_medium_small_square": "\u25FD\uFE0F",
+        "white_medium_square": "\u25FB\uFE0F",
+        "white_small_square": "\u25AB\uFE0F",
+        "white_square_button": "\u{1F533}",
+        "wilted_flower": "\u{1F940}",
+        "wind_chime": "\u{1F390}",
+        "wind_face": "\u{1F32C}",
+        "wine_glass": "\u{1F377}",
+        "wink": "\u{1F609}",
+        "wolf": "\u{1F43A}",
+        "woman": "\u{1F469}",
+        "woman_artist": "\u{1F469}&zwj;\u{1F3A8}",
+        "woman_astronaut": "\u{1F469}&zwj;\u{1F680}",
+        "woman_cartwheeling": "\u{1F938}&zwj;\u2640\uFE0F",
+        "woman_cook": "\u{1F469}&zwj;\u{1F373}",
+        "woman_facepalming": "\u{1F926}&zwj;\u2640\uFE0F",
+        "woman_factory_worker": "\u{1F469}&zwj;\u{1F3ED}",
+        "woman_farmer": "\u{1F469}&zwj;\u{1F33E}",
+        "woman_firefighter": "\u{1F469}&zwj;\u{1F692}",
+        "woman_health_worker": "\u{1F469}&zwj;\u2695\uFE0F",
+        "woman_judge": "\u{1F469}&zwj;\u2696\uFE0F",
+        "woman_juggling": "\u{1F939}&zwj;\u2640\uFE0F",
+        "woman_mechanic": "\u{1F469}&zwj;\u{1F527}",
+        "woman_office_worker": "\u{1F469}&zwj;\u{1F4BC}",
+        "woman_pilot": "\u{1F469}&zwj;\u2708\uFE0F",
+        "woman_playing_handball": "\u{1F93E}&zwj;\u2640\uFE0F",
+        "woman_playing_water_polo": "\u{1F93D}&zwj;\u2640\uFE0F",
+        "woman_scientist": "\u{1F469}&zwj;\u{1F52C}",
+        "woman_shrugging": "\u{1F937}&zwj;\u2640\uFE0F",
+        "woman_singer": "\u{1F469}&zwj;\u{1F3A4}",
+        "woman_student": "\u{1F469}&zwj;\u{1F393}",
+        "woman_teacher": "\u{1F469}&zwj;\u{1F3EB}",
+        "woman_technologist": "\u{1F469}&zwj;\u{1F4BB}",
+        "woman_with_turban": "\u{1F473}&zwj;\u2640\uFE0F",
+        "womans_clothes": "\u{1F45A}",
+        "womans_hat": "\u{1F452}",
+        "women_wrestling": "\u{1F93C}&zwj;\u2640\uFE0F",
+        "womens": "\u{1F6BA}",
+        "world_map": "\u{1F5FA}",
+        "worried": "\u{1F61F}",
+        "wrench": "\u{1F527}",
+        "writing_hand": "\u270D\uFE0F",
+        "x": "\u274C",
+        "yellow_heart": "\u{1F49B}",
+        "yen": "\u{1F4B4}",
+        "yin_yang": "\u262F\uFE0F",
+        "yum": "\u{1F60B}",
+        "zap": "\u26A1\uFE0F",
+        "zipper_mouth_face": "\u{1F910}",
+        "zzz": "\u{1F4A4}",
+        "octocat": '<img alt=":octocat:" height="20" width="20" align="absmiddle" src="https://assets-cdn.github.com/images/icons/emoji/octocat.png">',
+        "showdown": `<span style="font-family: 'Anonymous Pro', monospace; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: #3e8b8a;text-underline-position: under;">S</span>`
+      };
+      showdown.Converter = function(converterOptions) {
+        "use strict";
+        var options = {}, langExtensions = [], outputModifiers = [], listeners = {}, setConvFlavor = setFlavor, metadata = {
+          parsed: {},
+          raw: "",
+          format: ""
+        };
+        _constructor();
+        function _constructor() {
+          converterOptions = converterOptions || {};
+          for (var gOpt in globalOptions) {
+            if (globalOptions.hasOwnProperty(gOpt)) {
+              options[gOpt] = globalOptions[gOpt];
+            }
+          }
+          if (typeof converterOptions === "object") {
+            for (var opt in converterOptions) {
+              if (converterOptions.hasOwnProperty(opt)) {
+                options[opt] = converterOptions[opt];
+              }
+            }
+          } else {
+            throw Error("Converter expects the passed parameter to be an object, but " + typeof converterOptions + " was passed instead.");
+          }
+          if (options.extensions) {
+            showdown.helper.forEach(options.extensions, _parseExtension);
+          }
         }
-      } else if (typeof define == "function" && define.amd) {
+        function _parseExtension(ext, name) {
+          name = name || null;
+          if (showdown.helper.isString(ext)) {
+            ext = showdown.helper.stdExtName(ext);
+            name = ext;
+            if (showdown.extensions[ext]) {
+              console.warn("DEPRECATION WARNING: " + ext + " is an old extension that uses a deprecated loading method.Please inform the developer that the extension should be updated!");
+              legacyExtensionLoading(showdown.extensions[ext], ext);
+              return;
+            } else if (!showdown.helper.isUndefined(extensions[ext])) {
+              ext = extensions[ext];
+            } else {
+              throw Error('Extension "' + ext + '" could not be loaded. It was either not found or is not a valid extension.');
+            }
+          }
+          if (typeof ext === "function") {
+            ext = ext();
+          }
+          if (!showdown.helper.isArray(ext)) {
+            ext = [ext];
+          }
+          var validExt = validate(ext, name);
+          if (!validExt.valid) {
+            throw Error(validExt.error);
+          }
+          for (var i = 0; i < ext.length; ++i) {
+            switch (ext[i].type) {
+              case "lang":
+                langExtensions.push(ext[i]);
+                break;
+              case "output":
+                outputModifiers.push(ext[i]);
+                break;
+            }
+            if (ext[i].hasOwnProperty("listeners")) {
+              for (var ln in ext[i].listeners) {
+                if (ext[i].listeners.hasOwnProperty(ln)) {
+                  listen(ln, ext[i].listeners[ln]);
+                }
+              }
+            }
+          }
+        }
+        function legacyExtensionLoading(ext, name) {
+          if (typeof ext === "function") {
+            ext = ext(new showdown.Converter());
+          }
+          if (!showdown.helper.isArray(ext)) {
+            ext = [ext];
+          }
+          var valid = validate(ext, name);
+          if (!valid.valid) {
+            throw Error(valid.error);
+          }
+          for (var i = 0; i < ext.length; ++i) {
+            switch (ext[i].type) {
+              case "lang":
+                langExtensions.push(ext[i]);
+                break;
+              case "output":
+                outputModifiers.push(ext[i]);
+                break;
+              default:
+                throw Error("Extension loader error: Type unrecognized!!!");
+            }
+          }
+        }
+        function listen(name, callback) {
+          if (!showdown.helper.isString(name)) {
+            throw Error("Invalid argument in converter.listen() method: name must be a string, but " + typeof name + " given");
+          }
+          if (typeof callback !== "function") {
+            throw Error("Invalid argument in converter.listen() method: callback must be a function, but " + typeof callback + " given");
+          }
+          if (!listeners.hasOwnProperty(name)) {
+            listeners[name] = [];
+          }
+          listeners[name].push(callback);
+        }
+        function rTrimInputText(text) {
+          var rsp = text.match(/^\s*/)[0].length, rgx = new RegExp("^\\s{0," + rsp + "}", "gm");
+          return text.replace(rgx, "");
+        }
+        this._dispatch = function dispatch2(evtName, text, options2, globals) {
+          if (listeners.hasOwnProperty(evtName)) {
+            for (var ei = 0; ei < listeners[evtName].length; ++ei) {
+              var nText = listeners[evtName][ei](evtName, text, this, options2, globals);
+              if (nText && typeof nText !== "undefined") {
+                text = nText;
+              }
+            }
+          }
+          return text;
+        };
+        this.listen = function(name, callback) {
+          listen(name, callback);
+          return this;
+        };
+        this.makeHtml = function(text) {
+          if (!text) {
+            return text;
+          }
+          var globals = {
+            gHtmlBlocks: [],
+            gHtmlMdBlocks: [],
+            gHtmlSpans: [],
+            gUrls: {},
+            gTitles: {},
+            gDimensions: {},
+            gListLevel: 0,
+            hashLinkCounts: {},
+            langExtensions,
+            outputModifiers,
+            converter: this,
+            ghCodeBlocks: [],
+            metadata: {
+              parsed: {},
+              raw: "",
+              format: ""
+            }
+          };
+          text = text.replace(/¨/g, "\xA8T");
+          text = text.replace(/\$/g, "\xA8D");
+          text = text.replace(/\r\n/g, "\n");
+          text = text.replace(/\r/g, "\n");
+          text = text.replace(/\u00A0/g, "&nbsp;");
+          if (options.smartIndentationFix) {
+            text = rTrimInputText(text);
+          }
+          text = "\n\n" + text + "\n\n";
+          text = showdown.subParser("detab")(text, options, globals);
+          text = text.replace(/^[ \t]+$/mg, "");
+          showdown.helper.forEach(langExtensions, function(ext) {
+            text = showdown.subParser("runExtension")(ext, text, options, globals);
+          });
+          text = showdown.subParser("metadata")(text, options, globals);
+          text = showdown.subParser("hashPreCodeTags")(text, options, globals);
+          text = showdown.subParser("githubCodeBlocks")(text, options, globals);
+          text = showdown.subParser("hashHTMLBlocks")(text, options, globals);
+          text = showdown.subParser("hashCodeTags")(text, options, globals);
+          text = showdown.subParser("stripLinkDefinitions")(text, options, globals);
+          text = showdown.subParser("blockGamut")(text, options, globals);
+          text = showdown.subParser("unhashHTMLSpans")(text, options, globals);
+          text = showdown.subParser("unescapeSpecialChars")(text, options, globals);
+          text = text.replace(/¨D/g, "$$");
+          text = text.replace(/¨T/g, "\xA8");
+          text = showdown.subParser("completeHTMLDocument")(text, options, globals);
+          showdown.helper.forEach(outputModifiers, function(ext) {
+            text = showdown.subParser("runExtension")(ext, text, options, globals);
+          });
+          metadata = globals.metadata;
+          return text;
+        };
+        this.makeMarkdown = this.makeMd = function(src, HTMLParser) {
+          src = src.replace(/\r\n/g, "\n");
+          src = src.replace(/\r/g, "\n");
+          src = src.replace(/>[ \t]+</, ">\xA8NBSP;<");
+          if (!HTMLParser) {
+            if (window && window.document) {
+              HTMLParser = window.document;
+            } else {
+              throw new Error("HTMLParser is undefined. If in a webworker or nodejs environment, you need to provide a WHATWG DOM and HTML such as JSDOM");
+            }
+          }
+          var doc = HTMLParser.createElement("div");
+          doc.innerHTML = src;
+          var globals = {
+            preList: substitutePreCodeTags(doc)
+          };
+          clean(doc);
+          var nodes = doc.childNodes, mdDoc = "";
+          for (var i = 0; i < nodes.length; i++) {
+            mdDoc += showdown.subParser("makeMarkdown.node")(nodes[i], globals);
+          }
+          function clean(node) {
+            for (var n = 0; n < node.childNodes.length; ++n) {
+              var child = node.childNodes[n];
+              if (child.nodeType === 3) {
+                if (!/\S/.test(child.nodeValue)) {
+                  node.removeChild(child);
+                  --n;
+                } else {
+                  child.nodeValue = child.nodeValue.split("\n").join(" ");
+                  child.nodeValue = child.nodeValue.replace(/(\s)+/g, "$1");
+                }
+              } else if (child.nodeType === 1) {
+                clean(child);
+              }
+            }
+          }
+          function substitutePreCodeTags(doc2) {
+            var pres = doc2.querySelectorAll("pre"), presPH = [];
+            for (var i2 = 0; i2 < pres.length; ++i2) {
+              if (pres[i2].childElementCount === 1 && pres[i2].firstChild.tagName.toLowerCase() === "code") {
+                var content = pres[i2].firstChild.innerHTML.trim(), language = pres[i2].firstChild.getAttribute("data-language") || "";
+                if (language === "") {
+                  var classes = pres[i2].firstChild.className.split(" ");
+                  for (var c = 0; c < classes.length; ++c) {
+                    var matches = classes[c].match(/^language-(.+)$/);
+                    if (matches !== null) {
+                      language = matches[1];
+                      break;
+                    }
+                  }
+                }
+                content = showdown.helper.unescapeHTMLEntities(content);
+                presPH.push(content);
+                pres[i2].outerHTML = '<precode language="' + language + '" precodenum="' + i2.toString() + '"></precode>';
+              } else {
+                presPH.push(pres[i2].innerHTML);
+                pres[i2].innerHTML = "";
+                pres[i2].setAttribute("prenum", i2.toString());
+              }
+            }
+            return presPH;
+          }
+          return mdDoc;
+        };
+        this.setOption = function(key, value) {
+          options[key] = value;
+        };
+        this.getOption = function(key) {
+          return options[key];
+        };
+        this.getOptions = function() {
+          return options;
+        };
+        this.addExtension = function(extension, name) {
+          name = name || null;
+          _parseExtension(extension, name);
+        };
+        this.useExtension = function(extensionName) {
+          _parseExtension(extensionName);
+        };
+        this.setFlavor = function(name) {
+          if (!flavor.hasOwnProperty(name)) {
+            throw Error(name + " flavor was not found");
+          }
+          var preset = flavor[name];
+          setConvFlavor = name;
+          for (var option in preset) {
+            if (preset.hasOwnProperty(option)) {
+              options[option] = preset[option];
+            }
+          }
+        };
+        this.getFlavor = function() {
+          return setConvFlavor;
+        };
+        this.removeExtension = function(extension) {
+          if (!showdown.helper.isArray(extension)) {
+            extension = [extension];
+          }
+          for (var a = 0; a < extension.length; ++a) {
+            var ext = extension[a];
+            for (var i = 0; i < langExtensions.length; ++i) {
+              if (langExtensions[i] === ext) {
+                langExtensions[i].splice(i, 1);
+              }
+            }
+            for (var ii = 0; ii < outputModifiers.length; ++i) {
+              if (outputModifiers[ii] === ext) {
+                outputModifiers[ii].splice(i, 1);
+              }
+            }
+          }
+        };
+        this.getAllExtensions = function() {
+          return {
+            language: langExtensions,
+            output: outputModifiers
+          };
+        };
+        this.getMetadata = function(raw) {
+          if (raw) {
+            return metadata.raw;
+          } else {
+            return metadata.parsed;
+          }
+        };
+        this.getMetadataFormat = function() {
+          return metadata.format;
+        };
+        this._setMetadataPair = function(key, value) {
+          metadata.parsed[key] = value;
+        };
+        this._setMetadataFormat = function(format) {
+          metadata.format = format;
+        };
+        this._setMetadataRaw = function(raw) {
+          metadata.raw = raw;
+        };
+      };
+      showdown.subParser("anchors", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("anchors.before", text, options, globals);
+        var writeAnchorTag = function(wholeMatch, linkText, linkId, url, m5, m6, title) {
+          if (showdown.helper.isUndefined(title)) {
+            title = "";
+          }
+          linkId = linkId.toLowerCase();
+          if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
+            url = "";
+          } else if (!url) {
+            if (!linkId) {
+              linkId = linkText.toLowerCase().replace(/ ?\n/g, " ");
+            }
+            url = "#" + linkId;
+            if (!showdown.helper.isUndefined(globals.gUrls[linkId])) {
+              url = globals.gUrls[linkId];
+              if (!showdown.helper.isUndefined(globals.gTitles[linkId])) {
+                title = globals.gTitles[linkId];
+              }
+            } else {
+              return wholeMatch;
+            }
+          }
+          url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
+          var result = '<a href="' + url + '"';
+          if (title !== "" && title !== null) {
+            title = title.replace(/"/g, "&quot;");
+            title = title.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
+            result += ' title="' + title + '"';
+          }
+          if (options.openLinksInNewWindow && !/^#/.test(url)) {
+            result += ' rel="noopener noreferrer" target="\xA8E95Eblank"';
+          }
+          result += ">" + linkText + "</a>";
+          return result;
+        };
+        text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)] ?(?:\n *)?\[(.*?)]()()()()/g, writeAnchorTag);
+        text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)]()[ \t]*\([ \t]?<([^>]*)>(?:[ \t]*((["'])([^"]*?)\5))?[ \t]?\)/g, writeAnchorTag);
+        text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)]()[ \t]*\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?:[ \t]*((["'])([^"]*?)\5))?[ \t]?\)/g, writeAnchorTag);
+        text = text.replace(/\[([^\[\]]+)]()()()()()/g, writeAnchorTag);
+        if (options.ghMentions) {
+          text = text.replace(/(^|\s)(\\)?(@([a-z\d]+(?:[a-z\d.-]+?[a-z\d]+)*))/gmi, function(wm, st, escape2, mentions, username) {
+            if (escape2 === "\\") {
+              return st + mentions;
+            }
+            if (!showdown.helper.isString(options.ghMentionsLink)) {
+              throw new Error("ghMentionsLink option must be a string");
+            }
+            var lnk = options.ghMentionsLink.replace(/\{u}/g, username), target = "";
+            if (options.openLinksInNewWindow) {
+              target = ' rel="noopener noreferrer" target="\xA8E95Eblank"';
+            }
+            return st + '<a href="' + lnk + '"' + target + ">" + mentions + "</a>";
+          });
+        }
+        text = globals.converter._dispatch("anchors.after", text, options, globals);
+        return text;
+      });
+      var simpleURLRegex = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+?\.[^'">\s]+?)()(\1)?(?=\s|$)(?!["<>])/gi, simpleURLRegex2 = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+\.[^'">\s]+?)([.!?,()\[\]])?(\1)?(?=\s|$)(?!["<>])/gi, delimUrlRegex = /()<(((https?|ftp|dict):\/\/|www\.)[^'">\s]+)()>()/gi, simpleMailRegex = /(^|\s)(?:mailto:)?([A-Za-z0-9!#$%&'*+-/=?^_`{|}~.]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)(?=$|\s)/gmi, delimMailRegex = /<()(?:mailto:)?([-.\w]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)>/gi, replaceLink = function(options) {
+        "use strict";
+        return function(wm, leadingMagicChars, link, m2, m3, trailingPunctuation, trailingMagicChars) {
+          link = link.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
+          var lnkTxt = link, append = "", target = "", lmc = leadingMagicChars || "", tmc = trailingMagicChars || "";
+          if (/^www\./i.test(link)) {
+            link = link.replace(/^www\./i, "http://www.");
+          }
+          if (options.excludeTrailingPunctuationFromURLs && trailingPunctuation) {
+            append = trailingPunctuation;
+          }
+          if (options.openLinksInNewWindow) {
+            target = ' rel="noopener noreferrer" target="\xA8E95Eblank"';
+          }
+          return lmc + '<a href="' + link + '"' + target + ">" + lnkTxt + "</a>" + append + tmc;
+        };
+      }, replaceMail = function(options, globals) {
+        "use strict";
+        return function(wholeMatch, b, mail) {
+          var href = "mailto:";
+          b = b || "";
+          mail = showdown.subParser("unescapeSpecialChars")(mail, options, globals);
+          if (options.encodeEmails) {
+            href = showdown.helper.encodeEmailAddress(href + mail);
+            mail = showdown.helper.encodeEmailAddress(mail);
+          } else {
+            href = href + mail;
+          }
+          return b + '<a href="' + href + '">' + mail + "</a>";
+        };
+      };
+      showdown.subParser("autoLinks", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("autoLinks.before", text, options, globals);
+        text = text.replace(delimUrlRegex, replaceLink(options));
+        text = text.replace(delimMailRegex, replaceMail(options, globals));
+        text = globals.converter._dispatch("autoLinks.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("simplifiedAutoLinks", function(text, options, globals) {
+        "use strict";
+        if (!options.simplifiedAutoLink) {
+          return text;
+        }
+        text = globals.converter._dispatch("simplifiedAutoLinks.before", text, options, globals);
+        if (options.excludeTrailingPunctuationFromURLs) {
+          text = text.replace(simpleURLRegex2, replaceLink(options));
+        } else {
+          text = text.replace(simpleURLRegex, replaceLink(options));
+        }
+        text = text.replace(simpleMailRegex, replaceMail(options, globals));
+        text = globals.converter._dispatch("simplifiedAutoLinks.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("blockGamut", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("blockGamut.before", text, options, globals);
+        text = showdown.subParser("blockQuotes")(text, options, globals);
+        text = showdown.subParser("headers")(text, options, globals);
+        text = showdown.subParser("horizontalRule")(text, options, globals);
+        text = showdown.subParser("lists")(text, options, globals);
+        text = showdown.subParser("codeBlocks")(text, options, globals);
+        text = showdown.subParser("tables")(text, options, globals);
+        text = showdown.subParser("hashHTMLBlocks")(text, options, globals);
+        text = showdown.subParser("paragraphs")(text, options, globals);
+        text = globals.converter._dispatch("blockGamut.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("blockQuotes", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("blockQuotes.before", text, options, globals);
+        text = text + "\n\n";
+        var rgx = /(^ {0,3}>[ \t]?.+\n(.+\n)*\n*)+/gm;
+        if (options.splitAdjacentBlockquotes) {
+          rgx = /^ {0,3}>[\s\S]*?(?:\n\n)/gm;
+        }
+        text = text.replace(rgx, function(bq) {
+          bq = bq.replace(/^[ \t]*>[ \t]?/gm, "");
+          bq = bq.replace(/¨0/g, "");
+          bq = bq.replace(/^[ \t]+$/gm, "");
+          bq = showdown.subParser("githubCodeBlocks")(bq, options, globals);
+          bq = showdown.subParser("blockGamut")(bq, options, globals);
+          bq = bq.replace(/(^|\n)/g, "$1  ");
+          bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function(wholeMatch, m1) {
+            var pre = m1;
+            pre = pre.replace(/^  /mg, "\xA80");
+            pre = pre.replace(/¨0/g, "");
+            return pre;
+          });
+          return showdown.subParser("hashBlock")("<blockquote>\n" + bq + "\n</blockquote>", options, globals);
+        });
+        text = globals.converter._dispatch("blockQuotes.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("codeBlocks", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("codeBlocks.before", text, options, globals);
+        text += "\xA80";
+        var pattern = /(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=¨0))/g;
+        text = text.replace(pattern, function(wholeMatch, m1, m2) {
+          var codeblock = m1, nextChar = m2, end = "\n";
+          codeblock = showdown.subParser("outdent")(codeblock, options, globals);
+          codeblock = showdown.subParser("encodeCode")(codeblock, options, globals);
+          codeblock = showdown.subParser("detab")(codeblock, options, globals);
+          codeblock = codeblock.replace(/^\n+/g, "");
+          codeblock = codeblock.replace(/\n+$/g, "");
+          if (options.omitExtraWLInCodeBlocks) {
+            end = "";
+          }
+          codeblock = "<pre><code>" + codeblock + end + "</code></pre>";
+          return showdown.subParser("hashBlock")(codeblock, options, globals) + nextChar;
+        });
+        text = text.replace(/¨0/, "");
+        text = globals.converter._dispatch("codeBlocks.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("codeSpans", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("codeSpans.before", text, options, globals);
+        if (typeof text === "undefined") {
+          text = "";
+        }
+        text = text.replace(/(^|[^\\])(`+)([^\r]*?[^`])\2(?!`)/gm, function(wholeMatch, m1, m2, m3) {
+          var c = m3;
+          c = c.replace(/^([ \t]*)/g, "");
+          c = c.replace(/[ \t]*$/g, "");
+          c = showdown.subParser("encodeCode")(c, options, globals);
+          c = m1 + "<code>" + c + "</code>";
+          c = showdown.subParser("hashHTMLSpans")(c, options, globals);
+          return c;
+        });
+        text = globals.converter._dispatch("codeSpans.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("completeHTMLDocument", function(text, options, globals) {
+        "use strict";
+        if (!options.completeHTMLDocument) {
+          return text;
+        }
+        text = globals.converter._dispatch("completeHTMLDocument.before", text, options, globals);
+        var doctype = "html", doctypeParsed = "<!DOCTYPE HTML>\n", title = "", charset = '<meta charset="utf-8">\n', lang = "", metadata = "";
+        if (typeof globals.metadata.parsed.doctype !== "undefined") {
+          doctypeParsed = "<!DOCTYPE " + globals.metadata.parsed.doctype + ">\n";
+          doctype = globals.metadata.parsed.doctype.toString().toLowerCase();
+          if (doctype === "html" || doctype === "html5") {
+            charset = '<meta charset="utf-8">';
+          }
+        }
+        for (var meta in globals.metadata.parsed) {
+          if (globals.metadata.parsed.hasOwnProperty(meta)) {
+            switch (meta.toLowerCase()) {
+              case "doctype":
+                break;
+              case "title":
+                title = "<title>" + globals.metadata.parsed.title + "</title>\n";
+                break;
+              case "charset":
+                if (doctype === "html" || doctype === "html5") {
+                  charset = '<meta charset="' + globals.metadata.parsed.charset + '">\n';
+                } else {
+                  charset = '<meta name="charset" content="' + globals.metadata.parsed.charset + '">\n';
+                }
+                break;
+              case "language":
+              case "lang":
+                lang = ' lang="' + globals.metadata.parsed[meta] + '"';
+                metadata += '<meta name="' + meta + '" content="' + globals.metadata.parsed[meta] + '">\n';
+                break;
+              default:
+                metadata += '<meta name="' + meta + '" content="' + globals.metadata.parsed[meta] + '">\n';
+            }
+          }
+        }
+        text = doctypeParsed + "<html" + lang + ">\n<head>\n" + title + charset + metadata + "</head>\n<body>\n" + text.trim() + "\n</body>\n</html>";
+        text = globals.converter._dispatch("completeHTMLDocument.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("detab", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("detab.before", text, options, globals);
+        text = text.replace(/\t(?=\t)/g, "    ");
+        text = text.replace(/\t/g, "\xA8A\xA8B");
+        text = text.replace(/¨B(.+?)¨A/g, function(wholeMatch, m1) {
+          var leadingText = m1, numSpaces = 4 - leadingText.length % 4;
+          for (var i = 0; i < numSpaces; i++) {
+            leadingText += " ";
+          }
+          return leadingText;
+        });
+        text = text.replace(/¨A/g, "    ");
+        text = text.replace(/¨B/g, "");
+        text = globals.converter._dispatch("detab.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("ellipsis", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("ellipsis.before", text, options, globals);
+        text = text.replace(/\.\.\./g, "\u2026");
+        text = globals.converter._dispatch("ellipsis.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("emoji", function(text, options, globals) {
+        "use strict";
+        if (!options.emoji) {
+          return text;
+        }
+        text = globals.converter._dispatch("emoji.before", text, options, globals);
+        var emojiRgx = /:([\S]+?):/g;
+        text = text.replace(emojiRgx, function(wm, emojiCode) {
+          if (showdown.helper.emojis.hasOwnProperty(emojiCode)) {
+            return showdown.helper.emojis[emojiCode];
+          }
+          return wm;
+        });
+        text = globals.converter._dispatch("emoji.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("encodeAmpsAndAngles", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("encodeAmpsAndAngles.before", text, options, globals);
+        text = text.replace(/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/g, "&amp;");
+        text = text.replace(/<(?![a-z\/?$!])/gi, "&lt;");
+        text = text.replace(/</g, "&lt;");
+        text = text.replace(/>/g, "&gt;");
+        text = globals.converter._dispatch("encodeAmpsAndAngles.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("encodeBackslashEscapes", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("encodeBackslashEscapes.before", text, options, globals);
+        text = text.replace(/\\(\\)/g, showdown.helper.escapeCharactersCallback);
+        text = text.replace(/\\([`*_{}\[\]()>#+.!~=|-])/g, showdown.helper.escapeCharactersCallback);
+        text = globals.converter._dispatch("encodeBackslashEscapes.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("encodeCode", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("encodeCode.before", text, options, globals);
+        text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/([*_{}\[\]\\=~-])/g, showdown.helper.escapeCharactersCallback);
+        text = globals.converter._dispatch("encodeCode.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("escapeSpecialCharsWithinTagAttributes", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("escapeSpecialCharsWithinTagAttributes.before", text, options, globals);
+        var tags = /<\/?[a-z\d_:-]+(?:[\s]+[\s\S]+?)?>/gi, comments = /<!(--(?:(?:[^>-]|-[^>])(?:[^-]|-[^-])*)--)>/gi;
+        text = text.replace(tags, function(wholeMatch) {
+          return wholeMatch.replace(/(.)<\/?code>(?=.)/g, "$1`").replace(/([\\`*_~=|])/g, showdown.helper.escapeCharactersCallback);
+        });
+        text = text.replace(comments, function(wholeMatch) {
+          return wholeMatch.replace(/([\\`*_~=|])/g, showdown.helper.escapeCharactersCallback);
+        });
+        text = globals.converter._dispatch("escapeSpecialCharsWithinTagAttributes.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("githubCodeBlocks", function(text, options, globals) {
+        "use strict";
+        if (!options.ghCodeBlocks) {
+          return text;
+        }
+        text = globals.converter._dispatch("githubCodeBlocks.before", text, options, globals);
+        text += "\xA80";
+        text = text.replace(/(?:^|\n)(?: {0,3})(```+|~~~+)(?: *)([^\s`~]*)\n([\s\S]*?)\n(?: {0,3})\1/g, function(wholeMatch, delim, language, codeblock) {
+          var end = options.omitExtraWLInCodeBlocks ? "" : "\n";
+          codeblock = showdown.subParser("encodeCode")(codeblock, options, globals);
+          codeblock = showdown.subParser("detab")(codeblock, options, globals);
+          codeblock = codeblock.replace(/^\n+/g, "");
+          codeblock = codeblock.replace(/\n+$/g, "");
+          codeblock = "<pre><code" + (language ? ' class="' + language + " language-" + language + '"' : "") + ">" + codeblock + end + "</code></pre>";
+          codeblock = showdown.subParser("hashBlock")(codeblock, options, globals);
+          return "\n\n\xA8G" + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock }) - 1) + "G\n\n";
+        });
+        text = text.replace(/¨0/, "");
+        return globals.converter._dispatch("githubCodeBlocks.after", text, options, globals);
+      });
+      showdown.subParser("hashBlock", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("hashBlock.before", text, options, globals);
+        text = text.replace(/(^\n+|\n+$)/g, "");
+        text = "\n\n\xA8K" + (globals.gHtmlBlocks.push(text) - 1) + "K\n\n";
+        text = globals.converter._dispatch("hashBlock.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("hashCodeTags", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("hashCodeTags.before", text, options, globals);
+        var repFunc = function(wholeMatch, match, left, right) {
+          var codeblock = left + showdown.subParser("encodeCode")(match, options, globals) + right;
+          return "\xA8C" + (globals.gHtmlSpans.push(codeblock) - 1) + "C";
+        };
+        text = showdown.helper.replaceRecursiveRegExp(text, repFunc, "<code\\b[^>]*>", "</code>", "gim");
+        text = globals.converter._dispatch("hashCodeTags.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("hashElement", function(text, options, globals) {
+        "use strict";
+        return function(wholeMatch, m1) {
+          var blockText = m1;
+          blockText = blockText.replace(/\n\n/g, "\n");
+          blockText = blockText.replace(/^\n/, "");
+          blockText = blockText.replace(/\n+$/g, "");
+          blockText = "\n\n\xA8K" + (globals.gHtmlBlocks.push(blockText) - 1) + "K\n\n";
+          return blockText;
+        };
+      });
+      showdown.subParser("hashHTMLBlocks", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("hashHTMLBlocks.before", text, options, globals);
+        var blockTags = [
+          "pre",
+          "div",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "blockquote",
+          "table",
+          "dl",
+          "ol",
+          "ul",
+          "script",
+          "noscript",
+          "form",
+          "fieldset",
+          "iframe",
+          "math",
+          "style",
+          "section",
+          "header",
+          "footer",
+          "nav",
+          "article",
+          "aside",
+          "address",
+          "audio",
+          "canvas",
+          "figure",
+          "hgroup",
+          "output",
+          "video",
+          "p"
+        ], repFunc = function(wholeMatch, match, left, right) {
+          var txt = wholeMatch;
+          if (left.search(/\bmarkdown\b/) !== -1) {
+            txt = left + globals.converter.makeHtml(match) + right;
+          }
+          return "\n\n\xA8K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
+        };
+        if (options.backslashEscapesHTMLTags) {
+          text = text.replace(/\\<(\/?[^>]+?)>/g, function(wm, inside) {
+            return "&lt;" + inside + "&gt;";
+          });
+        }
+        for (var i = 0; i < blockTags.length; ++i) {
+          var opTagPos, rgx1 = new RegExp("^ {0,3}(<" + blockTags[i] + "\\b[^>]*>)", "im"), patLeft = "<" + blockTags[i] + "\\b[^>]*>", patRight = "</" + blockTags[i] + ">";
+          while ((opTagPos = showdown.helper.regexIndexOf(text, rgx1)) !== -1) {
+            var subTexts = showdown.helper.splitAtIndex(text, opTagPos), newSubText1 = showdown.helper.replaceRecursiveRegExp(subTexts[1], repFunc, patLeft, patRight, "im");
+            if (newSubText1 === subTexts[1]) {
+              break;
+            }
+            text = subTexts[0].concat(newSubText1);
+          }
+        }
+        text = text.replace(/(\n {0,3}(<(hr)\b([^<>])*?\/?>)[ \t]*(?=\n{2,}))/g, showdown.subParser("hashElement")(text, options, globals));
+        text = showdown.helper.replaceRecursiveRegExp(text, function(txt) {
+          return "\n\n\xA8K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
+        }, "^ {0,3}<!--", "-->", "gm");
+        text = text.replace(/(?:\n\n)( {0,3}(?:<([?%])[^\r]*?\2>)[ \t]*(?=\n{2,}))/g, showdown.subParser("hashElement")(text, options, globals));
+        text = globals.converter._dispatch("hashHTMLBlocks.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("hashHTMLSpans", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("hashHTMLSpans.before", text, options, globals);
+        function hashHTMLSpan(html) {
+          return "\xA8C" + (globals.gHtmlSpans.push(html) - 1) + "C";
+        }
+        text = text.replace(/<[^>]+?\/>/gi, function(wm) {
+          return hashHTMLSpan(wm);
+        });
+        text = text.replace(/<([^>]+?)>[\s\S]*?<\/\1>/g, function(wm) {
+          return hashHTMLSpan(wm);
+        });
+        text = text.replace(/<([^>]+?)\s[^>]+?>[\s\S]*?<\/\1>/g, function(wm) {
+          return hashHTMLSpan(wm);
+        });
+        text = text.replace(/<[^>]+?>/gi, function(wm) {
+          return hashHTMLSpan(wm);
+        });
+        text = globals.converter._dispatch("hashHTMLSpans.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("unhashHTMLSpans", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("unhashHTMLSpans.before", text, options, globals);
+        for (var i = 0; i < globals.gHtmlSpans.length; ++i) {
+          var repText = globals.gHtmlSpans[i], limit = 0;
+          while (/¨C(\d+)C/.test(repText)) {
+            var num = RegExp.$1;
+            repText = repText.replace("\xA8C" + num + "C", globals.gHtmlSpans[num]);
+            if (limit === 10) {
+              console.error("maximum nesting of 10 spans reached!!!");
+              break;
+            }
+            ++limit;
+          }
+          text = text.replace("\xA8C" + i + "C", repText);
+        }
+        text = globals.converter._dispatch("unhashHTMLSpans.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("hashPreCodeTags", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("hashPreCodeTags.before", text, options, globals);
+        var repFunc = function(wholeMatch, match, left, right) {
+          var codeblock = left + showdown.subParser("encodeCode")(match, options, globals) + right;
+          return "\n\n\xA8G" + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock }) - 1) + "G\n\n";
+        };
+        text = showdown.helper.replaceRecursiveRegExp(text, repFunc, "^ {0,3}<pre\\b[^>]*>\\s*<code\\b[^>]*>", "^ {0,3}</code>\\s*</pre>", "gim");
+        text = globals.converter._dispatch("hashPreCodeTags.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("headers", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("headers.before", text, options, globals);
+        var headerLevelStart = isNaN(parseInt(options.headerLevelStart)) ? 1 : parseInt(options.headerLevelStart), setextRegexH1 = options.smoothLivePreview ? /^(.+)[ \t]*\n={2,}[ \t]*\n+/gm : /^(.+)[ \t]*\n=+[ \t]*\n+/gm, setextRegexH2 = options.smoothLivePreview ? /^(.+)[ \t]*\n-{2,}[ \t]*\n+/gm : /^(.+)[ \t]*\n-+[ \t]*\n+/gm;
+        text = text.replace(setextRegexH1, function(wholeMatch, m1) {
+          var spanGamut = showdown.subParser("spanGamut")(m1, options, globals), hID = options.noHeaderId ? "" : ' id="' + headerId(m1) + '"', hLevel = headerLevelStart, hashBlock = "<h" + hLevel + hID + ">" + spanGamut + "</h" + hLevel + ">";
+          return showdown.subParser("hashBlock")(hashBlock, options, globals);
+        });
+        text = text.replace(setextRegexH2, function(matchFound, m1) {
+          var spanGamut = showdown.subParser("spanGamut")(m1, options, globals), hID = options.noHeaderId ? "" : ' id="' + headerId(m1) + '"', hLevel = headerLevelStart + 1, hashBlock = "<h" + hLevel + hID + ">" + spanGamut + "</h" + hLevel + ">";
+          return showdown.subParser("hashBlock")(hashBlock, options, globals);
+        });
+        var atxStyle = options.requireSpaceBeforeHeadingText ? /^(#{1,6})[ \t]+(.+?)[ \t]*#*\n+/gm : /^(#{1,6})[ \t]*(.+?)[ \t]*#*\n+/gm;
+        text = text.replace(atxStyle, function(wholeMatch, m1, m2) {
+          var hText = m2;
+          if (options.customizedHeaderId) {
+            hText = m2.replace(/\s?\{([^{]+?)}\s*$/, "");
+          }
+          var span = showdown.subParser("spanGamut")(hText, options, globals), hID = options.noHeaderId ? "" : ' id="' + headerId(m2) + '"', hLevel = headerLevelStart - 1 + m1.length, header = "<h" + hLevel + hID + ">" + span + "</h" + hLevel + ">";
+          return showdown.subParser("hashBlock")(header, options, globals);
+        });
+        function headerId(m) {
+          var title, prefix;
+          if (options.customizedHeaderId) {
+            var match = m.match(/\{([^{]+?)}\s*$/);
+            if (match && match[1]) {
+              m = match[1];
+            }
+          }
+          title = m;
+          if (showdown.helper.isString(options.prefixHeaderId)) {
+            prefix = options.prefixHeaderId;
+          } else if (options.prefixHeaderId === true) {
+            prefix = "section-";
+          } else {
+            prefix = "";
+          }
+          if (!options.rawPrefixHeaderId) {
+            title = prefix + title;
+          }
+          if (options.ghCompatibleHeaderId) {
+            title = title.replace(/ /g, "-").replace(/&amp;/g, "").replace(/¨T/g, "").replace(/¨D/g, "").replace(/[&+$,\/:;=?@"#{}|^¨~\[\]`\\*)(%.!'<>]/g, "").toLowerCase();
+          } else if (options.rawHeaderId) {
+            title = title.replace(/ /g, "-").replace(/&amp;/g, "&").replace(/¨T/g, "\xA8").replace(/¨D/g, "$").replace(/["']/g, "-").toLowerCase();
+          } else {
+            title = title.replace(/[^\w]/g, "").toLowerCase();
+          }
+          if (options.rawPrefixHeaderId) {
+            title = prefix + title;
+          }
+          if (globals.hashLinkCounts[title]) {
+            title = title + "-" + globals.hashLinkCounts[title]++;
+          } else {
+            globals.hashLinkCounts[title] = 1;
+          }
+          return title;
+        }
+        text = globals.converter._dispatch("headers.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("horizontalRule", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("horizontalRule.before", text, options, globals);
+        var key = showdown.subParser("hashBlock")("<hr />", options, globals);
+        text = text.replace(/^ {0,2}( ?-){3,}[ \t]*$/gm, key);
+        text = text.replace(/^ {0,2}( ?\*){3,}[ \t]*$/gm, key);
+        text = text.replace(/^ {0,2}( ?_){3,}[ \t]*$/gm, key);
+        text = globals.converter._dispatch("horizontalRule.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("images", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("images.before", text, options, globals);
+        var inlineRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, crazyRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g, base64RegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, referenceRegExp = /!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g, refShortcutRegExp = /!\[([^\[\]]+)]()()()()()/g;
+        function writeImageTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
+          url = url.replace(/\s/g, "");
+          return writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title);
+        }
+        function writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title) {
+          var gUrls = globals.gUrls, gTitles = globals.gTitles, gDims = globals.gDimensions;
+          linkId = linkId.toLowerCase();
+          if (!title) {
+            title = "";
+          }
+          if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
+            url = "";
+          } else if (url === "" || url === null) {
+            if (linkId === "" || linkId === null) {
+              linkId = altText.toLowerCase().replace(/ ?\n/g, " ");
+            }
+            url = "#" + linkId;
+            if (!showdown.helper.isUndefined(gUrls[linkId])) {
+              url = gUrls[linkId];
+              if (!showdown.helper.isUndefined(gTitles[linkId])) {
+                title = gTitles[linkId];
+              }
+              if (!showdown.helper.isUndefined(gDims[linkId])) {
+                width = gDims[linkId].width;
+                height = gDims[linkId].height;
+              }
+            } else {
+              return wholeMatch;
+            }
+          }
+          altText = altText.replace(/"/g, "&quot;").replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
+          url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
+          var result = '<img src="' + url + '" alt="' + altText + '"';
+          if (title && showdown.helper.isString(title)) {
+            title = title.replace(/"/g, "&quot;").replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
+            result += ' title="' + title + '"';
+          }
+          if (width && height) {
+            width = width === "*" ? "auto" : width;
+            height = height === "*" ? "auto" : height;
+            result += ' width="' + width + '"';
+            result += ' height="' + height + '"';
+          }
+          result += " />";
+          return result;
+        }
+        text = text.replace(referenceRegExp, writeImageTag);
+        text = text.replace(base64RegExp, writeImageTagBase64);
+        text = text.replace(crazyRegExp, writeImageTag);
+        text = text.replace(inlineRegExp, writeImageTag);
+        text = text.replace(refShortcutRegExp, writeImageTag);
+        text = globals.converter._dispatch("images.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("italicsAndBold", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("italicsAndBold.before", text, options, globals);
+        function parseInside(txt, left, right) {
+          return left + txt + right;
+        }
+        if (options.literalMidWordUnderscores) {
+          text = text.replace(/\b___(\S[\s\S]*?)___\b/g, function(wm, txt) {
+            return parseInside(txt, "<strong><em>", "</em></strong>");
+          });
+          text = text.replace(/\b__(\S[\s\S]*?)__\b/g, function(wm, txt) {
+            return parseInside(txt, "<strong>", "</strong>");
+          });
+          text = text.replace(/\b_(\S[\s\S]*?)_\b/g, function(wm, txt) {
+            return parseInside(txt, "<em>", "</em>");
+          });
+        } else {
+          text = text.replace(/___(\S[\s\S]*?)___/g, function(wm, m) {
+            return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
+          });
+          text = text.replace(/__(\S[\s\S]*?)__/g, function(wm, m) {
+            return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
+          });
+          text = text.replace(/_([^\s_][\s\S]*?)_/g, function(wm, m) {
+            return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
+          });
+        }
+        if (options.literalMidWordAsterisks) {
+          text = text.replace(/([^*]|^)\B\*\*\*(\S[\s\S]*?)\*\*\*\B(?!\*)/g, function(wm, lead, txt) {
+            return parseInside(txt, lead + "<strong><em>", "</em></strong>");
+          });
+          text = text.replace(/([^*]|^)\B\*\*(\S[\s\S]*?)\*\*\B(?!\*)/g, function(wm, lead, txt) {
+            return parseInside(txt, lead + "<strong>", "</strong>");
+          });
+          text = text.replace(/([^*]|^)\B\*(\S[\s\S]*?)\*\B(?!\*)/g, function(wm, lead, txt) {
+            return parseInside(txt, lead + "<em>", "</em>");
+          });
+        } else {
+          text = text.replace(/\*\*\*(\S[\s\S]*?)\*\*\*/g, function(wm, m) {
+            return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
+          });
+          text = text.replace(/\*\*(\S[\s\S]*?)\*\*/g, function(wm, m) {
+            return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
+          });
+          text = text.replace(/\*([^\s*][\s\S]*?)\*/g, function(wm, m) {
+            return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
+          });
+        }
+        text = globals.converter._dispatch("italicsAndBold.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("lists", function(text, options, globals) {
+        "use strict";
+        function processListItems(listStr, trimTrailing) {
+          globals.gListLevel++;
+          listStr = listStr.replace(/\n{2,}$/, "\n");
+          listStr += "\xA80";
+          var rgx = /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[(x|X| )?])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0| {0,3}([*+-]|\d+[.])[ \t]+))/gm, isParagraphed = /\n[ \t]*\n(?!¨0)/.test(listStr);
+          if (options.disableForced4SpacesIndentedSublists) {
+            rgx = /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[(x|X| )?])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0|\2([*+-]|\d+[.])[ \t]+))/gm;
+          }
+          listStr = listStr.replace(rgx, function(wholeMatch, m1, m2, m3, m4, taskbtn, checked) {
+            checked = checked && checked.trim() !== "";
+            var item = showdown.subParser("outdent")(m4, options, globals), bulletStyle = "";
+            if (taskbtn && options.tasklists) {
+              bulletStyle = ' class="task-list-item" style="list-style-type: none;"';
+              item = item.replace(/^[ \t]*\[(x|X| )?]/m, function() {
+                var otp = '<input type="checkbox" disabled style="margin: 0px 0.35em 0.25em -1.6em; vertical-align: middle;"';
+                if (checked) {
+                  otp += " checked";
+                }
+                otp += ">";
+                return otp;
+              });
+            }
+            item = item.replace(/^([-*+]|\d\.)[ \t]+[\S\n ]*/g, function(wm2) {
+              return "\xA8A" + wm2;
+            });
+            if (m1 || item.search(/\n{2,}/) > -1) {
+              item = showdown.subParser("githubCodeBlocks")(item, options, globals);
+              item = showdown.subParser("blockGamut")(item, options, globals);
+            } else {
+              item = showdown.subParser("lists")(item, options, globals);
+              item = item.replace(/\n$/, "");
+              item = showdown.subParser("hashHTMLBlocks")(item, options, globals);
+              item = item.replace(/\n\n+/g, "\n\n");
+              if (isParagraphed) {
+                item = showdown.subParser("paragraphs")(item, options, globals);
+              } else {
+                item = showdown.subParser("spanGamut")(item, options, globals);
+              }
+            }
+            item = item.replace("\xA8A", "");
+            item = "<li" + bulletStyle + ">" + item + "</li>\n";
+            return item;
+          });
+          listStr = listStr.replace(/¨0/g, "");
+          globals.gListLevel--;
+          if (trimTrailing) {
+            listStr = listStr.replace(/\s+$/, "");
+          }
+          return listStr;
+        }
+        function styleStartNumber(list, listType) {
+          if (listType === "ol") {
+            var res = list.match(/^ *(\d+)\./);
+            if (res && res[1] !== "1") {
+              return ' start="' + res[1] + '"';
+            }
+          }
+          return "";
+        }
+        function parseConsecutiveLists(list, listType, trimTrailing) {
+          var olRgx = options.disableForced4SpacesIndentedSublists ? /^ ?\d+\.[ \t]/gm : /^ {0,3}\d+\.[ \t]/gm, ulRgx = options.disableForced4SpacesIndentedSublists ? /^ ?[*+-][ \t]/gm : /^ {0,3}[*+-][ \t]/gm, counterRxg = listType === "ul" ? olRgx : ulRgx, result = "";
+          if (list.search(counterRxg) !== -1) {
+            (function parseCL(txt) {
+              var pos = txt.search(counterRxg), style2 = styleStartNumber(list, listType);
+              if (pos !== -1) {
+                result += "\n\n<" + listType + style2 + ">\n" + processListItems(txt.slice(0, pos), !!trimTrailing) + "</" + listType + ">\n";
+                listType = listType === "ul" ? "ol" : "ul";
+                counterRxg = listType === "ul" ? olRgx : ulRgx;
+                parseCL(txt.slice(pos));
+              } else {
+                result += "\n\n<" + listType + style2 + ">\n" + processListItems(txt, !!trimTrailing) + "</" + listType + ">\n";
+              }
+            })(list);
+          } else {
+            var style = styleStartNumber(list, listType);
+            result = "\n\n<" + listType + style + ">\n" + processListItems(list, !!trimTrailing) + "</" + listType + ">\n";
+          }
+          return result;
+        }
+        text = globals.converter._dispatch("lists.before", text, options, globals);
+        text += "\xA80";
+        if (globals.gListLevel) {
+          text = text.replace(/^(( {0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(¨0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm, function(wholeMatch, list, m2) {
+            var listType = m2.search(/[*+-]/g) > -1 ? "ul" : "ol";
+            return parseConsecutiveLists(list, listType, true);
+          });
+        } else {
+          text = text.replace(/(\n\n|^\n?)(( {0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(¨0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm, function(wholeMatch, m1, list, m3) {
+            var listType = m3.search(/[*+-]/g) > -1 ? "ul" : "ol";
+            return parseConsecutiveLists(list, listType, false);
+          });
+        }
+        text = text.replace(/¨0/, "");
+        text = globals.converter._dispatch("lists.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("metadata", function(text, options, globals) {
+        "use strict";
+        if (!options.metadata) {
+          return text;
+        }
+        text = globals.converter._dispatch("metadata.before", text, options, globals);
+        function parseMetadataContents(content) {
+          globals.metadata.raw = content;
+          content = content.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+          content = content.replace(/\n {4}/g, " ");
+          content.replace(/^([\S ]+): +([\s\S]+?)$/gm, function(wm, key, value) {
+            globals.metadata.parsed[key] = value;
+            return "";
+          });
+        }
+        text = text.replace(/^\s*«««+(\S*?)\n([\s\S]+?)\n»»»+\n/, function(wholematch, format, content) {
+          parseMetadataContents(content);
+          return "\xA8M";
+        });
+        text = text.replace(/^\s*---+(\S*?)\n([\s\S]+?)\n---+\n/, function(wholematch, format, content) {
+          if (format) {
+            globals.metadata.format = format;
+          }
+          parseMetadataContents(content);
+          return "\xA8M";
+        });
+        text = text.replace(/¨M/g, "");
+        text = globals.converter._dispatch("metadata.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("outdent", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("outdent.before", text, options, globals);
+        text = text.replace(/^(\t|[ ]{1,4})/gm, "\xA80");
+        text = text.replace(/¨0/g, "");
+        text = globals.converter._dispatch("outdent.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("paragraphs", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("paragraphs.before", text, options, globals);
+        text = text.replace(/^\n+/g, "");
+        text = text.replace(/\n+$/g, "");
+        var grafs = text.split(/\n{2,}/g), grafsOut = [], end = grafs.length;
+        for (var i = 0; i < end; i++) {
+          var str = grafs[i];
+          if (str.search(/¨(K|G)(\d+)\1/g) >= 0) {
+            grafsOut.push(str);
+          } else if (str.search(/\S/) >= 0) {
+            str = showdown.subParser("spanGamut")(str, options, globals);
+            str = str.replace(/^([ \t]*)/g, "<p>");
+            str += "</p>";
+            grafsOut.push(str);
+          }
+        }
+        end = grafsOut.length;
+        for (i = 0; i < end; i++) {
+          var blockText = "", grafsOutIt = grafsOut[i], codeFlag = false;
+          while (/¨(K|G)(\d+)\1/.test(grafsOutIt)) {
+            var delim = RegExp.$1, num = RegExp.$2;
+            if (delim === "K") {
+              blockText = globals.gHtmlBlocks[num];
+            } else {
+              if (codeFlag) {
+                blockText = showdown.subParser("encodeCode")(globals.ghCodeBlocks[num].text, options, globals);
+              } else {
+                blockText = globals.ghCodeBlocks[num].codeblock;
+              }
+            }
+            blockText = blockText.replace(/\$/g, "$$$$");
+            grafsOutIt = grafsOutIt.replace(/(\n\n)?¨(K|G)\d+\2(\n\n)?/, blockText);
+            if (/^<pre\b[^>]*>\s*<code\b[^>]*>/.test(grafsOutIt)) {
+              codeFlag = true;
+            }
+          }
+          grafsOut[i] = grafsOutIt;
+        }
+        text = grafsOut.join("\n");
+        text = text.replace(/^\n+/g, "");
+        text = text.replace(/\n+$/g, "");
+        return globals.converter._dispatch("paragraphs.after", text, options, globals);
+      });
+      showdown.subParser("runExtension", function(ext, text, options, globals) {
+        "use strict";
+        if (ext.filter) {
+          text = ext.filter(text, globals.converter, options);
+        } else if (ext.regex) {
+          var re = ext.regex;
+          if (!(re instanceof RegExp)) {
+            re = new RegExp(re, "g");
+          }
+          text = text.replace(re, ext.replace);
+        }
+        return text;
+      });
+      showdown.subParser("spanGamut", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("spanGamut.before", text, options, globals);
+        text = showdown.subParser("codeSpans")(text, options, globals);
+        text = showdown.subParser("escapeSpecialCharsWithinTagAttributes")(text, options, globals);
+        text = showdown.subParser("encodeBackslashEscapes")(text, options, globals);
+        text = showdown.subParser("images")(text, options, globals);
+        text = showdown.subParser("anchors")(text, options, globals);
+        text = showdown.subParser("autoLinks")(text, options, globals);
+        text = showdown.subParser("simplifiedAutoLinks")(text, options, globals);
+        text = showdown.subParser("emoji")(text, options, globals);
+        text = showdown.subParser("underline")(text, options, globals);
+        text = showdown.subParser("italicsAndBold")(text, options, globals);
+        text = showdown.subParser("strikethrough")(text, options, globals);
+        text = showdown.subParser("ellipsis")(text, options, globals);
+        text = showdown.subParser("hashHTMLSpans")(text, options, globals);
+        text = showdown.subParser("encodeAmpsAndAngles")(text, options, globals);
+        if (options.simpleLineBreaks) {
+          if (!/\n\n¨K/.test(text)) {
+            text = text.replace(/\n+/g, "<br />\n");
+          }
+        } else {
+          text = text.replace(/  +\n/g, "<br />\n");
+        }
+        text = globals.converter._dispatch("spanGamut.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("strikethrough", function(text, options, globals) {
+        "use strict";
+        function parseInside(txt) {
+          if (options.simplifiedAutoLink) {
+            txt = showdown.subParser("simplifiedAutoLinks")(txt, options, globals);
+          }
+          return "<del>" + txt + "</del>";
+        }
+        if (options.strikethrough) {
+          text = globals.converter._dispatch("strikethrough.before", text, options, globals);
+          text = text.replace(/(?:~){2}([\s\S]+?)(?:~){2}/g, function(wm, txt) {
+            return parseInside(txt);
+          });
+          text = globals.converter._dispatch("strikethrough.after", text, options, globals);
+        }
+        return text;
+      });
+      showdown.subParser("stripLinkDefinitions", function(text, options, globals) {
+        "use strict";
+        var regex = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?([^>\s]+)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n+|(?=¨0))/gm, base64Regex = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n\n|(?=¨0)|(?=\n\[))/gm;
+        text += "\xA80";
+        var replaceFunc = function(wholeMatch, linkId, url, width, height, blankLines, title) {
+          linkId = linkId.toLowerCase();
+          if (url.match(/^data:.+?\/.+?;base64,/)) {
+            globals.gUrls[linkId] = url.replace(/\s/g, "");
+          } else {
+            globals.gUrls[linkId] = showdown.subParser("encodeAmpsAndAngles")(url, options, globals);
+          }
+          if (blankLines) {
+            return blankLines + title;
+          } else {
+            if (title) {
+              globals.gTitles[linkId] = title.replace(/"|'/g, "&quot;");
+            }
+            if (options.parseImgDimensions && width && height) {
+              globals.gDimensions[linkId] = {
+                width,
+                height
+              };
+            }
+          }
+          return "";
+        };
+        text = text.replace(base64Regex, replaceFunc);
+        text = text.replace(regex, replaceFunc);
+        text = text.replace(/¨0/, "");
+        return text;
+      });
+      showdown.subParser("tables", function(text, options, globals) {
+        "use strict";
+        if (!options.tables) {
+          return text;
+        }
+        var tableRgx = /^ {0,3}\|?.+\|.+\n {0,3}\|?[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*:?[ \t]*(?:[-=]){2,}[\s\S]+?(?:\n\n|¨0)/gm, singeColTblRgx = /^ {0,3}\|.+\|[ \t]*\n {0,3}\|[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*\n( {0,3}\|.+\|[ \t]*\n)*(?:\n|¨0)/gm;
+        function parseStyles(sLine) {
+          if (/^:[ \t]*--*$/.test(sLine)) {
+            return ' style="text-align:left;"';
+          } else if (/^--*[ \t]*:[ \t]*$/.test(sLine)) {
+            return ' style="text-align:right;"';
+          } else if (/^:[ \t]*--*[ \t]*:$/.test(sLine)) {
+            return ' style="text-align:center;"';
+          } else {
+            return "";
+          }
+        }
+        function parseHeaders(header, style) {
+          var id = "";
+          header = header.trim();
+          if (options.tablesHeaderId || options.tableHeaderId) {
+            id = ' id="' + header.replace(/ /g, "_").toLowerCase() + '"';
+          }
+          header = showdown.subParser("spanGamut")(header, options, globals);
+          return "<th" + id + style + ">" + header + "</th>\n";
+        }
+        function parseCells(cell, style) {
+          var subText = showdown.subParser("spanGamut")(cell, options, globals);
+          return "<td" + style + ">" + subText + "</td>\n";
+        }
+        function buildTable(headers, cells) {
+          var tb = "<table>\n<thead>\n<tr>\n", tblLgn = headers.length;
+          for (var i = 0; i < tblLgn; ++i) {
+            tb += headers[i];
+          }
+          tb += "</tr>\n</thead>\n<tbody>\n";
+          for (i = 0; i < cells.length; ++i) {
+            tb += "<tr>\n";
+            for (var ii = 0; ii < tblLgn; ++ii) {
+              tb += cells[i][ii];
+            }
+            tb += "</tr>\n";
+          }
+          tb += "</tbody>\n</table>\n";
+          return tb;
+        }
+        function parseTable(rawTable) {
+          var i, tableLines = rawTable.split("\n");
+          for (i = 0; i < tableLines.length; ++i) {
+            if (/^ {0,3}\|/.test(tableLines[i])) {
+              tableLines[i] = tableLines[i].replace(/^ {0,3}\|/, "");
+            }
+            if (/\|[ \t]*$/.test(tableLines[i])) {
+              tableLines[i] = tableLines[i].replace(/\|[ \t]*$/, "");
+            }
+            tableLines[i] = showdown.subParser("codeSpans")(tableLines[i], options, globals);
+          }
+          var rawHeaders = tableLines[0].split("|").map(function(s) {
+            return s.trim();
+          }), rawStyles = tableLines[1].split("|").map(function(s) {
+            return s.trim();
+          }), rawCells = [], headers = [], styles = [], cells = [];
+          tableLines.shift();
+          tableLines.shift();
+          for (i = 0; i < tableLines.length; ++i) {
+            if (tableLines[i].trim() === "") {
+              continue;
+            }
+            rawCells.push(tableLines[i].split("|").map(function(s) {
+              return s.trim();
+            }));
+          }
+          if (rawHeaders.length < rawStyles.length) {
+            return rawTable;
+          }
+          for (i = 0; i < rawStyles.length; ++i) {
+            styles.push(parseStyles(rawStyles[i]));
+          }
+          for (i = 0; i < rawHeaders.length; ++i) {
+            if (showdown.helper.isUndefined(styles[i])) {
+              styles[i] = "";
+            }
+            headers.push(parseHeaders(rawHeaders[i], styles[i]));
+          }
+          for (i = 0; i < rawCells.length; ++i) {
+            var row = [];
+            for (var ii = 0; ii < headers.length; ++ii) {
+              if (showdown.helper.isUndefined(rawCells[i][ii])) {
+              }
+              row.push(parseCells(rawCells[i][ii], styles[ii]));
+            }
+            cells.push(row);
+          }
+          return buildTable(headers, cells);
+        }
+        text = globals.converter._dispatch("tables.before", text, options, globals);
+        text = text.replace(/\\(\|)/g, showdown.helper.escapeCharactersCallback);
+        text = text.replace(tableRgx, parseTable);
+        text = text.replace(singeColTblRgx, parseTable);
+        text = globals.converter._dispatch("tables.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("underline", function(text, options, globals) {
+        "use strict";
+        if (!options.underline) {
+          return text;
+        }
+        text = globals.converter._dispatch("underline.before", text, options, globals);
+        if (options.literalMidWordUnderscores) {
+          text = text.replace(/\b___(\S[\s\S]*?)___\b/g, function(wm, txt) {
+            return "<u>" + txt + "</u>";
+          });
+          text = text.replace(/\b__(\S[\s\S]*?)__\b/g, function(wm, txt) {
+            return "<u>" + txt + "</u>";
+          });
+        } else {
+          text = text.replace(/___(\S[\s\S]*?)___/g, function(wm, m) {
+            return /\S$/.test(m) ? "<u>" + m + "</u>" : wm;
+          });
+          text = text.replace(/__(\S[\s\S]*?)__/g, function(wm, m) {
+            return /\S$/.test(m) ? "<u>" + m + "</u>" : wm;
+          });
+        }
+        text = text.replace(/(_)/g, showdown.helper.escapeCharactersCallback);
+        text = globals.converter._dispatch("underline.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("unescapeSpecialChars", function(text, options, globals) {
+        "use strict";
+        text = globals.converter._dispatch("unescapeSpecialChars.before", text, options, globals);
+        text = text.replace(/¨E(\d+)E/g, function(wholeMatch, m1) {
+          var charCodeToReplace = parseInt(m1);
+          return String.fromCharCode(charCodeToReplace);
+        });
+        text = globals.converter._dispatch("unescapeSpecialChars.after", text, options, globals);
+        return text;
+      });
+      showdown.subParser("makeMarkdown.blockquote", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (node.hasChildNodes()) {
+          var children = node.childNodes, childrenLength = children.length;
+          for (var i = 0; i < childrenLength; ++i) {
+            var innerTxt = showdown.subParser("makeMarkdown.node")(children[i], globals);
+            if (innerTxt === "") {
+              continue;
+            }
+            txt += innerTxt;
+          }
+        }
+        txt = txt.trim();
+        txt = "> " + txt.split("\n").join("\n> ");
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.codeBlock", function(node, globals) {
+        "use strict";
+        var lang = node.getAttribute("language"), num = node.getAttribute("precodenum");
+        return "```" + lang + "\n" + globals.preList[num] + "\n```";
+      });
+      showdown.subParser("makeMarkdown.codeSpan", function(node) {
+        "use strict";
+        return "`" + node.innerHTML + "`";
+      });
+      showdown.subParser("makeMarkdown.emphasis", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (node.hasChildNodes()) {
+          txt += "*";
+          var children = node.childNodes, childrenLength = children.length;
+          for (var i = 0; i < childrenLength; ++i) {
+            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+          }
+          txt += "*";
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.header", function(node, globals, headerLevel) {
+        "use strict";
+        var headerMark = new Array(headerLevel + 1).join("#"), txt = "";
+        if (node.hasChildNodes()) {
+          txt = headerMark + " ";
+          var children = node.childNodes, childrenLength = children.length;
+          for (var i = 0; i < childrenLength; ++i) {
+            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+          }
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.hr", function() {
+        "use strict";
+        return "---";
+      });
+      showdown.subParser("makeMarkdown.image", function(node) {
+        "use strict";
+        var txt = "";
+        if (node.hasAttribute("src")) {
+          txt += "![" + node.getAttribute("alt") + "](";
+          txt += "<" + node.getAttribute("src") + ">";
+          if (node.hasAttribute("width") && node.hasAttribute("height")) {
+            txt += " =" + node.getAttribute("width") + "x" + node.getAttribute("height");
+          }
+          if (node.hasAttribute("title")) {
+            txt += ' "' + node.getAttribute("title") + '"';
+          }
+          txt += ")";
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.links", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (node.hasChildNodes() && node.hasAttribute("href")) {
+          var children = node.childNodes, childrenLength = children.length;
+          txt = "[";
+          for (var i = 0; i < childrenLength; ++i) {
+            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+          }
+          txt += "](";
+          txt += "<" + node.getAttribute("href") + ">";
+          if (node.hasAttribute("title")) {
+            txt += ' "' + node.getAttribute("title") + '"';
+          }
+          txt += ")";
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.list", function(node, globals, type) {
+        "use strict";
+        var txt = "";
+        if (!node.hasChildNodes()) {
+          return "";
+        }
+        var listItems = node.childNodes, listItemsLenght = listItems.length, listNum = node.getAttribute("start") || 1;
+        for (var i = 0; i < listItemsLenght; ++i) {
+          if (typeof listItems[i].tagName === "undefined" || listItems[i].tagName.toLowerCase() !== "li") {
+            continue;
+          }
+          var bullet = "";
+          if (type === "ol") {
+            bullet = listNum.toString() + ". ";
+          } else {
+            bullet = "- ";
+          }
+          txt += bullet + showdown.subParser("makeMarkdown.listItem")(listItems[i], globals);
+          ++listNum;
+        }
+        txt += "\n<!-- -->\n";
+        return txt.trim();
+      });
+      showdown.subParser("makeMarkdown.listItem", function(node, globals) {
+        "use strict";
+        var listItemTxt = "";
+        var children = node.childNodes, childrenLenght = children.length;
+        for (var i = 0; i < childrenLenght; ++i) {
+          listItemTxt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+        }
+        if (!/\n$/.test(listItemTxt)) {
+          listItemTxt += "\n";
+        } else {
+          listItemTxt = listItemTxt.split("\n").join("\n    ").replace(/^ {4}$/gm, "").replace(/\n\n+/g, "\n\n");
+        }
+        return listItemTxt;
+      });
+      showdown.subParser("makeMarkdown.node", function(node, globals, spansOnly) {
+        "use strict";
+        spansOnly = spansOnly || false;
+        var txt = "";
+        if (node.nodeType === 3) {
+          return showdown.subParser("makeMarkdown.txt")(node, globals);
+        }
+        if (node.nodeType === 8) {
+          return "<!--" + node.data + "-->\n\n";
+        }
+        if (node.nodeType !== 1) {
+          return "";
+        }
+        var tagName = node.tagName.toLowerCase();
+        switch (tagName) {
+          case "h1":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.header")(node, globals, 1) + "\n\n";
+            }
+            break;
+          case "h2":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.header")(node, globals, 2) + "\n\n";
+            }
+            break;
+          case "h3":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.header")(node, globals, 3) + "\n\n";
+            }
+            break;
+          case "h4":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.header")(node, globals, 4) + "\n\n";
+            }
+            break;
+          case "h5":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.header")(node, globals, 5) + "\n\n";
+            }
+            break;
+          case "h6":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.header")(node, globals, 6) + "\n\n";
+            }
+            break;
+          case "p":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.paragraph")(node, globals) + "\n\n";
+            }
+            break;
+          case "blockquote":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.blockquote")(node, globals) + "\n\n";
+            }
+            break;
+          case "hr":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.hr")(node, globals) + "\n\n";
+            }
+            break;
+          case "ol":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.list")(node, globals, "ol") + "\n\n";
+            }
+            break;
+          case "ul":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.list")(node, globals, "ul") + "\n\n";
+            }
+            break;
+          case "precode":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.codeBlock")(node, globals) + "\n\n";
+            }
+            break;
+          case "pre":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.pre")(node, globals) + "\n\n";
+            }
+            break;
+          case "table":
+            if (!spansOnly) {
+              txt = showdown.subParser("makeMarkdown.table")(node, globals) + "\n\n";
+            }
+            break;
+          case "code":
+            txt = showdown.subParser("makeMarkdown.codeSpan")(node, globals);
+            break;
+          case "em":
+          case "i":
+            txt = showdown.subParser("makeMarkdown.emphasis")(node, globals);
+            break;
+          case "strong":
+          case "b":
+            txt = showdown.subParser("makeMarkdown.strong")(node, globals);
+            break;
+          case "del":
+            txt = showdown.subParser("makeMarkdown.strikethrough")(node, globals);
+            break;
+          case "a":
+            txt = showdown.subParser("makeMarkdown.links")(node, globals);
+            break;
+          case "img":
+            txt = showdown.subParser("makeMarkdown.image")(node, globals);
+            break;
+          default:
+            txt = node.outerHTML + "\n\n";
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.paragraph", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (node.hasChildNodes()) {
+          var children = node.childNodes, childrenLength = children.length;
+          for (var i = 0; i < childrenLength; ++i) {
+            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+          }
+        }
+        txt = txt.trim();
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.pre", function(node, globals) {
+        "use strict";
+        var num = node.getAttribute("prenum");
+        return "<pre>" + globals.preList[num] + "</pre>";
+      });
+      showdown.subParser("makeMarkdown.strikethrough", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (node.hasChildNodes()) {
+          txt += "~~";
+          var children = node.childNodes, childrenLength = children.length;
+          for (var i = 0; i < childrenLength; ++i) {
+            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+          }
+          txt += "~~";
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.strong", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (node.hasChildNodes()) {
+          txt += "**";
+          var children = node.childNodes, childrenLength = children.length;
+          for (var i = 0; i < childrenLength; ++i) {
+            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
+          }
+          txt += "**";
+        }
+        return txt;
+      });
+      showdown.subParser("makeMarkdown.table", function(node, globals) {
+        "use strict";
+        var txt = "", tableArray = [[], []], headings = node.querySelectorAll("thead>tr>th"), rows = node.querySelectorAll("tbody>tr"), i, ii;
+        for (i = 0; i < headings.length; ++i) {
+          var headContent = showdown.subParser("makeMarkdown.tableCell")(headings[i], globals), allign = "---";
+          if (headings[i].hasAttribute("style")) {
+            var style = headings[i].getAttribute("style").toLowerCase().replace(/\s/g, "");
+            switch (style) {
+              case "text-align:left;":
+                allign = ":---";
+                break;
+              case "text-align:right;":
+                allign = "---:";
+                break;
+              case "text-align:center;":
+                allign = ":---:";
+                break;
+            }
+          }
+          tableArray[0][i] = headContent.trim();
+          tableArray[1][i] = allign;
+        }
+        for (i = 0; i < rows.length; ++i) {
+          var r = tableArray.push([]) - 1, cols = rows[i].getElementsByTagName("td");
+          for (ii = 0; ii < headings.length; ++ii) {
+            var cellContent = " ";
+            if (typeof cols[ii] !== "undefined") {
+              cellContent = showdown.subParser("makeMarkdown.tableCell")(cols[ii], globals);
+            }
+            tableArray[r].push(cellContent);
+          }
+        }
+        var cellSpacesCount = 3;
+        for (i = 0; i < tableArray.length; ++i) {
+          for (ii = 0; ii < tableArray[i].length; ++ii) {
+            var strLen = tableArray[i][ii].length;
+            if (strLen > cellSpacesCount) {
+              cellSpacesCount = strLen;
+            }
+          }
+        }
+        for (i = 0; i < tableArray.length; ++i) {
+          for (ii = 0; ii < tableArray[i].length; ++ii) {
+            if (i === 1) {
+              if (tableArray[i][ii].slice(-1) === ":") {
+                tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii].slice(-1), cellSpacesCount - 1, "-") + ":";
+              } else {
+                tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii], cellSpacesCount, "-");
+              }
+            } else {
+              tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii], cellSpacesCount);
+            }
+          }
+          txt += "| " + tableArray[i].join(" | ") + " |\n";
+        }
+        return txt.trim();
+      });
+      showdown.subParser("makeMarkdown.tableCell", function(node, globals) {
+        "use strict";
+        var txt = "";
+        if (!node.hasChildNodes()) {
+          return "";
+        }
+        var children = node.childNodes, childrenLength = children.length;
+        for (var i = 0; i < childrenLength; ++i) {
+          txt += showdown.subParser("makeMarkdown.node")(children[i], globals, true);
+        }
+        return txt.trim();
+      });
+      showdown.subParser("makeMarkdown.txt", function(node) {
+        "use strict";
+        var txt = node.nodeValue;
+        txt = txt.replace(/ +/g, " ");
+        txt = txt.replace(/¨NBSP;/g, " ");
+        txt = showdown.helper.unescapeHTMLEntities(txt);
+        txt = txt.replace(/([*_~|`])/g, "\\$1");
+        txt = txt.replace(/^(\s*)>/g, "\\$1>");
+        txt = txt.replace(/^#/gm, "\\#");
+        txt = txt.replace(/^(\s*)([-=]{3,})(\s*)$/, "$1\\$2$3");
+        txt = txt.replace(/^( {0,3}\d+)\./gm, "$1\\.");
+        txt = txt.replace(/^( {0,3})([+-])/gm, "$1\\$2");
+        txt = txt.replace(/]([\s]*)\(/g, "\\]$1\\(");
+        txt = txt.replace(/^ {0,3}\[([\S \t]*?)]:/gm, "\\[$1]:");
+        return txt;
+      });
+      var root = this;
+      if (typeof define === "function" && define.amd) {
         define(function() {
-          return seedrandom2;
+          "use strict";
+          return showdown;
         });
+      } else if (typeof module2 !== "undefined" && module2.exports) {
+        module2.exports = showdown;
       } else {
-        math["seed" + rngname] = seedrandom2;
+        root.showdown = showdown;
       }
-    })(typeof self !== "undefined" ? self : exports2, [], Math);
-  }
-});
-
-// node_modules/seedrandom/index.js
-var require_seedrandom2 = __commonJS({
-  "node_modules/seedrandom/index.js"(exports2, module2) {
-    var alea = require_alea();
-    var xor128 = require_xor128();
-    var xorwow = require_xorwow();
-    var xorshift7 = require_xorshift7();
-    var xor4096 = require_xor4096();
-    var tychei = require_tychei();
-    var sr = require_seedrandom();
-    sr.alea = alea;
-    sr.xor128 = xor128;
-    sr.xorwow = xorwow;
-    sr.xorshift7 = xorshift7;
-    sr.xor4096 = xor4096;
-    sr.tychei = tychei;
-    module2.exports = sr;
+    }).call(exports2);
   }
 });
 
@@ -27274,3590 +30208,656 @@ var require_luxon = __commonJS({
   }
 });
 
-// node_modules/showdown/dist/showdown.js
-var require_showdown = __commonJS({
-  "node_modules/showdown/dist/showdown.js"(exports2, module2) {
-    (function() {
-      function getDefaultOpts(simple) {
-        "use strict";
-        var defaultOptions = {
-          omitExtraWLInCodeBlocks: {
-            defaultValue: false,
-            describe: "Omit the default extra whiteline added to code blocks",
-            type: "boolean"
-          },
-          noHeaderId: {
-            defaultValue: false,
-            describe: "Turn on/off generated header id",
-            type: "boolean"
-          },
-          prefixHeaderId: {
-            defaultValue: false,
-            describe: "Add a prefix to the generated header ids. Passing a string will prefix that string to the header id. Setting to true will add a generic 'section-' prefix",
-            type: "string"
-          },
-          rawPrefixHeaderId: {
-            defaultValue: false,
-            describe: 'Setting this option to true will prevent showdown from modifying the prefix. This might result in malformed IDs (if, for instance, the " char is used in the prefix)',
-            type: "boolean"
-          },
-          ghCompatibleHeaderId: {
-            defaultValue: false,
-            describe: "Generate header ids compatible with github style (spaces are replaced with dashes, a bunch of non alphanumeric chars are removed)",
-            type: "boolean"
-          },
-          rawHeaderId: {
-            defaultValue: false,
-            describe: `Remove only spaces, ' and " from generated header ids (including prefixes), replacing them with dashes (-). WARNING: This might result in malformed ids`,
-            type: "boolean"
-          },
-          headerLevelStart: {
-            defaultValue: false,
-            describe: "The header blocks level start",
-            type: "integer"
-          },
-          parseImgDimensions: {
-            defaultValue: false,
-            describe: "Turn on/off image dimension parsing",
-            type: "boolean"
-          },
-          simplifiedAutoLink: {
-            defaultValue: false,
-            describe: "Turn on/off GFM autolink style",
-            type: "boolean"
-          },
-          excludeTrailingPunctuationFromURLs: {
-            defaultValue: false,
-            describe: "Excludes trailing punctuation from links generated with autoLinking",
-            type: "boolean"
-          },
-          literalMidWordUnderscores: {
-            defaultValue: false,
-            describe: "Parse midword underscores as literal underscores",
-            type: "boolean"
-          },
-          literalMidWordAsterisks: {
-            defaultValue: false,
-            describe: "Parse midword asterisks as literal asterisks",
-            type: "boolean"
-          },
-          strikethrough: {
-            defaultValue: false,
-            describe: "Turn on/off strikethrough support",
-            type: "boolean"
-          },
-          tables: {
-            defaultValue: false,
-            describe: "Turn on/off tables support",
-            type: "boolean"
-          },
-          tablesHeaderId: {
-            defaultValue: false,
-            describe: "Add an id to table headers",
-            type: "boolean"
-          },
-          ghCodeBlocks: {
-            defaultValue: true,
-            describe: "Turn on/off GFM fenced code blocks support",
-            type: "boolean"
-          },
-          tasklists: {
-            defaultValue: false,
-            describe: "Turn on/off GFM tasklist support",
-            type: "boolean"
-          },
-          smoothLivePreview: {
-            defaultValue: false,
-            describe: "Prevents weird effects in live previews due to incomplete input",
-            type: "boolean"
-          },
-          smartIndentationFix: {
-            defaultValue: false,
-            description: "Tries to smartly fix indentation in es6 strings",
-            type: "boolean"
-          },
-          disableForced4SpacesIndentedSublists: {
-            defaultValue: false,
-            description: "Disables the requirement of indenting nested sublists by 4 spaces",
-            type: "boolean"
-          },
-          simpleLineBreaks: {
-            defaultValue: false,
-            description: "Parses simple line breaks as <br> (GFM Style)",
-            type: "boolean"
-          },
-          requireSpaceBeforeHeadingText: {
-            defaultValue: false,
-            description: "Makes adding a space between `#` and the header text mandatory (GFM Style)",
-            type: "boolean"
-          },
-          ghMentions: {
-            defaultValue: false,
-            description: "Enables github @mentions",
-            type: "boolean"
-          },
-          ghMentionsLink: {
-            defaultValue: "https://github.com/{u}",
-            description: "Changes the link generated by @mentions. Only applies if ghMentions option is enabled.",
-            type: "string"
-          },
-          encodeEmails: {
-            defaultValue: true,
-            description: "Encode e-mail addresses through the use of Character Entities, transforming ASCII e-mail addresses into its equivalent decimal entities",
-            type: "boolean"
-          },
-          openLinksInNewWindow: {
-            defaultValue: false,
-            description: "Open all links in new windows",
-            type: "boolean"
-          },
-          backslashEscapesHTMLTags: {
-            defaultValue: false,
-            description: "Support for HTML Tag escaping. ex: <div>foo</div>",
-            type: "boolean"
-          },
-          emoji: {
-            defaultValue: false,
-            description: "Enable emoji support. Ex: `this is a :smile: emoji`",
-            type: "boolean"
-          },
-          underline: {
-            defaultValue: false,
-            description: "Enable support for underline. Syntax is double or triple underscores: `__underline word__`. With this option enabled, underscores no longer parses into `<em>` and `<strong>`",
-            type: "boolean"
-          },
-          completeHTMLDocument: {
-            defaultValue: false,
-            description: "Outputs a complete html document, including `<html>`, `<head>` and `<body>` tags",
-            type: "boolean"
-          },
-          metadata: {
-            defaultValue: false,
-            description: "Enable support for document metadata (defined at the top of the document between `\xAB\xAB\xAB` and `\xBB\xBB\xBB` or between `---` and `---`).",
-            type: "boolean"
-          },
-          splitAdjacentBlockquotes: {
-            defaultValue: false,
-            description: "Split adjacent blockquote blocks",
-            type: "boolean"
-          }
+// node_modules/seedrandom/lib/alea.js
+var require_alea = __commonJS({
+  "node_modules/seedrandom/lib/alea.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function Alea(seed) {
+        var me = this, mash = Mash();
+        me.next = function() {
+          var t = 2091639 * me.s0 + me.c * 23283064365386963e-26;
+          me.s0 = me.s1;
+          me.s1 = me.s2;
+          return me.s2 = t - (me.c = t | 0);
         };
-        if (simple === false) {
-          return JSON.parse(JSON.stringify(defaultOptions));
+        me.c = 1;
+        me.s0 = mash(" ");
+        me.s1 = mash(" ");
+        me.s2 = mash(" ");
+        me.s0 -= mash(seed);
+        if (me.s0 < 0) {
+          me.s0 += 1;
         }
-        var ret = {};
-        for (var opt in defaultOptions) {
-          if (defaultOptions.hasOwnProperty(opt)) {
-            ret[opt] = defaultOptions[opt].defaultValue;
-          }
+        me.s1 -= mash(seed);
+        if (me.s1 < 0) {
+          me.s1 += 1;
         }
-        return ret;
+        me.s2 -= mash(seed);
+        if (me.s2 < 0) {
+          me.s2 += 1;
+        }
+        mash = null;
       }
-      function allOptionsOn() {
-        "use strict";
-        var options = getDefaultOpts(true), ret = {};
-        for (var opt in options) {
-          if (options.hasOwnProperty(opt)) {
-            ret[opt] = true;
-          }
-        }
-        return ret;
+      function copy(f, t) {
+        t.c = f.c;
+        t.s0 = f.s0;
+        t.s1 = f.s1;
+        t.s2 = f.s2;
+        return t;
       }
-      var showdown = {}, parsers = {}, extensions = {}, globalOptions = getDefaultOpts(true), setFlavor = "vanilla", flavor = {
-        github: {
-          omitExtraWLInCodeBlocks: true,
-          simplifiedAutoLink: true,
-          excludeTrailingPunctuationFromURLs: true,
-          literalMidWordUnderscores: true,
-          strikethrough: true,
-          tables: true,
-          tablesHeaderId: true,
-          ghCodeBlocks: true,
-          tasklists: true,
-          disableForced4SpacesIndentedSublists: true,
-          simpleLineBreaks: true,
-          requireSpaceBeforeHeadingText: true,
-          ghCompatibleHeaderId: true,
-          ghMentions: true,
-          backslashEscapesHTMLTags: true,
-          emoji: true,
-          splitAdjacentBlockquotes: true
-        },
-        original: {
-          noHeaderId: true,
-          ghCodeBlocks: false
-        },
-        ghost: {
-          omitExtraWLInCodeBlocks: true,
-          parseImgDimensions: true,
-          simplifiedAutoLink: true,
-          excludeTrailingPunctuationFromURLs: true,
-          literalMidWordUnderscores: true,
-          strikethrough: true,
-          tables: true,
-          tablesHeaderId: true,
-          ghCodeBlocks: true,
-          tasklists: true,
-          smoothLivePreview: true,
-          simpleLineBreaks: true,
-          requireSpaceBeforeHeadingText: true,
-          ghMentions: false,
-          encodeEmails: true
-        },
-        vanilla: getDefaultOpts(true),
-        allOn: allOptionsOn()
-      };
-      showdown.helper = {};
-      showdown.extensions = {};
-      showdown.setOption = function(key, value) {
-        "use strict";
-        globalOptions[key] = value;
-        return this;
-      };
-      showdown.getOption = function(key) {
-        "use strict";
-        return globalOptions[key];
-      };
-      showdown.getOptions = function() {
-        "use strict";
-        return globalOptions;
-      };
-      showdown.resetOptions = function() {
-        "use strict";
-        globalOptions = getDefaultOpts(true);
-      };
-      showdown.setFlavor = function(name) {
-        "use strict";
-        if (!flavor.hasOwnProperty(name)) {
-          throw Error(name + " flavor was not found");
-        }
-        showdown.resetOptions();
-        var preset = flavor[name];
-        setFlavor = name;
-        for (var option in preset) {
-          if (preset.hasOwnProperty(option)) {
-            globalOptions[option] = preset[option];
-          }
-        }
-      };
-      showdown.getFlavor = function() {
-        "use strict";
-        return setFlavor;
-      };
-      showdown.getFlavorOptions = function(name) {
-        "use strict";
-        if (flavor.hasOwnProperty(name)) {
-          return flavor[name];
-        }
-      };
-      showdown.getDefaultOptions = function(simple) {
-        "use strict";
-        return getDefaultOpts(simple);
-      };
-      showdown.subParser = function(name, func) {
-        "use strict";
-        if (showdown.helper.isString(name)) {
-          if (typeof func !== "undefined") {
-            parsers[name] = func;
-          } else {
-            if (parsers.hasOwnProperty(name)) {
-              return parsers[name];
-            } else {
-              throw Error("SubParser named " + name + " not registered!");
-            }
-          }
-        }
-      };
-      showdown.extension = function(name, ext) {
-        "use strict";
-        if (!showdown.helper.isString(name)) {
-          throw Error("Extension 'name' must be a string");
-        }
-        name = showdown.helper.stdExtName(name);
-        if (showdown.helper.isUndefined(ext)) {
-          if (!extensions.hasOwnProperty(name)) {
-            throw Error("Extension named " + name + " is not registered!");
-          }
-          return extensions[name];
-        } else {
-          if (typeof ext === "function") {
-            ext = ext();
-          }
-          if (!showdown.helper.isArray(ext)) {
-            ext = [ext];
-          }
-          var validExtension = validate(ext, name);
-          if (validExtension.valid) {
-            extensions[name] = ext;
-          } else {
-            throw Error(validExtension.error);
-          }
-        }
-      };
-      showdown.getAllExtensions = function() {
-        "use strict";
-        return extensions;
-      };
-      showdown.removeExtension = function(name) {
-        "use strict";
-        delete extensions[name];
-      };
-      showdown.resetExtensions = function() {
-        "use strict";
-        extensions = {};
-      };
-      function validate(extension, name) {
-        "use strict";
-        var errMsg = name ? "Error in " + name + " extension->" : "Error in unnamed extension", ret = {
-          valid: true,
-          error: ""
+      function impl(seed, opts) {
+        var xg = new Alea(seed), state = opts && opts.state, prng = xg.next;
+        prng.int32 = function() {
+          return xg.next() * 4294967296 | 0;
         };
-        if (!showdown.helper.isArray(extension)) {
-          extension = [extension];
-        }
-        for (var i = 0; i < extension.length; ++i) {
-          var baseMsg = errMsg + " sub-extension " + i + ": ", ext = extension[i];
-          if (typeof ext !== "object") {
-            ret.valid = false;
-            ret.error = baseMsg + "must be an object, but " + typeof ext + " given";
-            return ret;
-          }
-          if (!showdown.helper.isString(ext.type)) {
-            ret.valid = false;
-            ret.error = baseMsg + 'property "type" must be a string, but ' + typeof ext.type + " given";
-            return ret;
-          }
-          var type = ext.type = ext.type.toLowerCase();
-          if (type === "language") {
-            type = ext.type = "lang";
-          }
-          if (type === "html") {
-            type = ext.type = "output";
-          }
-          if (type !== "lang" && type !== "output" && type !== "listener") {
-            ret.valid = false;
-            ret.error = baseMsg + "type " + type + ' is not recognized. Valid values: "lang/language", "output/html" or "listener"';
-            return ret;
-          }
-          if (type === "listener") {
-            if (showdown.helper.isUndefined(ext.listeners)) {
-              ret.valid = false;
-              ret.error = baseMsg + '. Extensions of type "listener" must have a property called "listeners"';
-              return ret;
-            }
-          } else {
-            if (showdown.helper.isUndefined(ext.filter) && showdown.helper.isUndefined(ext.regex)) {
-              ret.valid = false;
-              ret.error = baseMsg + type + ' extensions must define either a "regex" property or a "filter" method';
-              return ret;
-            }
-          }
-          if (ext.listeners) {
-            if (typeof ext.listeners !== "object") {
-              ret.valid = false;
-              ret.error = baseMsg + '"listeners" property must be an object but ' + typeof ext.listeners + " given";
-              return ret;
-            }
-            for (var ln in ext.listeners) {
-              if (ext.listeners.hasOwnProperty(ln)) {
-                if (typeof ext.listeners[ln] !== "function") {
-                  ret.valid = false;
-                  ret.error = baseMsg + '"listeners" property must be an hash of [event name]: [callback]. listeners.' + ln + " must be a function but " + typeof ext.listeners[ln] + " given";
-                  return ret;
-                }
-              }
-            }
-          }
-          if (ext.filter) {
-            if (typeof ext.filter !== "function") {
-              ret.valid = false;
-              ret.error = baseMsg + '"filter" must be a function, but ' + typeof ext.filter + " given";
-              return ret;
-            }
-          } else if (ext.regex) {
-            if (showdown.helper.isString(ext.regex)) {
-              ext.regex = new RegExp(ext.regex, "g");
-            }
-            if (!(ext.regex instanceof RegExp)) {
-              ret.valid = false;
-              ret.error = baseMsg + '"regex" property must either be a string or a RegExp object, but ' + typeof ext.regex + " given";
-              return ret;
-            }
-            if (showdown.helper.isUndefined(ext.replace)) {
-              ret.valid = false;
-              ret.error = baseMsg + '"regex" extensions must implement a replace string or function';
-              return ret;
-            }
-          }
-        }
-        return ret;
-      }
-      showdown.validateExtension = function(ext) {
-        "use strict";
-        var validateExtension = validate(ext, null);
-        if (!validateExtension.valid) {
-          console.warn(validateExtension.error);
-          return false;
-        }
-        return true;
-      };
-      if (!showdown.hasOwnProperty("helper")) {
-        showdown.helper = {};
-      }
-      showdown.helper.isString = function(a) {
-        "use strict";
-        return typeof a === "string" || a instanceof String;
-      };
-      showdown.helper.isFunction = function(a) {
-        "use strict";
-        var getType = {};
-        return a && getType.toString.call(a) === "[object Function]";
-      };
-      showdown.helper.isArray = function(a) {
-        "use strict";
-        return Array.isArray(a);
-      };
-      showdown.helper.isUndefined = function(value) {
-        "use strict";
-        return typeof value === "undefined";
-      };
-      showdown.helper.forEach = function(obj, callback) {
-        "use strict";
-        if (showdown.helper.isUndefined(obj)) {
-          throw new Error("obj param is required");
-        }
-        if (showdown.helper.isUndefined(callback)) {
-          throw new Error("callback param is required");
-        }
-        if (!showdown.helper.isFunction(callback)) {
-          throw new Error("callback param must be a function/closure");
-        }
-        if (typeof obj.forEach === "function") {
-          obj.forEach(callback);
-        } else if (showdown.helper.isArray(obj)) {
-          for (var i = 0; i < obj.length; i++) {
-            callback(obj[i], i, obj);
-          }
-        } else if (typeof obj === "object") {
-          for (var prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-              callback(obj[prop], prop, obj);
-            }
-          }
-        } else {
-          throw new Error("obj does not seem to be an array or an iterable object");
-        }
-      };
-      showdown.helper.stdExtName = function(s) {
-        "use strict";
-        return s.replace(/[_?*+\/\\.^-]/g, "").replace(/\s/g, "").toLowerCase();
-      };
-      function escapeCharactersCallback(wholeMatch, m1) {
-        "use strict";
-        var charCodeToEscape = m1.charCodeAt(0);
-        return "\xA8E" + charCodeToEscape + "E";
-      }
-      showdown.helper.escapeCharactersCallback = escapeCharactersCallback;
-      showdown.helper.escapeCharacters = function(text, charsToEscape, afterBackslash) {
-        "use strict";
-        var regexString = "([" + charsToEscape.replace(/([\[\]\\])/g, "\\$1") + "])";
-        if (afterBackslash) {
-          regexString = "\\\\" + regexString;
-        }
-        var regex = new RegExp(regexString, "g");
-        text = text.replace(regex, escapeCharactersCallback);
-        return text;
-      };
-      showdown.helper.unescapeHTMLEntities = function(txt) {
-        "use strict";
-        return txt.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-      };
-      var rgxFindMatchPos = function(str, left, right, flags) {
-        "use strict";
-        var f = flags || "", g = f.indexOf("g") > -1, x = new RegExp(left + "|" + right, "g" + f.replace(/g/g, "")), l = new RegExp(left, f.replace(/g/g, "")), pos = [], t, s, m, start, end;
-        do {
-          t = 0;
-          while (m = x.exec(str)) {
-            if (l.test(m[0])) {
-              if (!t++) {
-                s = x.lastIndex;
-                start = s - m[0].length;
-              }
-            } else if (t) {
-              if (!--t) {
-                end = m.index + m[0].length;
-                var obj = {
-                  left: { start, end: s },
-                  match: { start: s, end: m.index },
-                  right: { start: m.index, end },
-                  wholeMatch: { start, end }
-                };
-                pos.push(obj);
-                if (!g) {
-                  return pos;
-                }
-              }
-            }
-          }
-        } while (t && (x.lastIndex = s));
-        return pos;
-      };
-      showdown.helper.matchRecursiveRegExp = function(str, left, right, flags) {
-        "use strict";
-        var matchPos = rgxFindMatchPos(str, left, right, flags), results = [];
-        for (var i = 0; i < matchPos.length; ++i) {
-          results.push([
-            str.slice(matchPos[i].wholeMatch.start, matchPos[i].wholeMatch.end),
-            str.slice(matchPos[i].match.start, matchPos[i].match.end),
-            str.slice(matchPos[i].left.start, matchPos[i].left.end),
-            str.slice(matchPos[i].right.start, matchPos[i].right.end)
-          ]);
-        }
-        return results;
-      };
-      showdown.helper.replaceRecursiveRegExp = function(str, replacement, left, right, flags) {
-        "use strict";
-        if (!showdown.helper.isFunction(replacement)) {
-          var repStr = replacement;
-          replacement = function() {
-            return repStr;
+        prng.double = function() {
+          return prng() + (prng() * 2097152 | 0) * 11102230246251565e-32;
+        };
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
           };
         }
-        var matchPos = rgxFindMatchPos(str, left, right, flags), finalStr = str, lng = matchPos.length;
-        if (lng > 0) {
-          var bits = [];
-          if (matchPos[0].wholeMatch.start !== 0) {
-            bits.push(str.slice(0, matchPos[0].wholeMatch.start));
-          }
-          for (var i = 0; i < lng; ++i) {
-            bits.push(replacement(str.slice(matchPos[i].wholeMatch.start, matchPos[i].wholeMatch.end), str.slice(matchPos[i].match.start, matchPos[i].match.end), str.slice(matchPos[i].left.start, matchPos[i].left.end), str.slice(matchPos[i].right.start, matchPos[i].right.end)));
-            if (i < lng - 1) {
-              bits.push(str.slice(matchPos[i].wholeMatch.end, matchPos[i + 1].wholeMatch.start));
-            }
-          }
-          if (matchPos[lng - 1].wholeMatch.end < str.length) {
-            bits.push(str.slice(matchPos[lng - 1].wholeMatch.end));
-          }
-          finalStr = bits.join("");
-        }
-        return finalStr;
-      };
-      showdown.helper.regexIndexOf = function(str, regex, fromIndex) {
-        "use strict";
-        if (!showdown.helper.isString(str)) {
-          throw "InvalidArgumentError: first parameter of showdown.helper.regexIndexOf function must be a string";
-        }
-        if (regex instanceof RegExp === false) {
-          throw "InvalidArgumentError: second parameter of showdown.helper.regexIndexOf function must be an instance of RegExp";
-        }
-        var indexOf = str.substring(fromIndex || 0).search(regex);
-        return indexOf >= 0 ? indexOf + (fromIndex || 0) : indexOf;
-      };
-      showdown.helper.splitAtIndex = function(str, index) {
-        "use strict";
-        if (!showdown.helper.isString(str)) {
-          throw "InvalidArgumentError: first parameter of showdown.helper.regexIndexOf function must be a string";
-        }
-        return [str.substring(0, index), str.substring(index)];
-      };
-      showdown.helper.encodeEmailAddress = function(mail) {
-        "use strict";
-        var encode = [
-          function(ch) {
-            return "&#" + ch.charCodeAt(0) + ";";
-          },
-          function(ch) {
-            return "&#x" + ch.charCodeAt(0).toString(16) + ";";
-          },
-          function(ch) {
-            return ch;
-          }
-        ];
-        mail = mail.replace(/./g, function(ch) {
-          if (ch === "@") {
-            ch = encode[Math.floor(Math.random() * 2)](ch);
-          } else {
-            var r = Math.random();
-            ch = r > 0.9 ? encode[2](ch) : r > 0.45 ? encode[1](ch) : encode[0](ch);
-          }
-          return ch;
-        });
-        return mail;
-      };
-      showdown.helper.padEnd = function padEnd(str, targetLength, padString) {
-        "use strict";
-        targetLength = targetLength >> 0;
-        padString = String(padString || " ");
-        if (str.length > targetLength) {
-          return String(str);
-        } else {
-          targetLength = targetLength - str.length;
-          if (targetLength > padString.length) {
-            padString += padString.repeat(targetLength / padString.length);
-          }
-          return String(str) + padString.slice(0, targetLength);
-        }
-      };
-      if (typeof console === "undefined") {
-        console = {
-          warn: function(msg) {
-            "use strict";
-            alert(msg);
-          },
-          log: function(msg) {
-            "use strict";
-            alert(msg);
-          },
-          error: function(msg) {
-            "use strict";
-            throw msg;
-          }
-        };
+        return prng;
       }
-      showdown.helper.regexes = {
-        asteriskDashAndColon: /([*_:~])/g
-      };
-      showdown.helper.emojis = {
-        "+1": "\u{1F44D}",
-        "-1": "\u{1F44E}",
-        "100": "\u{1F4AF}",
-        "1234": "\u{1F522}",
-        "1st_place_medal": "\u{1F947}",
-        "2nd_place_medal": "\u{1F948}",
-        "3rd_place_medal": "\u{1F949}",
-        "8ball": "\u{1F3B1}",
-        "a": "\u{1F170}\uFE0F",
-        "ab": "\u{1F18E}",
-        "abc": "\u{1F524}",
-        "abcd": "\u{1F521}",
-        "accept": "\u{1F251}",
-        "aerial_tramway": "\u{1F6A1}",
-        "airplane": "\u2708\uFE0F",
-        "alarm_clock": "\u23F0",
-        "alembic": "\u2697\uFE0F",
-        "alien": "\u{1F47D}",
-        "ambulance": "\u{1F691}",
-        "amphora": "\u{1F3FA}",
-        "anchor": "\u2693\uFE0F",
-        "angel": "\u{1F47C}",
-        "anger": "\u{1F4A2}",
-        "angry": "\u{1F620}",
-        "anguished": "\u{1F627}",
-        "ant": "\u{1F41C}",
-        "apple": "\u{1F34E}",
-        "aquarius": "\u2652\uFE0F",
-        "aries": "\u2648\uFE0F",
-        "arrow_backward": "\u25C0\uFE0F",
-        "arrow_double_down": "\u23EC",
-        "arrow_double_up": "\u23EB",
-        "arrow_down": "\u2B07\uFE0F",
-        "arrow_down_small": "\u{1F53D}",
-        "arrow_forward": "\u25B6\uFE0F",
-        "arrow_heading_down": "\u2935\uFE0F",
-        "arrow_heading_up": "\u2934\uFE0F",
-        "arrow_left": "\u2B05\uFE0F",
-        "arrow_lower_left": "\u2199\uFE0F",
-        "arrow_lower_right": "\u2198\uFE0F",
-        "arrow_right": "\u27A1\uFE0F",
-        "arrow_right_hook": "\u21AA\uFE0F",
-        "arrow_up": "\u2B06\uFE0F",
-        "arrow_up_down": "\u2195\uFE0F",
-        "arrow_up_small": "\u{1F53C}",
-        "arrow_upper_left": "\u2196\uFE0F",
-        "arrow_upper_right": "\u2197\uFE0F",
-        "arrows_clockwise": "\u{1F503}",
-        "arrows_counterclockwise": "\u{1F504}",
-        "art": "\u{1F3A8}",
-        "articulated_lorry": "\u{1F69B}",
-        "artificial_satellite": "\u{1F6F0}",
-        "astonished": "\u{1F632}",
-        "athletic_shoe": "\u{1F45F}",
-        "atm": "\u{1F3E7}",
-        "atom_symbol": "\u269B\uFE0F",
-        "avocado": "\u{1F951}",
-        "b": "\u{1F171}\uFE0F",
-        "baby": "\u{1F476}",
-        "baby_bottle": "\u{1F37C}",
-        "baby_chick": "\u{1F424}",
-        "baby_symbol": "\u{1F6BC}",
-        "back": "\u{1F519}",
-        "bacon": "\u{1F953}",
-        "badminton": "\u{1F3F8}",
-        "baggage_claim": "\u{1F6C4}",
-        "baguette_bread": "\u{1F956}",
-        "balance_scale": "\u2696\uFE0F",
-        "balloon": "\u{1F388}",
-        "ballot_box": "\u{1F5F3}",
-        "ballot_box_with_check": "\u2611\uFE0F",
-        "bamboo": "\u{1F38D}",
-        "banana": "\u{1F34C}",
-        "bangbang": "\u203C\uFE0F",
-        "bank": "\u{1F3E6}",
-        "bar_chart": "\u{1F4CA}",
-        "barber": "\u{1F488}",
-        "baseball": "\u26BE\uFE0F",
-        "basketball": "\u{1F3C0}",
-        "basketball_man": "\u26F9\uFE0F",
-        "basketball_woman": "\u26F9\uFE0F&zwj;\u2640\uFE0F",
-        "bat": "\u{1F987}",
-        "bath": "\u{1F6C0}",
-        "bathtub": "\u{1F6C1}",
-        "battery": "\u{1F50B}",
-        "beach_umbrella": "\u{1F3D6}",
-        "bear": "\u{1F43B}",
-        "bed": "\u{1F6CF}",
-        "bee": "\u{1F41D}",
-        "beer": "\u{1F37A}",
-        "beers": "\u{1F37B}",
-        "beetle": "\u{1F41E}",
-        "beginner": "\u{1F530}",
-        "bell": "\u{1F514}",
-        "bellhop_bell": "\u{1F6CE}",
-        "bento": "\u{1F371}",
-        "biking_man": "\u{1F6B4}",
-        "bike": "\u{1F6B2}",
-        "biking_woman": "\u{1F6B4}&zwj;\u2640\uFE0F",
-        "bikini": "\u{1F459}",
-        "biohazard": "\u2623\uFE0F",
-        "bird": "\u{1F426}",
-        "birthday": "\u{1F382}",
-        "black_circle": "\u26AB\uFE0F",
-        "black_flag": "\u{1F3F4}",
-        "black_heart": "\u{1F5A4}",
-        "black_joker": "\u{1F0CF}",
-        "black_large_square": "\u2B1B\uFE0F",
-        "black_medium_small_square": "\u25FE\uFE0F",
-        "black_medium_square": "\u25FC\uFE0F",
-        "black_nib": "\u2712\uFE0F",
-        "black_small_square": "\u25AA\uFE0F",
-        "black_square_button": "\u{1F532}",
-        "blonde_man": "\u{1F471}",
-        "blonde_woman": "\u{1F471}&zwj;\u2640\uFE0F",
-        "blossom": "\u{1F33C}",
-        "blowfish": "\u{1F421}",
-        "blue_book": "\u{1F4D8}",
-        "blue_car": "\u{1F699}",
-        "blue_heart": "\u{1F499}",
-        "blush": "\u{1F60A}",
-        "boar": "\u{1F417}",
-        "boat": "\u26F5\uFE0F",
-        "bomb": "\u{1F4A3}",
-        "book": "\u{1F4D6}",
-        "bookmark": "\u{1F516}",
-        "bookmark_tabs": "\u{1F4D1}",
-        "books": "\u{1F4DA}",
-        "boom": "\u{1F4A5}",
-        "boot": "\u{1F462}",
-        "bouquet": "\u{1F490}",
-        "bowing_man": "\u{1F647}",
-        "bow_and_arrow": "\u{1F3F9}",
-        "bowing_woman": "\u{1F647}&zwj;\u2640\uFE0F",
-        "bowling": "\u{1F3B3}",
-        "boxing_glove": "\u{1F94A}",
-        "boy": "\u{1F466}",
-        "bread": "\u{1F35E}",
-        "bride_with_veil": "\u{1F470}",
-        "bridge_at_night": "\u{1F309}",
-        "briefcase": "\u{1F4BC}",
-        "broken_heart": "\u{1F494}",
-        "bug": "\u{1F41B}",
-        "building_construction": "\u{1F3D7}",
-        "bulb": "\u{1F4A1}",
-        "bullettrain_front": "\u{1F685}",
-        "bullettrain_side": "\u{1F684}",
-        "burrito": "\u{1F32F}",
-        "bus": "\u{1F68C}",
-        "business_suit_levitating": "\u{1F574}",
-        "busstop": "\u{1F68F}",
-        "bust_in_silhouette": "\u{1F464}",
-        "busts_in_silhouette": "\u{1F465}",
-        "butterfly": "\u{1F98B}",
-        "cactus": "\u{1F335}",
-        "cake": "\u{1F370}",
-        "calendar": "\u{1F4C6}",
-        "call_me_hand": "\u{1F919}",
-        "calling": "\u{1F4F2}",
-        "camel": "\u{1F42B}",
-        "camera": "\u{1F4F7}",
-        "camera_flash": "\u{1F4F8}",
-        "camping": "\u{1F3D5}",
-        "cancer": "\u264B\uFE0F",
-        "candle": "\u{1F56F}",
-        "candy": "\u{1F36C}",
-        "canoe": "\u{1F6F6}",
-        "capital_abcd": "\u{1F520}",
-        "capricorn": "\u2651\uFE0F",
-        "car": "\u{1F697}",
-        "card_file_box": "\u{1F5C3}",
-        "card_index": "\u{1F4C7}",
-        "card_index_dividers": "\u{1F5C2}",
-        "carousel_horse": "\u{1F3A0}",
-        "carrot": "\u{1F955}",
-        "cat": "\u{1F431}",
-        "cat2": "\u{1F408}",
-        "cd": "\u{1F4BF}",
-        "chains": "\u26D3",
-        "champagne": "\u{1F37E}",
-        "chart": "\u{1F4B9}",
-        "chart_with_downwards_trend": "\u{1F4C9}",
-        "chart_with_upwards_trend": "\u{1F4C8}",
-        "checkered_flag": "\u{1F3C1}",
-        "cheese": "\u{1F9C0}",
-        "cherries": "\u{1F352}",
-        "cherry_blossom": "\u{1F338}",
-        "chestnut": "\u{1F330}",
-        "chicken": "\u{1F414}",
-        "children_crossing": "\u{1F6B8}",
-        "chipmunk": "\u{1F43F}",
-        "chocolate_bar": "\u{1F36B}",
-        "christmas_tree": "\u{1F384}",
-        "church": "\u26EA\uFE0F",
-        "cinema": "\u{1F3A6}",
-        "circus_tent": "\u{1F3AA}",
-        "city_sunrise": "\u{1F307}",
-        "city_sunset": "\u{1F306}",
-        "cityscape": "\u{1F3D9}",
-        "cl": "\u{1F191}",
-        "clamp": "\u{1F5DC}",
-        "clap": "\u{1F44F}",
-        "clapper": "\u{1F3AC}",
-        "classical_building": "\u{1F3DB}",
-        "clinking_glasses": "\u{1F942}",
-        "clipboard": "\u{1F4CB}",
-        "clock1": "\u{1F550}",
-        "clock10": "\u{1F559}",
-        "clock1030": "\u{1F565}",
-        "clock11": "\u{1F55A}",
-        "clock1130": "\u{1F566}",
-        "clock12": "\u{1F55B}",
-        "clock1230": "\u{1F567}",
-        "clock130": "\u{1F55C}",
-        "clock2": "\u{1F551}",
-        "clock230": "\u{1F55D}",
-        "clock3": "\u{1F552}",
-        "clock330": "\u{1F55E}",
-        "clock4": "\u{1F553}",
-        "clock430": "\u{1F55F}",
-        "clock5": "\u{1F554}",
-        "clock530": "\u{1F560}",
-        "clock6": "\u{1F555}",
-        "clock630": "\u{1F561}",
-        "clock7": "\u{1F556}",
-        "clock730": "\u{1F562}",
-        "clock8": "\u{1F557}",
-        "clock830": "\u{1F563}",
-        "clock9": "\u{1F558}",
-        "clock930": "\u{1F564}",
-        "closed_book": "\u{1F4D5}",
-        "closed_lock_with_key": "\u{1F510}",
-        "closed_umbrella": "\u{1F302}",
-        "cloud": "\u2601\uFE0F",
-        "cloud_with_lightning": "\u{1F329}",
-        "cloud_with_lightning_and_rain": "\u26C8",
-        "cloud_with_rain": "\u{1F327}",
-        "cloud_with_snow": "\u{1F328}",
-        "clown_face": "\u{1F921}",
-        "clubs": "\u2663\uFE0F",
-        "cocktail": "\u{1F378}",
-        "coffee": "\u2615\uFE0F",
-        "coffin": "\u26B0\uFE0F",
-        "cold_sweat": "\u{1F630}",
-        "comet": "\u2604\uFE0F",
-        "computer": "\u{1F4BB}",
-        "computer_mouse": "\u{1F5B1}",
-        "confetti_ball": "\u{1F38A}",
-        "confounded": "\u{1F616}",
-        "confused": "\u{1F615}",
-        "congratulations": "\u3297\uFE0F",
-        "construction": "\u{1F6A7}",
-        "construction_worker_man": "\u{1F477}",
-        "construction_worker_woman": "\u{1F477}&zwj;\u2640\uFE0F",
-        "control_knobs": "\u{1F39B}",
-        "convenience_store": "\u{1F3EA}",
-        "cookie": "\u{1F36A}",
-        "cool": "\u{1F192}",
-        "policeman": "\u{1F46E}",
-        "copyright": "\xA9\uFE0F",
-        "corn": "\u{1F33D}",
-        "couch_and_lamp": "\u{1F6CB}",
-        "couple": "\u{1F46B}",
-        "couple_with_heart_woman_man": "\u{1F491}",
-        "couple_with_heart_man_man": "\u{1F468}&zwj;\u2764\uFE0F&zwj;\u{1F468}",
-        "couple_with_heart_woman_woman": "\u{1F469}&zwj;\u2764\uFE0F&zwj;\u{1F469}",
-        "couplekiss_man_man": "\u{1F468}&zwj;\u2764\uFE0F&zwj;\u{1F48B}&zwj;\u{1F468}",
-        "couplekiss_man_woman": "\u{1F48F}",
-        "couplekiss_woman_woman": "\u{1F469}&zwj;\u2764\uFE0F&zwj;\u{1F48B}&zwj;\u{1F469}",
-        "cow": "\u{1F42E}",
-        "cow2": "\u{1F404}",
-        "cowboy_hat_face": "\u{1F920}",
-        "crab": "\u{1F980}",
-        "crayon": "\u{1F58D}",
-        "credit_card": "\u{1F4B3}",
-        "crescent_moon": "\u{1F319}",
-        "cricket": "\u{1F3CF}",
-        "crocodile": "\u{1F40A}",
-        "croissant": "\u{1F950}",
-        "crossed_fingers": "\u{1F91E}",
-        "crossed_flags": "\u{1F38C}",
-        "crossed_swords": "\u2694\uFE0F",
-        "crown": "\u{1F451}",
-        "cry": "\u{1F622}",
-        "crying_cat_face": "\u{1F63F}",
-        "crystal_ball": "\u{1F52E}",
-        "cucumber": "\u{1F952}",
-        "cupid": "\u{1F498}",
-        "curly_loop": "\u27B0",
-        "currency_exchange": "\u{1F4B1}",
-        "curry": "\u{1F35B}",
-        "custard": "\u{1F36E}",
-        "customs": "\u{1F6C3}",
-        "cyclone": "\u{1F300}",
-        "dagger": "\u{1F5E1}",
-        "dancer": "\u{1F483}",
-        "dancing_women": "\u{1F46F}",
-        "dancing_men": "\u{1F46F}&zwj;\u2642\uFE0F",
-        "dango": "\u{1F361}",
-        "dark_sunglasses": "\u{1F576}",
-        "dart": "\u{1F3AF}",
-        "dash": "\u{1F4A8}",
-        "date": "\u{1F4C5}",
-        "deciduous_tree": "\u{1F333}",
-        "deer": "\u{1F98C}",
-        "department_store": "\u{1F3EC}",
-        "derelict_house": "\u{1F3DA}",
-        "desert": "\u{1F3DC}",
-        "desert_island": "\u{1F3DD}",
-        "desktop_computer": "\u{1F5A5}",
-        "male_detective": "\u{1F575}\uFE0F",
-        "diamond_shape_with_a_dot_inside": "\u{1F4A0}",
-        "diamonds": "\u2666\uFE0F",
-        "disappointed": "\u{1F61E}",
-        "disappointed_relieved": "\u{1F625}",
-        "dizzy": "\u{1F4AB}",
-        "dizzy_face": "\u{1F635}",
-        "do_not_litter": "\u{1F6AF}",
-        "dog": "\u{1F436}",
-        "dog2": "\u{1F415}",
-        "dollar": "\u{1F4B5}",
-        "dolls": "\u{1F38E}",
-        "dolphin": "\u{1F42C}",
-        "door": "\u{1F6AA}",
-        "doughnut": "\u{1F369}",
-        "dove": "\u{1F54A}",
-        "dragon": "\u{1F409}",
-        "dragon_face": "\u{1F432}",
-        "dress": "\u{1F457}",
-        "dromedary_camel": "\u{1F42A}",
-        "drooling_face": "\u{1F924}",
-        "droplet": "\u{1F4A7}",
-        "drum": "\u{1F941}",
-        "duck": "\u{1F986}",
-        "dvd": "\u{1F4C0}",
-        "e-mail": "\u{1F4E7}",
-        "eagle": "\u{1F985}",
-        "ear": "\u{1F442}",
-        "ear_of_rice": "\u{1F33E}",
-        "earth_africa": "\u{1F30D}",
-        "earth_americas": "\u{1F30E}",
-        "earth_asia": "\u{1F30F}",
-        "egg": "\u{1F95A}",
-        "eggplant": "\u{1F346}",
-        "eight_pointed_black_star": "\u2734\uFE0F",
-        "eight_spoked_asterisk": "\u2733\uFE0F",
-        "electric_plug": "\u{1F50C}",
-        "elephant": "\u{1F418}",
-        "email": "\u2709\uFE0F",
-        "end": "\u{1F51A}",
-        "envelope_with_arrow": "\u{1F4E9}",
-        "euro": "\u{1F4B6}",
-        "european_castle": "\u{1F3F0}",
-        "european_post_office": "\u{1F3E4}",
-        "evergreen_tree": "\u{1F332}",
-        "exclamation": "\u2757\uFE0F",
-        "expressionless": "\u{1F611}",
-        "eye": "\u{1F441}",
-        "eye_speech_bubble": "\u{1F441}&zwj;\u{1F5E8}",
-        "eyeglasses": "\u{1F453}",
-        "eyes": "\u{1F440}",
-        "face_with_head_bandage": "\u{1F915}",
-        "face_with_thermometer": "\u{1F912}",
-        "fist_oncoming": "\u{1F44A}",
-        "factory": "\u{1F3ED}",
-        "fallen_leaf": "\u{1F342}",
-        "family_man_woman_boy": "\u{1F46A}",
-        "family_man_boy": "\u{1F468}&zwj;\u{1F466}",
-        "family_man_boy_boy": "\u{1F468}&zwj;\u{1F466}&zwj;\u{1F466}",
-        "family_man_girl": "\u{1F468}&zwj;\u{1F467}",
-        "family_man_girl_boy": "\u{1F468}&zwj;\u{1F467}&zwj;\u{1F466}",
-        "family_man_girl_girl": "\u{1F468}&zwj;\u{1F467}&zwj;\u{1F467}",
-        "family_man_man_boy": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F466}",
-        "family_man_man_boy_boy": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F466}&zwj;\u{1F466}",
-        "family_man_man_girl": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F467}",
-        "family_man_man_girl_boy": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F467}&zwj;\u{1F466}",
-        "family_man_man_girl_girl": "\u{1F468}&zwj;\u{1F468}&zwj;\u{1F467}&zwj;\u{1F467}",
-        "family_man_woman_boy_boy": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F466}&zwj;\u{1F466}",
-        "family_man_woman_girl": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F467}",
-        "family_man_woman_girl_boy": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F466}",
-        "family_man_woman_girl_girl": "\u{1F468}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F467}",
-        "family_woman_boy": "\u{1F469}&zwj;\u{1F466}",
-        "family_woman_boy_boy": "\u{1F469}&zwj;\u{1F466}&zwj;\u{1F466}",
-        "family_woman_girl": "\u{1F469}&zwj;\u{1F467}",
-        "family_woman_girl_boy": "\u{1F469}&zwj;\u{1F467}&zwj;\u{1F466}",
-        "family_woman_girl_girl": "\u{1F469}&zwj;\u{1F467}&zwj;\u{1F467}",
-        "family_woman_woman_boy": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F466}",
-        "family_woman_woman_boy_boy": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F466}&zwj;\u{1F466}",
-        "family_woman_woman_girl": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F467}",
-        "family_woman_woman_girl_boy": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F466}",
-        "family_woman_woman_girl_girl": "\u{1F469}&zwj;\u{1F469}&zwj;\u{1F467}&zwj;\u{1F467}",
-        "fast_forward": "\u23E9",
-        "fax": "\u{1F4E0}",
-        "fearful": "\u{1F628}",
-        "feet": "\u{1F43E}",
-        "female_detective": "\u{1F575}\uFE0F&zwj;\u2640\uFE0F",
-        "ferris_wheel": "\u{1F3A1}",
-        "ferry": "\u26F4",
-        "field_hockey": "\u{1F3D1}",
-        "file_cabinet": "\u{1F5C4}",
-        "file_folder": "\u{1F4C1}",
-        "film_projector": "\u{1F4FD}",
-        "film_strip": "\u{1F39E}",
-        "fire": "\u{1F525}",
-        "fire_engine": "\u{1F692}",
-        "fireworks": "\u{1F386}",
-        "first_quarter_moon": "\u{1F313}",
-        "first_quarter_moon_with_face": "\u{1F31B}",
-        "fish": "\u{1F41F}",
-        "fish_cake": "\u{1F365}",
-        "fishing_pole_and_fish": "\u{1F3A3}",
-        "fist_raised": "\u270A",
-        "fist_left": "\u{1F91B}",
-        "fist_right": "\u{1F91C}",
-        "flags": "\u{1F38F}",
-        "flashlight": "\u{1F526}",
-        "fleur_de_lis": "\u269C\uFE0F",
-        "flight_arrival": "\u{1F6EC}",
-        "flight_departure": "\u{1F6EB}",
-        "floppy_disk": "\u{1F4BE}",
-        "flower_playing_cards": "\u{1F3B4}",
-        "flushed": "\u{1F633}",
-        "fog": "\u{1F32B}",
-        "foggy": "\u{1F301}",
-        "football": "\u{1F3C8}",
-        "footprints": "\u{1F463}",
-        "fork_and_knife": "\u{1F374}",
-        "fountain": "\u26F2\uFE0F",
-        "fountain_pen": "\u{1F58B}",
-        "four_leaf_clover": "\u{1F340}",
-        "fox_face": "\u{1F98A}",
-        "framed_picture": "\u{1F5BC}",
-        "free": "\u{1F193}",
-        "fried_egg": "\u{1F373}",
-        "fried_shrimp": "\u{1F364}",
-        "fries": "\u{1F35F}",
-        "frog": "\u{1F438}",
-        "frowning": "\u{1F626}",
-        "frowning_face": "\u2639\uFE0F",
-        "frowning_man": "\u{1F64D}&zwj;\u2642\uFE0F",
-        "frowning_woman": "\u{1F64D}",
-        "middle_finger": "\u{1F595}",
-        "fuelpump": "\u26FD\uFE0F",
-        "full_moon": "\u{1F315}",
-        "full_moon_with_face": "\u{1F31D}",
-        "funeral_urn": "\u26B1\uFE0F",
-        "game_die": "\u{1F3B2}",
-        "gear": "\u2699\uFE0F",
-        "gem": "\u{1F48E}",
-        "gemini": "\u264A\uFE0F",
-        "ghost": "\u{1F47B}",
-        "gift": "\u{1F381}",
-        "gift_heart": "\u{1F49D}",
-        "girl": "\u{1F467}",
-        "globe_with_meridians": "\u{1F310}",
-        "goal_net": "\u{1F945}",
-        "goat": "\u{1F410}",
-        "golf": "\u26F3\uFE0F",
-        "golfing_man": "\u{1F3CC}\uFE0F",
-        "golfing_woman": "\u{1F3CC}\uFE0F&zwj;\u2640\uFE0F",
-        "gorilla": "\u{1F98D}",
-        "grapes": "\u{1F347}",
-        "green_apple": "\u{1F34F}",
-        "green_book": "\u{1F4D7}",
-        "green_heart": "\u{1F49A}",
-        "green_salad": "\u{1F957}",
-        "grey_exclamation": "\u2755",
-        "grey_question": "\u2754",
-        "grimacing": "\u{1F62C}",
-        "grin": "\u{1F601}",
-        "grinning": "\u{1F600}",
-        "guardsman": "\u{1F482}",
-        "guardswoman": "\u{1F482}&zwj;\u2640\uFE0F",
-        "guitar": "\u{1F3B8}",
-        "gun": "\u{1F52B}",
-        "haircut_woman": "\u{1F487}",
-        "haircut_man": "\u{1F487}&zwj;\u2642\uFE0F",
-        "hamburger": "\u{1F354}",
-        "hammer": "\u{1F528}",
-        "hammer_and_pick": "\u2692",
-        "hammer_and_wrench": "\u{1F6E0}",
-        "hamster": "\u{1F439}",
-        "hand": "\u270B",
-        "handbag": "\u{1F45C}",
-        "handshake": "\u{1F91D}",
-        "hankey": "\u{1F4A9}",
-        "hatched_chick": "\u{1F425}",
-        "hatching_chick": "\u{1F423}",
-        "headphones": "\u{1F3A7}",
-        "hear_no_evil": "\u{1F649}",
-        "heart": "\u2764\uFE0F",
-        "heart_decoration": "\u{1F49F}",
-        "heart_eyes": "\u{1F60D}",
-        "heart_eyes_cat": "\u{1F63B}",
-        "heartbeat": "\u{1F493}",
-        "heartpulse": "\u{1F497}",
-        "hearts": "\u2665\uFE0F",
-        "heavy_check_mark": "\u2714\uFE0F",
-        "heavy_division_sign": "\u2797",
-        "heavy_dollar_sign": "\u{1F4B2}",
-        "heavy_heart_exclamation": "\u2763\uFE0F",
-        "heavy_minus_sign": "\u2796",
-        "heavy_multiplication_x": "\u2716\uFE0F",
-        "heavy_plus_sign": "\u2795",
-        "helicopter": "\u{1F681}",
-        "herb": "\u{1F33F}",
-        "hibiscus": "\u{1F33A}",
-        "high_brightness": "\u{1F506}",
-        "high_heel": "\u{1F460}",
-        "hocho": "\u{1F52A}",
-        "hole": "\u{1F573}",
-        "honey_pot": "\u{1F36F}",
-        "horse": "\u{1F434}",
-        "horse_racing": "\u{1F3C7}",
-        "hospital": "\u{1F3E5}",
-        "hot_pepper": "\u{1F336}",
-        "hotdog": "\u{1F32D}",
-        "hotel": "\u{1F3E8}",
-        "hotsprings": "\u2668\uFE0F",
-        "hourglass": "\u231B\uFE0F",
-        "hourglass_flowing_sand": "\u23F3",
-        "house": "\u{1F3E0}",
-        "house_with_garden": "\u{1F3E1}",
-        "houses": "\u{1F3D8}",
-        "hugs": "\u{1F917}",
-        "hushed": "\u{1F62F}",
-        "ice_cream": "\u{1F368}",
-        "ice_hockey": "\u{1F3D2}",
-        "ice_skate": "\u26F8",
-        "icecream": "\u{1F366}",
-        "id": "\u{1F194}",
-        "ideograph_advantage": "\u{1F250}",
-        "imp": "\u{1F47F}",
-        "inbox_tray": "\u{1F4E5}",
-        "incoming_envelope": "\u{1F4E8}",
-        "tipping_hand_woman": "\u{1F481}",
-        "information_source": "\u2139\uFE0F",
-        "innocent": "\u{1F607}",
-        "interrobang": "\u2049\uFE0F",
-        "iphone": "\u{1F4F1}",
-        "izakaya_lantern": "\u{1F3EE}",
-        "jack_o_lantern": "\u{1F383}",
-        "japan": "\u{1F5FE}",
-        "japanese_castle": "\u{1F3EF}",
-        "japanese_goblin": "\u{1F47A}",
-        "japanese_ogre": "\u{1F479}",
-        "jeans": "\u{1F456}",
-        "joy": "\u{1F602}",
-        "joy_cat": "\u{1F639}",
-        "joystick": "\u{1F579}",
-        "kaaba": "\u{1F54B}",
-        "key": "\u{1F511}",
-        "keyboard": "\u2328\uFE0F",
-        "keycap_ten": "\u{1F51F}",
-        "kick_scooter": "\u{1F6F4}",
-        "kimono": "\u{1F458}",
-        "kiss": "\u{1F48B}",
-        "kissing": "\u{1F617}",
-        "kissing_cat": "\u{1F63D}",
-        "kissing_closed_eyes": "\u{1F61A}",
-        "kissing_heart": "\u{1F618}",
-        "kissing_smiling_eyes": "\u{1F619}",
-        "kiwi_fruit": "\u{1F95D}",
-        "koala": "\u{1F428}",
-        "koko": "\u{1F201}",
-        "label": "\u{1F3F7}",
-        "large_blue_circle": "\u{1F535}",
-        "large_blue_diamond": "\u{1F537}",
-        "large_orange_diamond": "\u{1F536}",
-        "last_quarter_moon": "\u{1F317}",
-        "last_quarter_moon_with_face": "\u{1F31C}",
-        "latin_cross": "\u271D\uFE0F",
-        "laughing": "\u{1F606}",
-        "leaves": "\u{1F343}",
-        "ledger": "\u{1F4D2}",
-        "left_luggage": "\u{1F6C5}",
-        "left_right_arrow": "\u2194\uFE0F",
-        "leftwards_arrow_with_hook": "\u21A9\uFE0F",
-        "lemon": "\u{1F34B}",
-        "leo": "\u264C\uFE0F",
-        "leopard": "\u{1F406}",
-        "level_slider": "\u{1F39A}",
-        "libra": "\u264E\uFE0F",
-        "light_rail": "\u{1F688}",
-        "link": "\u{1F517}",
-        "lion": "\u{1F981}",
-        "lips": "\u{1F444}",
-        "lipstick": "\u{1F484}",
-        "lizard": "\u{1F98E}",
-        "lock": "\u{1F512}",
-        "lock_with_ink_pen": "\u{1F50F}",
-        "lollipop": "\u{1F36D}",
-        "loop": "\u27BF",
-        "loud_sound": "\u{1F50A}",
-        "loudspeaker": "\u{1F4E2}",
-        "love_hotel": "\u{1F3E9}",
-        "love_letter": "\u{1F48C}",
-        "low_brightness": "\u{1F505}",
-        "lying_face": "\u{1F925}",
-        "m": "\u24C2\uFE0F",
-        "mag": "\u{1F50D}",
-        "mag_right": "\u{1F50E}",
-        "mahjong": "\u{1F004}\uFE0F",
-        "mailbox": "\u{1F4EB}",
-        "mailbox_closed": "\u{1F4EA}",
-        "mailbox_with_mail": "\u{1F4EC}",
-        "mailbox_with_no_mail": "\u{1F4ED}",
-        "man": "\u{1F468}",
-        "man_artist": "\u{1F468}&zwj;\u{1F3A8}",
-        "man_astronaut": "\u{1F468}&zwj;\u{1F680}",
-        "man_cartwheeling": "\u{1F938}&zwj;\u2642\uFE0F",
-        "man_cook": "\u{1F468}&zwj;\u{1F373}",
-        "man_dancing": "\u{1F57A}",
-        "man_facepalming": "\u{1F926}&zwj;\u2642\uFE0F",
-        "man_factory_worker": "\u{1F468}&zwj;\u{1F3ED}",
-        "man_farmer": "\u{1F468}&zwj;\u{1F33E}",
-        "man_firefighter": "\u{1F468}&zwj;\u{1F692}",
-        "man_health_worker": "\u{1F468}&zwj;\u2695\uFE0F",
-        "man_in_tuxedo": "\u{1F935}",
-        "man_judge": "\u{1F468}&zwj;\u2696\uFE0F",
-        "man_juggling": "\u{1F939}&zwj;\u2642\uFE0F",
-        "man_mechanic": "\u{1F468}&zwj;\u{1F527}",
-        "man_office_worker": "\u{1F468}&zwj;\u{1F4BC}",
-        "man_pilot": "\u{1F468}&zwj;\u2708\uFE0F",
-        "man_playing_handball": "\u{1F93E}&zwj;\u2642\uFE0F",
-        "man_playing_water_polo": "\u{1F93D}&zwj;\u2642\uFE0F",
-        "man_scientist": "\u{1F468}&zwj;\u{1F52C}",
-        "man_shrugging": "\u{1F937}&zwj;\u2642\uFE0F",
-        "man_singer": "\u{1F468}&zwj;\u{1F3A4}",
-        "man_student": "\u{1F468}&zwj;\u{1F393}",
-        "man_teacher": "\u{1F468}&zwj;\u{1F3EB}",
-        "man_technologist": "\u{1F468}&zwj;\u{1F4BB}",
-        "man_with_gua_pi_mao": "\u{1F472}",
-        "man_with_turban": "\u{1F473}",
-        "tangerine": "\u{1F34A}",
-        "mans_shoe": "\u{1F45E}",
-        "mantelpiece_clock": "\u{1F570}",
-        "maple_leaf": "\u{1F341}",
-        "martial_arts_uniform": "\u{1F94B}",
-        "mask": "\u{1F637}",
-        "massage_woman": "\u{1F486}",
-        "massage_man": "\u{1F486}&zwj;\u2642\uFE0F",
-        "meat_on_bone": "\u{1F356}",
-        "medal_military": "\u{1F396}",
-        "medal_sports": "\u{1F3C5}",
-        "mega": "\u{1F4E3}",
-        "melon": "\u{1F348}",
-        "memo": "\u{1F4DD}",
-        "men_wrestling": "\u{1F93C}&zwj;\u2642\uFE0F",
-        "menorah": "\u{1F54E}",
-        "mens": "\u{1F6B9}",
-        "metal": "\u{1F918}",
-        "metro": "\u{1F687}",
-        "microphone": "\u{1F3A4}",
-        "microscope": "\u{1F52C}",
-        "milk_glass": "\u{1F95B}",
-        "milky_way": "\u{1F30C}",
-        "minibus": "\u{1F690}",
-        "minidisc": "\u{1F4BD}",
-        "mobile_phone_off": "\u{1F4F4}",
-        "money_mouth_face": "\u{1F911}",
-        "money_with_wings": "\u{1F4B8}",
-        "moneybag": "\u{1F4B0}",
-        "monkey": "\u{1F412}",
-        "monkey_face": "\u{1F435}",
-        "monorail": "\u{1F69D}",
-        "moon": "\u{1F314}",
-        "mortar_board": "\u{1F393}",
-        "mosque": "\u{1F54C}",
-        "motor_boat": "\u{1F6E5}",
-        "motor_scooter": "\u{1F6F5}",
-        "motorcycle": "\u{1F3CD}",
-        "motorway": "\u{1F6E3}",
-        "mount_fuji": "\u{1F5FB}",
-        "mountain": "\u26F0",
-        "mountain_biking_man": "\u{1F6B5}",
-        "mountain_biking_woman": "\u{1F6B5}&zwj;\u2640\uFE0F",
-        "mountain_cableway": "\u{1F6A0}",
-        "mountain_railway": "\u{1F69E}",
-        "mountain_snow": "\u{1F3D4}",
-        "mouse": "\u{1F42D}",
-        "mouse2": "\u{1F401}",
-        "movie_camera": "\u{1F3A5}",
-        "moyai": "\u{1F5FF}",
-        "mrs_claus": "\u{1F936}",
-        "muscle": "\u{1F4AA}",
-        "mushroom": "\u{1F344}",
-        "musical_keyboard": "\u{1F3B9}",
-        "musical_note": "\u{1F3B5}",
-        "musical_score": "\u{1F3BC}",
-        "mute": "\u{1F507}",
-        "nail_care": "\u{1F485}",
-        "name_badge": "\u{1F4DB}",
-        "national_park": "\u{1F3DE}",
-        "nauseated_face": "\u{1F922}",
-        "necktie": "\u{1F454}",
-        "negative_squared_cross_mark": "\u274E",
-        "nerd_face": "\u{1F913}",
-        "neutral_face": "\u{1F610}",
-        "new": "\u{1F195}",
-        "new_moon": "\u{1F311}",
-        "new_moon_with_face": "\u{1F31A}",
-        "newspaper": "\u{1F4F0}",
-        "newspaper_roll": "\u{1F5DE}",
-        "next_track_button": "\u23ED",
-        "ng": "\u{1F196}",
-        "no_good_man": "\u{1F645}&zwj;\u2642\uFE0F",
-        "no_good_woman": "\u{1F645}",
-        "night_with_stars": "\u{1F303}",
-        "no_bell": "\u{1F515}",
-        "no_bicycles": "\u{1F6B3}",
-        "no_entry": "\u26D4\uFE0F",
-        "no_entry_sign": "\u{1F6AB}",
-        "no_mobile_phones": "\u{1F4F5}",
-        "no_mouth": "\u{1F636}",
-        "no_pedestrians": "\u{1F6B7}",
-        "no_smoking": "\u{1F6AD}",
-        "non-potable_water": "\u{1F6B1}",
-        "nose": "\u{1F443}",
-        "notebook": "\u{1F4D3}",
-        "notebook_with_decorative_cover": "\u{1F4D4}",
-        "notes": "\u{1F3B6}",
-        "nut_and_bolt": "\u{1F529}",
-        "o": "\u2B55\uFE0F",
-        "o2": "\u{1F17E}\uFE0F",
-        "ocean": "\u{1F30A}",
-        "octopus": "\u{1F419}",
-        "oden": "\u{1F362}",
-        "office": "\u{1F3E2}",
-        "oil_drum": "\u{1F6E2}",
-        "ok": "\u{1F197}",
-        "ok_hand": "\u{1F44C}",
-        "ok_man": "\u{1F646}&zwj;\u2642\uFE0F",
-        "ok_woman": "\u{1F646}",
-        "old_key": "\u{1F5DD}",
-        "older_man": "\u{1F474}",
-        "older_woman": "\u{1F475}",
-        "om": "\u{1F549}",
-        "on": "\u{1F51B}",
-        "oncoming_automobile": "\u{1F698}",
-        "oncoming_bus": "\u{1F68D}",
-        "oncoming_police_car": "\u{1F694}",
-        "oncoming_taxi": "\u{1F696}",
-        "open_file_folder": "\u{1F4C2}",
-        "open_hands": "\u{1F450}",
-        "open_mouth": "\u{1F62E}",
-        "open_umbrella": "\u2602\uFE0F",
-        "ophiuchus": "\u26CE",
-        "orange_book": "\u{1F4D9}",
-        "orthodox_cross": "\u2626\uFE0F",
-        "outbox_tray": "\u{1F4E4}",
-        "owl": "\u{1F989}",
-        "ox": "\u{1F402}",
-        "package": "\u{1F4E6}",
-        "page_facing_up": "\u{1F4C4}",
-        "page_with_curl": "\u{1F4C3}",
-        "pager": "\u{1F4DF}",
-        "paintbrush": "\u{1F58C}",
-        "palm_tree": "\u{1F334}",
-        "pancakes": "\u{1F95E}",
-        "panda_face": "\u{1F43C}",
-        "paperclip": "\u{1F4CE}",
-        "paperclips": "\u{1F587}",
-        "parasol_on_ground": "\u26F1",
-        "parking": "\u{1F17F}\uFE0F",
-        "part_alternation_mark": "\u303D\uFE0F",
-        "partly_sunny": "\u26C5\uFE0F",
-        "passenger_ship": "\u{1F6F3}",
-        "passport_control": "\u{1F6C2}",
-        "pause_button": "\u23F8",
-        "peace_symbol": "\u262E\uFE0F",
-        "peach": "\u{1F351}",
-        "peanuts": "\u{1F95C}",
-        "pear": "\u{1F350}",
-        "pen": "\u{1F58A}",
-        "pencil2": "\u270F\uFE0F",
-        "penguin": "\u{1F427}",
-        "pensive": "\u{1F614}",
-        "performing_arts": "\u{1F3AD}",
-        "persevere": "\u{1F623}",
-        "person_fencing": "\u{1F93A}",
-        "pouting_woman": "\u{1F64E}",
-        "phone": "\u260E\uFE0F",
-        "pick": "\u26CF",
-        "pig": "\u{1F437}",
-        "pig2": "\u{1F416}",
-        "pig_nose": "\u{1F43D}",
-        "pill": "\u{1F48A}",
-        "pineapple": "\u{1F34D}",
-        "ping_pong": "\u{1F3D3}",
-        "pisces": "\u2653\uFE0F",
-        "pizza": "\u{1F355}",
-        "place_of_worship": "\u{1F6D0}",
-        "plate_with_cutlery": "\u{1F37D}",
-        "play_or_pause_button": "\u23EF",
-        "point_down": "\u{1F447}",
-        "point_left": "\u{1F448}",
-        "point_right": "\u{1F449}",
-        "point_up": "\u261D\uFE0F",
-        "point_up_2": "\u{1F446}",
-        "police_car": "\u{1F693}",
-        "policewoman": "\u{1F46E}&zwj;\u2640\uFE0F",
-        "poodle": "\u{1F429}",
-        "popcorn": "\u{1F37F}",
-        "post_office": "\u{1F3E3}",
-        "postal_horn": "\u{1F4EF}",
-        "postbox": "\u{1F4EE}",
-        "potable_water": "\u{1F6B0}",
-        "potato": "\u{1F954}",
-        "pouch": "\u{1F45D}",
-        "poultry_leg": "\u{1F357}",
-        "pound": "\u{1F4B7}",
-        "rage": "\u{1F621}",
-        "pouting_cat": "\u{1F63E}",
-        "pouting_man": "\u{1F64E}&zwj;\u2642\uFE0F",
-        "pray": "\u{1F64F}",
-        "prayer_beads": "\u{1F4FF}",
-        "pregnant_woman": "\u{1F930}",
-        "previous_track_button": "\u23EE",
-        "prince": "\u{1F934}",
-        "princess": "\u{1F478}",
-        "printer": "\u{1F5A8}",
-        "purple_heart": "\u{1F49C}",
-        "purse": "\u{1F45B}",
-        "pushpin": "\u{1F4CC}",
-        "put_litter_in_its_place": "\u{1F6AE}",
-        "question": "\u2753",
-        "rabbit": "\u{1F430}",
-        "rabbit2": "\u{1F407}",
-        "racehorse": "\u{1F40E}",
-        "racing_car": "\u{1F3CE}",
-        "radio": "\u{1F4FB}",
-        "radio_button": "\u{1F518}",
-        "radioactive": "\u2622\uFE0F",
-        "railway_car": "\u{1F683}",
-        "railway_track": "\u{1F6E4}",
-        "rainbow": "\u{1F308}",
-        "rainbow_flag": "\u{1F3F3}\uFE0F&zwj;\u{1F308}",
-        "raised_back_of_hand": "\u{1F91A}",
-        "raised_hand_with_fingers_splayed": "\u{1F590}",
-        "raised_hands": "\u{1F64C}",
-        "raising_hand_woman": "\u{1F64B}",
-        "raising_hand_man": "\u{1F64B}&zwj;\u2642\uFE0F",
-        "ram": "\u{1F40F}",
-        "ramen": "\u{1F35C}",
-        "rat": "\u{1F400}",
-        "record_button": "\u23FA",
-        "recycle": "\u267B\uFE0F",
-        "red_circle": "\u{1F534}",
-        "registered": "\xAE\uFE0F",
-        "relaxed": "\u263A\uFE0F",
-        "relieved": "\u{1F60C}",
-        "reminder_ribbon": "\u{1F397}",
-        "repeat": "\u{1F501}",
-        "repeat_one": "\u{1F502}",
-        "rescue_worker_helmet": "\u26D1",
-        "restroom": "\u{1F6BB}",
-        "revolving_hearts": "\u{1F49E}",
-        "rewind": "\u23EA",
-        "rhinoceros": "\u{1F98F}",
-        "ribbon": "\u{1F380}",
-        "rice": "\u{1F35A}",
-        "rice_ball": "\u{1F359}",
-        "rice_cracker": "\u{1F358}",
-        "rice_scene": "\u{1F391}",
-        "right_anger_bubble": "\u{1F5EF}",
-        "ring": "\u{1F48D}",
-        "robot": "\u{1F916}",
-        "rocket": "\u{1F680}",
-        "rofl": "\u{1F923}",
-        "roll_eyes": "\u{1F644}",
-        "roller_coaster": "\u{1F3A2}",
-        "rooster": "\u{1F413}",
-        "rose": "\u{1F339}",
-        "rosette": "\u{1F3F5}",
-        "rotating_light": "\u{1F6A8}",
-        "round_pushpin": "\u{1F4CD}",
-        "rowing_man": "\u{1F6A3}",
-        "rowing_woman": "\u{1F6A3}&zwj;\u2640\uFE0F",
-        "rugby_football": "\u{1F3C9}",
-        "running_man": "\u{1F3C3}",
-        "running_shirt_with_sash": "\u{1F3BD}",
-        "running_woman": "\u{1F3C3}&zwj;\u2640\uFE0F",
-        "sa": "\u{1F202}\uFE0F",
-        "sagittarius": "\u2650\uFE0F",
-        "sake": "\u{1F376}",
-        "sandal": "\u{1F461}",
-        "santa": "\u{1F385}",
-        "satellite": "\u{1F4E1}",
-        "saxophone": "\u{1F3B7}",
-        "school": "\u{1F3EB}",
-        "school_satchel": "\u{1F392}",
-        "scissors": "\u2702\uFE0F",
-        "scorpion": "\u{1F982}",
-        "scorpius": "\u264F\uFE0F",
-        "scream": "\u{1F631}",
-        "scream_cat": "\u{1F640}",
-        "scroll": "\u{1F4DC}",
-        "seat": "\u{1F4BA}",
-        "secret": "\u3299\uFE0F",
-        "see_no_evil": "\u{1F648}",
-        "seedling": "\u{1F331}",
-        "selfie": "\u{1F933}",
-        "shallow_pan_of_food": "\u{1F958}",
-        "shamrock": "\u2618\uFE0F",
-        "shark": "\u{1F988}",
-        "shaved_ice": "\u{1F367}",
-        "sheep": "\u{1F411}",
-        "shell": "\u{1F41A}",
-        "shield": "\u{1F6E1}",
-        "shinto_shrine": "\u26E9",
-        "ship": "\u{1F6A2}",
-        "shirt": "\u{1F455}",
-        "shopping": "\u{1F6CD}",
-        "shopping_cart": "\u{1F6D2}",
-        "shower": "\u{1F6BF}",
-        "shrimp": "\u{1F990}",
-        "signal_strength": "\u{1F4F6}",
-        "six_pointed_star": "\u{1F52F}",
-        "ski": "\u{1F3BF}",
-        "skier": "\u26F7",
-        "skull": "\u{1F480}",
-        "skull_and_crossbones": "\u2620\uFE0F",
-        "sleeping": "\u{1F634}",
-        "sleeping_bed": "\u{1F6CC}",
-        "sleepy": "\u{1F62A}",
-        "slightly_frowning_face": "\u{1F641}",
-        "slightly_smiling_face": "\u{1F642}",
-        "slot_machine": "\u{1F3B0}",
-        "small_airplane": "\u{1F6E9}",
-        "small_blue_diamond": "\u{1F539}",
-        "small_orange_diamond": "\u{1F538}",
-        "small_red_triangle": "\u{1F53A}",
-        "small_red_triangle_down": "\u{1F53B}",
-        "smile": "\u{1F604}",
-        "smile_cat": "\u{1F638}",
-        "smiley": "\u{1F603}",
-        "smiley_cat": "\u{1F63A}",
-        "smiling_imp": "\u{1F608}",
-        "smirk": "\u{1F60F}",
-        "smirk_cat": "\u{1F63C}",
-        "smoking": "\u{1F6AC}",
-        "snail": "\u{1F40C}",
-        "snake": "\u{1F40D}",
-        "sneezing_face": "\u{1F927}",
-        "snowboarder": "\u{1F3C2}",
-        "snowflake": "\u2744\uFE0F",
-        "snowman": "\u26C4\uFE0F",
-        "snowman_with_snow": "\u2603\uFE0F",
-        "sob": "\u{1F62D}",
-        "soccer": "\u26BD\uFE0F",
-        "soon": "\u{1F51C}",
-        "sos": "\u{1F198}",
-        "sound": "\u{1F509}",
-        "space_invader": "\u{1F47E}",
-        "spades": "\u2660\uFE0F",
-        "spaghetti": "\u{1F35D}",
-        "sparkle": "\u2747\uFE0F",
-        "sparkler": "\u{1F387}",
-        "sparkles": "\u2728",
-        "sparkling_heart": "\u{1F496}",
-        "speak_no_evil": "\u{1F64A}",
-        "speaker": "\u{1F508}",
-        "speaking_head": "\u{1F5E3}",
-        "speech_balloon": "\u{1F4AC}",
-        "speedboat": "\u{1F6A4}",
-        "spider": "\u{1F577}",
-        "spider_web": "\u{1F578}",
-        "spiral_calendar": "\u{1F5D3}",
-        "spiral_notepad": "\u{1F5D2}",
-        "spoon": "\u{1F944}",
-        "squid": "\u{1F991}",
-        "stadium": "\u{1F3DF}",
-        "star": "\u2B50\uFE0F",
-        "star2": "\u{1F31F}",
-        "star_and_crescent": "\u262A\uFE0F",
-        "star_of_david": "\u2721\uFE0F",
-        "stars": "\u{1F320}",
-        "station": "\u{1F689}",
-        "statue_of_liberty": "\u{1F5FD}",
-        "steam_locomotive": "\u{1F682}",
-        "stew": "\u{1F372}",
-        "stop_button": "\u23F9",
-        "stop_sign": "\u{1F6D1}",
-        "stopwatch": "\u23F1",
-        "straight_ruler": "\u{1F4CF}",
-        "strawberry": "\u{1F353}",
-        "stuck_out_tongue": "\u{1F61B}",
-        "stuck_out_tongue_closed_eyes": "\u{1F61D}",
-        "stuck_out_tongue_winking_eye": "\u{1F61C}",
-        "studio_microphone": "\u{1F399}",
-        "stuffed_flatbread": "\u{1F959}",
-        "sun_behind_large_cloud": "\u{1F325}",
-        "sun_behind_rain_cloud": "\u{1F326}",
-        "sun_behind_small_cloud": "\u{1F324}",
-        "sun_with_face": "\u{1F31E}",
-        "sunflower": "\u{1F33B}",
-        "sunglasses": "\u{1F60E}",
-        "sunny": "\u2600\uFE0F",
-        "sunrise": "\u{1F305}",
-        "sunrise_over_mountains": "\u{1F304}",
-        "surfing_man": "\u{1F3C4}",
-        "surfing_woman": "\u{1F3C4}&zwj;\u2640\uFE0F",
-        "sushi": "\u{1F363}",
-        "suspension_railway": "\u{1F69F}",
-        "sweat": "\u{1F613}",
-        "sweat_drops": "\u{1F4A6}",
-        "sweat_smile": "\u{1F605}",
-        "sweet_potato": "\u{1F360}",
-        "swimming_man": "\u{1F3CA}",
-        "swimming_woman": "\u{1F3CA}&zwj;\u2640\uFE0F",
-        "symbols": "\u{1F523}",
-        "synagogue": "\u{1F54D}",
-        "syringe": "\u{1F489}",
-        "taco": "\u{1F32E}",
-        "tada": "\u{1F389}",
-        "tanabata_tree": "\u{1F38B}",
-        "taurus": "\u2649\uFE0F",
-        "taxi": "\u{1F695}",
-        "tea": "\u{1F375}",
-        "telephone_receiver": "\u{1F4DE}",
-        "telescope": "\u{1F52D}",
-        "tennis": "\u{1F3BE}",
-        "tent": "\u26FA\uFE0F",
-        "thermometer": "\u{1F321}",
-        "thinking": "\u{1F914}",
-        "thought_balloon": "\u{1F4AD}",
-        "ticket": "\u{1F3AB}",
-        "tickets": "\u{1F39F}",
-        "tiger": "\u{1F42F}",
-        "tiger2": "\u{1F405}",
-        "timer_clock": "\u23F2",
-        "tipping_hand_man": "\u{1F481}&zwj;\u2642\uFE0F",
-        "tired_face": "\u{1F62B}",
-        "tm": "\u2122\uFE0F",
-        "toilet": "\u{1F6BD}",
-        "tokyo_tower": "\u{1F5FC}",
-        "tomato": "\u{1F345}",
-        "tongue": "\u{1F445}",
-        "top": "\u{1F51D}",
-        "tophat": "\u{1F3A9}",
-        "tornado": "\u{1F32A}",
-        "trackball": "\u{1F5B2}",
-        "tractor": "\u{1F69C}",
-        "traffic_light": "\u{1F6A5}",
-        "train": "\u{1F68B}",
-        "train2": "\u{1F686}",
-        "tram": "\u{1F68A}",
-        "triangular_flag_on_post": "\u{1F6A9}",
-        "triangular_ruler": "\u{1F4D0}",
-        "trident": "\u{1F531}",
-        "triumph": "\u{1F624}",
-        "trolleybus": "\u{1F68E}",
-        "trophy": "\u{1F3C6}",
-        "tropical_drink": "\u{1F379}",
-        "tropical_fish": "\u{1F420}",
-        "truck": "\u{1F69A}",
-        "trumpet": "\u{1F3BA}",
-        "tulip": "\u{1F337}",
-        "tumbler_glass": "\u{1F943}",
-        "turkey": "\u{1F983}",
-        "turtle": "\u{1F422}",
-        "tv": "\u{1F4FA}",
-        "twisted_rightwards_arrows": "\u{1F500}",
-        "two_hearts": "\u{1F495}",
-        "two_men_holding_hands": "\u{1F46C}",
-        "two_women_holding_hands": "\u{1F46D}",
-        "u5272": "\u{1F239}",
-        "u5408": "\u{1F234}",
-        "u55b6": "\u{1F23A}",
-        "u6307": "\u{1F22F}\uFE0F",
-        "u6708": "\u{1F237}\uFE0F",
-        "u6709": "\u{1F236}",
-        "u6e80": "\u{1F235}",
-        "u7121": "\u{1F21A}\uFE0F",
-        "u7533": "\u{1F238}",
-        "u7981": "\u{1F232}",
-        "u7a7a": "\u{1F233}",
-        "umbrella": "\u2614\uFE0F",
-        "unamused": "\u{1F612}",
-        "underage": "\u{1F51E}",
-        "unicorn": "\u{1F984}",
-        "unlock": "\u{1F513}",
-        "up": "\u{1F199}",
-        "upside_down_face": "\u{1F643}",
-        "v": "\u270C\uFE0F",
-        "vertical_traffic_light": "\u{1F6A6}",
-        "vhs": "\u{1F4FC}",
-        "vibration_mode": "\u{1F4F3}",
-        "video_camera": "\u{1F4F9}",
-        "video_game": "\u{1F3AE}",
-        "violin": "\u{1F3BB}",
-        "virgo": "\u264D\uFE0F",
-        "volcano": "\u{1F30B}",
-        "volleyball": "\u{1F3D0}",
-        "vs": "\u{1F19A}",
-        "vulcan_salute": "\u{1F596}",
-        "walking_man": "\u{1F6B6}",
-        "walking_woman": "\u{1F6B6}&zwj;\u2640\uFE0F",
-        "waning_crescent_moon": "\u{1F318}",
-        "waning_gibbous_moon": "\u{1F316}",
-        "warning": "\u26A0\uFE0F",
-        "wastebasket": "\u{1F5D1}",
-        "watch": "\u231A\uFE0F",
-        "water_buffalo": "\u{1F403}",
-        "watermelon": "\u{1F349}",
-        "wave": "\u{1F44B}",
-        "wavy_dash": "\u3030\uFE0F",
-        "waxing_crescent_moon": "\u{1F312}",
-        "wc": "\u{1F6BE}",
-        "weary": "\u{1F629}",
-        "wedding": "\u{1F492}",
-        "weight_lifting_man": "\u{1F3CB}\uFE0F",
-        "weight_lifting_woman": "\u{1F3CB}\uFE0F&zwj;\u2640\uFE0F",
-        "whale": "\u{1F433}",
-        "whale2": "\u{1F40B}",
-        "wheel_of_dharma": "\u2638\uFE0F",
-        "wheelchair": "\u267F\uFE0F",
-        "white_check_mark": "\u2705",
-        "white_circle": "\u26AA\uFE0F",
-        "white_flag": "\u{1F3F3}\uFE0F",
-        "white_flower": "\u{1F4AE}",
-        "white_large_square": "\u2B1C\uFE0F",
-        "white_medium_small_square": "\u25FD\uFE0F",
-        "white_medium_square": "\u25FB\uFE0F",
-        "white_small_square": "\u25AB\uFE0F",
-        "white_square_button": "\u{1F533}",
-        "wilted_flower": "\u{1F940}",
-        "wind_chime": "\u{1F390}",
-        "wind_face": "\u{1F32C}",
-        "wine_glass": "\u{1F377}",
-        "wink": "\u{1F609}",
-        "wolf": "\u{1F43A}",
-        "woman": "\u{1F469}",
-        "woman_artist": "\u{1F469}&zwj;\u{1F3A8}",
-        "woman_astronaut": "\u{1F469}&zwj;\u{1F680}",
-        "woman_cartwheeling": "\u{1F938}&zwj;\u2640\uFE0F",
-        "woman_cook": "\u{1F469}&zwj;\u{1F373}",
-        "woman_facepalming": "\u{1F926}&zwj;\u2640\uFE0F",
-        "woman_factory_worker": "\u{1F469}&zwj;\u{1F3ED}",
-        "woman_farmer": "\u{1F469}&zwj;\u{1F33E}",
-        "woman_firefighter": "\u{1F469}&zwj;\u{1F692}",
-        "woman_health_worker": "\u{1F469}&zwj;\u2695\uFE0F",
-        "woman_judge": "\u{1F469}&zwj;\u2696\uFE0F",
-        "woman_juggling": "\u{1F939}&zwj;\u2640\uFE0F",
-        "woman_mechanic": "\u{1F469}&zwj;\u{1F527}",
-        "woman_office_worker": "\u{1F469}&zwj;\u{1F4BC}",
-        "woman_pilot": "\u{1F469}&zwj;\u2708\uFE0F",
-        "woman_playing_handball": "\u{1F93E}&zwj;\u2640\uFE0F",
-        "woman_playing_water_polo": "\u{1F93D}&zwj;\u2640\uFE0F",
-        "woman_scientist": "\u{1F469}&zwj;\u{1F52C}",
-        "woman_shrugging": "\u{1F937}&zwj;\u2640\uFE0F",
-        "woman_singer": "\u{1F469}&zwj;\u{1F3A4}",
-        "woman_student": "\u{1F469}&zwj;\u{1F393}",
-        "woman_teacher": "\u{1F469}&zwj;\u{1F3EB}",
-        "woman_technologist": "\u{1F469}&zwj;\u{1F4BB}",
-        "woman_with_turban": "\u{1F473}&zwj;\u2640\uFE0F",
-        "womans_clothes": "\u{1F45A}",
-        "womans_hat": "\u{1F452}",
-        "women_wrestling": "\u{1F93C}&zwj;\u2640\uFE0F",
-        "womens": "\u{1F6BA}",
-        "world_map": "\u{1F5FA}",
-        "worried": "\u{1F61F}",
-        "wrench": "\u{1F527}",
-        "writing_hand": "\u270D\uFE0F",
-        "x": "\u274C",
-        "yellow_heart": "\u{1F49B}",
-        "yen": "\u{1F4B4}",
-        "yin_yang": "\u262F\uFE0F",
-        "yum": "\u{1F60B}",
-        "zap": "\u26A1\uFE0F",
-        "zipper_mouth_face": "\u{1F910}",
-        "zzz": "\u{1F4A4}",
-        "octocat": '<img alt=":octocat:" height="20" width="20" align="absmiddle" src="https://assets-cdn.github.com/images/icons/emoji/octocat.png">',
-        "showdown": `<span style="font-family: 'Anonymous Pro', monospace; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: #3e8b8a;text-underline-position: under;">S</span>`
-      };
-      showdown.Converter = function(converterOptions) {
-        "use strict";
-        var options = {}, langExtensions = [], outputModifiers = [], listeners = {}, setConvFlavor = setFlavor, metadata = {
-          parsed: {},
-          raw: "",
-          format: ""
+      function Mash() {
+        var n = 4022871197;
+        var mash = function(data) {
+          data = String(data);
+          for (var i = 0; i < data.length; i++) {
+            n += data.charCodeAt(i);
+            var h = 0.02519603282416938 * n;
+            n = h >>> 0;
+            h -= n;
+            h *= n;
+            n = h >>> 0;
+            h -= n;
+            n += h * 4294967296;
+          }
+          return (n >>> 0) * 23283064365386963e-26;
         };
-        _constructor();
-        function _constructor() {
-          converterOptions = converterOptions || {};
-          for (var gOpt in globalOptions) {
-            if (globalOptions.hasOwnProperty(gOpt)) {
-              options[gOpt] = globalOptions[gOpt];
-            }
-          }
-          if (typeof converterOptions === "object") {
-            for (var opt in converterOptions) {
-              if (converterOptions.hasOwnProperty(opt)) {
-                options[opt] = converterOptions[opt];
-              }
-            }
-          } else {
-            throw Error("Converter expects the passed parameter to be an object, but " + typeof converterOptions + " was passed instead.");
-          }
-          if (options.extensions) {
-            showdown.helper.forEach(options.extensions, _parseExtension);
-          }
-        }
-        function _parseExtension(ext, name) {
-          name = name || null;
-          if (showdown.helper.isString(ext)) {
-            ext = showdown.helper.stdExtName(ext);
-            name = ext;
-            if (showdown.extensions[ext]) {
-              console.warn("DEPRECATION WARNING: " + ext + " is an old extension that uses a deprecated loading method.Please inform the developer that the extension should be updated!");
-              legacyExtensionLoading(showdown.extensions[ext], ext);
-              return;
-            } else if (!showdown.helper.isUndefined(extensions[ext])) {
-              ext = extensions[ext];
-            } else {
-              throw Error('Extension "' + ext + '" could not be loaded. It was either not found or is not a valid extension.');
-            }
-          }
-          if (typeof ext === "function") {
-            ext = ext();
-          }
-          if (!showdown.helper.isArray(ext)) {
-            ext = [ext];
-          }
-          var validExt = validate(ext, name);
-          if (!validExt.valid) {
-            throw Error(validExt.error);
-          }
-          for (var i = 0; i < ext.length; ++i) {
-            switch (ext[i].type) {
-              case "lang":
-                langExtensions.push(ext[i]);
-                break;
-              case "output":
-                outputModifiers.push(ext[i]);
-                break;
-            }
-            if (ext[i].hasOwnProperty("listeners")) {
-              for (var ln in ext[i].listeners) {
-                if (ext[i].listeners.hasOwnProperty(ln)) {
-                  listen(ln, ext[i].listeners[ln]);
-                }
-              }
-            }
-          }
-        }
-        function legacyExtensionLoading(ext, name) {
-          if (typeof ext === "function") {
-            ext = ext(new showdown.Converter());
-          }
-          if (!showdown.helper.isArray(ext)) {
-            ext = [ext];
-          }
-          var valid = validate(ext, name);
-          if (!valid.valid) {
-            throw Error(valid.error);
-          }
-          for (var i = 0; i < ext.length; ++i) {
-            switch (ext[i].type) {
-              case "lang":
-                langExtensions.push(ext[i]);
-                break;
-              case "output":
-                outputModifiers.push(ext[i]);
-                break;
-              default:
-                throw Error("Extension loader error: Type unrecognized!!!");
-            }
-          }
-        }
-        function listen(name, callback) {
-          if (!showdown.helper.isString(name)) {
-            throw Error("Invalid argument in converter.listen() method: name must be a string, but " + typeof name + " given");
-          }
-          if (typeof callback !== "function") {
-            throw Error("Invalid argument in converter.listen() method: callback must be a function, but " + typeof callback + " given");
-          }
-          if (!listeners.hasOwnProperty(name)) {
-            listeners[name] = [];
-          }
-          listeners[name].push(callback);
-        }
-        function rTrimInputText(text) {
-          var rsp = text.match(/^\s*/)[0].length, rgx = new RegExp("^\\s{0," + rsp + "}", "gm");
-          return text.replace(rgx, "");
-        }
-        this._dispatch = function dispatch2(evtName, text, options2, globals) {
-          if (listeners.hasOwnProperty(evtName)) {
-            for (var ei = 0; ei < listeners[evtName].length; ++ei) {
-              var nText = listeners[evtName][ei](evtName, text, this, options2, globals);
-              if (nText && typeof nText !== "undefined") {
-                text = nText;
-              }
-            }
-          }
-          return text;
-        };
-        this.listen = function(name, callback) {
-          listen(name, callback);
-          return this;
-        };
-        this.makeHtml = function(text) {
-          if (!text) {
-            return text;
-          }
-          var globals = {
-            gHtmlBlocks: [],
-            gHtmlMdBlocks: [],
-            gHtmlSpans: [],
-            gUrls: {},
-            gTitles: {},
-            gDimensions: {},
-            gListLevel: 0,
-            hashLinkCounts: {},
-            langExtensions,
-            outputModifiers,
-            converter: this,
-            ghCodeBlocks: [],
-            metadata: {
-              parsed: {},
-              raw: "",
-              format: ""
-            }
-          };
-          text = text.replace(/¨/g, "\xA8T");
-          text = text.replace(/\$/g, "\xA8D");
-          text = text.replace(/\r\n/g, "\n");
-          text = text.replace(/\r/g, "\n");
-          text = text.replace(/\u00A0/g, "&nbsp;");
-          if (options.smartIndentationFix) {
-            text = rTrimInputText(text);
-          }
-          text = "\n\n" + text + "\n\n";
-          text = showdown.subParser("detab")(text, options, globals);
-          text = text.replace(/^[ \t]+$/mg, "");
-          showdown.helper.forEach(langExtensions, function(ext) {
-            text = showdown.subParser("runExtension")(ext, text, options, globals);
-          });
-          text = showdown.subParser("metadata")(text, options, globals);
-          text = showdown.subParser("hashPreCodeTags")(text, options, globals);
-          text = showdown.subParser("githubCodeBlocks")(text, options, globals);
-          text = showdown.subParser("hashHTMLBlocks")(text, options, globals);
-          text = showdown.subParser("hashCodeTags")(text, options, globals);
-          text = showdown.subParser("stripLinkDefinitions")(text, options, globals);
-          text = showdown.subParser("blockGamut")(text, options, globals);
-          text = showdown.subParser("unhashHTMLSpans")(text, options, globals);
-          text = showdown.subParser("unescapeSpecialChars")(text, options, globals);
-          text = text.replace(/¨D/g, "$$");
-          text = text.replace(/¨T/g, "\xA8");
-          text = showdown.subParser("completeHTMLDocument")(text, options, globals);
-          showdown.helper.forEach(outputModifiers, function(ext) {
-            text = showdown.subParser("runExtension")(ext, text, options, globals);
-          });
-          metadata = globals.metadata;
-          return text;
-        };
-        this.makeMarkdown = this.makeMd = function(src, HTMLParser) {
-          src = src.replace(/\r\n/g, "\n");
-          src = src.replace(/\r/g, "\n");
-          src = src.replace(/>[ \t]+</, ">\xA8NBSP;<");
-          if (!HTMLParser) {
-            if (window && window.document) {
-              HTMLParser = window.document;
-            } else {
-              throw new Error("HTMLParser is undefined. If in a webworker or nodejs environment, you need to provide a WHATWG DOM and HTML such as JSDOM");
-            }
-          }
-          var doc = HTMLParser.createElement("div");
-          doc.innerHTML = src;
-          var globals = {
-            preList: substitutePreCodeTags(doc)
-          };
-          clean(doc);
-          var nodes = doc.childNodes, mdDoc = "";
-          for (var i = 0; i < nodes.length; i++) {
-            mdDoc += showdown.subParser("makeMarkdown.node")(nodes[i], globals);
-          }
-          function clean(node) {
-            for (var n = 0; n < node.childNodes.length; ++n) {
-              var child = node.childNodes[n];
-              if (child.nodeType === 3) {
-                if (!/\S/.test(child.nodeValue)) {
-                  node.removeChild(child);
-                  --n;
-                } else {
-                  child.nodeValue = child.nodeValue.split("\n").join(" ");
-                  child.nodeValue = child.nodeValue.replace(/(\s)+/g, "$1");
-                }
-              } else if (child.nodeType === 1) {
-                clean(child);
-              }
-            }
-          }
-          function substitutePreCodeTags(doc2) {
-            var pres = doc2.querySelectorAll("pre"), presPH = [];
-            for (var i2 = 0; i2 < pres.length; ++i2) {
-              if (pres[i2].childElementCount === 1 && pres[i2].firstChild.tagName.toLowerCase() === "code") {
-                var content = pres[i2].firstChild.innerHTML.trim(), language = pres[i2].firstChild.getAttribute("data-language") || "";
-                if (language === "") {
-                  var classes = pres[i2].firstChild.className.split(" ");
-                  for (var c = 0; c < classes.length; ++c) {
-                    var matches = classes[c].match(/^language-(.+)$/);
-                    if (matches !== null) {
-                      language = matches[1];
-                      break;
-                    }
-                  }
-                }
-                content = showdown.helper.unescapeHTMLEntities(content);
-                presPH.push(content);
-                pres[i2].outerHTML = '<precode language="' + language + '" precodenum="' + i2.toString() + '"></precode>';
-              } else {
-                presPH.push(pres[i2].innerHTML);
-                pres[i2].innerHTML = "";
-                pres[i2].setAttribute("prenum", i2.toString());
-              }
-            }
-            return presPH;
-          }
-          return mdDoc;
-        };
-        this.setOption = function(key, value) {
-          options[key] = value;
-        };
-        this.getOption = function(key) {
-          return options[key];
-        };
-        this.getOptions = function() {
-          return options;
-        };
-        this.addExtension = function(extension, name) {
-          name = name || null;
-          _parseExtension(extension, name);
-        };
-        this.useExtension = function(extensionName) {
-          _parseExtension(extensionName);
-        };
-        this.setFlavor = function(name) {
-          if (!flavor.hasOwnProperty(name)) {
-            throw Error(name + " flavor was not found");
-          }
-          var preset = flavor[name];
-          setConvFlavor = name;
-          for (var option in preset) {
-            if (preset.hasOwnProperty(option)) {
-              options[option] = preset[option];
-            }
-          }
-        };
-        this.getFlavor = function() {
-          return setConvFlavor;
-        };
-        this.removeExtension = function(extension) {
-          if (!showdown.helper.isArray(extension)) {
-            extension = [extension];
-          }
-          for (var a = 0; a < extension.length; ++a) {
-            var ext = extension[a];
-            for (var i = 0; i < langExtensions.length; ++i) {
-              if (langExtensions[i] === ext) {
-                langExtensions[i].splice(i, 1);
-              }
-            }
-            for (var ii = 0; ii < outputModifiers.length; ++i) {
-              if (outputModifiers[ii] === ext) {
-                outputModifiers[ii].splice(i, 1);
-              }
-            }
-          }
-        };
-        this.getAllExtensions = function() {
-          return {
-            language: langExtensions,
-            output: outputModifiers
-          };
-        };
-        this.getMetadata = function(raw) {
-          if (raw) {
-            return metadata.raw;
-          } else {
-            return metadata.parsed;
-          }
-        };
-        this.getMetadataFormat = function() {
-          return metadata.format;
-        };
-        this._setMetadataPair = function(key, value) {
-          metadata.parsed[key] = value;
-        };
-        this._setMetadataFormat = function(format) {
-          metadata.format = format;
-        };
-        this._setMetadataRaw = function(raw) {
-          metadata.raw = raw;
-        };
-      };
-      showdown.subParser("anchors", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("anchors.before", text, options, globals);
-        var writeAnchorTag = function(wholeMatch, linkText, linkId, url, m5, m6, title) {
-          if (showdown.helper.isUndefined(title)) {
-            title = "";
-          }
-          linkId = linkId.toLowerCase();
-          if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
-            url = "";
-          } else if (!url) {
-            if (!linkId) {
-              linkId = linkText.toLowerCase().replace(/ ?\n/g, " ");
-            }
-            url = "#" + linkId;
-            if (!showdown.helper.isUndefined(globals.gUrls[linkId])) {
-              url = globals.gUrls[linkId];
-              if (!showdown.helper.isUndefined(globals.gTitles[linkId])) {
-                title = globals.gTitles[linkId];
-              }
-            } else {
-              return wholeMatch;
-            }
-          }
-          url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-          var result = '<a href="' + url + '"';
-          if (title !== "" && title !== null) {
-            title = title.replace(/"/g, "&quot;");
-            title = title.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-            result += ' title="' + title + '"';
-          }
-          if (options.openLinksInNewWindow && !/^#/.test(url)) {
-            result += ' rel="noopener noreferrer" target="\xA8E95Eblank"';
-          }
-          result += ">" + linkText + "</a>";
-          return result;
-        };
-        text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)] ?(?:\n *)?\[(.*?)]()()()()/g, writeAnchorTag);
-        text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)]()[ \t]*\([ \t]?<([^>]*)>(?:[ \t]*((["'])([^"]*?)\5))?[ \t]?\)/g, writeAnchorTag);
-        text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)]()[ \t]*\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?:[ \t]*((["'])([^"]*?)\5))?[ \t]?\)/g, writeAnchorTag);
-        text = text.replace(/\[([^\[\]]+)]()()()()()/g, writeAnchorTag);
-        if (options.ghMentions) {
-          text = text.replace(/(^|\s)(\\)?(@([a-z\d]+(?:[a-z\d.-]+?[a-z\d]+)*))/gmi, function(wm, st, escape2, mentions, username) {
-            if (escape2 === "\\") {
-              return st + mentions;
-            }
-            if (!showdown.helper.isString(options.ghMentionsLink)) {
-              throw new Error("ghMentionsLink option must be a string");
-            }
-            var lnk = options.ghMentionsLink.replace(/\{u}/g, username), target = "";
-            if (options.openLinksInNewWindow) {
-              target = ' rel="noopener noreferrer" target="\xA8E95Eblank"';
-            }
-            return st + '<a href="' + lnk + '"' + target + ">" + mentions + "</a>";
-          });
-        }
-        text = globals.converter._dispatch("anchors.after", text, options, globals);
-        return text;
-      });
-      var simpleURLRegex = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+?\.[^'">\s]+?)()(\1)?(?=\s|$)(?!["<>])/gi, simpleURLRegex2 = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+\.[^'">\s]+?)([.!?,()\[\]])?(\1)?(?=\s|$)(?!["<>])/gi, delimUrlRegex = /()<(((https?|ftp|dict):\/\/|www\.)[^'">\s]+)()>()/gi, simpleMailRegex = /(^|\s)(?:mailto:)?([A-Za-z0-9!#$%&'*+-/=?^_`{|}~.]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)(?=$|\s)/gmi, delimMailRegex = /<()(?:mailto:)?([-.\w]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)>/gi, replaceLink = function(options) {
-        "use strict";
-        return function(wm, leadingMagicChars, link, m2, m3, trailingPunctuation, trailingMagicChars) {
-          link = link.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-          var lnkTxt = link, append = "", target = "", lmc = leadingMagicChars || "", tmc = trailingMagicChars || "";
-          if (/^www\./i.test(link)) {
-            link = link.replace(/^www\./i, "http://www.");
-          }
-          if (options.excludeTrailingPunctuationFromURLs && trailingPunctuation) {
-            append = trailingPunctuation;
-          }
-          if (options.openLinksInNewWindow) {
-            target = ' rel="noopener noreferrer" target="\xA8E95Eblank"';
-          }
-          return lmc + '<a href="' + link + '"' + target + ">" + lnkTxt + "</a>" + append + tmc;
-        };
-      }, replaceMail = function(options, globals) {
-        "use strict";
-        return function(wholeMatch, b, mail) {
-          var href = "mailto:";
-          b = b || "";
-          mail = showdown.subParser("unescapeSpecialChars")(mail, options, globals);
-          if (options.encodeEmails) {
-            href = showdown.helper.encodeEmailAddress(href + mail);
-            mail = showdown.helper.encodeEmailAddress(mail);
-          } else {
-            href = href + mail;
-          }
-          return b + '<a href="' + href + '">' + mail + "</a>";
-        };
-      };
-      showdown.subParser("autoLinks", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("autoLinks.before", text, options, globals);
-        text = text.replace(delimUrlRegex, replaceLink(options));
-        text = text.replace(delimMailRegex, replaceMail(options, globals));
-        text = globals.converter._dispatch("autoLinks.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("simplifiedAutoLinks", function(text, options, globals) {
-        "use strict";
-        if (!options.simplifiedAutoLink) {
-          return text;
-        }
-        text = globals.converter._dispatch("simplifiedAutoLinks.before", text, options, globals);
-        if (options.excludeTrailingPunctuationFromURLs) {
-          text = text.replace(simpleURLRegex2, replaceLink(options));
-        } else {
-          text = text.replace(simpleURLRegex, replaceLink(options));
-        }
-        text = text.replace(simpleMailRegex, replaceMail(options, globals));
-        text = globals.converter._dispatch("simplifiedAutoLinks.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("blockGamut", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("blockGamut.before", text, options, globals);
-        text = showdown.subParser("blockQuotes")(text, options, globals);
-        text = showdown.subParser("headers")(text, options, globals);
-        text = showdown.subParser("horizontalRule")(text, options, globals);
-        text = showdown.subParser("lists")(text, options, globals);
-        text = showdown.subParser("codeBlocks")(text, options, globals);
-        text = showdown.subParser("tables")(text, options, globals);
-        text = showdown.subParser("hashHTMLBlocks")(text, options, globals);
-        text = showdown.subParser("paragraphs")(text, options, globals);
-        text = globals.converter._dispatch("blockGamut.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("blockQuotes", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("blockQuotes.before", text, options, globals);
-        text = text + "\n\n";
-        var rgx = /(^ {0,3}>[ \t]?.+\n(.+\n)*\n*)+/gm;
-        if (options.splitAdjacentBlockquotes) {
-          rgx = /^ {0,3}>[\s\S]*?(?:\n\n)/gm;
-        }
-        text = text.replace(rgx, function(bq) {
-          bq = bq.replace(/^[ \t]*>[ \t]?/gm, "");
-          bq = bq.replace(/¨0/g, "");
-          bq = bq.replace(/^[ \t]+$/gm, "");
-          bq = showdown.subParser("githubCodeBlocks")(bq, options, globals);
-          bq = showdown.subParser("blockGamut")(bq, options, globals);
-          bq = bq.replace(/(^|\n)/g, "$1  ");
-          bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function(wholeMatch, m1) {
-            var pre = m1;
-            pre = pre.replace(/^  /mg, "\xA80");
-            pre = pre.replace(/¨0/g, "");
-            return pre;
-          });
-          return showdown.subParser("hashBlock")("<blockquote>\n" + bq + "\n</blockquote>", options, globals);
+        return mash;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
         });
-        text = globals.converter._dispatch("blockQuotes.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("codeBlocks", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("codeBlocks.before", text, options, globals);
-        text += "\xA80";
-        var pattern = /(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=¨0))/g;
-        text = text.replace(pattern, function(wholeMatch, m1, m2) {
-          var codeblock = m1, nextChar = m2, end = "\n";
-          codeblock = showdown.subParser("outdent")(codeblock, options, globals);
-          codeblock = showdown.subParser("encodeCode")(codeblock, options, globals);
-          codeblock = showdown.subParser("detab")(codeblock, options, globals);
-          codeblock = codeblock.replace(/^\n+/g, "");
-          codeblock = codeblock.replace(/\n+$/g, "");
-          if (options.omitExtraWLInCodeBlocks) {
-            end = "";
-          }
-          codeblock = "<pre><code>" + codeblock + end + "</code></pre>";
-          return showdown.subParser("hashBlock")(codeblock, options, globals) + nextChar;
-        });
-        text = text.replace(/¨0/, "");
-        text = globals.converter._dispatch("codeBlocks.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("codeSpans", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("codeSpans.before", text, options, globals);
-        if (typeof text === "undefined") {
-          text = "";
-        }
-        text = text.replace(/(^|[^\\])(`+)([^\r]*?[^`])\2(?!`)/gm, function(wholeMatch, m1, m2, m3) {
-          var c = m3;
-          c = c.replace(/^([ \t]*)/g, "");
-          c = c.replace(/[ \t]*$/g, "");
-          c = showdown.subParser("encodeCode")(c, options, globals);
-          c = m1 + "<code>" + c + "</code>";
-          c = showdown.subParser("hashHTMLSpans")(c, options, globals);
-          return c;
-        });
-        text = globals.converter._dispatch("codeSpans.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("completeHTMLDocument", function(text, options, globals) {
-        "use strict";
-        if (!options.completeHTMLDocument) {
-          return text;
-        }
-        text = globals.converter._dispatch("completeHTMLDocument.before", text, options, globals);
-        var doctype = "html", doctypeParsed = "<!DOCTYPE HTML>\n", title = "", charset = '<meta charset="utf-8">\n', lang = "", metadata = "";
-        if (typeof globals.metadata.parsed.doctype !== "undefined") {
-          doctypeParsed = "<!DOCTYPE " + globals.metadata.parsed.doctype + ">\n";
-          doctype = globals.metadata.parsed.doctype.toString().toLowerCase();
-          if (doctype === "html" || doctype === "html5") {
-            charset = '<meta charset="utf-8">';
-          }
-        }
-        for (var meta in globals.metadata.parsed) {
-          if (globals.metadata.parsed.hasOwnProperty(meta)) {
-            switch (meta.toLowerCase()) {
-              case "doctype":
-                break;
-              case "title":
-                title = "<title>" + globals.metadata.parsed.title + "</title>\n";
-                break;
-              case "charset":
-                if (doctype === "html" || doctype === "html5") {
-                  charset = '<meta charset="' + globals.metadata.parsed.charset + '">\n';
-                } else {
-                  charset = '<meta name="charset" content="' + globals.metadata.parsed.charset + '">\n';
-                }
-                break;
-              case "language":
-              case "lang":
-                lang = ' lang="' + globals.metadata.parsed[meta] + '"';
-                metadata += '<meta name="' + meta + '" content="' + globals.metadata.parsed[meta] + '">\n';
-                break;
-              default:
-                metadata += '<meta name="' + meta + '" content="' + globals.metadata.parsed[meta] + '">\n';
-            }
-          }
-        }
-        text = doctypeParsed + "<html" + lang + ">\n<head>\n" + title + charset + metadata + "</head>\n<body>\n" + text.trim() + "\n</body>\n</html>";
-        text = globals.converter._dispatch("completeHTMLDocument.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("detab", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("detab.before", text, options, globals);
-        text = text.replace(/\t(?=\t)/g, "    ");
-        text = text.replace(/\t/g, "\xA8A\xA8B");
-        text = text.replace(/¨B(.+?)¨A/g, function(wholeMatch, m1) {
-          var leadingText = m1, numSpaces = 4 - leadingText.length % 4;
-          for (var i = 0; i < numSpaces; i++) {
-            leadingText += " ";
-          }
-          return leadingText;
-        });
-        text = text.replace(/¨A/g, "    ");
-        text = text.replace(/¨B/g, "");
-        text = globals.converter._dispatch("detab.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("ellipsis", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("ellipsis.before", text, options, globals);
-        text = text.replace(/\.\.\./g, "\u2026");
-        text = globals.converter._dispatch("ellipsis.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("emoji", function(text, options, globals) {
-        "use strict";
-        if (!options.emoji) {
-          return text;
-        }
-        text = globals.converter._dispatch("emoji.before", text, options, globals);
-        var emojiRgx = /:([\S]+?):/g;
-        text = text.replace(emojiRgx, function(wm, emojiCode) {
-          if (showdown.helper.emojis.hasOwnProperty(emojiCode)) {
-            return showdown.helper.emojis[emojiCode];
-          }
-          return wm;
-        });
-        text = globals.converter._dispatch("emoji.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("encodeAmpsAndAngles", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("encodeAmpsAndAngles.before", text, options, globals);
-        text = text.replace(/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/g, "&amp;");
-        text = text.replace(/<(?![a-z\/?$!])/gi, "&lt;");
-        text = text.replace(/</g, "&lt;");
-        text = text.replace(/>/g, "&gt;");
-        text = globals.converter._dispatch("encodeAmpsAndAngles.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("encodeBackslashEscapes", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("encodeBackslashEscapes.before", text, options, globals);
-        text = text.replace(/\\(\\)/g, showdown.helper.escapeCharactersCallback);
-        text = text.replace(/\\([`*_{}\[\]()>#+.!~=|-])/g, showdown.helper.escapeCharactersCallback);
-        text = globals.converter._dispatch("encodeBackslashEscapes.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("encodeCode", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("encodeCode.before", text, options, globals);
-        text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/([*_{}\[\]\\=~-])/g, showdown.helper.escapeCharactersCallback);
-        text = globals.converter._dispatch("encodeCode.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("escapeSpecialCharsWithinTagAttributes", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("escapeSpecialCharsWithinTagAttributes.before", text, options, globals);
-        var tags = /<\/?[a-z\d_:-]+(?:[\s]+[\s\S]+?)?>/gi, comments = /<!(--(?:(?:[^>-]|-[^>])(?:[^-]|-[^-])*)--)>/gi;
-        text = text.replace(tags, function(wholeMatch) {
-          return wholeMatch.replace(/(.)<\/?code>(?=.)/g, "$1`").replace(/([\\`*_~=|])/g, showdown.helper.escapeCharactersCallback);
-        });
-        text = text.replace(comments, function(wholeMatch) {
-          return wholeMatch.replace(/([\\`*_~=|])/g, showdown.helper.escapeCharactersCallback);
-        });
-        text = globals.converter._dispatch("escapeSpecialCharsWithinTagAttributes.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("githubCodeBlocks", function(text, options, globals) {
-        "use strict";
-        if (!options.ghCodeBlocks) {
-          return text;
-        }
-        text = globals.converter._dispatch("githubCodeBlocks.before", text, options, globals);
-        text += "\xA80";
-        text = text.replace(/(?:^|\n)(?: {0,3})(```+|~~~+)(?: *)([^\s`~]*)\n([\s\S]*?)\n(?: {0,3})\1/g, function(wholeMatch, delim, language, codeblock) {
-          var end = options.omitExtraWLInCodeBlocks ? "" : "\n";
-          codeblock = showdown.subParser("encodeCode")(codeblock, options, globals);
-          codeblock = showdown.subParser("detab")(codeblock, options, globals);
-          codeblock = codeblock.replace(/^\n+/g, "");
-          codeblock = codeblock.replace(/\n+$/g, "");
-          codeblock = "<pre><code" + (language ? ' class="' + language + " language-" + language + '"' : "") + ">" + codeblock + end + "</code></pre>";
-          codeblock = showdown.subParser("hashBlock")(codeblock, options, globals);
-          return "\n\n\xA8G" + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock }) - 1) + "G\n\n";
-        });
-        text = text.replace(/¨0/, "");
-        return globals.converter._dispatch("githubCodeBlocks.after", text, options, globals);
-      });
-      showdown.subParser("hashBlock", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("hashBlock.before", text, options, globals);
-        text = text.replace(/(^\n+|\n+$)/g, "");
-        text = "\n\n\xA8K" + (globals.gHtmlBlocks.push(text) - 1) + "K\n\n";
-        text = globals.converter._dispatch("hashBlock.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("hashCodeTags", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("hashCodeTags.before", text, options, globals);
-        var repFunc = function(wholeMatch, match, left, right) {
-          var codeblock = left + showdown.subParser("encodeCode")(match, options, globals) + right;
-          return "\xA8C" + (globals.gHtmlSpans.push(codeblock) - 1) + "C";
-        };
-        text = showdown.helper.replaceRecursiveRegExp(text, repFunc, "<code\\b[^>]*>", "</code>", "gim");
-        text = globals.converter._dispatch("hashCodeTags.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("hashElement", function(text, options, globals) {
-        "use strict";
-        return function(wholeMatch, m1) {
-          var blockText = m1;
-          blockText = blockText.replace(/\n\n/g, "\n");
-          blockText = blockText.replace(/^\n/, "");
-          blockText = blockText.replace(/\n+$/g, "");
-          blockText = "\n\n\xA8K" + (globals.gHtmlBlocks.push(blockText) - 1) + "K\n\n";
-          return blockText;
-        };
-      });
-      showdown.subParser("hashHTMLBlocks", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("hashHTMLBlocks.before", text, options, globals);
-        var blockTags = [
-          "pre",
-          "div",
-          "h1",
-          "h2",
-          "h3",
-          "h4",
-          "h5",
-          "h6",
-          "blockquote",
-          "table",
-          "dl",
-          "ol",
-          "ul",
-          "script",
-          "noscript",
-          "form",
-          "fieldset",
-          "iframe",
-          "math",
-          "style",
-          "section",
-          "header",
-          "footer",
-          "nav",
-          "article",
-          "aside",
-          "address",
-          "audio",
-          "canvas",
-          "figure",
-          "hgroup",
-          "output",
-          "video",
-          "p"
-        ], repFunc = function(wholeMatch, match, left, right) {
-          var txt = wholeMatch;
-          if (left.search(/\bmarkdown\b/) !== -1) {
-            txt = left + globals.converter.makeHtml(match) + right;
-          }
-          return "\n\n\xA8K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
-        };
-        if (options.backslashEscapesHTMLTags) {
-          text = text.replace(/\\<(\/?[^>]+?)>/g, function(wm, inside) {
-            return "&lt;" + inside + "&gt;";
-          });
-        }
-        for (var i = 0; i < blockTags.length; ++i) {
-          var opTagPos, rgx1 = new RegExp("^ {0,3}(<" + blockTags[i] + "\\b[^>]*>)", "im"), patLeft = "<" + blockTags[i] + "\\b[^>]*>", patRight = "</" + blockTags[i] + ">";
-          while ((opTagPos = showdown.helper.regexIndexOf(text, rgx1)) !== -1) {
-            var subTexts = showdown.helper.splitAtIndex(text, opTagPos), newSubText1 = showdown.helper.replaceRecursiveRegExp(subTexts[1], repFunc, patLeft, patRight, "im");
-            if (newSubText1 === subTexts[1]) {
-              break;
-            }
-            text = subTexts[0].concat(newSubText1);
-          }
-        }
-        text = text.replace(/(\n {0,3}(<(hr)\b([^<>])*?\/?>)[ \t]*(?=\n{2,}))/g, showdown.subParser("hashElement")(text, options, globals));
-        text = showdown.helper.replaceRecursiveRegExp(text, function(txt) {
-          return "\n\n\xA8K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
-        }, "^ {0,3}<!--", "-->", "gm");
-        text = text.replace(/(?:\n\n)( {0,3}(?:<([?%])[^\r]*?\2>)[ \t]*(?=\n{2,}))/g, showdown.subParser("hashElement")(text, options, globals));
-        text = globals.converter._dispatch("hashHTMLBlocks.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("hashHTMLSpans", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("hashHTMLSpans.before", text, options, globals);
-        function hashHTMLSpan(html) {
-          return "\xA8C" + (globals.gHtmlSpans.push(html) - 1) + "C";
-        }
-        text = text.replace(/<[^>]+?\/>/gi, function(wm) {
-          return hashHTMLSpan(wm);
-        });
-        text = text.replace(/<([^>]+?)>[\s\S]*?<\/\1>/g, function(wm) {
-          return hashHTMLSpan(wm);
-        });
-        text = text.replace(/<([^>]+?)\s[^>]+?>[\s\S]*?<\/\1>/g, function(wm) {
-          return hashHTMLSpan(wm);
-        });
-        text = text.replace(/<[^>]+?>/gi, function(wm) {
-          return hashHTMLSpan(wm);
-        });
-        text = globals.converter._dispatch("hashHTMLSpans.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("unhashHTMLSpans", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("unhashHTMLSpans.before", text, options, globals);
-        for (var i = 0; i < globals.gHtmlSpans.length; ++i) {
-          var repText = globals.gHtmlSpans[i], limit = 0;
-          while (/¨C(\d+)C/.test(repText)) {
-            var num = RegExp.$1;
-            repText = repText.replace("\xA8C" + num + "C", globals.gHtmlSpans[num]);
-            if (limit === 10) {
-              console.error("maximum nesting of 10 spans reached!!!");
-              break;
-            }
-            ++limit;
-          }
-          text = text.replace("\xA8C" + i + "C", repText);
-        }
-        text = globals.converter._dispatch("unhashHTMLSpans.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("hashPreCodeTags", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("hashPreCodeTags.before", text, options, globals);
-        var repFunc = function(wholeMatch, match, left, right) {
-          var codeblock = left + showdown.subParser("encodeCode")(match, options, globals) + right;
-          return "\n\n\xA8G" + (globals.ghCodeBlocks.push({ text: wholeMatch, codeblock }) - 1) + "G\n\n";
-        };
-        text = showdown.helper.replaceRecursiveRegExp(text, repFunc, "^ {0,3}<pre\\b[^>]*>\\s*<code\\b[^>]*>", "^ {0,3}</code>\\s*</pre>", "gim");
-        text = globals.converter._dispatch("hashPreCodeTags.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("headers", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("headers.before", text, options, globals);
-        var headerLevelStart = isNaN(parseInt(options.headerLevelStart)) ? 1 : parseInt(options.headerLevelStart), setextRegexH1 = options.smoothLivePreview ? /^(.+)[ \t]*\n={2,}[ \t]*\n+/gm : /^(.+)[ \t]*\n=+[ \t]*\n+/gm, setextRegexH2 = options.smoothLivePreview ? /^(.+)[ \t]*\n-{2,}[ \t]*\n+/gm : /^(.+)[ \t]*\n-+[ \t]*\n+/gm;
-        text = text.replace(setextRegexH1, function(wholeMatch, m1) {
-          var spanGamut = showdown.subParser("spanGamut")(m1, options, globals), hID = options.noHeaderId ? "" : ' id="' + headerId(m1) + '"', hLevel = headerLevelStart, hashBlock = "<h" + hLevel + hID + ">" + spanGamut + "</h" + hLevel + ">";
-          return showdown.subParser("hashBlock")(hashBlock, options, globals);
-        });
-        text = text.replace(setextRegexH2, function(matchFound, m1) {
-          var spanGamut = showdown.subParser("spanGamut")(m1, options, globals), hID = options.noHeaderId ? "" : ' id="' + headerId(m1) + '"', hLevel = headerLevelStart + 1, hashBlock = "<h" + hLevel + hID + ">" + spanGamut + "</h" + hLevel + ">";
-          return showdown.subParser("hashBlock")(hashBlock, options, globals);
-        });
-        var atxStyle = options.requireSpaceBeforeHeadingText ? /^(#{1,6})[ \t]+(.+?)[ \t]*#*\n+/gm : /^(#{1,6})[ \t]*(.+?)[ \t]*#*\n+/gm;
-        text = text.replace(atxStyle, function(wholeMatch, m1, m2) {
-          var hText = m2;
-          if (options.customizedHeaderId) {
-            hText = m2.replace(/\s?\{([^{]+?)}\s*$/, "");
-          }
-          var span = showdown.subParser("spanGamut")(hText, options, globals), hID = options.noHeaderId ? "" : ' id="' + headerId(m2) + '"', hLevel = headerLevelStart - 1 + m1.length, header = "<h" + hLevel + hID + ">" + span + "</h" + hLevel + ">";
-          return showdown.subParser("hashBlock")(header, options, globals);
-        });
-        function headerId(m) {
-          var title, prefix;
-          if (options.customizedHeaderId) {
-            var match = m.match(/\{([^{]+?)}\s*$/);
-            if (match && match[1]) {
-              m = match[1];
-            }
-          }
-          title = m;
-          if (showdown.helper.isString(options.prefixHeaderId)) {
-            prefix = options.prefixHeaderId;
-          } else if (options.prefixHeaderId === true) {
-            prefix = "section-";
-          } else {
-            prefix = "";
-          }
-          if (!options.rawPrefixHeaderId) {
-            title = prefix + title;
-          }
-          if (options.ghCompatibleHeaderId) {
-            title = title.replace(/ /g, "-").replace(/&amp;/g, "").replace(/¨T/g, "").replace(/¨D/g, "").replace(/[&+$,\/:;=?@"#{}|^¨~\[\]`\\*)(%.!'<>]/g, "").toLowerCase();
-          } else if (options.rawHeaderId) {
-            title = title.replace(/ /g, "-").replace(/&amp;/g, "&").replace(/¨T/g, "\xA8").replace(/¨D/g, "$").replace(/["']/g, "-").toLowerCase();
-          } else {
-            title = title.replace(/[^\w]/g, "").toLowerCase();
-          }
-          if (options.rawPrefixHeaderId) {
-            title = prefix + title;
-          }
-          if (globals.hashLinkCounts[title]) {
-            title = title + "-" + globals.hashLinkCounts[title]++;
-          } else {
-            globals.hashLinkCounts[title] = 1;
-          }
-          return title;
-        }
-        text = globals.converter._dispatch("headers.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("horizontalRule", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("horizontalRule.before", text, options, globals);
-        var key = showdown.subParser("hashBlock")("<hr />", options, globals);
-        text = text.replace(/^ {0,2}( ?-){3,}[ \t]*$/gm, key);
-        text = text.replace(/^ {0,2}( ?\*){3,}[ \t]*$/gm, key);
-        text = text.replace(/^ {0,2}( ?_){3,}[ \t]*$/gm, key);
-        text = globals.converter._dispatch("horizontalRule.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("images", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("images.before", text, options, globals);
-        var inlineRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, crazyRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g, base64RegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, referenceRegExp = /!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g, refShortcutRegExp = /!\[([^\[\]]+)]()()()()()/g;
-        function writeImageTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
-          url = url.replace(/\s/g, "");
-          return writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title);
-        }
-        function writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title) {
-          var gUrls = globals.gUrls, gTitles = globals.gTitles, gDims = globals.gDimensions;
-          linkId = linkId.toLowerCase();
-          if (!title) {
-            title = "";
-          }
-          if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) {
-            url = "";
-          } else if (url === "" || url === null) {
-            if (linkId === "" || linkId === null) {
-              linkId = altText.toLowerCase().replace(/ ?\n/g, " ");
-            }
-            url = "#" + linkId;
-            if (!showdown.helper.isUndefined(gUrls[linkId])) {
-              url = gUrls[linkId];
-              if (!showdown.helper.isUndefined(gTitles[linkId])) {
-                title = gTitles[linkId];
-              }
-              if (!showdown.helper.isUndefined(gDims[linkId])) {
-                width = gDims[linkId].width;
-                height = gDims[linkId].height;
-              }
-            } else {
-              return wholeMatch;
-            }
-          }
-          altText = altText.replace(/"/g, "&quot;").replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-          url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-          var result = '<img src="' + url + '" alt="' + altText + '"';
-          if (title && showdown.helper.isString(title)) {
-            title = title.replace(/"/g, "&quot;").replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-            result += ' title="' + title + '"';
-          }
-          if (width && height) {
-            width = width === "*" ? "auto" : width;
-            height = height === "*" ? "auto" : height;
-            result += ' width="' + width + '"';
-            result += ' height="' + height + '"';
-          }
-          result += " />";
-          return result;
-        }
-        text = text.replace(referenceRegExp, writeImageTag);
-        text = text.replace(base64RegExp, writeImageTagBase64);
-        text = text.replace(crazyRegExp, writeImageTag);
-        text = text.replace(inlineRegExp, writeImageTag);
-        text = text.replace(refShortcutRegExp, writeImageTag);
-        text = globals.converter._dispatch("images.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("italicsAndBold", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("italicsAndBold.before", text, options, globals);
-        function parseInside(txt, left, right) {
-          return left + txt + right;
-        }
-        if (options.literalMidWordUnderscores) {
-          text = text.replace(/\b___(\S[\s\S]*?)___\b/g, function(wm, txt) {
-            return parseInside(txt, "<strong><em>", "</em></strong>");
-          });
-          text = text.replace(/\b__(\S[\s\S]*?)__\b/g, function(wm, txt) {
-            return parseInside(txt, "<strong>", "</strong>");
-          });
-          text = text.replace(/\b_(\S[\s\S]*?)_\b/g, function(wm, txt) {
-            return parseInside(txt, "<em>", "</em>");
-          });
-        } else {
-          text = text.replace(/___(\S[\s\S]*?)___/g, function(wm, m) {
-            return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
-          });
-          text = text.replace(/__(\S[\s\S]*?)__/g, function(wm, m) {
-            return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
-          });
-          text = text.replace(/_([^\s_][\s\S]*?)_/g, function(wm, m) {
-            return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
-          });
-        }
-        if (options.literalMidWordAsterisks) {
-          text = text.replace(/([^*]|^)\B\*\*\*(\S[\s\S]*?)\*\*\*\B(?!\*)/g, function(wm, lead, txt) {
-            return parseInside(txt, lead + "<strong><em>", "</em></strong>");
-          });
-          text = text.replace(/([^*]|^)\B\*\*(\S[\s\S]*?)\*\*\B(?!\*)/g, function(wm, lead, txt) {
-            return parseInside(txt, lead + "<strong>", "</strong>");
-          });
-          text = text.replace(/([^*]|^)\B\*(\S[\s\S]*?)\*\B(?!\*)/g, function(wm, lead, txt) {
-            return parseInside(txt, lead + "<em>", "</em>");
-          });
-        } else {
-          text = text.replace(/\*\*\*(\S[\s\S]*?)\*\*\*/g, function(wm, m) {
-            return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
-          });
-          text = text.replace(/\*\*(\S[\s\S]*?)\*\*/g, function(wm, m) {
-            return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
-          });
-          text = text.replace(/\*([^\s*][\s\S]*?)\*/g, function(wm, m) {
-            return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
-          });
-        }
-        text = globals.converter._dispatch("italicsAndBold.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("lists", function(text, options, globals) {
-        "use strict";
-        function processListItems(listStr, trimTrailing) {
-          globals.gListLevel++;
-          listStr = listStr.replace(/\n{2,}$/, "\n");
-          listStr += "\xA80";
-          var rgx = /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[(x|X| )?])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0| {0,3}([*+-]|\d+[.])[ \t]+))/gm, isParagraphed = /\n[ \t]*\n(?!¨0)/.test(listStr);
-          if (options.disableForced4SpacesIndentedSublists) {
-            rgx = /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[(x|X| )?])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0|\2([*+-]|\d+[.])[ \t]+))/gm;
-          }
-          listStr = listStr.replace(rgx, function(wholeMatch, m1, m2, m3, m4, taskbtn, checked) {
-            checked = checked && checked.trim() !== "";
-            var item = showdown.subParser("outdent")(m4, options, globals), bulletStyle = "";
-            if (taskbtn && options.tasklists) {
-              bulletStyle = ' class="task-list-item" style="list-style-type: none;"';
-              item = item.replace(/^[ \t]*\[(x|X| )?]/m, function() {
-                var otp = '<input type="checkbox" disabled style="margin: 0px 0.35em 0.25em -1.6em; vertical-align: middle;"';
-                if (checked) {
-                  otp += " checked";
-                }
-                otp += ">";
-                return otp;
-              });
-            }
-            item = item.replace(/^([-*+]|\d\.)[ \t]+[\S\n ]*/g, function(wm2) {
-              return "\xA8A" + wm2;
-            });
-            if (m1 || item.search(/\n{2,}/) > -1) {
-              item = showdown.subParser("githubCodeBlocks")(item, options, globals);
-              item = showdown.subParser("blockGamut")(item, options, globals);
-            } else {
-              item = showdown.subParser("lists")(item, options, globals);
-              item = item.replace(/\n$/, "");
-              item = showdown.subParser("hashHTMLBlocks")(item, options, globals);
-              item = item.replace(/\n\n+/g, "\n\n");
-              if (isParagraphed) {
-                item = showdown.subParser("paragraphs")(item, options, globals);
-              } else {
-                item = showdown.subParser("spanGamut")(item, options, globals);
-              }
-            }
-            item = item.replace("\xA8A", "");
-            item = "<li" + bulletStyle + ">" + item + "</li>\n";
-            return item;
-          });
-          listStr = listStr.replace(/¨0/g, "");
-          globals.gListLevel--;
-          if (trimTrailing) {
-            listStr = listStr.replace(/\s+$/, "");
-          }
-          return listStr;
-        }
-        function styleStartNumber(list, listType) {
-          if (listType === "ol") {
-            var res = list.match(/^ *(\d+)\./);
-            if (res && res[1] !== "1") {
-              return ' start="' + res[1] + '"';
-            }
-          }
-          return "";
-        }
-        function parseConsecutiveLists(list, listType, trimTrailing) {
-          var olRgx = options.disableForced4SpacesIndentedSublists ? /^ ?\d+\.[ \t]/gm : /^ {0,3}\d+\.[ \t]/gm, ulRgx = options.disableForced4SpacesIndentedSublists ? /^ ?[*+-][ \t]/gm : /^ {0,3}[*+-][ \t]/gm, counterRxg = listType === "ul" ? olRgx : ulRgx, result = "";
-          if (list.search(counterRxg) !== -1) {
-            (function parseCL(txt) {
-              var pos = txt.search(counterRxg), style2 = styleStartNumber(list, listType);
-              if (pos !== -1) {
-                result += "\n\n<" + listType + style2 + ">\n" + processListItems(txt.slice(0, pos), !!trimTrailing) + "</" + listType + ">\n";
-                listType = listType === "ul" ? "ol" : "ul";
-                counterRxg = listType === "ul" ? olRgx : ulRgx;
-                parseCL(txt.slice(pos));
-              } else {
-                result += "\n\n<" + listType + style2 + ">\n" + processListItems(txt, !!trimTrailing) + "</" + listType + ">\n";
-              }
-            })(list);
-          } else {
-            var style = styleStartNumber(list, listType);
-            result = "\n\n<" + listType + style + ">\n" + processListItems(list, !!trimTrailing) + "</" + listType + ">\n";
-          }
-          return result;
-        }
-        text = globals.converter._dispatch("lists.before", text, options, globals);
-        text += "\xA80";
-        if (globals.gListLevel) {
-          text = text.replace(/^(( {0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(¨0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm, function(wholeMatch, list, m2) {
-            var listType = m2.search(/[*+-]/g) > -1 ? "ul" : "ol";
-            return parseConsecutiveLists(list, listType, true);
-          });
-        } else {
-          text = text.replace(/(\n\n|^\n?)(( {0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(¨0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm, function(wholeMatch, m1, list, m3) {
-            var listType = m3.search(/[*+-]/g) > -1 ? "ul" : "ol";
-            return parseConsecutiveLists(list, listType, false);
-          });
-        }
-        text = text.replace(/¨0/, "");
-        text = globals.converter._dispatch("lists.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("metadata", function(text, options, globals) {
-        "use strict";
-        if (!options.metadata) {
-          return text;
-        }
-        text = globals.converter._dispatch("metadata.before", text, options, globals);
-        function parseMetadataContents(content) {
-          globals.metadata.raw = content;
-          content = content.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-          content = content.replace(/\n {4}/g, " ");
-          content.replace(/^([\S ]+): +([\s\S]+?)$/gm, function(wm, key, value) {
-            globals.metadata.parsed[key] = value;
-            return "";
-          });
-        }
-        text = text.replace(/^\s*«««+(\S*?)\n([\s\S]+?)\n»»»+\n/, function(wholematch, format, content) {
-          parseMetadataContents(content);
-          return "\xA8M";
-        });
-        text = text.replace(/^\s*---+(\S*?)\n([\s\S]+?)\n---+\n/, function(wholematch, format, content) {
-          if (format) {
-            globals.metadata.format = format;
-          }
-          parseMetadataContents(content);
-          return "\xA8M";
-        });
-        text = text.replace(/¨M/g, "");
-        text = globals.converter._dispatch("metadata.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("outdent", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("outdent.before", text, options, globals);
-        text = text.replace(/^(\t|[ ]{1,4})/gm, "\xA80");
-        text = text.replace(/¨0/g, "");
-        text = globals.converter._dispatch("outdent.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("paragraphs", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("paragraphs.before", text, options, globals);
-        text = text.replace(/^\n+/g, "");
-        text = text.replace(/\n+$/g, "");
-        var grafs = text.split(/\n{2,}/g), grafsOut = [], end = grafs.length;
-        for (var i = 0; i < end; i++) {
-          var str = grafs[i];
-          if (str.search(/¨(K|G)(\d+)\1/g) >= 0) {
-            grafsOut.push(str);
-          } else if (str.search(/\S/) >= 0) {
-            str = showdown.subParser("spanGamut")(str, options, globals);
-            str = str.replace(/^([ \t]*)/g, "<p>");
-            str += "</p>";
-            grafsOut.push(str);
-          }
-        }
-        end = grafsOut.length;
-        for (i = 0; i < end; i++) {
-          var blockText = "", grafsOutIt = grafsOut[i], codeFlag = false;
-          while (/¨(K|G)(\d+)\1/.test(grafsOutIt)) {
-            var delim = RegExp.$1, num = RegExp.$2;
-            if (delim === "K") {
-              blockText = globals.gHtmlBlocks[num];
-            } else {
-              if (codeFlag) {
-                blockText = showdown.subParser("encodeCode")(globals.ghCodeBlocks[num].text, options, globals);
-              } else {
-                blockText = globals.ghCodeBlocks[num].codeblock;
-              }
-            }
-            blockText = blockText.replace(/\$/g, "$$$$");
-            grafsOutIt = grafsOutIt.replace(/(\n\n)?¨(K|G)\d+\2(\n\n)?/, blockText);
-            if (/^<pre\b[^>]*>\s*<code\b[^>]*>/.test(grafsOutIt)) {
-              codeFlag = true;
-            }
-          }
-          grafsOut[i] = grafsOutIt;
-        }
-        text = grafsOut.join("\n");
-        text = text.replace(/^\n+/g, "");
-        text = text.replace(/\n+$/g, "");
-        return globals.converter._dispatch("paragraphs.after", text, options, globals);
-      });
-      showdown.subParser("runExtension", function(ext, text, options, globals) {
-        "use strict";
-        if (ext.filter) {
-          text = ext.filter(text, globals.converter, options);
-        } else if (ext.regex) {
-          var re = ext.regex;
-          if (!(re instanceof RegExp)) {
-            re = new RegExp(re, "g");
-          }
-          text = text.replace(re, ext.replace);
-        }
-        return text;
-      });
-      showdown.subParser("spanGamut", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("spanGamut.before", text, options, globals);
-        text = showdown.subParser("codeSpans")(text, options, globals);
-        text = showdown.subParser("escapeSpecialCharsWithinTagAttributes")(text, options, globals);
-        text = showdown.subParser("encodeBackslashEscapes")(text, options, globals);
-        text = showdown.subParser("images")(text, options, globals);
-        text = showdown.subParser("anchors")(text, options, globals);
-        text = showdown.subParser("autoLinks")(text, options, globals);
-        text = showdown.subParser("simplifiedAutoLinks")(text, options, globals);
-        text = showdown.subParser("emoji")(text, options, globals);
-        text = showdown.subParser("underline")(text, options, globals);
-        text = showdown.subParser("italicsAndBold")(text, options, globals);
-        text = showdown.subParser("strikethrough")(text, options, globals);
-        text = showdown.subParser("ellipsis")(text, options, globals);
-        text = showdown.subParser("hashHTMLSpans")(text, options, globals);
-        text = showdown.subParser("encodeAmpsAndAngles")(text, options, globals);
-        if (options.simpleLineBreaks) {
-          if (!/\n\n¨K/.test(text)) {
-            text = text.replace(/\n+/g, "<br />\n");
-          }
-        } else {
-          text = text.replace(/  +\n/g, "<br />\n");
-        }
-        text = globals.converter._dispatch("spanGamut.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("strikethrough", function(text, options, globals) {
-        "use strict";
-        function parseInside(txt) {
-          if (options.simplifiedAutoLink) {
-            txt = showdown.subParser("simplifiedAutoLinks")(txt, options, globals);
-          }
-          return "<del>" + txt + "</del>";
-        }
-        if (options.strikethrough) {
-          text = globals.converter._dispatch("strikethrough.before", text, options, globals);
-          text = text.replace(/(?:~){2}([\s\S]+?)(?:~){2}/g, function(wm, txt) {
-            return parseInside(txt);
-          });
-          text = globals.converter._dispatch("strikethrough.after", text, options, globals);
-        }
-        return text;
-      });
-      showdown.subParser("stripLinkDefinitions", function(text, options, globals) {
-        "use strict";
-        var regex = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?([^>\s]+)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n+|(?=¨0))/gm, base64Regex = /^ {0,3}\[(.+)]:[ \t]*\n?[ \t]*<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n\n|(?=¨0)|(?=\n\[))/gm;
-        text += "\xA80";
-        var replaceFunc = function(wholeMatch, linkId, url, width, height, blankLines, title) {
-          linkId = linkId.toLowerCase();
-          if (url.match(/^data:.+?\/.+?;base64,/)) {
-            globals.gUrls[linkId] = url.replace(/\s/g, "");
-          } else {
-            globals.gUrls[linkId] = showdown.subParser("encodeAmpsAndAngles")(url, options, globals);
-          }
-          if (blankLines) {
-            return blankLines + title;
-          } else {
-            if (title) {
-              globals.gTitles[linkId] = title.replace(/"|'/g, "&quot;");
-            }
-            if (options.parseImgDimensions && width && height) {
-              globals.gDimensions[linkId] = {
-                width,
-                height
-              };
-            }
-          }
-          return "";
-        };
-        text = text.replace(base64Regex, replaceFunc);
-        text = text.replace(regex, replaceFunc);
-        text = text.replace(/¨0/, "");
-        return text;
-      });
-      showdown.subParser("tables", function(text, options, globals) {
-        "use strict";
-        if (!options.tables) {
-          return text;
-        }
-        var tableRgx = /^ {0,3}\|?.+\|.+\n {0,3}\|?[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*:?[ \t]*(?:[-=]){2,}[\s\S]+?(?:\n\n|¨0)/gm, singeColTblRgx = /^ {0,3}\|.+\|[ \t]*\n {0,3}\|[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*\n( {0,3}\|.+\|[ \t]*\n)*(?:\n|¨0)/gm;
-        function parseStyles(sLine) {
-          if (/^:[ \t]*--*$/.test(sLine)) {
-            return ' style="text-align:left;"';
-          } else if (/^--*[ \t]*:[ \t]*$/.test(sLine)) {
-            return ' style="text-align:right;"';
-          } else if (/^:[ \t]*--*[ \t]*:$/.test(sLine)) {
-            return ' style="text-align:center;"';
-          } else {
-            return "";
-          }
-        }
-        function parseHeaders(header, style) {
-          var id = "";
-          header = header.trim();
-          if (options.tablesHeaderId || options.tableHeaderId) {
-            id = ' id="' + header.replace(/ /g, "_").toLowerCase() + '"';
-          }
-          header = showdown.subParser("spanGamut")(header, options, globals);
-          return "<th" + id + style + ">" + header + "</th>\n";
-        }
-        function parseCells(cell, style) {
-          var subText = showdown.subParser("spanGamut")(cell, options, globals);
-          return "<td" + style + ">" + subText + "</td>\n";
-        }
-        function buildTable(headers, cells) {
-          var tb = "<table>\n<thead>\n<tr>\n", tblLgn = headers.length;
-          for (var i = 0; i < tblLgn; ++i) {
-            tb += headers[i];
-          }
-          tb += "</tr>\n</thead>\n<tbody>\n";
-          for (i = 0; i < cells.length; ++i) {
-            tb += "<tr>\n";
-            for (var ii = 0; ii < tblLgn; ++ii) {
-              tb += cells[i][ii];
-            }
-            tb += "</tr>\n";
-          }
-          tb += "</tbody>\n</table>\n";
-          return tb;
-        }
-        function parseTable(rawTable) {
-          var i, tableLines = rawTable.split("\n");
-          for (i = 0; i < tableLines.length; ++i) {
-            if (/^ {0,3}\|/.test(tableLines[i])) {
-              tableLines[i] = tableLines[i].replace(/^ {0,3}\|/, "");
-            }
-            if (/\|[ \t]*$/.test(tableLines[i])) {
-              tableLines[i] = tableLines[i].replace(/\|[ \t]*$/, "");
-            }
-            tableLines[i] = showdown.subParser("codeSpans")(tableLines[i], options, globals);
-          }
-          var rawHeaders = tableLines[0].split("|").map(function(s) {
-            return s.trim();
-          }), rawStyles = tableLines[1].split("|").map(function(s) {
-            return s.trim();
-          }), rawCells = [], headers = [], styles = [], cells = [];
-          tableLines.shift();
-          tableLines.shift();
-          for (i = 0; i < tableLines.length; ++i) {
-            if (tableLines[i].trim() === "") {
-              continue;
-            }
-            rawCells.push(tableLines[i].split("|").map(function(s) {
-              return s.trim();
-            }));
-          }
-          if (rawHeaders.length < rawStyles.length) {
-            return rawTable;
-          }
-          for (i = 0; i < rawStyles.length; ++i) {
-            styles.push(parseStyles(rawStyles[i]));
-          }
-          for (i = 0; i < rawHeaders.length; ++i) {
-            if (showdown.helper.isUndefined(styles[i])) {
-              styles[i] = "";
-            }
-            headers.push(parseHeaders(rawHeaders[i], styles[i]));
-          }
-          for (i = 0; i < rawCells.length; ++i) {
-            var row = [];
-            for (var ii = 0; ii < headers.length; ++ii) {
-              if (showdown.helper.isUndefined(rawCells[i][ii])) {
-              }
-              row.push(parseCells(rawCells[i][ii], styles[ii]));
-            }
-            cells.push(row);
-          }
-          return buildTable(headers, cells);
-        }
-        text = globals.converter._dispatch("tables.before", text, options, globals);
-        text = text.replace(/\\(\|)/g, showdown.helper.escapeCharactersCallback);
-        text = text.replace(tableRgx, parseTable);
-        text = text.replace(singeColTblRgx, parseTable);
-        text = globals.converter._dispatch("tables.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("underline", function(text, options, globals) {
-        "use strict";
-        if (!options.underline) {
-          return text;
-        }
-        text = globals.converter._dispatch("underline.before", text, options, globals);
-        if (options.literalMidWordUnderscores) {
-          text = text.replace(/\b___(\S[\s\S]*?)___\b/g, function(wm, txt) {
-            return "<u>" + txt + "</u>";
-          });
-          text = text.replace(/\b__(\S[\s\S]*?)__\b/g, function(wm, txt) {
-            return "<u>" + txt + "</u>";
-          });
-        } else {
-          text = text.replace(/___(\S[\s\S]*?)___/g, function(wm, m) {
-            return /\S$/.test(m) ? "<u>" + m + "</u>" : wm;
-          });
-          text = text.replace(/__(\S[\s\S]*?)__/g, function(wm, m) {
-            return /\S$/.test(m) ? "<u>" + m + "</u>" : wm;
-          });
-        }
-        text = text.replace(/(_)/g, showdown.helper.escapeCharactersCallback);
-        text = globals.converter._dispatch("underline.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("unescapeSpecialChars", function(text, options, globals) {
-        "use strict";
-        text = globals.converter._dispatch("unescapeSpecialChars.before", text, options, globals);
-        text = text.replace(/¨E(\d+)E/g, function(wholeMatch, m1) {
-          var charCodeToReplace = parseInt(m1);
-          return String.fromCharCode(charCodeToReplace);
-        });
-        text = globals.converter._dispatch("unescapeSpecialChars.after", text, options, globals);
-        return text;
-      });
-      showdown.subParser("makeMarkdown.blockquote", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (node.hasChildNodes()) {
-          var children = node.childNodes, childrenLength = children.length;
-          for (var i = 0; i < childrenLength; ++i) {
-            var innerTxt = showdown.subParser("makeMarkdown.node")(children[i], globals);
-            if (innerTxt === "") {
-              continue;
-            }
-            txt += innerTxt;
-          }
-        }
-        txt = txt.trim();
-        txt = "> " + txt.split("\n").join("\n> ");
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.codeBlock", function(node, globals) {
-        "use strict";
-        var lang = node.getAttribute("language"), num = node.getAttribute("precodenum");
-        return "```" + lang + "\n" + globals.preList[num] + "\n```";
-      });
-      showdown.subParser("makeMarkdown.codeSpan", function(node) {
-        "use strict";
-        return "`" + node.innerHTML + "`";
-      });
-      showdown.subParser("makeMarkdown.emphasis", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (node.hasChildNodes()) {
-          txt += "*";
-          var children = node.childNodes, childrenLength = children.length;
-          for (var i = 0; i < childrenLength; ++i) {
-            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-          }
-          txt += "*";
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.header", function(node, globals, headerLevel) {
-        "use strict";
-        var headerMark = new Array(headerLevel + 1).join("#"), txt = "";
-        if (node.hasChildNodes()) {
-          txt = headerMark + " ";
-          var children = node.childNodes, childrenLength = children.length;
-          for (var i = 0; i < childrenLength; ++i) {
-            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-          }
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.hr", function() {
-        "use strict";
-        return "---";
-      });
-      showdown.subParser("makeMarkdown.image", function(node) {
-        "use strict";
-        var txt = "";
-        if (node.hasAttribute("src")) {
-          txt += "![" + node.getAttribute("alt") + "](";
-          txt += "<" + node.getAttribute("src") + ">";
-          if (node.hasAttribute("width") && node.hasAttribute("height")) {
-            txt += " =" + node.getAttribute("width") + "x" + node.getAttribute("height");
-          }
-          if (node.hasAttribute("title")) {
-            txt += ' "' + node.getAttribute("title") + '"';
-          }
-          txt += ")";
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.links", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (node.hasChildNodes() && node.hasAttribute("href")) {
-          var children = node.childNodes, childrenLength = children.length;
-          txt = "[";
-          for (var i = 0; i < childrenLength; ++i) {
-            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-          }
-          txt += "](";
-          txt += "<" + node.getAttribute("href") + ">";
-          if (node.hasAttribute("title")) {
-            txt += ' "' + node.getAttribute("title") + '"';
-          }
-          txt += ")";
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.list", function(node, globals, type) {
-        "use strict";
-        var txt = "";
-        if (!node.hasChildNodes()) {
-          return "";
-        }
-        var listItems = node.childNodes, listItemsLenght = listItems.length, listNum = node.getAttribute("start") || 1;
-        for (var i = 0; i < listItemsLenght; ++i) {
-          if (typeof listItems[i].tagName === "undefined" || listItems[i].tagName.toLowerCase() !== "li") {
-            continue;
-          }
-          var bullet = "";
-          if (type === "ol") {
-            bullet = listNum.toString() + ". ";
-          } else {
-            bullet = "- ";
-          }
-          txt += bullet + showdown.subParser("makeMarkdown.listItem")(listItems[i], globals);
-          ++listNum;
-        }
-        txt += "\n<!-- -->\n";
-        return txt.trim();
-      });
-      showdown.subParser("makeMarkdown.listItem", function(node, globals) {
-        "use strict";
-        var listItemTxt = "";
-        var children = node.childNodes, childrenLenght = children.length;
-        for (var i = 0; i < childrenLenght; ++i) {
-          listItemTxt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-        }
-        if (!/\n$/.test(listItemTxt)) {
-          listItemTxt += "\n";
-        } else {
-          listItemTxt = listItemTxt.split("\n").join("\n    ").replace(/^ {4}$/gm, "").replace(/\n\n+/g, "\n\n");
-        }
-        return listItemTxt;
-      });
-      showdown.subParser("makeMarkdown.node", function(node, globals, spansOnly) {
-        "use strict";
-        spansOnly = spansOnly || false;
-        var txt = "";
-        if (node.nodeType === 3) {
-          return showdown.subParser("makeMarkdown.txt")(node, globals);
-        }
-        if (node.nodeType === 8) {
-          return "<!--" + node.data + "-->\n\n";
-        }
-        if (node.nodeType !== 1) {
-          return "";
-        }
-        var tagName = node.tagName.toLowerCase();
-        switch (tagName) {
-          case "h1":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.header")(node, globals, 1) + "\n\n";
-            }
-            break;
-          case "h2":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.header")(node, globals, 2) + "\n\n";
-            }
-            break;
-          case "h3":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.header")(node, globals, 3) + "\n\n";
-            }
-            break;
-          case "h4":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.header")(node, globals, 4) + "\n\n";
-            }
-            break;
-          case "h5":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.header")(node, globals, 5) + "\n\n";
-            }
-            break;
-          case "h6":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.header")(node, globals, 6) + "\n\n";
-            }
-            break;
-          case "p":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.paragraph")(node, globals) + "\n\n";
-            }
-            break;
-          case "blockquote":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.blockquote")(node, globals) + "\n\n";
-            }
-            break;
-          case "hr":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.hr")(node, globals) + "\n\n";
-            }
-            break;
-          case "ol":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.list")(node, globals, "ol") + "\n\n";
-            }
-            break;
-          case "ul":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.list")(node, globals, "ul") + "\n\n";
-            }
-            break;
-          case "precode":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.codeBlock")(node, globals) + "\n\n";
-            }
-            break;
-          case "pre":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.pre")(node, globals) + "\n\n";
-            }
-            break;
-          case "table":
-            if (!spansOnly) {
-              txt = showdown.subParser("makeMarkdown.table")(node, globals) + "\n\n";
-            }
-            break;
-          case "code":
-            txt = showdown.subParser("makeMarkdown.codeSpan")(node, globals);
-            break;
-          case "em":
-          case "i":
-            txt = showdown.subParser("makeMarkdown.emphasis")(node, globals);
-            break;
-          case "strong":
-          case "b":
-            txt = showdown.subParser("makeMarkdown.strong")(node, globals);
-            break;
-          case "del":
-            txt = showdown.subParser("makeMarkdown.strikethrough")(node, globals);
-            break;
-          case "a":
-            txt = showdown.subParser("makeMarkdown.links")(node, globals);
-            break;
-          case "img":
-            txt = showdown.subParser("makeMarkdown.image")(node, globals);
-            break;
-          default:
-            txt = node.outerHTML + "\n\n";
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.paragraph", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (node.hasChildNodes()) {
-          var children = node.childNodes, childrenLength = children.length;
-          for (var i = 0; i < childrenLength; ++i) {
-            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-          }
-        }
-        txt = txt.trim();
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.pre", function(node, globals) {
-        "use strict";
-        var num = node.getAttribute("prenum");
-        return "<pre>" + globals.preList[num] + "</pre>";
-      });
-      showdown.subParser("makeMarkdown.strikethrough", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (node.hasChildNodes()) {
-          txt += "~~";
-          var children = node.childNodes, childrenLength = children.length;
-          for (var i = 0; i < childrenLength; ++i) {
-            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-          }
-          txt += "~~";
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.strong", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (node.hasChildNodes()) {
-          txt += "**";
-          var children = node.childNodes, childrenLength = children.length;
-          for (var i = 0; i < childrenLength; ++i) {
-            txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-          }
-          txt += "**";
-        }
-        return txt;
-      });
-      showdown.subParser("makeMarkdown.table", function(node, globals) {
-        "use strict";
-        var txt = "", tableArray = [[], []], headings = node.querySelectorAll("thead>tr>th"), rows = node.querySelectorAll("tbody>tr"), i, ii;
-        for (i = 0; i < headings.length; ++i) {
-          var headContent = showdown.subParser("makeMarkdown.tableCell")(headings[i], globals), allign = "---";
-          if (headings[i].hasAttribute("style")) {
-            var style = headings[i].getAttribute("style").toLowerCase().replace(/\s/g, "");
-            switch (style) {
-              case "text-align:left;":
-                allign = ":---";
-                break;
-              case "text-align:right;":
-                allign = "---:";
-                break;
-              case "text-align:center;":
-                allign = ":---:";
-                break;
-            }
-          }
-          tableArray[0][i] = headContent.trim();
-          tableArray[1][i] = allign;
-        }
-        for (i = 0; i < rows.length; ++i) {
-          var r = tableArray.push([]) - 1, cols = rows[i].getElementsByTagName("td");
-          for (ii = 0; ii < headings.length; ++ii) {
-            var cellContent = " ";
-            if (typeof cols[ii] !== "undefined") {
-              cellContent = showdown.subParser("makeMarkdown.tableCell")(cols[ii], globals);
-            }
-            tableArray[r].push(cellContent);
-          }
-        }
-        var cellSpacesCount = 3;
-        for (i = 0; i < tableArray.length; ++i) {
-          for (ii = 0; ii < tableArray[i].length; ++ii) {
-            var strLen = tableArray[i][ii].length;
-            if (strLen > cellSpacesCount) {
-              cellSpacesCount = strLen;
-            }
-          }
-        }
-        for (i = 0; i < tableArray.length; ++i) {
-          for (ii = 0; ii < tableArray[i].length; ++ii) {
-            if (i === 1) {
-              if (tableArray[i][ii].slice(-1) === ":") {
-                tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii].slice(-1), cellSpacesCount - 1, "-") + ":";
-              } else {
-                tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii], cellSpacesCount, "-");
-              }
-            } else {
-              tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii], cellSpacesCount);
-            }
-          }
-          txt += "| " + tableArray[i].join(" | ") + " |\n";
-        }
-        return txt.trim();
-      });
-      showdown.subParser("makeMarkdown.tableCell", function(node, globals) {
-        "use strict";
-        var txt = "";
-        if (!node.hasChildNodes()) {
-          return "";
-        }
-        var children = node.childNodes, childrenLength = children.length;
-        for (var i = 0; i < childrenLength; ++i) {
-          txt += showdown.subParser("makeMarkdown.node")(children[i], globals, true);
-        }
-        return txt.trim();
-      });
-      showdown.subParser("makeMarkdown.txt", function(node) {
-        "use strict";
-        var txt = node.nodeValue;
-        txt = txt.replace(/ +/g, " ");
-        txt = txt.replace(/¨NBSP;/g, " ");
-        txt = showdown.helper.unescapeHTMLEntities(txt);
-        txt = txt.replace(/([*_~|`])/g, "\\$1");
-        txt = txt.replace(/^(\s*)>/g, "\\$1>");
-        txt = txt.replace(/^#/gm, "\\#");
-        txt = txt.replace(/^(\s*)([-=]{3,})(\s*)$/, "$1\\$2$3");
-        txt = txt.replace(/^( {0,3}\d+)\./gm, "$1\\.");
-        txt = txt.replace(/^( {0,3})([+-])/gm, "$1\\$2");
-        txt = txt.replace(/]([\s]*)\(/g, "\\]$1\\(");
-        txt = txt.replace(/^ {0,3}\[([\S \t]*?)]:/gm, "\\[$1]:");
-        return txt;
-      });
-      var root = this;
-      if (typeof define === "function" && define.amd) {
-        define(function() {
-          "use strict";
-          return showdown;
-        });
-      } else if (typeof module2 !== "undefined" && module2.exports) {
-        module2.exports = showdown;
       } else {
-        root.showdown = showdown;
+        this.alea = impl;
       }
-    }).call(exports2);
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xor128.js
+var require_xor128 = __commonJS({
+  "node_modules/seedrandom/lib/xor128.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.x = 0;
+        me.y = 0;
+        me.z = 0;
+        me.w = 0;
+        me.next = function() {
+          var t = me.x ^ me.x << 11;
+          me.x = me.y;
+          me.y = me.z;
+          me.z = me.w;
+          return me.w ^= me.w >>> 19 ^ t ^ t >>> 8;
+        };
+        if (seed === (seed | 0)) {
+          me.x = seed;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 64; k++) {
+          me.x ^= strseed.charCodeAt(k) | 0;
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.x = f.x;
+        t.y = f.y;
+        t.z = f.z;
+        t.w = f.w;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xor128 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xorwow.js
+var require_xorwow = __commonJS({
+  "node_modules/seedrandom/lib/xorwow.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.next = function() {
+          var t = me.x ^ me.x >>> 2;
+          me.x = me.y;
+          me.y = me.z;
+          me.z = me.w;
+          me.w = me.v;
+          return (me.d = me.d + 362437 | 0) + (me.v = me.v ^ me.v << 4 ^ (t ^ t << 1)) | 0;
+        };
+        me.x = 0;
+        me.y = 0;
+        me.z = 0;
+        me.w = 0;
+        me.v = 0;
+        if (seed === (seed | 0)) {
+          me.x = seed;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 64; k++) {
+          me.x ^= strseed.charCodeAt(k) | 0;
+          if (k == strseed.length) {
+            me.d = me.x << 10 ^ me.x >>> 4;
+          }
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.x = f.x;
+        t.y = f.y;
+        t.z = f.z;
+        t.w = f.w;
+        t.v = f.v;
+        t.d = f.d;
+        return t;
+      }
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xorwow = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xorshift7.js
+var require_xorshift7 = __commonJS({
+  "node_modules/seedrandom/lib/xorshift7.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this;
+        me.next = function() {
+          var X = me.x, i = me.i, t, v, w;
+          t = X[i];
+          t ^= t >>> 7;
+          v = t ^ t << 24;
+          t = X[i + 1 & 7];
+          v ^= t ^ t >>> 10;
+          t = X[i + 3 & 7];
+          v ^= t ^ t >>> 3;
+          t = X[i + 4 & 7];
+          v ^= t ^ t << 7;
+          t = X[i + 7 & 7];
+          t = t ^ t << 13;
+          v ^= t ^ t << 9;
+          X[i] = v;
+          me.i = i + 1 & 7;
+          return v;
+        };
+        function init(me2, seed2) {
+          var j, w, X = [];
+          if (seed2 === (seed2 | 0)) {
+            w = X[0] = seed2;
+          } else {
+            seed2 = "" + seed2;
+            for (j = 0; j < seed2.length; ++j) {
+              X[j & 7] = X[j & 7] << 15 ^ seed2.charCodeAt(j) + X[j + 1 & 7] << 13;
+            }
+          }
+          while (X.length < 8)
+            X.push(0);
+          for (j = 0; j < 8 && X[j] === 0; ++j)
+            ;
+          if (j == 8)
+            w = X[7] = -1;
+          else
+            w = X[j];
+          me2.x = X;
+          me2.i = 0;
+          for (j = 256; j > 0; --j) {
+            me2.next();
+          }
+        }
+        init(me, seed);
+      }
+      function copy(f, t) {
+        t.x = f.x.slice();
+        t.i = f.i;
+        return t;
+      }
+      function impl(seed, opts) {
+        if (seed == null)
+          seed = +new Date();
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (state.x)
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xorshift7 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/xor4096.js
+var require_xor4096 = __commonJS({
+  "node_modules/seedrandom/lib/xor4096.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this;
+        me.next = function() {
+          var w = me.w, X = me.X, i = me.i, t, v;
+          me.w = w = w + 1640531527 | 0;
+          v = X[i + 34 & 127];
+          t = X[i = i + 1 & 127];
+          v ^= v << 13;
+          t ^= t << 17;
+          v ^= v >>> 15;
+          t ^= t >>> 12;
+          v = X[i] = v ^ t;
+          me.i = i;
+          return v + (w ^ w >>> 16) | 0;
+        };
+        function init(me2, seed2) {
+          var t, v, i, j, w, X = [], limit = 128;
+          if (seed2 === (seed2 | 0)) {
+            v = seed2;
+            seed2 = null;
+          } else {
+            seed2 = seed2 + "\0";
+            v = 0;
+            limit = Math.max(limit, seed2.length);
+          }
+          for (i = 0, j = -32; j < limit; ++j) {
+            if (seed2)
+              v ^= seed2.charCodeAt((j + 32) % seed2.length);
+            if (j === 0)
+              w = v;
+            v ^= v << 10;
+            v ^= v >>> 15;
+            v ^= v << 4;
+            v ^= v >>> 13;
+            if (j >= 0) {
+              w = w + 1640531527 | 0;
+              t = X[j & 127] ^= v + w;
+              i = t == 0 ? i + 1 : 0;
+            }
+          }
+          if (i >= 128) {
+            X[(seed2 && seed2.length || 0) & 127] = -1;
+          }
+          i = 127;
+          for (j = 4 * 128; j > 0; --j) {
+            v = X[i + 34 & 127];
+            t = X[i = i + 1 & 127];
+            v ^= v << 13;
+            t ^= t << 17;
+            v ^= v >>> 15;
+            t ^= t >>> 12;
+            X[i] = v ^ t;
+          }
+          me2.w = w;
+          me2.X = X;
+          me2.i = i;
+        }
+        init(me, seed);
+      }
+      function copy(f, t) {
+        t.i = f.i;
+        t.w = f.w;
+        t.X = f.X.slice();
+        return t;
+      }
+      ;
+      function impl(seed, opts) {
+        if (seed == null)
+          seed = +new Date();
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (state.X)
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.xor4096 = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/lib/tychei.js
+var require_tychei = __commonJS({
+  "node_modules/seedrandom/lib/tychei.js"(exports2, module2) {
+    (function(global2, module3, define2) {
+      function XorGen(seed) {
+        var me = this, strseed = "";
+        me.next = function() {
+          var b = me.b, c = me.c, d = me.d, a = me.a;
+          b = b << 25 ^ b >>> 7 ^ c;
+          c = c - d | 0;
+          d = d << 24 ^ d >>> 8 ^ a;
+          a = a - b | 0;
+          me.b = b = b << 20 ^ b >>> 12 ^ c;
+          me.c = c = c - d | 0;
+          me.d = d << 16 ^ c >>> 16 ^ a;
+          return me.a = a - b | 0;
+        };
+        me.a = 0;
+        me.b = 0;
+        me.c = 2654435769 | 0;
+        me.d = 1367130551;
+        if (seed === Math.floor(seed)) {
+          me.a = seed / 4294967296 | 0;
+          me.b = seed | 0;
+        } else {
+          strseed += seed;
+        }
+        for (var k = 0; k < strseed.length + 20; k++) {
+          me.b ^= strseed.charCodeAt(k) | 0;
+          me.next();
+        }
+      }
+      function copy(f, t) {
+        t.a = f.a;
+        t.b = f.b;
+        t.c = f.c;
+        t.d = f.d;
+        return t;
+      }
+      ;
+      function impl(seed, opts) {
+        var xg = new XorGen(seed), state = opts && opts.state, prng = function() {
+          return (xg.next() >>> 0) / 4294967296;
+        };
+        prng.double = function() {
+          do {
+            var top = xg.next() >>> 11, bot = (xg.next() >>> 0) / 4294967296, result = (top + bot) / (1 << 21);
+          } while (result === 0);
+          return result;
+        };
+        prng.int32 = xg.next;
+        prng.quick = prng;
+        if (state) {
+          if (typeof state == "object")
+            copy(state, xg);
+          prng.state = function() {
+            return copy(xg, {});
+          };
+        }
+        return prng;
+      }
+      if (module3 && module3.exports) {
+        module3.exports = impl;
+      } else if (define2 && define2.amd) {
+        define2(function() {
+          return impl;
+        });
+      } else {
+        this.tychei = impl;
+      }
+    })(exports2, typeof module2 == "object" && module2, typeof define == "function" && define);
+  }
+});
+
+// node_modules/seedrandom/seedrandom.js
+var require_seedrandom = __commonJS({
+  "node_modules/seedrandom/seedrandom.js"(exports2, module2) {
+    (function(global2, pool, math) {
+      var width = 256, chunks = 6, digits = 52, rngname = "random", startdenom = math.pow(width, chunks), significance = math.pow(2, digits), overflow = significance * 2, mask = width - 1, nodecrypto;
+      function seedrandom2(seed, options, callback) {
+        var key = [];
+        options = options == true ? { entropy: true } : options || {};
+        var shortseed = mixkey(flatten(options.entropy ? [seed, tostring(pool)] : seed == null ? autoseed() : seed, 3), key);
+        var arc4 = new ARC4(key);
+        var prng = function() {
+          var n = arc4.g(chunks), d = startdenom, x = 0;
+          while (n < significance) {
+            n = (n + x) * width;
+            d *= width;
+            x = arc4.g(1);
+          }
+          while (n >= overflow) {
+            n /= 2;
+            d /= 2;
+            x >>>= 1;
+          }
+          return (n + x) / d;
+        };
+        prng.int32 = function() {
+          return arc4.g(4) | 0;
+        };
+        prng.quick = function() {
+          return arc4.g(4) / 4294967296;
+        };
+        prng.double = prng;
+        mixkey(tostring(arc4.S), pool);
+        return (options.pass || callback || function(prng2, seed2, is_math_call, state) {
+          if (state) {
+            if (state.S) {
+              copy(state, arc4);
+            }
+            prng2.state = function() {
+              return copy(arc4, {});
+            };
+          }
+          if (is_math_call) {
+            math[rngname] = prng2;
+            return seed2;
+          } else
+            return prng2;
+        })(prng, shortseed, "global" in options ? options.global : this == math, options.state);
+      }
+      function ARC4(key) {
+        var t, keylen = key.length, me = this, i = 0, j = me.i = me.j = 0, s = me.S = [];
+        if (!keylen) {
+          key = [keylen++];
+        }
+        while (i < width) {
+          s[i] = i++;
+        }
+        for (i = 0; i < width; i++) {
+          s[i] = s[j = mask & j + key[i % keylen] + (t = s[i])];
+          s[j] = t;
+        }
+        (me.g = function(count) {
+          var t2, r = 0, i2 = me.i, j2 = me.j, s2 = me.S;
+          while (count--) {
+            t2 = s2[i2 = mask & i2 + 1];
+            r = r * width + s2[mask & (s2[i2] = s2[j2 = mask & j2 + t2]) + (s2[j2] = t2)];
+          }
+          me.i = i2;
+          me.j = j2;
+          return r;
+        })(width);
+      }
+      function copy(f, t) {
+        t.i = f.i;
+        t.j = f.j;
+        t.S = f.S.slice();
+        return t;
+      }
+      ;
+      function flatten(obj, depth) {
+        var result = [], typ = typeof obj, prop;
+        if (depth && typ == "object") {
+          for (prop in obj) {
+            try {
+              result.push(flatten(obj[prop], depth - 1));
+            } catch (e) {
+            }
+          }
+        }
+        return result.length ? result : typ == "string" ? obj : obj + "\0";
+      }
+      function mixkey(seed, key) {
+        var stringseed = seed + "", smear, j = 0;
+        while (j < stringseed.length) {
+          key[mask & j] = mask & (smear ^= key[mask & j] * 19) + stringseed.charCodeAt(j++);
+        }
+        return tostring(key);
+      }
+      function autoseed() {
+        try {
+          var out;
+          if (nodecrypto && (out = nodecrypto.randomBytes)) {
+            out = out(width);
+          } else {
+            out = new Uint8Array(width);
+            (global2.crypto || global2.msCrypto).getRandomValues(out);
+          }
+          return tostring(out);
+        } catch (e) {
+          var browser = global2.navigator, plugins = browser && browser.plugins;
+          return [+new Date(), global2, plugins, global2.screen, tostring(pool)];
+        }
+      }
+      function tostring(a) {
+        return String.fromCharCode.apply(0, a);
+      }
+      mixkey(math.random(), pool);
+      if (typeof module2 == "object" && module2.exports) {
+        module2.exports = seedrandom2;
+        try {
+          nodecrypto = require("crypto");
+        } catch (ex) {
+        }
+      } else if (typeof define == "function" && define.amd) {
+        define(function() {
+          return seedrandom2;
+        });
+      } else {
+        math["seed" + rngname] = seedrandom2;
+      }
+    })(typeof self !== "undefined" ? self : exports2, [], Math);
+  }
+});
+
+// node_modules/seedrandom/index.js
+var require_seedrandom2 = __commonJS({
+  "node_modules/seedrandom/index.js"(exports2, module2) {
+    var alea = require_alea();
+    var xor128 = require_xor128();
+    var xorwow = require_xorwow();
+    var xorshift7 = require_xorshift7();
+    var xor4096 = require_xor4096();
+    var tychei = require_tychei();
+    var sr = require_seedrandom();
+    sr.alea = alea;
+    sr.xor128 = xor128;
+    sr.xorwow = xorwow;
+    sr.xorshift7 = xorshift7;
+    sr.xor4096 = xor4096;
+    sr.tychei = tychei;
+    module2.exports = sr;
   }
 });
 
@@ -31595,127 +31595,6 @@ function GameController_default({ eventStore: eventStore2, models: models2 }) {
     }
   };
 }
-
-// src/lib/random.ts
-var import_seedrandom = __toModule(require_seedrandom2());
-var rnd = (0, import_seedrandom.default)("", { state: true });
-var random = () => Math.abs(rnd());
-
-// src/lib/Temporal.ts
-var import_luxon = __toModule(require_luxon());
-var fullDateTimeOps = {
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  second: "numeric",
-  timeZoneName: "short"
-};
-var Date2 = class {
-  lux;
-  constructor(input) {
-    if (input instanceof import_luxon.DateTime) {
-      this.lux = input.setLocale("de-DE").setZone("Europe/Berlin");
-    } else {
-      this.lux = import_luxon.DateTime.fromISO(input, { zone: "Europe/Berlin", locale: "de-DE" });
-    }
-  }
-  static durationBetween(start, end) {
-    return new Duration(end.lux.diff(start.lux, ["months"]));
-  }
-  plus(amount) {
-    return new Date2(this.lux.plus(amount.lux));
-  }
-  getYear() {
-    return this.lux.get("year");
-  }
-  toLocaleString() {
-    return this.lux.toLocaleString(fullDateTimeOps);
-  }
-  toMonthString() {
-    return this.lux.toLocaleString({ month: "long", year: "numeric" });
-  }
-  toJSON() {
-    return this.lux.toJSON();
-  }
-};
-var Duration = class {
-  lux;
-  constructor(input) {
-    if (input instanceof import_luxon.Duration) {
-      this.lux = input;
-    } else if (typeof input === "string") {
-      this.lux = import_luxon.Duration.fromISO(input, { locale: "de-DE" });
-    } else {
-      this.lux = import_luxon.Duration.fromObject(input);
-    }
-  }
-  toMonthsString() {
-    const months2 = this.lux.as("months");
-    if (months2 === 1) {
-      return "1 Monat";
-    } else {
-      return months2 + " Monate";
-    }
-  }
-  lessThan(other) {
-    return this.lux < other.lux;
-  }
-};
-function date(isoString) {
-  return new Date2(isoString);
-}
-function duration(input) {
-  return new Duration(input);
-}
-function durationBetween(start, end) {
-  return Date2.durationBetween(start, end);
-}
-function months(month) {
-  return new Duration(import_luxon.Duration.fromDurationLike({ month }));
-}
-function laterOf(a, b) {
-  return a.lux < b.lux ? b : a;
-}
-
-// src/constants.ts
-var startYear = 2021;
-var startDate = "2021-01-01";
-var endYear = 2050;
-var defaultEffortDuration = duration("P3M");
-var sitOutDuration = duration("P3M");
-
-// src/laws/LawsTypes.ts
-var defaultEffort = (g) => {
-  return {
-    time: defaultEffortDuration,
-    text: `Braucht ${defaultEffortDuration.toMonthsString()}.`
-  };
-};
-function monthsEffort(inMonths, format = "Braucht {months}.") {
-  const time = months(inMonths);
-  const text = format.replace(/{months}/g, time.toMonthsString());
-  return { time, text };
-}
-function defineLaw(law) {
-  return law;
-}
-
-// src/laws/AllesBleibtBeimAlten.ts
-var AllesBleibtBeimAlten_default = defineLaw({
-  title: "Alles bleibt wie es ist",
-  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sie sind.",
-  effort(game) {
-    return monthsEffort(3, "Wie aussitzen: {months}.");
-  },
-  effects() {
-    return [];
-  },
-  priority(game) {
-    return random();
-  }
-});
 
 // src/lib/utils.ts
 var import_showdown = __toModule(require_showdown());
@@ -32876,6 +32755,107 @@ function transfer(to, from) {
   };
 }
 
+// src/lib/Temporal.ts
+var import_luxon = __toModule(require_luxon());
+var fullDateTimeOps = {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  timeZoneName: "short"
+};
+var Date2 = class {
+  lux;
+  constructor(input) {
+    if (input instanceof import_luxon.DateTime) {
+      this.lux = input.setLocale("de-DE").setZone("Europe/Berlin");
+    } else {
+      this.lux = import_luxon.DateTime.fromISO(input, { zone: "Europe/Berlin", locale: "de-DE" });
+    }
+  }
+  static durationBetween(start, end) {
+    return new Duration(end.lux.diff(start.lux, ["months"]));
+  }
+  plus(amount) {
+    return new Date2(this.lux.plus(amount.lux));
+  }
+  getYear() {
+    return this.lux.get("year");
+  }
+  toLocaleString() {
+    return this.lux.toLocaleString(fullDateTimeOps);
+  }
+  toMonthString() {
+    return this.lux.toLocaleString({ month: "long", year: "numeric" });
+  }
+  toJSON() {
+    return this.lux.toJSON();
+  }
+};
+var Duration = class {
+  lux;
+  constructor(input) {
+    if (input instanceof import_luxon.Duration) {
+      this.lux = input;
+    } else if (typeof input === "string") {
+      this.lux = import_luxon.Duration.fromISO(input, { locale: "de-DE" });
+    } else {
+      this.lux = import_luxon.Duration.fromObject(input);
+    }
+  }
+  toMonthsString() {
+    const months2 = this.lux.as("months");
+    if (months2 === 1) {
+      return "1 Monat";
+    } else {
+      return months2 + " Monate";
+    }
+  }
+  lessThan(other) {
+    return this.lux < other.lux;
+  }
+};
+function date(isoString) {
+  return new Date2(isoString);
+}
+function duration(input) {
+  return new Duration(input);
+}
+function durationBetween(start, end) {
+  return Date2.durationBetween(start, end);
+}
+function months(month) {
+  return new Duration(import_luxon.Duration.fromDurationLike({ month }));
+}
+function laterOf(a, b) {
+  return a.lux < b.lux ? b : a;
+}
+
+// src/constants.ts
+var startYear = 2021;
+var startDate = "2021-01-01";
+var endYear = 2050;
+var defaultEffortDuration = duration("P3M");
+var sitOutDuration = duration("P3M");
+
+// src/laws/LawsTypes.ts
+var defaultEffort = (g) => {
+  return {
+    time: defaultEffortDuration,
+    text: `Braucht ${defaultEffortDuration.toMonthsString()}.`
+  };
+};
+function monthsEffort(inMonths, format = "Braucht {months}.") {
+  const time = months(inMonths);
+  const text = format.replace(/{months}/g, time.toMonthsString());
+  return { time, text };
+}
+function defineLaw(law) {
+  return law;
+}
+
 // src/laws/lawTools.ts
 function linear(zero, hundred, actual) {
   const shifted = actual - zero;
@@ -32898,10 +32878,6 @@ function lawIsAccepted(game, lawId, minActiveYears = 0) {
   if (!allLaws.map((l) => l.id).includes(lawId))
     throw new Error("Unknown law ID " + lawId + " used in a law.");
   return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears);
-}
-function getActiveLaw(lawRefs, matcher) {
-  const lawRef = lawRefs.sort((law1, law2) => law2.effectiveSince - law1.effectiveSince).find((law) => matcher.test(law.lawId));
-  return lawRef?.lawId;
 }
 function windPercentage(game) {
   const v = game.values;
@@ -32962,7 +32938,456 @@ function co2PricingEffects(game, price, relReduction, popChangeFunc) {
   ];
 }
 
-// src/laws/KohleverstromungEinstellen.ts
+// src/laws/energy/AbstandsregelnFuerWindkraftAbschaffen.ts
+var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft abschaffen",
+  description: "Jeder der Land besitzt kann seine Windkraftanlage dahin bauen wo er will.",
+  labels: ["WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(12, "BIs werden es Dir schwer machen. {months}!");
+  },
+  effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
+    return [
+      modify("popularity").byValue(-40).if(startYear2 === currentYear),
+      modify("electricityWindOnshoreMaxNew").setValue(1e3).if(currentYear >= startYear2 + delay)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
+      return linear(80, 25, windPercentage(game));
+    }
+    return 0;
+  }
+});
+
+// src/laws/energy/AbstandsregelnFuerWindkraftLockern.ts
+var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft lockern",
+  description: "Bundesweite gelockerte Abstandsregeln f\xFCr Windkraftanlagen sowie Bauerlaubniss in W\xE4ldern. Ja auch Bayern wird jetzt gezwungen Windkraftanlagen zuzulassen, sowie andere nicht bauwillige Kommunen.",
+  labels: ["WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(6, "Das schaffst Du in {months}n.");
+  },
+  effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
+    return [
+      modify("popularity").byValue(-3).if(startYear2 === currentYear),
+      modify("electricityWindOnshoreMaxNew").setValue(30).if(currentYear >= startYear2 + delay)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
+      return linear(70, 27, windPercentage(game));
+    }
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftAbschaffen")) {
+      return linear(30, 100, windPercentage(game));
+    }
+    return 0;
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 2
+
+    # Priorität
+
+    Zu Beginn und wenn "WieBisher" ausgewählt:
+
+    - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
+    - 100% bei einem Anteil von Windstrom von 27%.
+    - linear interpoliert
+
+    Wenn Abstandsregeln abgeschafft wurden:
+
+    - 0% bei einem Anteil von Windstrom von 30%.
+    - 100% bei einem Anteil von Windstrom von 100%.
+  `
+});
+
+// src/laws/energy/AbstandsregelnFuerWindkraftVerschaerfen.ts
+var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft versch\xE4rfen",
+  description: "Der Mindestabstand zwischen Wind Energie Anlagen und Wohngeb\xE4uden im Innenbereich muss das Zehnfache der Gesamth\xF6he der Wind Energie Anlagen betragen (10H-Regel)",
+  labels: ["WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(1, "Dauert nur einen Monat.");
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(5).if(startYear2 === currentYear),
+      modify("electricityWindOnshoreMaxNew").setValue(0.42)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
+      return linear(0, 100, windPercentage(game));
+    }
+    return 0;
+  }
+});
+
+// src/laws/energy/AbstandsregelnFuerWindkraftWieBisher.ts
+var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
+  title: "Abstandsregeln f\xFCr Windkraft wie zu Beginn",
+  description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
+  labels: ["initial", "WindkraftAbstandsregel"],
+  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(3, "Wie aussitzen: {months}.");
+  },
+  effects(game, startYear2, currentYear) {
+    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
+    return [
+      modify("electricityWindOnshoreMaxNew").setValue(6).if(currentYear >= startYear2 + delay)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
+      return linear(30, 100, windPercentage(game));
+    }
+    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftVerschaerfen")) {
+      return linear(70, 27, windPercentage(game));
+    }
+    return 0;
+  }
+});
+
+// src/laws/energy/AusschreibungsverfahrenfuerWindkraftVerachtfachen.ts
+var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft verachtfachen",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 64,8TWh verachtfacht.",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(5);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-20).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-100).if(startYear2 === currentYear),
+      ...windPowerExpansion(game, 55.2, 9.6, startYear2)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return linear(100, 50, renewablePercentage(game));
+    }
+    return 0;
+  }
+});
+
+// src/laws/energy/AusschreibungsverfahrenfuerWindkraftVerdoppeln.ts
+var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft verdoppeln",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 16,2TWh verdoppelt.",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(2);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-1).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-20).if(startYear2 === currentYear),
+      ...windPowerExpansion(game, 13.8, 2.4, startYear2)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) {
+      return linear(100, 50, renewablePercentage(game));
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return linear(40, 100, renewablePercentage(game));
+    }
+    return 0;
+  }
+});
+
+// src/laws/energy/AusschreibungsverfahrenfuerWindkraftVervierfachen.ts
+var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft vervierfachen",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 32,4TWh vervierfacht.",
+  labels: ["WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(4);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-2).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-100).if(startYear2 === currentYear),
+      ...windPowerExpansion(game, 27.6, 4.8, startYear2)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return linear(100, 50, renewablePercentage(game));
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
+      return linear(0, 100, renewablePercentage(game));
+    }
+    return 0;
+  },
+  citations: [],
+  details: markdown`
+    Windkraft Betreiber können sich mehrmals im Jahr auf ein eine bestimte Leistung
+    von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstmöglichen
+    Subventionierung umsetzen kann bekommt den Zuschlag.
+  `,
+  internals: markdown`
+    # Happy Path 3
+
+    # Folgen
+
+    - [x] Schulden +-0
+    - [x] Popularität: -2%
+    - [x] Arbeitsplätze: 500.000 also Arbeitslosigkeit -100 Tausend Menschen im ersten Jahr
+    - [ ] Abhängigkeit, ob das Budget ausgeschöpft wird, ist schwierig.)
+    - [x] CO2 Emissionen: Zubau Windkraftonshore +27,6 TWh (es sei den gedeckelt durch Abstandsregeln), Windkraftoffshore + 4,8 TWh.
+
+    # Vorbedingungen
+
+    - Nur wenn "verdoppeln" schon beschlossen wurde.
+    - Priorität über 0%.
+
+    # Priorität
+
+    Wenn bisher "verdoppeln":
+
+    - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
+    - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
+      Wenn bisher "verachtfachen":
+    - 0% bei einem Anteil der erneuerbaren Stromquellen von 0%. (Zu Beginn: 50%)
+    - 100% bei einem Anteil der erneuerbaren Stromquellen von 100%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/energy/AusschreibungsverfahrenfuerWindkraftWieBisher.ts
+var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
+  title: "Ausschreibungsverfahren f\xFCr Windkraft wie zu Beginn",
+  description: "Windkraft Betreiber k\xF6nnen sich mehrmals im Jahr auf ein eine bestimte Leistung von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstm\xF6glichen Subventionierung umsetzen kann bekommt den Zuschlag. Insgesamt werden 8,1 TWh pro Jahr ausgeschrieben.",
+  labels: ["initial", "hidden", "WindkraftSubvention"],
+  removeLawsWithLabels: ["WindkraftSubvention"],
+  treatAfterLabels: ["WindkraftAbstandsregel"],
+  effort(game) {
+    return monthsEffort(8);
+  },
+  effects(game, startYear2, currentYear) {
+    return [...windPowerExpansion(game, 6.9, 1.2, startYear2)];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return linear(60, 100, renewablePercentage(game));
+    }
+    return 0;
+  }
+});
+
+// src/laws/energy/AutomatischeSektoren.ts
+var AutomatischeSektoren_default = defineLaw({
+  title: "Automatische Anpassungen einiger Sektoren",
+  description: "Mobilit\xE4t, Industrie, Geb\xE4ude und Landwirtschaft nutzen automatisch regenerative Energiequellen, sobald sie zur Verf\xFCgung stehen.",
+  labels: ["initial"],
+  effects(game, startYear2, currentYear) {
+    if (renewablePercentage(game) < 70)
+      return [];
+    paramDefinitions.co2emissionsOthers;
+    const industryCo2Red = modify("co2emissionsIndustry").byPercent(-20);
+    const industryCo2RedVal = industryCo2Red.getChange(game.values);
+    const industryElectrDemandIncrease = industryCo2RedVal / -0.835;
+    return [
+      modify("carRenewablePercentage").byValue(10),
+      modify("electricityDemand").byValue(22),
+      industryCo2Red,
+      modify("electricityDemand").byValue(industryElectrDemandIncrease),
+      transfer("buildingsSourceBio", "buildingsSourceOil").byValue(10),
+      transfer("electricityDemand", "buildingsSourceOil").byValue(10),
+      transfer("buildingsSourceBio", "buildingsSourceTele").byValue(5),
+      modify("co2emissionsAgriculture").byValue(-10),
+      modify("co2emissionsOthers").byValue(-1)
+    ];
+  },
+  priority(game) {
+    return 0;
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Dieses Gesetz läuft dauerhaft mit und soll kompensieren, dass es für diese Sektoren noch nicht genügend Gesetze gibt.
+  `
+});
+
+// src/laws/energy/EnergiemixRegeltDerMarkt.ts
+var EnergiemixRegeltDerMarkt_default = defineLaw({
+  title: "Energiemix regelt der Markt",
+  description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
+  effort(game) {
+    if (game.values.popularity >= 50) {
+      return monthsEffort(6, "Normal dauert das 12 Monate, aber bei Deiner Beliebtheit nur {months}.");
+    } else {
+      return monthsEffort(12);
+    }
+  },
+  effects() {
+    return [
+      modify("stateDebt").byValue(-37),
+      modify("electricityHardCoal").byPercent(-10),
+      modify("electricityBrownCoal").byPercent(-5),
+      modify("electricityWind").byValue(5),
+      modify("electricitySolar").byValue(3),
+      modify("electricityWater").byValue(0.5)
+    ];
+  },
+  priority(game) {
+    return linear(endYear, startYear, game.currentYear);
+  }
+});
+
+// src/laws/energy/ForschungDezentraleStromerzeugung.ts
+var ForschungDezentraleStromerzeugung_default = defineLaw({
+  title: "Erforschung und Umsetzung dezentraler Stromerzeugung f\xF6rdern",
+  description: "Ein F\xF6rderprogramm zur Erfoschung und Umsetzung der notwendigen Anpassungen von Netz und Infrastruktur f\xFCr die denzentrale Stromerzeugung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(1);
+  },
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 1;
+    return [modify("stateDebt").byValue(2).if(inGrantPeriod), modify("electricityGridQuality").byValue(1).if(effective)];
+  },
+  priority(game) {
+    const v = game.values;
+    return linear(80, 45, v.electricityGridQuality);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 4.5
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 1 Jahr zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 1%.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Identisch zu "StromspeicherungErleichtern".
+
+    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
+    - 100% bei einer Netzqualität von 45%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/energy/ForschungUndEntwicklungStromspeicherung.ts
+var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
+  title: "Forschung und Entwicklung zur Stromspeicherung f\xF6rdern",
+  description: "Ein F\xF6rderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(1);
+  },
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 3;
+    return [
+      modify("stateDebt").byValue(2).if(inGrantPeriod),
+      modify("electricityGridQuality").byValue(0.2).if(effective)
+    ];
+  },
+  priority(game) {
+    const v = game.values;
+    return linear(80, 45, v.electricityGridQuality);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 4
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 2 Jahren zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 0.2%.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Identisch zu "StromspeicherungErleichtern".
+
+    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
+    - 100% bei einer Netzqualität von 45%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/energy/InitialAtomausstieg.ts
+var InitialAtomausstieg_default = defineLaw({
+  title: "Initial: Atomausstieg",
+  description: "Atomausstieg finded wie beschlossen 2022 statt",
+  labels: ["hidden", "initial", "Kernenergie"],
+  effects(game, startYear2, currentYear) {
+    const mapping = {
+      2021: 60.45,
+      2022: 30.21
+    };
+    const newValue = mapping[currentYear] || 0;
+    return [modify("electricityNuclear").setValue(newValue)];
+  },
+  priority(game) {
+    return 0;
+  }
+});
+
+// src/laws/energy/KernenergienutzungVerlaengern.ts
+var electricityGasAtStart = createBaseValues(defaultValues).electricityGas;
+var KernenergienutzungVerlaengern_default = defineLaw({
+  title: "Kernenergienutzung verl\xE4ngern",
+  description: "Kernkraftwerke l\xE4nger nutzen, wieder in Betrieb nehmen und neu bauen.",
+  removeLawsWithLabels: ["Kernenergie"],
+  effort(game) {
+    return monthsEffort(8);
+  },
+  effects() {
+    return [
+      modify("electricityNuclear").setValue(104.3),
+      modify("stateDebt").byValue(-2.5),
+      modify("popularity").byValue(-4)
+    ];
+  },
+  priority(game) {
+    return linear(electricityGasAtStart, 1.1 * electricityGasAtStart, game.values.electricityGas);
+  }
+});
+
+// src/laws/energy/KohleverstromungEinstellen.ts
 var KohleverstromungEinstellen_default = defineLaw({
   title: "Kohleverstromung einstellen",
   description: "Die Verbrennung von Kohle zur Erzeugung von Strom wird verboten.",
@@ -33028,72 +33453,7 @@ var KohleverstromungEinstellen_default = defineLaw({
   `
 });
 
-// src/laws/EnergiemixRegeltDerMarkt.ts
-var EnergiemixRegeltDerMarkt_default = defineLaw({
-  title: "Energiemix regelt der Markt",
-  description: "Subventionen in der Energiewirtschaft werden insgesamt eingestellt.",
-  effort(game) {
-    if (game.values.popularity >= 50) {
-      return monthsEffort(6, "Normal dauert das 12 Monate, aber bei Deiner Beliebtheit nur {months}.");
-    } else {
-      return monthsEffort(12);
-    }
-  },
-  effects() {
-    return [
-      modify("stateDebt").byValue(-37),
-      modify("electricityHardCoal").byPercent(-10),
-      modify("electricityBrownCoal").byPercent(-5),
-      modify("electricityWind").byValue(5),
-      modify("electricitySolar").byValue(3),
-      modify("electricityWater").byValue(0.5)
-    ];
-  },
-  priority(game) {
-    return linear(endYear, startYear, game.currentYear);
-  }
-});
-
-// src/laws/KernenergienutzungVerlaengern.ts
-var electricityGasAtStart = createBaseValues(defaultValues).electricityGas;
-var KernenergienutzungVerlaengern_default = defineLaw({
-  title: "Kernenergienutzung verl\xE4ngern",
-  description: "Kernkraftwerke l\xE4nger nutzen, wieder in Betrieb nehmen und neu bauen.",
-  removeLawsWithLabels: ["Kernenergie"],
-  effort(game) {
-    return monthsEffort(8);
-  },
-  effects() {
-    return [
-      modify("electricityNuclear").setValue(104.3),
-      modify("stateDebt").byValue(-2.5),
-      modify("popularity").byValue(-4)
-    ];
-  },
-  priority(game) {
-    return linear(electricityGasAtStart, 1.1 * electricityGasAtStart, game.values.electricityGas);
-  }
-});
-
-// src/laws/InitialAtomausstieg.ts
-var InitialAtomausstieg_default = defineLaw({
-  title: "Initial: Atomausstieg",
-  description: "Atomausstieg finded wie beschlossen 2022 statt",
-  labels: ["hidden", "initial", "Kernenergie"],
-  effects(game, startYear2, currentYear) {
-    const mapping = {
-      2021: 60.45,
-      2022: 30.21
-    };
-    const newValue = mapping[currentYear] || 0;
-    return [modify("electricityNuclear").setValue(newValue)];
-  },
-  priority(game) {
-    return 0;
-  }
-});
-
-// src/laws/NetzausbauErleichtern.ts
+// src/laws/energy/NetzausbauErleichtern.ts
 var NetzausbauErleichtern_default = defineLaw({
   title: "Netzausbau erleichtern",
   description: "Vereinfachung und Beschleunigung von Planungsverfahren f\xFCr den Ausbau des Stromnetzes",
@@ -33133,7 +33493,7 @@ var NetzausbauErleichtern_default = defineLaw({
   `
 });
 
-// src/laws/NetzausbauFoerdern.ts
+// src/laws/energy/NetzausbauFoerdern.ts
 var NetzausbauFoerdern_default = defineLaw({
   title: "Netzausbau f\xF6rdern",
   description: "Ausbau des Stromnetzes mit Steuermitteln f\xF6rdern",
@@ -33175,7 +33535,188 @@ var NetzausbauFoerdern_default = defineLaw({
   `
 });
 
-// src/laws/StromspeicherungErleichtern.ts
+// src/laws/energy/SolarAufAllenDaechernVerpflichtend.ts
+var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
+  title: "Solar auf neuen D\xE4chern verpflichtend",
+  description: "Alle Neubauten bekommen PV Anlagen auf die D\xE4cher.",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(3);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-3).if(startYear2 === currentYear),
+      ...powerTransfer(game, "electricitySolar", 2)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 11
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
+
+    - Popularität sinkt um 3 Prozent im ersten Jahr, weil das als Zwang empfunden wird.
+    - Zusätzlicher Ausbau um 2TWh pro Jahr.
+  `
+});
+
+// src/laws/energy/SolarstromFoerdernx2.ts
+var SolarstromFoerdernx2_default = defineLaw({
+  title: "Solarstrom F\xF6rderung x2",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verdoppeln",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  effort(game) {
+    return monthsEffort(4);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(10).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-31e3).if(startYear2 === currentYear),
+      ...powerTransfer(game, "electricitySolar", 10)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+  `
+});
+
+// src/laws/energy/SolarstromFoerdernx4.ts
+var SolarstromFoerdernx4_default = defineLaw({
+  title: "Solarstrom F\xF6rderung x4",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen vervierfachen",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  effort(game) {
+    return monthsEffort(3);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(20).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-89e3).if(startYear2 === currentYear),
+      ...powerTransfer(game, "electricitySolar", 20)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+    Nachrüst Pflicht für besonders geeignete Gebäude, moderater Zuwachs der Freiflächen Photovoltaik mit Doppeltbewirtschaftung von Energieerzeugung und Landwirtschaft #AgroPV.
+  `,
+  internals: markdown`
+    # Happy path 10
+
+    ${cite(wuppertalStudie)}
+  `,
+  citations: [wuppertalStudie]
+});
+
+// src/laws/energy/SolarstromFoerdernx8.ts
+var SolarstromFoerdernx8_default = defineLaw({
+  title: "Solarstrom F\xF6rderung x8",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verachtfachen",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(2);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byValue(-10).if(startYear2 === currentYear),
+      modify("unemployment").byValue(-209e3).if(startYear2 === currentYear),
+      ...powerTransfer(game, "electricitySolar", 40)
+    ];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
+      return linear(100, 30, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+    Nachrüst Pflicht für alle Gebäude, auch bei moderater Ausbäute.
+    Umwandlung vieler Landwirtschaftlicher flächen in Freiflächen PV.
+  `
+});
+
+// src/laws/energy/SolarstromFoerderungAbschaffen.ts
+var SolarstromFoerderungAbschaffen_default = defineLaw({
+  title: "Solarstrom F\xF6rderung einstellen",
+  description: "Mittlere bis gro\xDFe Solaranlagen sollten sich selbst tragen. Die F\xF6rderung wird abgeschafft.",
+  labels: ["SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(5);
+  },
+  effects(game, startYear2, currentYear) {
+    return [...powerTransfer(game, "electricitySolar", 2)];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
+      return linear(0, 100, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+
+  `
+});
+
+// src/laws/energy/SolarstromFoerderungWieZuBeginn.ts
+var SolarstromFoerderungWieZuBeginn_default = defineLaw({
+  title: "Solarstrom F\xF6rderung wie zu Beginn",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen wie bisher",
+  labels: ["initial", "SolarFoerderung"],
+  removeLawsWithLabels: ["SolarFoerderung"],
+  treatAfterLabels: [],
+  effort(game) {
+    return monthsEffort(9);
+  },
+  effects(game, startYear2, currentYear) {
+    return [...powerTransfer(game, "electricitySolar", 5)];
+  },
+  priority(game) {
+    if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
+      return linear(70, 100, renewablePercentage(game));
+    }
+    return 0;
+  },
+  details: markdown`
+    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
+    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
+  `
+});
+
+// src/laws/energy/StromspeicherungErleichtern.ts
 var StromspeicherungErleichtern_default = defineLaw({
   title: "Stromspeicherung erleichtern",
   description: "B\xFCrokratische H\xFCrden f\xFCr den Bau von Speicheranlagen und Einspeisung von gespeichertem Strom werden abgeschafft.",
@@ -33217,7 +33758,7 @@ var StromspeicherungErleichtern_default = defineLaw({
   `
 });
 
-// src/laws/StromspeicherungFoerdern.ts
+// src/laws/energy/StromspeicherungFoerdern.ts
 var StromspeicherungFoerdern_default = defineLaw({
   title: "Stromspeicherung f\xF6rdern",
   description: "Bau von Speicheranlagen und Einspeisung von gespeichertem Strom mit Steuermitteln f\xF6rdern. 2 Mrd \u20AC pro Jahr.",
@@ -33277,878 +33818,7 @@ var StromspeicherungFoerdern_default = defineLaw({
   `
 });
 
-// src/laws/DaemmungAltbau1Percent.ts
-var DaemmungAltbau1Percent_default = defineLaw({
-  title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
-  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit verg\xFCnstigten Krediten gef\xF6rdert.",
-  effort(game) {
-    return monthsEffort(3);
-  },
-  effects(game, startYear2, currentYear) {
-    const costsPerYear = 0.5;
-    const inEffect = currentYear - startYear2 > 2;
-    return [
-      modify("stateDebt").byValue(costsPerYear),
-      modify("buildingsSourceBio").byPercent(-1).if(inEffect),
-      modify("buildingsSourceOil").byPercent(-1).if(inEffect),
-      modify("buildingsSourceTele").byPercent(-1).if(inEffect),
-      modify("buildingsPrivateDemand").byPercent(-1).if(inEffect)
-    ];
-  },
-  priority(game) {
-    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 40, buildingsPercentage);
-  }
-});
-
-// src/laws/DaemmungAltbau2Percent.ts
-var DaemmungAltbau2Percent_default = defineLaw({
-  title: "D\xE4mmung von Wohngeb\xE4uden f\xF6rdern",
-  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit einem zinslosen Kredit und einem Zuschuss von 20% der Kosten gef\xF6rdert.",
-  effort(game) {
-    return monthsEffort(5);
-  },
-  effects(game, startYear2, currentYear) {
-    const costsPerYear = 1;
-    const inEffect = currentYear - startYear2 > 2;
-    return [
-      modify("stateDebt").byValue(costsPerYear),
-      modify("buildingsSourceBio").byPercent(-2).if(inEffect),
-      modify("buildingsSourceOil").byPercent(-2).if(inEffect),
-      modify("buildingsSourceTele").byPercent(-2).if(inEffect),
-      modify("buildingsPrivateDemand").byPercent(-2).if(inEffect),
-      modify("popularity").byValue(5).if(inEffect)
-    ];
-  },
-  priority(game) {
-    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 40, buildingsPercentage);
-  }
-});
-
-// src/laws/DaemmungAltbau4Percent.ts
-var DaemmungAltbau4Percent_default = defineLaw({
-  title: "D\xE4mmung von Wohngeb\xE4uden sehr stark f\xF6rdern",
-  description: "Die nachtr\xE4gliche D\xE4mmung von Wohngeb\xE4uden wird mit 50% der Kosten bezuschusst. Gleichzeitig werden Ausbildungspl\xE4tze im Handwerk geschaffen durch einen Zuschuss von 500\u20AC pro Monat, damit der zu erwartende Bauboom bew\xE4ltigt werden kann.",
-  effort(game) {
-    return monthsEffort(7);
-  },
-  effects(game, startYear2, currentYear) {
-    const costsPerYear = 3;
-    const yearsActive = currentYear - startYear2;
-    const inEffect = yearsActive >= 2;
-    return [
-      modify("stateDebt").byValue(costsPerYear),
-      modify("buildingsSourceBio").byPercent(-4).if(inEffect),
-      modify("buildingsSourceOil").byPercent(-4).if(inEffect),
-      modify("buildingsSourceTele").byPercent(-4).if(inEffect),
-      modify("buildingsPrivateDemand").byPercent(-4).if(inEffect),
-      modify("popularity").byValue(10).if(yearsActive === 1),
-      modify("popularity").byValue(5).if(inEffect)
-    ];
-  },
-  priority(game) {
-    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 40, buildingsPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 6
-
-    # Folgen
-
-    # Vorbedingungen
-
-    # Priorität
-  `
-});
-
-// src/laws/DaemmungAltbauAbschaffen.ts
-var DaemmungAltbauAbschaffen_default = defineLaw({
-  title: "D\xE4mmung von Wohngeb\xE4uden abschaffen",
-  description: "Wir geben den B\xFCrgern die Freiheit zur\xFCck, selbst zu entscheiden, ob sie ihr Haus d\xE4mmen wollen und lassen die F\xF6rderung auslaufen",
-  effort(game) {
-    return monthsEffort(3);
-  },
-  effects() {
-    return [
-      modify("stateDebt").byValue(-0.5),
-      modify("buildingsSourceBio").byPercent(-0.5),
-      modify("buildingsSourceOil").byPercent(-0.5),
-      modify("buildingsSourceTele").byPercent(-0.5),
-      modify("buildingsPrivateDemand").byPercent(-0.5)
-    ];
-  },
-  priority(game) {
-    const currentActiveLawId = getActiveLaw(game.acceptedLaws, /^DaemmungAltbau/);
-    if (!currentActiveLawId || currentActiveLawId === "DaemmungAltbauAbschaffen")
-      return 0;
-    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return linear(15, 40, buildingsPercentage);
-  }
-});
-
-// src/laws/NahverkehrAusbauen.ts
-var NahverkehrAusbauen_default = defineLaw({
-  title: "Nahverkehr Ausbauen",
-  description: "Der Ausbau des Nahverkehrs wird bundesweit st\xE4rker bezuschusst.",
-  effort(game) {
-    return monthsEffort(5, "Komplexe Verhandlungen mit den Bundesl\xE4ndern dauern {months}.");
-  },
-  effects(game, startYear2, currentYear) {
-    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
-    const yearsActive = currentYear - startYear2;
-    return [
-      modify("stateDebt").byValue(3),
-      modify("publicLocalCapacity").byPercent(1),
-      transfer("publicLocalUsage", "carUsage").byPercent(1).if(relCapacity >= 105),
-      modify("popularity").byValue(2).if(yearsActive >= 5)
-    ];
-  },
-  priority(game) {
-    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
-    return linear(150, 80, relCapacity);
-  },
-  citations: [bmvi2020OePNVFoerderungDesBundes],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 18
-
-    # Folgen
-
-    - Der Staatshaushalt wird jährlich mit 3 Mrd € mehr belastet. (${cite(bmvi2020OePNVFoerderungDesBundes)})
-    - Nahverkehr Kapazität steigt jährlich um 1%
-    - (Umstieg von individual Verkehr auf ÖPNV wird vereinfacht)
-        - (Geringere Verkehrsbelastung in städtischen Gebieten / auf Kurzstrecken)
-        - Nahverkehr Nutzung steigt jährlich um 1%, sobald die relative Kapazität 105% erreicht hat.
-        - PKW Nutzung sinkt um denselben Wert.
-    - Langfristig: 5 Jahre nach Inkrafttreten:
-        - (CO2 Emissionen des Mobilitätssektors sinken um 2 Mio t pro Jahr.) (Indirekt)
-        - Beliebtheit steigt um 2% pro Jahr.
-
-    # Vorbedingungen
-
-    - Priorität über 0%.
-
-    # Priorität:
-
-    Sollte erst vorgeschlagen werden, wenn genügend Nachfrage da ist.
-
-    - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
-    - 100 bei 80% relativer Kapazität.
-    - linear interpoliert
-  `
-});
-
-// src/laws/NahverkehrModernisieren.ts
-var NahverkehrModernisieren_default = defineLaw({
-  title: "Nahverkehr Modernisieren",
-  description: "Anschaffung Moderner, bequemer, emissionsfreier Fahrzeuge f\xFCr den Nahverkehr wird gef\xF6rdert.",
-  effort(game) {
-    return monthsEffort(4);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(3),
-      modify("publicLocalCapacity").byPercent(1),
-      transfer("publicLocalUsage", "carUsage").byPercent(1),
-      modify("popularity").byValue(3)
-    ];
-  },
-  priority(game) {
-    if (!lawIsAccepted(game, "FernverkehrModernisieren"))
-      return 0;
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 24, mobilityPercentage);
-  },
-  citations: [vdvDatenFakten],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 16
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    - Der Staatshaushalt wird jährlich mit 3 Mrd € stärker belastet.
-    - Die "Kapazität" des Nahverkehrs steigt jährlich um 1%.
-    - Umstieg von individual Verkehr auf Nahverkehr ist attraktiver:
-      - Nahverkehr Nutzung steigt 1% jährlich.
-      - Auto Nutzung sinkt entsprechend.
-    - Popularität steigt jährlich um 3%.
-
-    # Vorbedingungen:
-
-    - "FernverkehrModernisieren" wurde beschlossen. (Damit nicht zu viele ähnliche Vorschläge gleichzeitig da sind.)
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 24% Anteil
-    - linear interpoliert
-  `
-});
-
-// src/laws/FoerderungFuerTierhaltungAbschaffen.ts
-var FoerderungFuerTierhaltungAbschaffen_default = defineLaw({
-  title: "F\xF6rderung f\xFCr Tierhaltung abschaffen",
-  description: "Subventionen f\xFCr Tierhaltung werden ersatzlos gestrichen",
-  effort(game) {
-    return monthsEffort(2);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(-10),
-      modify("co2emissionsAgriculture").byValue(-10).if(startYear2 === currentYear),
-      modify("popularity").byValue(-20).if(startYear2 === currentYear)
-    ];
-  },
-  priority(game) {
-    return linear(1e4, 0, game.values.unemployment);
-  }
-});
-
-// src/laws/NahverkehrKostenlos.ts
-var NahverkehrKostenlos_default = defineLaw({
-  title: "Nahverkehr Kostenlos",
-  description: "Die Kosten f\xFCr den Nahverkehr werden bundesweit bezuschusst, so dass keine Tickets mehr ben\xF6tigt werden.",
-  effort(game) {
-    return monthsEffort(7, "Die Haushaltsverhandlungen dauern {months}.");
-  },
-  effects(game, startYear2, currentYear) {
-    const percentage = startYear2 === currentYear ? 10 : 1;
-    return [
-      modify("stateDebt").byValue(10),
-      transfer("publicLocalUsage", "carUsage").byPercent(percentage),
-      modify("popularity").byValue(10).if(startYear2 === currentYear),
-      modify("unemployment").byValue(20).if(startYear2 === currentYear)
-    ];
-  },
-  priority(game) {
-    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
-    return linear(90, 120, relCapacity);
-  },
-  citations: [vdvDatenFakten],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 19
-
-    # Folgen
-
-    - Der Staatshaushalt wird jährlich mit 10 Mrd € stärker belastet.
-        - 13.3 Mrd € Ticketeinnahmen pro Jahr (${cite(vdvDatenFakten)})
-        - Annahme: Einsparung durch Ticketverkauf und Personal.
-    - (CO2 Emissionen für Mobilität singenk jährlich um 2 MioTonnen) (indirekt)
-    - Umstieg von individual Verkehr auf ÖPNV lohnt sich mehr
-        - Geringere Verkehrsbelastung in gut angeschlossenen Gebieten.
-        - CO2 Emissionen werden indirekt verbessert.
-        - Nahverkehr Nutzung steigt im ersten Jahr um 10%, danach um 1% jährlich.
-        - Auto Nutzung sinkt entsprechend.
-    - Arbeitslosigkeit steigt im ersten Jahr um 20 000 Menschen.
-    - Popularität steigt im ersten Jah um 10%
-        - (Sozial benachteiligte Personen profitieren)
-
-    # Vorbedingungen:
-
-    - Priorität über 0%.
-
-    # Priorität
-
-    Sollte erst vorgeschlagen werden, wenn genügend Kapazität da ist.
-
-    - 0 bei 90% relativer Kapazität. (Zu Beginn: 100%)
-    - 100 bei 120% relativer Kapazität.
-    - linear interpoliert
-  `
-});
-
-// src/laws/AutosInInnenstaedtenVerbieten.ts
-var AutosInInnenstaedtenVerbieten_default = defineLaw({
-  title: "Autos in Innenst\xE4dten verbieten",
-  description: "Die Innenst\xE4dte der gro\xDFen St\xE4dte werden zu Autofreien Zonen erkl\xE4rt und begr\xFCnt, sowie Fahrrad und Fu\xDFg\xE4ngerzonen eingerichtet.",
-  effort(game) {
-    return monthsEffort(12);
-  },
-  effects(game, startYear2, currentYear) {
-    var popularityChange = -2;
-    if (game.values.publicLocalCapacity > game.values.publicLocalUsage * 1.2) {
-      popularityChange = -1;
-      if (startYear2 + 2 < currentYear) {
-        popularityChange = 2;
-      }
-    }
-    return [
-      modify("popularity").byValue(popularityChange),
-      transfer("publicLocalUsage", "carUsage").byPercent(10).if(startYear2 === currentYear)
-    ];
-  },
-  priority(game) {
-    const relCapacity = game.values.publicLocalCapacity / game.values.publicLocalUsage * 100;
-    return linear(90, 120, relCapacity);
-  }
-});
-
-// src/laws/FernverkehrVerbindungenAusbauen.ts
-var FernverkehrVerbindungenAusbauen_default = defineLaw({
-  title: "Fernverkehr Verbindungen ausbauen",
-  description: "Der Ausbau des \xF6ffentlichen Fernverkehrs wird bundesweit st\xE4rker Bezuschusst und Vorangetrieben",
-  effort(game) {
-    return monthsEffort(12);
-  },
-  effects(game) {
-    const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
-    return [
-      modify("stateDebt").byValue(6),
-      modify("publicNationalCapacity").byPercent(1),
-      transfer("publicNationalUsage", "carUsage").byPercent(1).if(relCapacity >= 105),
-      transfer("publicNationalUsage", "carUsage").byPercent(0.5).if(relCapacity >= 105),
-      modify("popularity").byValue(2).if(relCapacity >= 105)
-    ];
-  },
-  priority(game) {
-    const relCapacity = game.values.publicNationalCapacity / game.values.publicNationalUsage * 100;
-    return linear(150, 80, relCapacity);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 17
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    - Der Staatshaushalt wird jährlich mit 6 Mrd € mehr belastet. (Analog zu Nahverkehr)
-    - Fernverkehr Kapazität steigt jährlich um 1%
-    - Sobald die Kapazität um 5% gestiegen ist (relative Kapazität >= 105%):
-      - Fernverkehr Nutzung steigt jährlich um 1%.
-      - Nahverkehr Nutzung steigt jährlich um die Hälfte der Steigerung des Fernverkehrs.
-      - PKW Nutzung sinkt entsprechend um die Summe der Steigerungen von Fern- und Nahverkehr
-      - Die Popularität steigt um 2% pro Jahr.
-
-    # Vorbedingungen
-
-    - Priorität über 0%.
-
-    # Priorität:
-
-    Sollte erst vorgeschlagen werden, wenn genügend Nachfrage da ist.
-
-    - 0 bei 150% relativer Kapazität. (Zu Beginn: 100%)
-    - 100 bei 80% relativer Kapazität.
-    - linear interpoliert
-  `
-});
-
-// src/laws/FernverkehrModernisieren.ts
-var FernverkehrModernisieren_default = defineLaw({
-  title: "Fernverkehr Modernisieren",
-  description: "Moderne, bequeme und weniger anf\xE4llige Z\xFCge werden f\xFCr den Fernverkehr angeschafft.",
-  effort(game) {
-    return monthsEffort(4);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(3),
-      modify("publicNationalCapacity").byPercent(1),
-      transfer("publicNationalUsage", "carUsage").byPercent(1),
-      modify("popularity").byValue(3)
-    ];
-  },
-  priority(game) {
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 24, mobilityPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 15
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    - Der Staatshaushalt wird jährlich mit 3 Mrd € stärker belastet.
-    - Die "Kapazität" des Fernverkehrs steigt jährlich um 1%.
-    - Umstieg von individual Verkehr auf Fernverkehr ist attraktiver:
-      - Fernverkehr Nutzung steigt 1% jährlich.
-      - Auto Nutzung sinkt entsprechend.
-    - Popularität steigt jährlich um 3%.
-
-    # Vorbedingungen:
-
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 24% Anteil
-    - linear interpoliert
-  `
-});
-
-// src/laws/WasserstofftechnologieFoerdern.ts
-var WasserstofftechnologieFoerdern_default = defineLaw({
-  title: "Wasserstofftechnologie f\xF6rdern",
-  description: "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie und zur effizienten Wasserstoffgewinnung wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
-  effort(game) {
-    return monthsEffort(1);
-  },
-  effects(game, startYear2, currentYear) {
-    const inGrantPeriod = currentYear < startYear2 + 5;
-    const effective = currentYear >= startYear2 + 5;
-    return [modify("stateDebt").byValue(2).if(inGrantPeriod), modify("carRenewablePercentage").byValue(1).if(effective)];
-  },
-  priority(game) {
-    const v = game.values;
-    const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
-    const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
-    return linear(40, 90, relCarPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 9
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
-
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
-    - [x] Nach 5 Jahren zahlt es sich aus und der Anteil der erneuerbaren PKW steigt um 1% pro Jahr.
-    - [x] Voraussetzung für weitere Wasserstoffbasierte Gesetze.
-
-    # Voraussetzungen
-
-    - Priorität > 0
-
-    # Priorität
-
-    Je höher der Anteil nicht-erneuerbaren PKW am gesamt Pasagiertransport is, desto eher
-
-    - 0% bei einem Anteil von von 90%.
-    - 100% bei einer Netzqualität von 40%.
-    - linear interpoliert
-  `
-});
-
-// src/laws/WasserstoffmobilitaetFoerdern.ts
-var WasserstoffmobilitaetFoerdern_default = defineLaw({
-  title: "Wasserstoffmobilit\xE4t f\xF6rdern",
-  description: "Wasserstoffbasierte Fahrzeuge werden gef\xF6rdert.",
-  effort(game) {
-    return monthsEffort(2);
-  },
-  effects(game, startYear2, currentYear) {
-    if (lawIsAccepted(game, "WasserstofftechnologieFoerdern")) {
-      return [
-        modify("stateDebt").byValue(3),
-        modify("carRenewablePercentage").byValue(1),
-        modify("popularity").byValue(1).if(startYear2 === currentYear)
-      ];
-    }
-    return [];
-  },
-  priority(game) {
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 26, mobilityPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 21
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    Nur wenn "WasserstofftechnologieFoerdern" beschlossen wurde:
-
-    - Der Staatshaushalt wird jährlich mit 3 Mrd € stärker belastet.
-    - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
-    - Popularität steigt im ersten Jah um 1%
-
-    # Vorbedingungen:
-
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 26% Anteil
-    - linear interpoliert
-  `
-});
-
-// src/laws/AbschaffungDerMineraloelsteuer.ts
-var AbschaffungDerMineraloelsteuer_default = defineLaw({
-  title: "Abschaffung der Mineral\xF6lsteuer",
-  description: "Die Steuer auf s\xE4mtliche erd\xF6lbasierten Treibstoffe wird abgeschafft.",
-  effort(game) {
-    const yearsTillUp = Math.ceil(game.values.co2budget / game.values.co2emissions);
-    if (yearsTillUp >= 15) {
-      return monthsEffort(2, `Die derzeitigen CO2 Emissionen w\xFCrden das Budget
-        in ${yearsTillUp} Jahren verbrauchen.
-        Nicht schlecht! Bei der Stimmung bekommst Dus in {months}n durch.`);
-    } else {
-      return monthsEffort(9, "Nicht beliebt! Sowas dauert {months}.");
-    }
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(41),
-      modify("popularity").byValue(5).if(startYear2 === currentYear),
-      modify("popularity").byValue(-3).if(startYear2 < currentYear),
-      transfer("publicLocalUsage", "carUsage").byPercent(-20).if(startYear2 === currentYear),
-      transfer("publicNationalUsage", "carUsage").byPercent(-20).if(startYear2 === currentYear)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
-    const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
-    return linear(60, 100, relCarPercentage);
-  },
-  citations: [welt2018BundKassiertMineraloelsteuer],
-  details: ``,
-  internals: markdown`
-    # Folgen
-
-    Staatsschulden steigen um 41 Mrd € pro Jahr ${cite(welt2018BundKassiertMineraloelsteuer)}
-    Im ersten Jahr steigen 20% der Nutzer von öffentlichen Verkehrsmitteln aufs Auto um.
-    Popularität steigt im ersten Jahr um 5% und sinkt danach um 3% pro Jahr.
-
-    # Vorbedingungen
-
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0% bei einem Anteil von nichterneuerbaren PKW von 60%.
-    - 100% bei einem Anteil von nichterneuerbaren PKW von 100%. (Zu Beginn: 78%)
-    - linear interpoliert
-  `
-});
-
-// src/laws/AusbauVonStrassen.ts
-var AusbauVonStrassen_default = defineLaw({
-  title: "Ausbau von Stra\xDFen",
-  description: "Autobahnen und Stra\xDFen werden intensiver ausgebaut.",
-  effort(game) {
-    return monthsEffort(9);
-  },
-  effects(game) {
-    return [
-      modify("stateDebt").byValue(5),
-      modify("popularity").byValue(0.5),
-      transfer("publicLocalUsage", "carUsage").byPercent(-1),
-      transfer("publicNationalUsage", "carUsage").byPercent(-1)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(60, 100, relCarPercentage);
-  }
-});
-
-// src/laws/DieselPrivilegAbgeschaffen.ts
-var DieselPrivilegAbgeschaffen_default = defineLaw({
-  title: "Diesel Privileg abgeschaffen",
-  description: "Diesel wird jetzt genauso besteuert wie Benzin.",
-  effort(game) {
-    return monthsEffort(6);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(-7.35),
-      modify("popularity").byValue(-1).if(startYear2 === currentYear)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
-    const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
-    return linear(10, 100, relCarPercentage);
-  }
-});
-
-// src/laws/DienstwagenPrivilegAbgeschaffen.ts
-var DienstwagenPrivilegAbgeschaffen_default = defineLaw({
-  title: "Dienstwagen Privileg abgeschaffen",
-  description: "Steuererleichterungen f\xFCr Dienstwagen werden abgeschafft.",
-  effort(game) {
-    return monthsEffort(6);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(-18),
-      modify("popularity").byValue(-1).if(startYear2 === currentYear),
-      transfer("carUsage", "publicLocalUsage").byPercent(-0.05)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
-    const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
-    return linear(50, 100, relCarPercentage);
-  },
-  citations: [welt2016SteuervorteileKosten18Mrd, duh2020Dienstwagenprivileg],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 20
-
-    Zunächst sollte Nah- und Fernverkehr attraktiver gemacht werden.
-    TODO: Folgen sollten davon abhängen, ob es attraktive Alternativen gibt.
-
-    # Folgen
-
-    - Steuermehreinnahmen: 18 mrd€ / Jahr (${cite(welt2016SteuervorteileKosten18Mrd)})
-    - -0.05% Fahleistung pro Jahr (Anreiz für Auto fällt weg Gebrauchte Wagen werden teuerer).
-        - ${cite(duh2020Dienstwagenprivileg)} sagt es gibt keine echte Schätzung dafür.
-    - Entsprechend mehr Nahverkehrnutzung
-    - Zufriedenheit sinkt einmalig um 1%
-
-    # Vorbedingungen
-
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0% bei einem Anteil von nichterneuerbaren PKW von 50%.
-    - 100% bei einem Anteil von nichterneuerbaren PKW von 100%. (Zu Beginn: 78%)
-    - linear interpoliert
-  `
-});
-
-// src/laws/Tempolimit130AufAutobahnen.ts
-var Tempolimit130AufAutobahnen_default = defineLaw({
-  title: "Tempolimit 130 auf Autobahnen",
-  description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 130 km/h.",
-  labels: ["TempolimitAutobahn"],
-  removeLawsWithLabels: ["TempolimitAutobahn"],
-  effort(game) {
-    return monthsEffort(3);
-  },
-  effects(game) {
-    const emissionModifier = modify("carEmissionFactor").setValue(157.9);
-    const emissionChange = emissionModifier.getChange(game.values);
-    return [
-      modify("popularity").byValue(2).if(emissionChange < 0),
-      emissionModifier
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "Tempolimit100AufAutobahnen") || lawIsAccepted(game, "Tempolimit120AufAutobahnen") || lawIsAccepted(game, "TempolimitAufAutobahnenAussitzen"))
-      return 0;
-    const v = game.values;
-    const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 100, relCarPercentage);
-  }
-});
-
-// src/laws/Tempolimit120AufAutobahnen.ts
-var Tempolimit120AufAutobahnen_default = defineLaw({
-  title: "Tempolimit 120 auf Autobahnen",
-  description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 120 km/h.",
-  labels: ["TempolimitAutobahn"],
-  removeLawsWithLabels: ["TempolimitAutobahn"],
-  effort(game) {
-    return monthsEffort(4);
-  },
-  effects(game) {
-    const emissionModifier = modify("carEmissionFactor").setValue(157.1);
-    const emissionChange = emissionModifier.getChange(game.values);
-    return [
-      modify("popularity").byValue(2).if(emissionChange < 0),
-      emissionModifier
-    ];
-  },
-  priority(game) {
-    if (!lawIsAccepted(game, "Tempolimit130AufAutobahnen"))
-      return 0;
-    const v = game.values;
-    const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 100, relCarPercentage);
-  }
-});
-
-// src/laws/Tempolimit100AufAutobahnen.ts
-var Tempolimit100AufAutobahnen_default = defineLaw({
-  title: "Tempolimit 100 auf Autobahnen",
-  description: "Auf den Autobahnen gilt ab sofort ein allgemeines Tempolimit von 100 km/h.",
-  labels: ["TempolimitAutobahn"],
-  removeLawsWithLabels: ["TempolimitAutobahn"],
-  effort(game) {
-    return monthsEffort(5);
-  },
-  effects(game) {
-    const emissionModifier = modify("carEmissionFactor").setValue(154.1);
-    const emissionChange = emissionModifier.getChange(game.values);
-    return [
-      modify("popularity").byValue(-1).if(emissionChange < 0),
-      emissionModifier
-    ];
-  },
-  priority(game) {
-    if (!lawIsAccepted(game, "Tempolimit120AufAutobahnen"))
-      return 0;
-    const v = game.values;
-    const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 100, relCarPercentage);
-  }
-});
-
-// src/laws/TempolimitAufAutobahnenAussitzen.ts
-var TempolimitAufAutobahnenAussitzen_default = defineLaw({
-  title: "Generelles Tempolimit nicht umsetzen",
-  description: "Die EU hat das generelle Tempolkmit zwar beschlossen, wir setzen es aber nicht um. Das k\xF6nnte zwar Strafen oder gar Zwangsma\xDFnahmen bewirken, aber das Risiko der gef\xE4hrdeten Wiederwahl ist zu gro\xDF.",
-  labels: ["TempolimitAutobahn"],
-  removeLawsWithLabels: ["TempolimitAutobahn"],
-  effort(game) {
-    return monthsEffort(3, "Wie aussitzen: {months}.");
-  },
-  effects() {
-    return [
-      modify("stateDebt").byValue(-10),
-      modify("popularity").byValue(-2)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "Tempolimit100AufAutobahnen") || lawIsAccepted(game, "Tempolimit120AufAutobahnen") || lawIsAccepted(game, "Tempolimit130AufAutobahnen"))
-      return 0;
-    const v = game.values;
-    const relCarPercentage = v.carUsage / v.passengerTransportUsage * 100;
-    return linear(10, 100, relCarPercentage);
-  }
-});
-
-// src/laws/ElektromobilitaetFoerdern.ts
-var ElektromobilitaetFoerdern_default = defineLaw({
-  title: "Elektromobilit\xE4t F\xF6rdern",
-  description: "H\xF6here Kaufpr\xE4mien, Steuerbefreiung, g\xFCnstiges Laden f\xFCr E-Autos.",
-  effort(game) {
-    return monthsEffort(2);
-  },
-  effects(game, startYear2, currentYear) {
-    if (lawIsAccepted(game, "LadeinfrastrukturAusbauen")) {
-      return [
-        modify("stateDebt").byValue(5),
-        modify("carRenewablePercentage").byValue(1),
-        modify("popularity").byValue(4).if(startYear2 === currentYear)
-      ];
-    }
-    return [];
-  },
-  priority(game) {
-    if (!lawIsAccepted(game, "LadeinfrastrukturAusbauen"))
-      return 0;
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 25, mobilityPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 20.5
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    Nur wenn "LadeinfrastrukturAusbauen" beschlossen wurde:
-
-    - Der Staatshaushalt wird jährlich mit 5 Mrd € stärker belastet.
-    - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
-    - Popularität steigt im ersten Jah um 4%
-
-    # Vorbedingungen:
-
-    - "LadeinfrastrukturAusbauen" ist beschlossen.
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 25% Anteil
-    - linear interpoliert
-  `
-});
-
-// src/laws/LadeinfrastrukturAusbauen.ts
-var LadeinfrastrukturAusbauen_default = defineLaw({
-  title: "Ladeinfrastruktur ausbauen",
-  description: "Ausbau der Ladeinfrastruktur wird mit Steuermitteln stark gef\xF6rdert.",
-  effort(game) {
-    return monthsEffort(4);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("stateDebt").byValue(5),
-      modify("carRenewablePercentage").byValue(1),
-      modify("popularity").byValue(2).if(startYear2 === currentYear)
-    ];
-  },
-  priority(game) {
-    const mobilityPercentage = game.values.co2emissionsMobility / game.values.co2emissions * 100;
-    return linear(0, 25, mobilityPercentage);
-  },
-  citations: [vdvDatenFakten],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 18.5
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    - Der Staatshaushalt wird jährlich mit 5 Mrd € stärker belastet.
-    - Anteil erneuerbar betrieber PKW steigt um 1% pro Jahr.
-    - Popularität steigt im ersten Jah um 2%
-
-    # Vorbedingungen:
-
-    - Priorität über 0%.
-
-    # Priorität
-
-    - 0 bei 0% Anteil an den CO2 Emissionen. (Zu Beginn: knapp 25%)
-    - 100 bei 25% Anteil
-    - linear interpoliert
-  `
-});
-
-// src/laws/WindkraftVereinfachen.ts
+// src/laws/energy/WindkraftVereinfachen.ts
 var WindkraftVereinfachen_default = defineLaw({
   title: "Windkraft vereinfachen",
   description: "Genehmigungen f\xFCr Windkraftanlagen werden vereinfacht und beschleunigt.",
@@ -34184,262 +33854,57 @@ var WindkraftVereinfachen_default = defineLaw({
   `
 });
 
-// src/laws/AbstandsregelnFuerWindkraftWieBisher.ts
-var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
-  title: "Abstandsregeln f\xFCr Windkraft wie zu Beginn",
-  description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
-  labels: ["initial", "WindkraftAbstandsregel"],
-  removeLawsWithLabels: ["WindkraftAbstandsregel"],
+// src/laws/energy/index.ts
+var energyLaws = {
+  AbstandsregelnFuerWindkraftAbschaffen: AbstandsregelnFuerWindkraftAbschaffen_default,
+  AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
+  AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
+  AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
+  AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default,
+  AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
+  AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
+  AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
+  AutomatischeSektoren: AutomatischeSektoren_default,
+  EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
+  ForschungDezentraleStromerzeugung: ForschungDezentraleStromerzeugung_default,
+  ForschungUndEntwicklungStromspeicherung: ForschungUndEntwicklungStromspeicherung_default,
+  InitialAtomausstieg: InitialAtomausstieg_default,
+  KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
+  KohleverstromungEinstellen: KohleverstromungEinstellen_default,
+  NetzausbauErleichtern: NetzausbauErleichtern_default,
+  NetzausbauFoerdern: NetzausbauFoerdern_default,
+  SolarAufAllenDaechernVerpflichtend: SolarAufAllenDaechernVerpflichtend_default,
+  SolarstromFoerdernx2: SolarstromFoerdernx2_default,
+  SolarstromFoerdernx4: SolarstromFoerdernx4_default,
+  SolarstromFoerdernx8: SolarstromFoerdernx8_default,
+  SolarstromFoerderungAbschaffen: SolarstromFoerderungAbschaffen_default,
+  SolarstromFoerderungWieZuBeginn: SolarstromFoerderungWieZuBeginn_default,
+  StromspeicherungErleichtern: StromspeicherungErleichtern_default,
+  StromspeicherungFoerdern: StromspeicherungFoerdern_default,
+  WindkraftVereinfachen: WindkraftVereinfachen_default
+};
+
+// src/lib/random.ts
+var import_seedrandom = __toModule(require_seedrandom2());
+var rnd = (0, import_seedrandom.default)("", { state: true });
+var random = () => Math.abs(rnd());
+
+// src/laws/general/AllesBleibtBeimAlten.ts
+var AllesBleibtBeimAlten_default = defineLaw({
+  title: "Alles bleibt wie es ist",
+  description: "Die vorhandenen Gesetze haben sich lange bew\xE4hrt. Wir lassen sie so, wie sie sind.",
   effort(game) {
     return monthsEffort(3, "Wie aussitzen: {months}.");
   },
-  effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    return [
-      modify("electricityWindOnshoreMaxNew").setValue(6).if(currentYear >= startYear2 + delay)
-    ];
+  effects() {
+    return [];
   },
   priority(game) {
-    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
-      return linear(30, 100, windPercentage(game));
-    }
-    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftVerschaerfen")) {
-      return linear(70, 27, windPercentage(game));
-    }
-    return 0;
+    return random();
   }
 });
 
-// src/laws/AbstandsregelnFuerWindkraftLockern.ts
-var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
-  title: "Abstandsregeln f\xFCr Windkraft lockern",
-  description: "Bundesweite gelockerte Abstandsregeln f\xFCr Windkraftanlagen sowie Bauerlaubniss in W\xE4ldern. Ja auch Bayern wird jetzt gezwungen Windkraftanlagen zuzulassen, sowie andere nicht bauwillige Kommunen.",
-  labels: ["WindkraftAbstandsregel"],
-  removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(6, "Das schaffst Du in {months}n.");
-  },
-  effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    return [
-      modify("popularity").byValue(-3).if(startYear2 === currentYear),
-      modify("electricityWindOnshoreMaxNew").setValue(30).if(currentYear >= startYear2 + delay)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
-      return linear(70, 27, windPercentage(game));
-    }
-    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftAbschaffen")) {
-      return linear(30, 100, windPercentage(game));
-    }
-    return 0;
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 2
-
-    # Priorität
-
-    Zu Beginn und wenn "WieBisher" ausgewählt:
-
-    - 0% bei einem Anteil von Windstrom von 70%. (Zu Beginn: 27%)
-    - 100% bei einem Anteil von Windstrom von 27%.
-    - linear interpoliert
-
-    Wenn Abstandsregeln abgeschafft wurden:
-
-    - 0% bei einem Anteil von Windstrom von 30%.
-    - 100% bei einem Anteil von Windstrom von 100%.
-  `
-});
-
-// src/laws/AbstandsregelnFuerWindkraftAbschaffen.ts
-var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
-  title: "Abstandsregeln f\xFCr Windkraft abschaffen",
-  description: "Jeder der Land besitzt kann seine Windkraftanlage dahin bauen wo er will.",
-  labels: ["WindkraftAbstandsregel"],
-  removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(12, "BIs werden es Dir schwer machen. {months}!");
-  },
-  effects(game, startYear2, currentYear) {
-    const delay = lawIsAccepted(game, "WindkraftVereinfachen") ? 0 : 5;
-    return [
-      modify("popularity").byValue(-40).if(startYear2 === currentYear),
-      modify("electricityWindOnshoreMaxNew").setValue(1e3).if(currentYear >= startYear2 + delay)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
-      return linear(80, 25, windPercentage(game));
-    }
-    return 0;
-  }
-});
-
-// src/laws/AbstandsregelnFuerWindkraftVerschaerfen.ts
-var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
-  title: "Abstandsregeln f\xFCr Windkraft versch\xE4rfen",
-  description: "Der Mindestabstand zwischen Wind Energie Anlagen und Wohngeb\xE4uden im Innenbereich muss das Zehnfache der Gesamth\xF6he der Wind Energie Anlagen betragen (10H-Regel)",
-  labels: ["WindkraftAbstandsregel"],
-  removeLawsWithLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(1, "Dauert nur einen Monat.");
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(5).if(startYear2 === currentYear),
-      modify("electricityWindOnshoreMaxNew").setValue(0.42)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
-      return linear(0, 100, windPercentage(game));
-    }
-    return 0;
-  }
-});
-
-// src/laws/AusschreibungsverfahrenfuerWindkraftWieBisher.ts
-var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft wie zu Beginn",
-  description: "Windkraft Betreiber k\xF6nnen sich mehrmals im Jahr auf ein eine bestimte Leistung von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstm\xF6glichen Subventionierung umsetzen kann bekommt den Zuschlag. Insgesamt werden 8,1 TWh pro Jahr ausgeschrieben.",
-  labels: ["initial", "hidden", "WindkraftSubvention"],
-  removeLawsWithLabels: ["WindkraftSubvention"],
-  treatAfterLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(8);
-  },
-  effects(game, startYear2, currentYear) {
-    return [...windPowerExpansion(game, 6.9, 1.2, startYear2)];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
-      return linear(60, 100, renewablePercentage(game));
-    }
-    return 0;
-  }
-});
-
-// src/laws/AusschreibungsverfahrenfuerWindkraftVerdoppeln.ts
-var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft verdoppeln",
-  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 16,2TWh verdoppelt.",
-  labels: ["WindkraftSubvention"],
-  removeLawsWithLabels: ["WindkraftSubvention"],
-  treatAfterLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(2);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(-1).if(startYear2 === currentYear),
-      modify("unemployment").byValue(-20).if(startYear2 === currentYear),
-      ...windPowerExpansion(game, 13.8, 2.4, startYear2)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) {
-      return linear(100, 50, renewablePercentage(game));
-    }
-    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
-      return linear(40, 100, renewablePercentage(game));
-    }
-    return 0;
-  }
-});
-
-// src/laws/AusschreibungsverfahrenfuerWindkraftVervierfachen.ts
-var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft vervierfachen",
-  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 32,4TWh vervierfacht.",
-  labels: ["WindkraftSubvention"],
-  removeLawsWithLabels: ["WindkraftSubvention"],
-  treatAfterLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(4);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(-2).if(startYear2 === currentYear),
-      modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      ...windPowerExpansion(game, 27.6, 4.8, startYear2)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
-      return linear(100, 50, renewablePercentage(game));
-    }
-    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
-      return linear(0, 100, renewablePercentage(game));
-    }
-    return 0;
-  },
-  citations: [],
-  details: markdown`
-    Windkraft Betreiber können sich mehrmals im Jahr auf ein eine bestimte Leistung
-    von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstmöglichen
-    Subventionierung umsetzen kann bekommt den Zuschlag.
-  `,
-  internals: markdown`
-    # Happy Path 3
-
-    # Folgen
-
-    - [x] Schulden +-0
-    - [x] Popularität: -2%
-    - [x] Arbeitsplätze: 500.000 also Arbeitslosigkeit -100 Tausend Menschen im ersten Jahr
-    - [ ] Abhängigkeit, ob das Budget ausgeschöpft wird, ist schwierig.)
-    - [x] CO2 Emissionen: Zubau Windkraftonshore +27,6 TWh (es sei den gedeckelt durch Abstandsregeln), Windkraftoffshore + 4,8 TWh.
-
-    # Vorbedingungen
-
-    - Nur wenn "verdoppeln" schon beschlossen wurde.
-    - Priorität über 0%.
-
-    # Priorität
-
-    Wenn bisher "verdoppeln":
-
-    - 0% bei einem Anteil der erneuerbaren Stromquellen von 100%. (Zu Beginn: 50%)
-    - 100% bei einem Anteil der erneuerbaren Stromquellen von 40%.
-      Wenn bisher "verachtfachen":
-    - 0% bei einem Anteil der erneuerbaren Stromquellen von 0%. (Zu Beginn: 50%)
-    - 100% bei einem Anteil der erneuerbaren Stromquellen von 100%.
-    - linear interpoliert
-  `
-});
-
-// src/laws/AusschreibungsverfahrenfuerWindkraftVerachtfachen.ts
-var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft verachtfachen",
-  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 64,8TWh verachtfacht.",
-  labels: ["WindkraftSubvention"],
-  removeLawsWithLabels: ["WindkraftSubvention"],
-  treatAfterLabels: ["WindkraftAbstandsregel"],
-  effort(game) {
-    return monthsEffort(5);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(-20).if(startYear2 === currentYear),
-      modify("unemployment").byValue(-100).if(startYear2 === currentYear),
-      ...windPowerExpansion(game, 55.2, 9.6, startYear2)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
-      return linear(100, 50, renewablePercentage(game));
-    }
-    return 0;
-  }
-});
-
-// src/laws/CO2PreisErhoehen.ts
+// src/laws/general/CO2PreisErhoehen.ts
 var CO2PreisErhoehen_default = defineLaw({
   title: "CO2 Preis Erh\xF6hen",
   description: "Die Preise werden schneller erh\xF6ht, als bisher geplant. Eine Tonne CO2 kostet in 2 Jahren 70 Euro und in 4 Jahren 100 Euro.",
@@ -34506,7 +33971,149 @@ var CO2PreisErhoehen_default = defineLaw({
   `
 });
 
-// src/laws/WirksamerCO2Preis.ts
+// src/laws/general/Test.ts
+var Test_default = defineLaw({
+  title: "Test",
+  description: "Gesetz zum Testen. Wird in automatischen Tests verwendet.",
+  effort(game) {
+    return monthsEffort(6);
+  },
+  effects(game, startYear2, currentYear) {
+    return [
+      modify("popularity").byPercent(50).if((currentYear - startYear2) % 3 != 0),
+      modify("popularity").byPercent(-50).if((currentYear - startYear2) % 3 === 0),
+      modify("stateDebt").byPercent(-200).if(currentYear === startYear2),
+      modify("stateDebt").byPercent(50).if((currentYear - startYear2) % 3 != 0),
+      modify("stateDebt").byPercent(-50).if((currentYear - startYear2) % 3 === 0),
+      modify("stateDebt").byPercent(-200).if(currentYear === startYear2 + 10)
+    ];
+  },
+  priority(game) {
+    return 0;
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/laws/general/VollerCO2Preis.ts
+var VollerCO2Preis_default = defineLaw({
+  title: "Voller CO2 Preis",
+  description: "Eine Tonne CO2 kostet ab jetzt 3000 Euro. Das deckt die derzeit prognostizierten Klimafolgekosten.",
+  labels: ["CO2Preis"],
+  removeLawsWithLabels: ["CO2Preis"],
+  effort(game) {
+    return monthsEffort(10);
+  },
+  effects(game, startYear2, currentYear) {
+    return [...co2PricingEffects(game, 3e3, -5, linearPopChange({ value: 90, result: 0 }, { value: 50, result: -10 }))];
+  },
+  priority(game) {
+    if (!lawIsAccepted(game, "WirksamerCO2Preis"))
+      return 0;
+    return 50;
+  },
+  citations: [ucl2021EconomicCostSixTimesHigher],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    ## Staatsschulden
+
+    sinken um die eingenommene CO2-Steuer von 150€ pro Tonne CO2.
+
+    ## Popularität
+
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren an der Stromerzeugung.
+    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren am Straßenverkehr.
+
+    Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
+
+    - Anteil >= 90%: Popularität sinkt nicht.
+    - Anteil = 70%: Popularität sinkt um 5% pro Jahr.
+    - Anteil = 50%: Popularität sinkt um 10% pro Jahr.
+    - Anteil = 10%: Pooularität sinkt um 20% pro Jahr.
+      (dazwischen linear interpoliert.)
+
+    ## Fossile
+
+    - [x] Nutzungen, die fossile Energieträger verwenden, reduzieren sich jährlich um 5%.
+
+    - Es werden 5% von allen CO2 Emissionen bzw. emittierenden Größen abgezogen.
+    - Nicht mehr erzeugter Kohlestrom wird zu 70% aus Windkraft udn 30% Solar erzeugt.
+    - Erdöl wird ersetzt durch biologische Quellen.
+    - KFZ wird je zur Hälfte durch Fernverkehr und Nahverkehr ersetzt.
+
+    TODO #78: Dies ist ein sehr grobes Modell.
+
+    # Voraussetzungen
+
+    - "WirksamerCO2Preis" wurde beschlossen.
+
+    # Priorität
+
+    - 50%
+  `
+});
+
+// src/laws/general/WasserstofftechnologieFoerdern.ts
+var WasserstofftechnologieFoerdern_default = defineLaw({
+  title: "Wasserstofftechnologie f\xF6rdern",
+  description: "Forschung und Entwicklung von wasserstoffbasierter Antriebs- und Produktionstechnologie und zur effizienten Wasserstoffgewinnung wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  effort(game) {
+    return monthsEffort(1);
+  },
+  effects(game, startYear2, currentYear) {
+    const inGrantPeriod = currentYear < startYear2 + 5;
+    const effective = currentYear >= startYear2 + 5;
+    return [modify("stateDebt").byValue(2).if(inGrantPeriod), modify("carRenewablePercentage").byValue(1).if(effective)];
+  },
+  priority(game) {
+    const v = game.values;
+    const carNonRenewableUsage = v.carUsage * (1 - v.carRenewablePercentage / 100);
+    const relCarPercentage = carNonRenewableUsage / v.passengerTransportUsage * 100;
+    return linear(40, 90, relCarPercentage);
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Happy Path 9
+
+    # Folgen
+
+    Diese Folgen sind völlig aus der Luft gegriffen.
+    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
+
+    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Nach 5 Jahren zahlt es sich aus und der Anteil der erneuerbaren PKW steigt um 1% pro Jahr.
+    - [x] Voraussetzung für weitere Wasserstoffbasierte Gesetze.
+
+    # Voraussetzungen
+
+    - Priorität > 0
+
+    # Priorität
+
+    Je höher der Anteil nicht-erneuerbaren PKW am gesamt Pasagiertransport is, desto eher
+
+    - 0% bei einem Anteil von von 90%.
+    - 100% bei einer Netzqualität von 40%.
+    - linear interpoliert
+  `
+});
+
+// src/laws/general/WirksamerCO2Preis.ts
 var WirksamerCO2Preis_default = defineLaw({
   title: "Wirksamer CO2 Preis",
   description: "Eine Tonne CO2 kostet ab jetzt 150 Euro.",
@@ -34573,588 +34180,20 @@ var WirksamerCO2Preis_default = defineLaw({
   `
 });
 
-// src/laws/VollerCO2Preis.ts
-var VollerCO2Preis_default = defineLaw({
-  title: "Voller CO2 Preis",
-  description: "Eine Tonne CO2 kostet ab jetzt 3000 Euro. Das deckt die derzeit prognostizierten Klimafolgekosten.",
-  labels: ["CO2Preis"],
-  removeLawsWithLabels: ["CO2Preis"],
-  effort(game) {
-    return monthsEffort(10);
-  },
-  effects(game, startYear2, currentYear) {
-    return [...co2PricingEffects(game, 3e3, -5, linearPopChange({ value: 90, result: 0 }, { value: 50, result: -10 }))];
-  },
-  priority(game) {
-    if (!lawIsAccepted(game, "WirksamerCO2Preis"))
-      return 0;
-    return 50;
-  },
-  citations: [ucl2021EconomicCostSixTimesHigher],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
-
-    ## Staatsschulden
-
-    sinken um die eingenommene CO2-Steuer von 150€ pro Tonne CO2.
-
-    ## Popularität
-
-    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren an der Stromerzeugung.
-    - [x] Popularität sinkt jährlich abhängig vom Anteil der Erneuerbaren am Straßenverkehr.
-
-    Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
-
-    - Anteil >= 90%: Popularität sinkt nicht.
-    - Anteil = 70%: Popularität sinkt um 5% pro Jahr.
-    - Anteil = 50%: Popularität sinkt um 10% pro Jahr.
-    - Anteil = 10%: Pooularität sinkt um 20% pro Jahr.
-      (dazwischen linear interpoliert.)
-
-    ## Fossile
-
-    - [x] Nutzungen, die fossile Energieträger verwenden, reduzieren sich jährlich um 5%.
-
-    - Es werden 5% von allen CO2 Emissionen bzw. emittierenden Größen abgezogen.
-    - Nicht mehr erzeugter Kohlestrom wird zu 70% aus Windkraft udn 30% Solar erzeugt.
-    - Erdöl wird ersetzt durch biologische Quellen.
-    - KFZ wird je zur Hälfte durch Fernverkehr und Nahverkehr ersetzt.
-
-    TODO #78: Dies ist ein sehr grobes Modell.
-
-    # Voraussetzungen
-
-    - "WirksamerCO2Preis" wurde beschlossen.
-
-    # Priorität
-
-    - 50%
-  `
-});
-
-// src/laws/SolarstromFoerderungAbschaffen.ts
-var SolarstromFoerderungAbschaffen_default = defineLaw({
-  title: "Solarstrom F\xF6rderung einstellen",
-  description: "Mittlere bis gro\xDFe Solaranlagen sollten sich selbst tragen. Die F\xF6rderung wird abgeschafft.",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
-  treatAfterLabels: [],
-  effort(game) {
-    return monthsEffort(5);
-  },
-  effects(game, startYear2, currentYear) {
-    return [...powerTransfer(game, "electricitySolar", 2)];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
-      return linear(0, 100, renewablePercentage(game));
-    }
-    return 0;
-  },
-  details: markdown`
-
-  `
-});
-
-// src/laws/SolarstromFoerderungWieZuBeginn.ts
-var SolarstromFoerderungWieZuBeginn_default = defineLaw({
-  title: "Solarstrom F\xF6rderung wie zu Beginn",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen wie bisher",
-  labels: ["initial", "SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
-  treatAfterLabels: [],
-  effort(game) {
-    return monthsEffort(9);
-  },
-  effects(game, startYear2, currentYear) {
-    return [...powerTransfer(game, "electricitySolar", 5)];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
-      return linear(70, 100, renewablePercentage(game));
-    }
-    return 0;
-  },
-  details: markdown`
-    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
-    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
-  `
-});
-
-// src/laws/SolarstromFoerdernx2.ts
-var SolarstromFoerdernx2_default = defineLaw({
-  title: "Solarstrom F\xF6rderung x2",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verdoppeln",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
-  effort(game) {
-    return monthsEffort(4);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(10).if(startYear2 === currentYear),
-      modify("unemployment").byValue(-31e3).if(startYear2 === currentYear),
-      ...powerTransfer(game, "electricitySolar", 10)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
-      return linear(100, 30, renewablePercentage(game));
-    }
-    return 0;
-  },
-  details: markdown`
-    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
-    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
-  `
-});
-
-// src/laws/SolarstromFoerdernx4.ts
-var SolarstromFoerdernx4_default = defineLaw({
-  title: "Solarstrom F\xF6rderung x4",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen vervierfachen",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
-  effort(game) {
-    return monthsEffort(3);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(20).if(startYear2 === currentYear),
-      modify("unemployment").byValue(-89e3).if(startYear2 === currentYear),
-      ...powerTransfer(game, "electricitySolar", 20)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
-      return linear(100, 30, renewablePercentage(game));
-    }
-    return 0;
-  },
-  details: markdown`
-    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
-    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
-    Nachrüst Pflicht für besonders geeignete Gebäude, moderater Zuwachs der Freiflächen Photovoltaik mit Doppeltbewirtschaftung von Energieerzeugung und Landwirtschaft #AgroPV.
-  `,
-  internals: markdown`
-    # Happy path 10
-
-    ${cite(wuppertalStudie)}
-  `,
-  citations: [wuppertalStudie]
-});
-
-// src/laws/SolarstromFoerdernx8.ts
-var SolarstromFoerdernx8_default = defineLaw({
-  title: "Solarstrom F\xF6rderung x8",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verachtfachen",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
-  treatAfterLabels: [],
-  effort(game) {
-    return monthsEffort(2);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(-10).if(startYear2 === currentYear),
-      modify("unemployment").byValue(-209e3).if(startYear2 === currentYear),
-      ...powerTransfer(game, "electricitySolar", 40)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
-      return linear(100, 30, renewablePercentage(game));
-    }
-    return 0;
-  },
-  details: markdown`
-    Betreiber von etwas größeren PV Anlagen z.B. Lagerhaus bewerben sich um Subventionen.
-    Der Betreiber, der das Projekt mit der kleinstmöglichen Subventionierung umsetzen kann bekommt den Zuschlag.
-    Nachrüst Pflicht für alle Gebäude, auch bei moderater Ausbäute.
-    Umwandlung vieler Landwirtschaftlicher flächen in Freiflächen PV.
-  `
-});
-
-// src/laws/SolarAufAllenDaechernVerpflichtend.ts
-var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
-  title: "Solar auf neuen D\xE4chern verpflichtend",
-  description: "Alle Neubauten bekommen PV Anlagen auf die D\xE4cher.",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
-  treatAfterLabels: [],
-  effort(game) {
-    return monthsEffort(3);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byValue(-3).if(startYear2 === currentYear),
-      ...powerTransfer(game, "electricitySolar", 2)
-    ];
-  },
-  priority(game) {
-    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
-      return linear(100, 30, renewablePercentage(game));
-    }
-    return 0;
-  },
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 11
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    - Popularität sinkt um 3 Prozent im ersten Jahr, weil das als Zwang empfunden wird.
-    - Zusätzlicher Ausbau um 2TWh pro Jahr.
-  `
-});
-
-// src/laws/ForschungUndEntwicklungStromspeicherung.ts
-var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
-  title: "Forschung und Entwicklung zur Stromspeicherung f\xF6rdern",
-  description: "Ein F\xF6rderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
-  effort(game) {
-    return monthsEffort(1);
-  },
-  effects(game, startYear2, currentYear) {
-    const inGrantPeriod = currentYear < startYear2 + 5;
-    const effective = currentYear >= startYear2 + 3;
-    return [
-      modify("stateDebt").byValue(2).if(inGrantPeriod),
-      modify("electricityGridQuality").byValue(0.2).if(effective)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    return linear(80, 45, v.electricityGridQuality);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 4
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
-
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
-    - [x] Nach 2 Jahren zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 0.2%.
-
-    # Voraussetzungen
-
-    - Priorität > 0
-
-    # Priorität
-
-    Identisch zu "StromspeicherungErleichtern".
-
-    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
-    - 100% bei einer Netzqualität von 45%.
-    - linear interpoliert
-  `
-});
-
-// src/laws/ForschungEmissionsfreieStahlproduktion.ts
-var ForschungEmissionsfreieStahlproduktion_default = defineLaw({
-  title: "Forschung zur emissionsfreien Stahlproduktion f\xF6rdern",
-  description: "Forschung und Entwicklung von Technologien zur Produktion von Stahl mit stark reduzierten CO2-Emissionen wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
-  effort(game) {
-    return monthsEffort(2);
-  },
-  effects(game, startYear2, currentYear) {
-    const inGrantPeriod = currentYear < startYear2 + 5;
-    const effective = currentYear >= startYear2 + 3;
-    const hydrogenReduction = lawIsAccepted(game, "WasserstofftechnologieFoerdern", 3) ? renewablePercentage(game) - 70 : 0;
-    const economicPressure = lawIsAccepted(game, "WirksamerCO2Preis");
-    return [
-      modify("stateDebt").byValue(2).if(inGrantPeriod),
-      modify("co2emissionsIndustry").byValue(-2).if(effective),
-      modify("co2emissionsIndustry").byValue(-2).if(economicPressure),
-      modify("co2emissionsIndustry").byValue(-hydrogenReduction).if(hydrogenReduction > 0)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    const industryPercentage = v.co2emissionsIndustry / v.co2emissions * 100;
-    return linear(0, 80, industryPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 12
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
-
-    Derzeit identisch zu \`ForschungEmissionsfreieZementproduktion\`, weil Emissionen Beider in
-    \`co2emissionsIndustry\` zusammengefasst sind.
-
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
-    - [x] Nach 3 Jahren zahlt es sich aus und die Industrieemissionen werden um 2 MioTons pro Jahr reduziert.
-    - [x] Ein wirksamer CO2-Preis erzeugt ökonomischen Druck, der eine Reduktion um weitere 2 MioTons bewirkt.
-    - [x] Falls "WasserstofftechnologieFoerdern" vor 3 oder mehr Jahren beschlossen wurde und
-          mehr als 70% der Stromproduktion erneuerbar sind, kann genügend Wasserstoff erzeugt werden und
-          pro weiteres Prozent werden die Industrieemmissionen um 1 MioTons pro Jahr reduziert.
-
-    # Voraussetzungen
-
-    - Priorität > 0
-
-    # Priorität
-
-    Je höher der Anteil der Industrieemmissionen ist, desto höher die Priorität: (24% zu Beginn.)
-
-    - 0% bei einem Anteil von von 0%.
-    - 100% bei einem Anteil von 80%.
-    - linear interpoliert
-  `
-});
-
-// src/laws/ForschungEmissionsfreieZementproduktion.ts
-var ForschungEmissionsfreieZementproduktion_default = defineLaw({
-  title: "Forschung zur emissionsfreien Zementproduktion f\xF6rdern",
-  description: "Forschung und Entwicklung von Technologien zur Produktion von Zement mit stark reduzierten CO2-Emissionen wird stark gef\xF6rdert. 10 Mrd \u20AC \xFCber 5 Jahre.",
-  effort(game) {
-    return monthsEffort(3);
-  },
-  effects(game, startYear2, currentYear) {
-    const inGrantPeriod = currentYear < startYear2 + 5;
-    const effective = currentYear >= startYear2 + 3;
-    const hydrogenReduction = lawIsAccepted(game, "WasserstofftechnologieFoerdern", 3) ? renewablePercentage(game) - 70 : 0;
-    const economicPressure = lawIsAccepted(game, "WirksamerCO2Preis");
-    return [
-      modify("stateDebt").byValue(2).if(inGrantPeriod),
-      modify("co2emissionsIndustry").byValue(-2).if(effective),
-      modify("co2emissionsIndustry").byValue(-2).if(economicPressure),
-      modify("co2emissionsIndustry").byValue(-hydrogenReduction).if(hydrogenReduction > 0)
-    ];
-  },
-  priority(game) {
-    const v = game.values;
-    const industryPercentage = v.co2emissionsIndustry / v.co2emissions * 100;
-    return linear(0, 80, industryPercentage);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 7
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
-
-    Derzeit identisch zu \`ForschungEmissionsfreieStahlproduktion\`, weil Emissionen Beider in
-    \`co2emissionsIndustry\` zusammengefasst sind.
-
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
-    - [x] Nach 3 Jahren zahlt es sich aus und die Industrieemissionen werden um 2 MioTons pro Jahr reduziert.
-    - [x] Ein wirksamer CO2-Preis erzeugt ökonomischen Druck, der eine Reduktion um weitere 2 MioTons bewirkt.
-    - [x] Falls "WasserstofftechnologieFoerdern" vor 3 oder mehr Jahren beschlossen wurde und
-          mehr als 70% der Stromproduktion erneuerbar sind, kann genügend Wasserstoff erzeugt werden und
-          pro weiteres Prozent werden die Industrieemmissionen um 1 MioTons pro Jahr reduziert.
-
-    # Voraussetzungen
-
-    - Priorität > 0
-
-    # Priorität
-
-    Je höher der Anteil der Industrieemmissionen ist, desto höher die Priorität: (24% zu Beginn.)
-
-    - 0% bei einem Anteil von von 0%.
-    - 100% bei einem Anteil von 80%.
-    - linear interpoliert
-  `
-});
-
-// src/laws/ForschungDezentraleStromerzeugung.ts
-var ForschungDezentraleStromerzeugung_default = defineLaw({
-  title: "Erforschung und Umsetzung dezentraler Stromerzeugung f\xF6rdern",
-  description: "Ein F\xF6rderprogramm zur Erfoschung und Umsetzung der notwendigen Anpassungen von Netz und Infrastruktur f\xFCr die denzentrale Stromerzeugung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
-  effort(game) {
-    return monthsEffort(1);
-  },
-  effects(game, startYear2, currentYear) {
-    const inGrantPeriod = currentYear < startYear2 + 5;
-    const effective = currentYear >= startYear2 + 1;
-    return [modify("stateDebt").byValue(2).if(inGrantPeriod), modify("electricityGridQuality").byValue(1).if(effective)];
-  },
-  priority(game) {
-    const v = game.values;
-    return linear(80, 45, v.electricityGridQuality);
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Happy Path 4.5
-
-    # Folgen
-
-    Diese Folgen sind völlig aus der Luft gegriffen.
-    TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen.
-
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
-    - [x] Nach 1 Jahr zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 1%.
-
-    # Voraussetzungen
-
-    - Priorität > 0
-
-    # Priorität
-
-    Identisch zu "StromspeicherungErleichtern".
-
-    - 0% bei einer Netzqualität von 80%. (Zu Beginn: 50%)
-    - 100% bei einer Netzqualität von 45%.
-    - linear interpoliert
-  `
-});
-
-// src/laws/Test.ts
-var Test_default = defineLaw({
-  title: "Test",
-  description: "Unsinniges Gesetz zum Testen.",
-  effort(game) {
-    return monthsEffort(6);
-  },
-  effects(game, startYear2, currentYear) {
-    return [
-      modify("popularity").byPercent(50).if((currentYear - startYear2) % 3 != 0),
-      modify("popularity").byPercent(-50).if((currentYear - startYear2) % 3 === 0),
-      modify("stateDebt").byPercent(-200).if(currentYear === startYear2),
-      modify("stateDebt").byPercent(50).if((currentYear - startYear2) % 3 != 0),
-      modify("stateDebt").byPercent(-50).if((currentYear - startYear2) % 3 === 0),
-      modify("stateDebt").byPercent(-200).if(currentYear === startYear2 + 10)
-    ];
-  },
-  priority(game) {
-    return 0;
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-
-  `
-});
-
-// src/laws/AutomatischeSektoren.ts
-var AutomatischeSektoren_default = defineLaw({
-  title: "Automatische Anpassungen einiger Sektoren",
-  description: "Mobilit\xE4t, Industrie, Geb\xE4ude und Landwirtschaft nutzen automatisch regenerative Energiequellen, sobald sie zur Verf\xFCgung stehen.",
-  labels: ["initial"],
-  effects(game, startYear2, currentYear) {
-    if (renewablePercentage(game) < 70)
-      return [];
-    paramDefinitions.co2emissionsOthers;
-    const industryCo2Red = modify("co2emissionsIndustry").byPercent(-20);
-    const industryCo2RedVal = industryCo2Red.getChange(game.values);
-    const industryElectrDemandIncrease = industryCo2RedVal / -0.835;
-    return [
-      modify("carRenewablePercentage").byValue(10),
-      modify("electricityDemand").byValue(22),
-      industryCo2Red,
-      modify("electricityDemand").byValue(industryElectrDemandIncrease),
-      transfer("buildingsSourceBio", "buildingsSourceOil").byValue(10),
-      transfer("electricityDemand", "buildingsSourceOil").byValue(10),
-      transfer("buildingsSourceBio", "buildingsSourceTele").byValue(5),
-      modify("co2emissionsAgriculture").byValue(-10),
-      modify("co2emissionsOthers").byValue(-1)
-    ];
-  },
-  priority(game) {
-    return 0;
-  },
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    Dieses Gesetz läuft dauerhaft mit und soll kompensieren, dass es für diese Sektoren noch nicht genügend Gesetze gibt.
-  `
-});
+// src/laws/general/index.ts
+var generalLaws = {
+  AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
+  CO2PreisErhoehen: CO2PreisErhoehen_default,
+  Test: Test_default,
+  VollerCO2Preis: VollerCO2Preis_default,
+  WasserstofftechnologieFoerdern: WasserstofftechnologieFoerdern_default,
+  WirksamerCO2Preis: WirksamerCO2Preis_default
+};
 
 // src/laws/index.ts
 var allLawsObj = {
-  AllesBleibtBeimAlten: AllesBleibtBeimAlten_default,
-  InitialAtomausstieg: InitialAtomausstieg_default,
-  KohleverstromungEinstellen: KohleverstromungEinstellen_default,
-  EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
-  KernenergienutzungVerlaengern: KernenergienutzungVerlaengern_default,
-  NetzausbauErleichtern: NetzausbauErleichtern_default,
-  NetzausbauFoerdern: NetzausbauFoerdern_default,
-  ForschungUndEntwicklungStromspeicherung: ForschungUndEntwicklungStromspeicherung_default,
-  StromspeicherungErleichtern: StromspeicherungErleichtern_default,
-  StromspeicherungFoerdern: StromspeicherungFoerdern_default,
-  ForschungDezentraleStromerzeugung: ForschungDezentraleStromerzeugung_default,
-  WindkraftVereinfachen: WindkraftVereinfachen_default,
-  AbstandsregelnFuerWindkraftVerschaerfen: AbstandsregelnFuerWindkraftVerschaerfen_default,
-  AbstandsregelnFuerWindkraftWieBisher: AbstandsregelnFuerWindkraftWieBisher_default,
-  AbstandsregelnFuerWindkraftLockern: AbstandsregelnFuerWindkraftLockern_default,
-  AbstandsregelnFuerWindkraftAbschaffen: AbstandsregelnFuerWindkraftAbschaffen_default,
-  AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
-  AusschreibungsverfahrenfuerWindkraftVerdoppeln: AusschreibungsverfahrenfuerWindkraftVerdoppeln_default,
-  AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
-  AusschreibungsverfahrenfuerWindkraftVerachtfachen: AusschreibungsverfahrenfuerWindkraftVerachtfachen_default,
-  SolarstromFoerderungAbschaffen: SolarstromFoerderungAbschaffen_default,
-  SolarstromFoerderungWieZuBeginn: SolarstromFoerderungWieZuBeginn_default,
-  SolarstromFoerdernx2: SolarstromFoerdernx2_default,
-  SolarstromFoerdernx4: SolarstromFoerdernx4_default,
-  SolarstromFoerdernx8: SolarstromFoerdernx8_default,
-  SolarAufAllenDaechernVerpflichtend: SolarAufAllenDaechernVerpflichtend_default,
-  DaemmungAltbau1Percent: DaemmungAltbau1Percent_default,
-  DaemmungAltbau2Percent: DaemmungAltbau2Percent_default,
-  DaemmungAltbau4Percent: DaemmungAltbau4Percent_default,
-  DaemmungAltbauAbschaffen: DaemmungAltbauAbschaffen_default,
-  NahverkehrKostenlos: NahverkehrKostenlos_default,
-  AutosInInnenstaedtenVerbieten: AutosInInnenstaedtenVerbieten_default,
-  WasserstofftechnologieFoerdern: WasserstofftechnologieFoerdern_default,
-  WasserstoffmobilitaetFoerdern: WasserstoffmobilitaetFoerdern_default,
-  NahverkehrAusbauen: NahverkehrAusbauen_default,
-  NahverkehrModernisieren: NahverkehrModernisieren_default,
-  FernverkehrVerbindungenAusbauen: FernverkehrVerbindungenAusbauen_default,
-  FernverkehrModernisieren: FernverkehrModernisieren_default,
-  AusbauVonStrassen: AusbauVonStrassen_default,
-  AbschaffungDerMineraloelsteuer: AbschaffungDerMineraloelsteuer_default,
-  DieselPrivilegAbgeschaffen: DieselPrivilegAbgeschaffen_default,
-  DienstwagenPrivilegAbgeschaffen: DienstwagenPrivilegAbgeschaffen_default,
-  Tempolimit130AufAutobahnen: Tempolimit130AufAutobahnen_default,
-  Tempolimit120AufAutobahnen: Tempolimit120AufAutobahnen_default,
-  Tempolimit100AufAutobahnen: Tempolimit100AufAutobahnen_default,
-  TempolimitAufAutobahnenAussitzen: TempolimitAufAutobahnenAussitzen_default,
-  ElektromobilitaetFoerdern: ElektromobilitaetFoerdern_default,
-  LadeinfrastrukturAusbauen: LadeinfrastrukturAusbauen_default,
-  FoerderungFuerTierhaltungAbschaffen: FoerderungFuerTierhaltungAbschaffen_default,
-  CO2PreisErhoehen: CO2PreisErhoehen_default,
-  WirksamerCO2Preis: WirksamerCO2Preis_default,
-  VollerCO2Preis: VollerCO2Preis_default,
-  ForschungEmissionsfreieStahlproduktion: ForschungEmissionsfreieStahlproduktion_default,
-  ForschungEmissionsfreieZementproduktion: ForschungEmissionsfreieZementproduktion_default,
-  Test: Test_default,
-  AutomatischeSektoren: AutomatischeSektoren_default
+  ...generalLaws,
+  ...energyLaws
 };
 var lawIds = Object.keys(allLawsObj);
 function lawList(modules) {
@@ -35225,27 +34264,25 @@ var AbstandsregelnWindkraft_default = defineEvent({
   }
 });
 
-// src/events/Altbausanierung.ts
-var Altbausanierung_default = defineEvent({
-  title: "Gesetzesinitiative zur Sanierung von Altbauten",
-  description: "Zur Einhaltung der Pariser Klimaschutzvereinbarung halten Experten es f\xFCr unausweichlich, dass in die Sanierung von Altbauten investiert werden muss. Die konkrete Ausgestaltung wird kontrovers diskutiert.",
-  laws: [
-    "DaemmungAltbauAbschaffen",
-    "AllesBleibtBeimAlten",
-    "DaemmungAltbau1Percent",
-    "DaemmungAltbau2Percent",
-    "DaemmungAltbau4Percent"
-  ],
+// src/events/AtomKatastrophe.ts
+var AtomKatastrophe_default = defineEvent({
+  title: "Atom-Katastrophe",
+  description: `Atomkraftwerk Tihange fliegt in die Luft`,
   apply() {
-    return [];
+    return [dispatch("gameOver")];
   },
-  probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 2, months: 2 })) {
-      return 0;
-    }
-    const buildingsPercentage = game.values.co2emissionsBuildings / game.values.co2emissions * 100;
-    return Math.min(1, linear(15, 30, buildingsPercentage) / 100);
-  }
+  probability(game) {
+    const law = game.acceptedLaws.find((l) => l.lawId === "KernenergienutzungVerlaengern");
+    return law ? 0.5 : 0;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
 });
 
 // src/events/Bestechung.ts
@@ -35274,6 +34311,51 @@ var Bestechung_default = defineEvent({
     const law = getFirstMatchingLaw(idsToLaws(game.proposedLaws));
     return law ? 0.5 : 0;
   }
+});
+
+// src/events/BSE.ts
+var BSE_default = defineEvent({
+  title: "Staatsoberhaupt verstorben",
+  description: `Du stirbst an der neuen BSE Variante. Tja, h\xE4ttest du dich mal besser um das Tierwohl gek\xFCmmert...`,
+  apply() {
+    return [dispatch("gameOver")];
+  },
+  probability(game, event) {
+    if (idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))) {
+      return 0;
+    }
+    return Math.min(1, linear(5, 10, durationWithoutEvents(game, [event.id]).lux.as("years")) / 100);
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    # Voraussetzungen
+
+    Kann passieren, wenn es 5 Jahre keine Investitionen in bessere Tierhaltung gab.
+  `
+});
+
+// src/events/Duerrewelle.ts
+var Duerrewelle_default = defineEvent({
+  title: "D\xFCrreperiode",
+  description: `Die anhaltende Trockenheit und die damit verbundene Wasserknappheit hatte Rationierungen zur Folge. Die Ernteausf\xE4lle sind enorm.`,
+  apply() {
+    return [modify("gdp").byValue(-100), modify("popularity").byValue(-10)];
+  },
+  probability(game, event) {
+    return Math.min(1, linear(400, 0, game.values.co2budget) / 100);
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
 });
 
 // src/events/EnergieStrategie.ts
@@ -35316,6 +34398,26 @@ var Hitzeh_lle_default = defineEvent({
   }
 });
 
+// src/events/Klimafluechtlinge.ts
+var Klimafluechtlinge_default = defineEvent({
+  title: "Klimafl\xFCchtlinge",
+  description: `Durch weltweiten Temperaturanstieg kommt es international zu mehr Klimafl\xFCchtlingen - auch in Deutschland. Das Kostet die Staatskasse.`,
+  apply() {
+    return [modify("stateDebt").byValue(10)];
+  },
+  probability(game, event) {
+    return game.values.co2budget < 500 ? 0.2 : 0;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
 // src/events/NewYear.ts
 var NewYear_default = defineEvent({
   title: "Happy New Year!",
@@ -35334,6 +34436,78 @@ var NewYear_default = defineEvent({
   }
 });
 
+// src/events/Plagiatsaffaere.ts
+var Plagiatsaffaere_default = defineEvent({
+  title: "Plagiatsaff\xE4re",
+  description: `W\xE4hrend des Wahlkampfs wirft dir die Opposition Plagiatsverletzungen vor. Das kostet W\xE4hlerstimmen.`,
+  apply() {
+    return [modify("popularity").byValue(-10)];
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 3, months: 10 })) {
+      return 0;
+    }
+    return 0.5;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/PR-Innenminister.ts
+var PR_Innenminister_default = defineEvent({
+  title: "PR-Skandal",
+  description: `Auf dem Computer deines Innenministers wurden durch Hackerangriff rechtsradikale Inhalte gefunden.`,
+  apply() {
+    return [modify("popularity").byValue(-2)];
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 2, months: 11 })) {
+      return 0;
+    }
+    return 0.3;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
+
+// src/events/PR-Kohleindustrie.ts
+var PR_Kohleindustrie_default = defineEvent({
+  title: "PR-Skandal",
+  description: `Du wurdest mit dem Vorstand von RWE beim Currywurst essen gesehen und fotografiert. Das Bild geht jetzt viral und f\xFChrt zu einer neuen Diskussion \xFCber Lobbyismus.`,
+  apply() {
+    return [modify("popularity").byValue(-2)];
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { months: 11 })) {
+      return 0;
+    }
+    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "VollerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
+      return 0;
+    }
+    return 0.3;
+  },
+  laws: [],
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Klimaaktivisten steigen dir aufs Dach! Aber bei den Lobbyisten steigt deine Beliebtheit. Das gleicht deinen Popularitätsverlust etwas aus.
+  `
+});
+
 // src/events/SocialMedia.ts
 var SocialMedia_default = defineEvent({
   title: "Social Media Alarm!",
@@ -35346,19 +34520,73 @@ var SocialMedia_default = defineEvent({
   }
 });
 
-// src/events/TempolimitAufAutobahnen.ts
-var TempolimitAufAutobahnen_default = defineEvent({
-  title: "Generelles Tempolimit beschlossen",
-  description: "Die EU hat ein einheitliches, generelles Tempolimit von 120km/h auf Autobahnen beschlossen. Bis auf Deutschland m\xFCssen die Mitgliedsstaaten ihr bereits bestehendes generelles Tempolimit nur noch anpassen.",
+// src/events/SolarstromFoerderung.ts
+var SolarstromFoerderung_default = defineEvent({
+  title: "B\xFCrgerinitiative fordert st\xE4rkere Solarf\xF6rderung",
+  description: "",
   laws: [
-    "Tempolimit130AufAutobahnen",
-    "Tempolimit120AufAutobahnen",
-    "Tempolimit100AufAutobahnen",
-    "TempolimitAufAutobahnenAussitzen"
+    "SolarstromFoerderungAbschaffen",
+    "SolarstromFoerderungWieZuBeginn",
+    "SolarstromFoerdernx2",
+    "SolarstromFoerdernx4",
+    "SolarstromFoerdernx8"
   ],
   apply() {
     return [];
-  }
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+      return 0;
+    }
+    const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
+    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn");
+    const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
+    return abgeschafft || beibehalten || x2 ? 0.5 : 0;
+  },
+  citations: [fraunhoferISE2020InstalledPower],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Installierte Leistung 2020 54GW entspricht Jährlich ~51,42TWh.
+    ${cite(fraunhoferISE2020InstalledPower)}
+    Ausgeschrieben sind 5-6GW PV Leistung
+  `
+});
+
+// src/events/SolarstromFoerderung2.ts
+var SolarstromFoerderung2_default = defineEvent({
+  title: "Bund der Steuerzahler fordert Abschaffung Solarf\xF6rderung",
+  description: "Der Solaranteil ist bereits sehr hoch, die Kosten f\xFCr die F\xF6rderung sind schwer zu vermitteln.",
+  laws: [
+    "SolarstromFoerderungAbschaffen",
+    "SolarstromFoerderungWieZuBeginn",
+    "SolarstromFoerdernx2",
+    "SolarstromFoerdernx4",
+    "SolarstromFoerdernx8"
+  ],
+  apply() {
+    return [];
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 1, months: 2 })) {
+      return 0;
+    }
+    const solarRatio = game.values.electricitySolar / game.values.electricityDemand;
+    const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
+    const x4 = lawIsAccepted(game, "SolarstromFoerdernx4");
+    const x8 = lawIsAccepted(game, "SolarstromFoerdernx8");
+    return solarRatio > 50 && (x2 || x4 || x8) ? 0.5 : 0;
+  },
+  citations: [fraunhoferISE2020InstalledPower],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    Installierte Leistung 2020 54GW entspricht Jährlich ~51,42TWh.
+    ${cite(fraunhoferISE2020InstalledPower)}
+    Ausgeschrieben sind 5-6GW PV Leistung
+  `
 });
 
 // src/events/TimesUp.ts
@@ -35424,50 +34652,28 @@ var WindkraftAusschreibung_default = defineEvent({
   `
 });
 
-// src/events/SolarstromFoerderung.ts
-var SolarstromFoerderung_default = defineEvent({
-  title: "B\xFCrgerinitiative fordert st\xE4rkere Solarf\xF6rderung",
-  description: "",
-  laws: [
-    "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungWieZuBeginn",
-    "SolarstromFoerdernx2",
-    "SolarstromFoerdernx4",
-    "SolarstromFoerdernx8"
-  ],
+// src/events/WindkraftForschung.ts
+var WindkraftForschung_default = defineEvent({
+  title: "Durchbruch in der Windenergie-Forschung",
+  description: `Wissenschaftler haben eine neue Art der Energiegewinnung durch Wind entwickelt, mit der bestehende Windturbinen deutlich mehr Leistung bringen.`,
   apply() {
-    return [];
+    return [modify("popularity").byValue(4), modify("electricityWindEfficiency").byPercent(30)];
   },
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+    if (lessTimeHasPassed(game, event, { years: 3, months: 7 })) {
       return 0;
     }
-    const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
-    const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn");
-    const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
-    return abgeschafft || beibehalten || x2 ? 0.5 : 0;
-  },
-  citations: [fraunhoferISE2020InstalledPower],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    Installierte Leistung 2020 54GW entspricht Jährlich ~51,42TWh.
-    ${cite(fraunhoferISE2020InstalledPower)}
-    Ausgeschrieben sind 5-6GW PV Leistung
-  `
-});
-
-// src/events/AtomKatastrophe.ts
-var AtomKatastrophe_default = defineEvent({
-  title: "Atom-Katastrophe",
-  description: `Atomkraftwerk Tihange fliegt in die Luft`,
-  apply() {
-    return [dispatch("gameOver")];
-  },
-  probability(game) {
-    const law = game.acceptedLaws.find((l) => l.lawId === "KernenergienutzungVerlaengern");
-    return law ? 0.5 : 0;
+    const factor = lawIsAccepted(game, "WindkraftVereinfachen") ? 1.5 : 1;
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerachtfachen")) {
+      return 0.5 * factor;
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return 0.4 * factor;
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return 0.3 * factor;
+    }
+    return 0;
   },
   laws: [],
   citations: [],
@@ -35477,185 +34683,30 @@ var AtomKatastrophe_default = defineEvent({
   internals: markdown`
 
   `
-});
-
-// src/events/BSE.ts
-var BSE_default = defineEvent({
-  title: "Staatsoberhaupt verstorben",
-  description: `Du stirbst an der neuen BSE Variante. Tja, h\xE4ttest du dich mal besser um das Tierwohl gek\xFCmmert...`,
-  apply() {
-    return [dispatch("gameOver")];
-  },
-  probability(game, event) {
-    if (idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))) {
-      return 0;
-    }
-    return Math.min(1, linear(5, 10, durationWithoutEvents(game, [event.id]).lux.as("years")) / 100);
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Voraussetzungen
-
-    Kann passieren, wenn es 5 Jahre keine Investitionen in bessere Tierhaltung gab.
-  `
-});
-
-// src/events/Duerrewelle.ts
-var Duerrewelle_default = defineEvent({
-  title: "D\xFCrreperiode",
-  description: `Die anhaltende Trockenheit und die damit verbundene Wasserknappheit hatte Rationierungen zur Folge. Die Ernteausf\xE4lle sind enorm.`,
-  apply() {
-    return [modify("gdp").byValue(-100), modify("popularity").byValue(-10)];
-  },
-  probability(game, event) {
-    return Math.min(1, linear(400, 0, game.values.co2budget) / 100);
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-
-  `
-});
-
-// src/events/PR-Kohleindustrie.ts
-var PR_Kohleindustrie_default = defineEvent({
-  title: "PR-Skandal",
-  description: `Du wurdest mit dem Vorstand von RWE beim Currywurst essen gesehen und fotografiert. Das Bild geht jetzt viral und f\xFChrt zu einer neuen Diskussion \xFCber Lobbyismus.`,
-  apply() {
-    return [modify("popularity").byValue(-2)];
-  },
-  probability(game, event) {
-    if (lessTimeHasPassed(game, event, { months: 11 })) {
-      return 0;
-    }
-    if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "VollerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
-      return 0;
-    }
-    return 0.3;
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    Klimaaktivisten steigen dir aufs Dach! Aber bei den Lobbyisten steigt deine Beliebtheit. Das gleicht deinen Popularitätsverlust etwas aus.
-  `
-});
-
-// src/events/PR-Innenminister.ts
-var PR_Innenminister_default = defineEvent({
-  title: "PR-Skandal",
-  description: `Auf dem Computer deines Innenministers wurden durch Hackerangriff rechtsradikale Inhalte gefunden.`,
-  apply() {
-    return [modify("popularity").byValue(-2)];
-  },
-  probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 2, months: 11 })) {
-      return 0;
-    }
-    return 0.3;
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-
-  `
-});
-
-// src/events/Klimafluechtlinge.ts
-var Klimafluechtlinge_default = defineEvent({
-  title: "Klimafl\xFCchtlinge",
-  description: `Durch weltweiten Temperaturanstieg kommt es international zu mehr Klimafl\xFCchtlingen - auch in Deutschland. Das Kostet die Staatskasse.`,
-  apply() {
-    return [modify("stateDebt").byValue(10)];
-  },
-  probability(game, event) {
-    return game.values.co2budget < 500 ? 0.2 : 0;
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-
-  `
-});
-
-// src/events/Plagiatsaffaere.ts
-var Plagiatsaffaere_default = defineEvent({
-  title: "Plagiatsaff\xE4re",
-  description: `W\xE4hrend des Wahlkampfs wirft dir die Opposition Plagiatsverletzungen vor. Das kostet W\xE4hlerstimmen.`,
-  apply() {
-    return [modify("popularity").byValue(-10)];
-  },
-  probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 3, months: 10 })) {
-      return 0;
-    }
-    return 0.5;
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-
-  `
-});
-
-// src/events/CO2PreisDebatte.ts
-var CO2PreisDebatte_default = defineEvent({
-  title: "Debatte \xFCber CO2-Preise",
-  description: "Eine marktliberale Kampagne ist sehr erfolgreich darin, Dich als Verbots-Kanzler hinzustellen. Aus allen Richtungen prasseln Forderungen nach einem ad\xE4quaten CO2-Preis auf Dich ein. Nur leider gehen die Vorstellungen \xFCber den genauen Preis sehr weit auseinander.",
-  laws: ["CO2PreisErhoehen", "WirksamerCO2Preis", "VollerCO2Preis"],
-  apply() {
-    return [];
-  },
-  probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 1, months: 4 })) {
-      return 0;
-    }
-    const count = (lawIsAccepted(game, "AutosInInnenstaedtenVerbieten") ? 1 : 0) + (lawIsAccepted(game, "KohleverstromungEinstellen") ? 1 : 0) + (lawIsAccepted(game, "SolarAufAllenDaechernVerpflichtend") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit130AufAutobahnen") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit120AufAutobahnen") ? 1 : 0) + (lawIsAccepted(game, "Tempolimit100AufAutobahnen") ? 1 : 0);
-    return linear(1, 3, count) / 100;
-  }
 });
 
 // src/events/index.ts
 var allEventsObj = {
   AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
-  Altbausanierung: Altbausanierung_default,
+  AtomKatastrophe: AtomKatastrophe_default,
   Bestechung: Bestechung_default,
+  BSE: BSE_default,
+  Duerrewelle: Duerrewelle_default,
   EnergieStrategie: EnergieStrategie_default,
   FinanzKollaps: Finanzkollaps_default,
   Hitzehoelle: Hitzeh_lle_default,
+  Klimafluechtlinge: Klimafluechtlinge_default,
   NewYear: NewYear_default,
+  Plagiatsaffaere: Plagiatsaffaere_default,
+  PRInnenminister: PR_Innenminister_default,
+  PRKohleindustrie: PR_Kohleindustrie_default,
   SocialMedia: SocialMedia_default,
-  TempolimitAufAutobahnen: TempolimitAufAutobahnen_default,
+  SolarstromFoerderung: SolarstromFoerderung_default,
+  SolarstromFoerderung2: SolarstromFoerderung2_default,
   TimesUp: TimesUp_default,
   WahlVerloren: WahlVerloren_default,
   WindkraftAusschreibung: WindkraftAusschreibung_default,
-  SolarstromFoerderung: SolarstromFoerderung_default,
-  AtomKatastrophe: AtomKatastrophe_default,
-  BSE: BSE_default,
-  Duerrewelle: Duerrewelle_default,
-  PRKohleindustrie: PR_Kohleindustrie_default,
-  PRInnenminister: PR_Innenminister_default,
-  Klimafluechtlinge: Klimafluechtlinge_default,
-  Plagiatsaffaere: Plagiatsaffaere_default,
-  CO2PreisDebatte: CO2PreisDebatte_default
+  WindkraftForschung: WindkraftForschung_default
 };
 function defaultProbability(game, event) {
   if (lessTimeHasPassed(game, event, { years: 3 })) {
