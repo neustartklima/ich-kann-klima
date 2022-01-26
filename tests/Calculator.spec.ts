@@ -1,13 +1,11 @@
-import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
-import { Change, createBaseValues, defaultValues, modify } from "../src/params"
-import { AcceptedLaw, LawId } from "../src/laws"
-import { BaseParams } from "../src/params"
-import { Game, initGame } from "../src/game"
-import { defaultEffort, EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
-import { MioPsgrKm } from "../src/types"
 import "should"
+import { calculateNextYear, co2Rating, financeRating } from "../src/Calculator"
 import { startDate, startYear } from "../src/constants"
-import { date } from "../src/lib/Temporal"
+import { Game, initGame } from "../src/game"
+import { AcceptedLaw, LawId } from "../src/laws"
+import { defaultEffort, EffectsFunc, LawLabel } from "../src/laws/LawsTypes"
+import { BaseParams, Change, createBaseValues, defaultValues, modify } from "../src/params"
+import { MioPsgrKm } from "../src/types"
 
 function agriEffects(): Change[] {
   return [modify("co2emissionsAgriculture").byValue(-29)]
@@ -52,7 +50,7 @@ describe("Calculator.calculateNextYear", () => {
     })
   })
 
-  const acceptedLaws = [mockAcceptedLaw("NahverkehrAusbauen", agriEffects)]
+  const acceptedLaws = [mockAcceptedLaw("Test", agriEffects)]
 
   it("should return modified value if it is modified by a law directly", () => {
     const newValues = calculateNextYear(initGame(), acceptedLaws, 2022)
@@ -77,8 +75,8 @@ describe("Calculator.calculateNextYear", () => {
 
   it("should treat a law (A) with treatAfterLabels set after a law (B) with the corresponding label", () => {
     const sortedLaws: AcceptedLaw[] = [
-      mockAcceptedLaw("NahverkehrAusbauen", mockEffects(1), [], ["WindkraftAbstandsregel"]),
-      mockAcceptedLaw("AusbauVonStrassen", mockEffects(0), ["WindkraftAbstandsregel"], []),
+      mockAcceptedLaw("Test", mockEffects(1), [], ["WindkraftAbstandsregel"]),
+      mockAcceptedLaw("Test", mockEffects(0), ["WindkraftAbstandsregel"], []),
     ]
     const newValues = calculateNextYear({ values: startValues } as Game, sortedLaws, 2022)
     newValues.carUsage.should.equal(1)
@@ -87,11 +85,11 @@ describe("Calculator.calculateNextYear", () => {
   it(
     "should throw an error if treatAfterLabels is not satsifiable" /*, () => {
     const sortedLaws: AcceptedLaw[] = [
-      mockAcceptedLaw("NahverkehrAusbauen", mockEffects(1), ["Kernenergie"], ["WindkraftAbstandsregel"]),
-      mockAcceptedLaw("NahverkehrKostenlos", mockEffects(2), ["WindkraftAbstandsregel"], ["TempolimitAutobahn"]),
-      mockAcceptedLaw("CAusbauVonStrassen, mockEffects(3), ["TempolimitAutobahn"], ["Kernenergie"]),
+      mockAcceptedLaw("Test", mockEffects(1), ["Kernenergie"], ["WindkraftAbstandsregel"]),
+      mockAcceptedLaw("Test", mockEffects(2), ["WindkraftAbstandsregel"], ["TempolimitAutobahn"]),
+      mockAcceptedLaw("Test", mockEffects(3), ["TempolimitAutobahn"], ["Kernenergie"]),
     ]
-    should.throws(() => calculateNextYear(startValues, sortedLaws, 2022))
+    should.throws(() => calculateNextYear({ values: startValues } as Game, sortedLaws, 2022))
   }*/
   )
 })

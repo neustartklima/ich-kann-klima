@@ -15,12 +15,12 @@ function priority(): number {
 const defaultLaw = { description: "", effort: defaultEffort, effects: () => [], priority }
 
 const allLaws: Law[] = [
-  { ...defaultLaw, id: "AbschaffungDerMineraloelsteuer", title: "law 1" },
+  { ...defaultLaw, id: "Test", title: "law 1" },
   { ...defaultLaw, id: "AbstandsregelnFuerWindkraftAbschaffen", title: "law 2" },
   { ...defaultLaw, id: "AbstandsregelnFuerWindkraftLockern", title: "law 3" },
   { ...defaultLaw, id: "AbstandsregelnFuerWindkraftVerschaerfen", title: "law 4" },
   { ...defaultLaw, id: "AllesBleibtBeimAlten", title: "law 5" },
-  { ...defaultLaw, id: "AusbauVonStrassen", title: "law 6" },
+  { ...defaultLaw, id: "AusschreibungsverfahrenfuerWindkraftVerdoppeln", title: "law 6" },
   { ...defaultLaw, id: "AusschreibungsverfahrenfuerWindkraftVerachtfachen", title: "law 7" },
 ]
 

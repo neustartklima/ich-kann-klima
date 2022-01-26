@@ -16,5 +16,7 @@
       "module": "commonjs"
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "tests/**/*.spec.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "tests/**/*.spec.ts"],
+  // Unused laws and events are not checked. That way they can easily be disabled.
+  "exclude": ["src/laws/**/*.ts", "src/events/**/*.ts"]
 }
