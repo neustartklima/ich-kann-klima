@@ -4,8 +4,8 @@ import { defineLaw, monthsEffort } from "../LawsTypes"
 import { currentEventIsInList, lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "../lawTools"
 
 export default defineLaw({
-  title: "Ausschreibungsverfahren für Windkraft verdoppeln",
-  description: "Der jährlich ausgeschriebene Windstrom-Zubau wird auf 16,2TWh verdoppelt.",
+  title: "Ausschreibungsverfahren für Windkraft 16,2 TWh",
+  description: "Der jährlich ausgeschriebene Windstrom-Zubau wird auf 16,2 TWh verdoppelt.",
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],

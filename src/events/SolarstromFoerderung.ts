@@ -5,7 +5,8 @@ import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Bürgerinitiative fordert stärkere Solarförderung",
-  description: "",
+  description:
+    "Du musst entscheiden, wie groß die Förderung ausfällt. Oder willst du sie verkleinern oder sogar abschaffen?",
 
   apply() {
     return []

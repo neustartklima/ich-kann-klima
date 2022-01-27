@@ -4,8 +4,8 @@ import { defineLaw, monthsEffort } from "../LawsTypes"
 import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
 
 export default defineLaw({
-  title: "Solarstrom Förderung wie zu Beginn",
-  description: "Subventionierung für mittlere bis große Solaranlagen wie bisher",
+  title: "Solarstrom Förderung wie zu Beginn 5 TWh",
+  description: "Subventionierung für mittlere bis große Solaranlagen wie bisher. Es werden 5 TWh pro Jahr zugebaut.",
   labels: ["initial", "SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
