@@ -12,7 +12,10 @@ export default defineLaw({
   treatAfterLabels: ["WindkraftAbstandsregel"],
 
   effort(game) {
-    return monthsEffort(4)
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return monthsEffort(4)
+    }
+    return monthsEffort(6)
   },
 
   effects(game, startYear, currentYear): Change[] {
