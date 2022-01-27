@@ -11,7 +11,10 @@ export default defineLaw({
   treatAfterLabels: [],
 
   effort(game) {
-    return monthsEffort(5)
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
+      return monthsEffort(5)
+    }
+    return monthsEffort(13, "So eine Kehrtwende in der Politik ist schwer durchsetzbar. Das braucht {months}.")
   },
 
   effects(game, startYear, currentYear): Change[] {

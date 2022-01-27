@@ -13,7 +13,7 @@ export default defineEvent({
   },
 
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+    if (lessTimeHasPassed(game, event, { months: 8 })) {
       return 0
     }
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")

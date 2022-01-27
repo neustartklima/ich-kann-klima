@@ -12,7 +12,13 @@ export default defineLaw({
   treatAfterLabels: [],
 
   effort(game) {
-    return monthsEffort(2)
+    if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
+      return monthsEffort(2)
+    }
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return monthsEffort(5)
+    }
+    return monthsEffort(9)
   },
 
   effects(game, startYear, currentYear): Change[] {
