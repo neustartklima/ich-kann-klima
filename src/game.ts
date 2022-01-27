@@ -128,7 +128,7 @@ export function prepareNextStep(
     const eventRef: EventReference = { id: event.id, occuredIn: game.currentDate, acknowledged: false }
     game.events.unshift(eventRef)
   }
-  const newProposals = determineNewProposals(game, laws, event?.laws ? event.laws : [])
+  const newProposals = determineNewProposals(game, laws)
   game.proposedLaws = changeInPlace(game.proposedLaws, newProposals)
 
   return event
@@ -173,7 +173,7 @@ function selectEvent(events: ProbEvent[], random: number): Event | undefined {
   return undefined
 }
 
-function determineNewProposals(game: Game, laws: Law[], eventLawIds: LawId[]): LawId[] {
+function determineNewProposals(game: Game, laws: Law[]): LawId[] {
   const isAccepted = (law: Law) => game.acceptedLaws?.some((l) => l.lawId === law.id)
   const isRejected = (law: Law) => game.rejectedLaws?.includes(law.id)
   const isHidden = (law: Law) => law.labels?.includes("hidden") || false
@@ -181,18 +181,12 @@ function determineNewProposals(game: Game, laws: Law[], eventLawIds: LawId[]): L
   type LawPriority = { law: Law; priority: Percent }
   const makeLawPriority = (law: Law): LawPriority => ({ law: law, priority: law.priority(game) })
 
-  const priorizeIfEventLaw = (lp: LawPriority): LawPriority => ({
-    law: lp.law,
-    priority: lp.priority + (eventLawIds.includes(lp.law.id) ? 100 : 0),
-  })
-
   return laws
     .filter(not(isAccepted))
     .filter(not(isRejected))
     .filter(not(isHidden))
     .map(makeLawPriority)
     .filter((lp) => lp.priority > 0)
-    .map(priorizeIfEventLaw)
     .sort((a, b) => b.priority - a.priority)
     .map((lp): LawId => lp.law.id)
     .slice(0, maxProposedLaws)
