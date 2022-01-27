@@ -14,7 +14,6 @@ export default defineEvent({
     return game.values.co2budget < 500 ? 0.2 : 0
   },
 
-  laws: [],
   citations: [],
   details: markdown`
 

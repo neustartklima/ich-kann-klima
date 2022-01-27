@@ -2,7 +2,7 @@ import { markdown } from "../../lib/utils"
 import { Change, modify } from "../../params"
 import { TsdPeople } from "../../types"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "../lawTools"
 
 export default defineLaw({
   title: "Ausschreibungsverfahren für Windkraft vervierfachen",
@@ -28,6 +28,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
       return linear(100, 50, renewablePercentage(game))
     }

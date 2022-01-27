@@ -28,7 +28,6 @@ export default defineEvent({
     return 0
   },
 
-  laws: [],
   citations: [],
   details: markdown`
 

@@ -15,7 +15,6 @@ export default defineEvent({
     return Math.min(1, linear(400, 0, game.values.co2budget) / 100)
   },
 
-  laws: [],
   citations: [],
   details: markdown`
 

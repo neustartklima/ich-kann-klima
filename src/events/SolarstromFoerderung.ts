@@ -6,13 +6,6 @@ import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 export default defineEvent({
   title: "Bürgerinitiative fordert stärkere Solarförderung",
   description: "",
-  laws: [
-    "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungWieZuBeginn",
-    "SolarstromFoerdernx2",
-    "SolarstromFoerdernx4",
-    "SolarstromFoerdernx8",
-  ],
 
   apply() {
     return []

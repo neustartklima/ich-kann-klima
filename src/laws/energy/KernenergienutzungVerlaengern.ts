@@ -1,7 +1,7 @@
 import { Change, createBaseValues, defaultValues, modify } from "../../params"
 import { MrdEuro, TWh } from "../../types"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { linear } from "../lawTools"
+import { currentEventIsInList, linear } from "../lawTools"
 
 const electricityGasAtStart: TWh = createBaseValues(defaultValues).electricityGas
 
@@ -23,6 +23,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100
+    }
     return linear(electricityGasAtStart, 1.1 * electricityGasAtStart, game.values.electricityGas)
   },
 })

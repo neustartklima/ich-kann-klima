@@ -15,7 +15,6 @@ export default defineEvent({
     return law ? 0.5 : 0
   },
 
-  laws: [],
   citations: [],
   details: markdown`
 
