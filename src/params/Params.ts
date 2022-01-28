@@ -111,6 +111,7 @@ const co2emissionsBuildings = new ComputedParam({
   unit: "MioTons",
   valueGetter(data: ParamsBase): MioTons {
     return (
+      data.buildingsSourceElectricity * 0 + // covered in energy sector
       data.buildingsSourceBio * 0 +
       data.buildingsSourceGas * 0.247 +
       data.buildingsSourceOil * 0.318 +
@@ -387,7 +388,8 @@ const electricityGas = new ComputedParam({
   unit: "TWh",
   valueGetter(data: ParamsBase): number {
     return (
-      data.electricityDemand -
+      data.electricityDemand +
+      data.buildingsSourceElectricity * 0.25 - // TODO #46: electricityDemand computed, "Jahresarbeitszahl" as parameter...
       data.electricitySolar -
       data.electricityWind -
       data.electricityWater -
@@ -582,6 +584,18 @@ const buildingsDemand = new ComputedParam({
   `,
 })
 
+const buildingsSourceElectricity = new WritableParam({
+  unit: "TWh",
+  initialValue: 0 as TWh,
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+TODO: #78 Quelle für Anfangswert 0 TWh.
+  `,
+})
+
 const buildingsSourceBio = new WritableParam({
   unit: "TWh",
   initialValue: 130 as TWh,
@@ -621,7 +635,10 @@ TODO: #78 Quelle für Anfangswert 58 TWh.
 const buildingsSourceGas = new ComputedParam({
   unit: "TWh",
   valueGetter(data: ParamsBase): TWh {
-    return data.buildingsDemand - (data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele)
+    return (
+      data.buildingsDemand -
+      (data.buildingsSourceElectricity + data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele)
+    )
   },
   // TODO: #72 See `internals`.
   //shouldInitiallyBe: 359 as TWh,
@@ -738,6 +755,7 @@ export const paramDefinitions = {
   buildingsIndustryDemand,
   buildingsPrivateDemand,
   buildingsDemand,
+  buildingsSourceElectricity,
   buildingsSourceBio,
   buildingsSourceOil,
   buildingsSourceTele,
