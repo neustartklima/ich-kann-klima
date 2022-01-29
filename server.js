@@ -32042,7 +32042,7 @@ var co2emissionsMobility = new ComputedParam({
 var co2emissionsBuildings = new ComputedParam({
   unit: "MioTons",
   valueGetter(data) {
-    return data.buildingsSourceBio * 0 + data.buildingsSourceGas * 0.247 + data.buildingsSourceOil * 0.318 + data.buildingsSourceTele * 0.16;
+    return data.buildingsSourceElectricity * 0 + data.buildingsSourceBio * 0 + data.buildingsSourceGas * 0.247 + data.buildingsSourceOil * 0.318 + data.buildingsSourceTele * 0.16;
   },
   citations: [uba2020DeutscheTreibhausgasEmissionen, polarstern2021CO2nachBrennstoff],
   details: markdown`
@@ -32272,7 +32272,7 @@ var electricityCoal = new ComputedParam({
 var electricityGas = new ComputedParam({
   unit: "TWh",
   valueGetter(data) {
-    return data.electricityDemand - data.electricitySolar - data.electricityWind - data.electricityWater - data.electricityHardCoal - data.electricityBrownCoal - data.electricityBiomass - data.electricityNuclear;
+    return data.electricityDemand + data.buildingsSourceElectricity * 0.25 - data.electricitySolar - data.electricityWind - data.electricityWater - data.electricityHardCoal - data.electricityBrownCoal - data.electricityBiomass - data.electricityNuclear;
   },
   details: markdown`
 
@@ -32445,6 +32445,17 @@ var buildingsDemand = new ComputedParam({
     TODO: #78 Quelle ${cite(ageb2020AuswertungstabellenEnergiebilanz)} gibt diese Zahlen nicht her.
   `
 });
+var buildingsSourceElectricity = new WritableParam({
+  unit: "TWh",
+  initialValue: 0,
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+TODO: #78 Quelle für Anfangswert 0 TWh.
+  `
+});
 var buildingsSourceBio = new WritableParam({
   unit: "TWh",
   initialValue: 130,
@@ -32481,7 +32492,7 @@ TODO: #78 Quelle für Anfangswert 58 TWh.
 var buildingsSourceGas = new ComputedParam({
   unit: "TWh",
   valueGetter(data) {
-    return data.buildingsDemand - (data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele);
+    return data.buildingsDemand - (data.buildingsSourceElectricity + data.buildingsSourceBio + data.buildingsSourceOil + data.buildingsSourceTele);
   },
   citations: [],
   details: markdown`
@@ -32586,6 +32597,7 @@ var paramDefinitions = {
   buildingsIndustryDemand,
   buildingsPrivateDemand,
   buildingsDemand,
+  buildingsSourceElectricity,
   buildingsSourceBio,
   buildingsSourceOil,
   buildingsSourceTele,
@@ -32793,6 +32805,9 @@ var Date2 = class {
   toJSON() {
     return this.lux.toJSON();
   }
+  sameInstant(other) {
+    return +this.lux === +other.lux;
+  }
 };
 var Duration = class {
   lux;
@@ -32879,6 +32894,14 @@ function lawIsAccepted(game, lawId, minActiveYears = 0) {
     throw new Error("Unknown law ID " + lawId + " used in a law.");
   return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears);
 }
+function getCurrentEvent(game) {
+  const latestEvent = game.events[0];
+  return latestEvent && date(latestEvent.occuredIn).sameInstant(date(game.currentDate)) ? latestEvent : void 0;
+}
+function currentEventIsInList(game, eventIds) {
+  const currentEvent = getCurrentEvent(game);
+  return currentEvent != void 0 && eventIds.includes(currentEvent.id);
+}
 function windPercentage(game) {
   const v = game.values;
   return v.electricityWind / v.electricityDemand * 100;
@@ -32955,6 +32978,9 @@ var AbstandsregelnFuerWindkraftAbschaffen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["AbstandsregelnWindkraft"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
       return linear(80, 25, windPercentage(game));
     }
@@ -32979,6 +33005,9 @@ var AbstandsregelnFuerWindkraftLockern_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["AbstandsregelnWindkraft"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
       return linear(70, 27, windPercentage(game));
     }
@@ -33025,6 +33054,9 @@ var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["AbstandsregelnWindkraft"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
       return linear(0, 100, windPercentage(game));
     }
@@ -33048,6 +33080,9 @@ var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["AbstandsregelnWindkraft"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftLockern")) {
       return linear(30, 100, windPercentage(game));
     }
@@ -33060,13 +33095,19 @@ var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
 
 // src/laws/energy/AusschreibungsverfahrenfuerWindkraftVerachtfachen.ts
 var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft verachtfachen",
-  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 64,8TWh verachtfacht.",
+  title: "Ausschreibungsverfahren f\xFCr Windkraft 64,8 TWh",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 64,8 TWh verachtfacht.",
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
   effort(game) {
-    return monthsEffort(5);
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
+      return monthsEffort(5);
+    }
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return monthsEffort(9);
+    }
+    return monthsEffort(11);
   },
   effects(game, startYear2, currentYear) {
     return [
@@ -33076,6 +33117,9 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVervierfachen")) {
       return linear(100, 50, renewablePercentage(game));
     }
@@ -33085,8 +33129,8 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
 
 // src/laws/energy/AusschreibungsverfahrenfuerWindkraftVerdoppeln.ts
 var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft verdoppeln",
-  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 16,2TWh verdoppelt.",
+  title: "Ausschreibungsverfahren f\xFCr Windkraft 16,2 TWh",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 16,2 TWh verdoppelt.",
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
@@ -33101,6 +33145,9 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) {
       return linear(100, 50, renewablePercentage(game));
     }
@@ -33113,13 +33160,16 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
 
 // src/laws/energy/AusschreibungsverfahrenfuerWindkraftVervierfachen.ts
 var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft vervierfachen",
-  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 32,4TWh vervierfacht.",
+  title: "Ausschreibungsverfahren f\xFCr Windkraft 32,4 TWh",
+  description: "Der j\xE4hrlich ausgeschriebene Windstrom-Zubau wird auf 32,4 TWh vervierfacht.",
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
   effort(game) {
-    return monthsEffort(4);
+    if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
+      return monthsEffort(4);
+    }
+    return monthsEffort(6);
   },
   effects(game, startYear2, currentYear) {
     return [
@@ -33129,6 +33179,9 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
       return linear(100, 50, renewablePercentage(game));
     }
@@ -33174,7 +33227,7 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
 
 // src/laws/energy/AusschreibungsverfahrenfuerWindkraftWieBisher.ts
 var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
-  title: "Ausschreibungsverfahren f\xFCr Windkraft wie zu Beginn",
+  title: "Ausschreibungsverfahren f\xFCr Windkraft 8,1 TWh wie zu Beginn",
   description: "Windkraft Betreiber k\xF6nnen sich mehrmals im Jahr auf ein eine bestimte Leistung von Windkraft bewerben. Der Betreiber, der das Projekt mit der kleinstm\xF6glichen Subventionierung umsetzen kann bekommt den Zuschlag. Insgesamt werden 8,1 TWh pro Jahr ausgeschrieben.",
   labels: ["initial", "hidden", "WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
@@ -33186,6 +33239,9 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
     return [...windPowerExpansion(game, 6.9, 1.2, startYear2)];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
       return linear(60, 100, renewablePercentage(game));
     }
@@ -33201,7 +33257,6 @@ var AutomatischeSektoren_default = defineLaw({
   effects(game, startYear2, currentYear) {
     if (renewablePercentage(game) < 70)
       return [];
-    paramDefinitions.co2emissionsOthers;
     const industryCo2Red = modify("co2emissionsIndustry").byPercent(-20);
     const industryCo2RedVal = industryCo2Red.getChange(game.values);
     const industryElectrDemandIncrease = industryCo2RedVal / -0.835;
@@ -33211,8 +33266,9 @@ var AutomatischeSektoren_default = defineLaw({
       industryCo2Red,
       modify("electricityDemand").byValue(industryElectrDemandIncrease),
       transfer("buildingsSourceBio", "buildingsSourceOil").byValue(10),
-      transfer("electricityDemand", "buildingsSourceOil").byValue(10),
-      transfer("buildingsSourceBio", "buildingsSourceTele").byValue(5),
+      transfer("buildingsSourceElectricity", "buildingsSourceOil").byValue(10),
+      transfer("buildingsSourceElectricity", "buildingsSourceTele").byValue(5),
+      modify("buildingsSourceElectricity").byValue(Math.min(20, game.values.buildingsSourceGas)),
       modify("co2emissionsAgriculture").byValue(-10),
       modify("co2emissionsOthers").byValue(-1)
     ];
@@ -33251,6 +33307,9 @@ var EnergiemixRegeltDerMarkt_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100;
+    }
     return linear(endYear, startYear, game.currentYear);
   }
 });
@@ -33383,6 +33442,9 @@ var KernenergienutzungVerlaengern_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100;
+    }
     return linear(electricityGasAtStart, 1.1 * electricityGasAtStart, game.values.electricityGas);
   }
 });
@@ -33410,6 +33472,9 @@ var KohleverstromungEinstellen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100;
+    }
     if (game.values.electricityCoal / game.values.electricityDemand <= 0.1) {
       return 0;
     }
@@ -33575,8 +33640,8 @@ var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
 
 // src/laws/energy/SolarstromFoerdernx2.ts
 var SolarstromFoerdernx2_default = defineLaw({
-  title: "Solarstrom F\xF6rderung x2",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verdoppeln",
+  title: "Solarstrom F\xF6rderung 10 TWh",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verdoppeln. Es werden 10 TWh pro Jahr zugebaut.",
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   effort(game) {
@@ -33590,6 +33655,9 @@ var SolarstromFoerdernx2_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(100, 30, renewablePercentage(game));
     }
@@ -33603,12 +33671,15 @@ var SolarstromFoerdernx2_default = defineLaw({
 
 // src/laws/energy/SolarstromFoerdernx4.ts
 var SolarstromFoerdernx4_default = defineLaw({
-  title: "Solarstrom F\xF6rderung x4",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen vervierfachen",
+  title: "Solarstrom F\xF6rderung 20TWh",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen vervierfachen. Es werden 20 TWh pro Jahr zugebaut.",
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   effort(game) {
-    return monthsEffort(3);
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return monthsEffort(3);
+    }
+    return monthsEffort(7);
   },
   effects(game, startYear2, currentYear) {
     return [
@@ -33618,6 +33689,9 @@ var SolarstromFoerdernx4_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
       return linear(100, 30, renewablePercentage(game));
     }
@@ -33638,13 +33712,19 @@ var SolarstromFoerdernx4_default = defineLaw({
 
 // src/laws/energy/SolarstromFoerdernx8.ts
 var SolarstromFoerdernx8_default = defineLaw({
-  title: "Solarstrom F\xF6rderung x8",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verachtfachen",
+  title: "Solarstrom F\xF6rderung 40TWh",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen verachtfachen. Es werden 40 TWh pro Jahr zugebaut.",
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
   effort(game) {
-    return monthsEffort(2);
+    if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
+      return monthsEffort(2);
+    }
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return monthsEffort(5);
+    }
+    return monthsEffort(9);
   },
   effects(game, startYear2, currentYear) {
     return [
@@ -33654,6 +33734,9 @@ var SolarstromFoerdernx8_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
       return linear(100, 30, renewablePercentage(game));
     }
@@ -33675,12 +33758,18 @@ var SolarstromFoerderungAbschaffen_default = defineLaw({
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
   effort(game) {
-    return monthsEffort(5);
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
+      return monthsEffort(5);
+    }
+    return monthsEffort(13, "So eine Kehrtwende in der Politik ist schwer durchsetzbar. Das braucht {months}.");
   },
   effects(game, startYear2, currentYear) {
     return [...powerTransfer(game, "electricitySolar", 2)];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(0, 100, renewablePercentage(game));
     }
@@ -33693,8 +33782,8 @@ var SolarstromFoerderungAbschaffen_default = defineLaw({
 
 // src/laws/energy/SolarstromFoerderungWieZuBeginn.ts
 var SolarstromFoerderungWieZuBeginn_default = defineLaw({
-  title: "Solarstrom F\xF6rderung wie zu Beginn",
-  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen wie bisher",
+  title: "Solarstrom F\xF6rderung wie zu Beginn 5 TWh",
+  description: "Subventionierung f\xFCr mittlere bis gro\xDFe Solaranlagen wie bisher. Es werden 5 TWh pro Jahr zugebaut.",
   labels: ["initial", "SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
@@ -33705,6 +33794,9 @@ var SolarstromFoerderungWieZuBeginn_default = defineLaw({
     return [...powerTransfer(game, "electricitySolar", 5)];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
       return linear(70, 100, renewablePercentage(game));
     }
@@ -34253,12 +34345,6 @@ function lessTimeHasPassed(game, event, time) {
 var AbstandsregelnWindkraft_default = defineEvent({
   title: "Abstandsregeln f\xFCr Windkraft erneut im Fokus",
   description: "Anwohner wollen, dass der Abstand zu Windkraftanlagen erh\xF6ht wird. Das f\xFChrte zu einer Auseinandersetzung des Wirtschaftsministers mit der Umweltministerin.",
-  laws: [
-    "AbstandsregelnFuerWindkraftVerschaerfen",
-    "AbstandsregelnFuerWindkraftWieBisher",
-    "AbstandsregelnFuerWindkraftLockern",
-    "AbstandsregelnFuerWindkraftAbschaffen"
-  ],
   apply() {
     return [];
   }
@@ -34275,7 +34361,6 @@ var AtomKatastrophe_default = defineEvent({
     const law = game.acceptedLaws.find((l) => l.lawId === "KernenergienutzungVerlaengern");
     return law ? 0.5 : 0;
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34313,31 +34398,6 @@ var Bestechung_default = defineEvent({
   }
 });
 
-// src/events/BSE.ts
-var BSE_default = defineEvent({
-  title: "Staatsoberhaupt verstorben",
-  description: `Du stirbst an der neuen BSE Variante. Tja, h\xE4ttest du dich mal besser um das Tierwohl gek\xFCmmert...`,
-  apply() {
-    return [dispatch("gameOver")];
-  },
-  probability(game, event) {
-    if (idsToLaws(game.acceptedLaws.map((ref) => ref.lawId)).find((law) => law.title.match(/tierwohl/i))) {
-      return 0;
-    }
-    return Math.min(1, linear(5, 10, durationWithoutEvents(game, [event.id]).lux.as("years")) / 100);
-  },
-  laws: [],
-  citations: [],
-  details: markdown`
-
-  `,
-  internals: markdown`
-    # Voraussetzungen
-
-    Kann passieren, wenn es 5 Jahre keine Investitionen in bessere Tierhaltung gab.
-  `
-});
-
 // src/events/Duerrewelle.ts
 var Duerrewelle_default = defineEvent({
   title: "D\xFCrreperiode",
@@ -34348,7 +34408,6 @@ var Duerrewelle_default = defineEvent({
   probability(game, event) {
     return Math.min(1, linear(400, 0, game.values.co2budget) / 100);
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34362,7 +34421,6 @@ var Duerrewelle_default = defineEvent({
 var EnergieStrategie_default = defineEvent({
   title: "Grundsatzdebatte zur Stromerzeugung",
   description: "Der Bundestag debattierte heute \xFCber die Strategie zur Stromerzeugung in Deutschland. Die Meinungen der Parteien gingen dabei stark auseinander.",
-  laws: ["KohleverstromungEinstellen", "EnergiemixRegeltDerMarkt", "KernenergienutzungVerlaengern"],
   apply() {
     return [];
   }
@@ -34408,7 +34466,6 @@ var Klimafluechtlinge_default = defineEvent({
   probability(game, event) {
     return game.values.co2budget < 500 ? 0.2 : 0;
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34449,7 +34506,6 @@ var Plagiatsaffaere_default = defineEvent({
     }
     return 0.5;
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34472,7 +34528,6 @@ var PR_Innenminister_default = defineEvent({
     }
     return 0.3;
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34498,7 +34553,6 @@ var PR_Kohleindustrie_default = defineEvent({
     }
     return 0.3;
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34523,19 +34577,12 @@ var SocialMedia_default = defineEvent({
 // src/events/SolarstromFoerderung.ts
 var SolarstromFoerderung_default = defineEvent({
   title: "B\xFCrgerinitiative fordert st\xE4rkere Solarf\xF6rderung",
-  description: "",
-  laws: [
-    "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungWieZuBeginn",
-    "SolarstromFoerdernx2",
-    "SolarstromFoerdernx4",
-    "SolarstromFoerdernx8"
-  ],
+  description: "Du musst entscheiden, wie gro\xDF die F\xF6rderung ausf\xE4llt. Oder willst du sie verkleinern oder sogar abschaffen?",
   apply() {
     return [];
   },
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+    if (lessTimeHasPassed(game, event, { months: 8 })) {
       return 0;
     }
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
@@ -34558,13 +34605,6 @@ var SolarstromFoerderung_default = defineEvent({
 var SolarstromFoerderung2_default = defineEvent({
   title: "Bund der Steuerzahler fordert Abschaffung Solarf\xF6rderung",
   description: "Der Solaranteil ist bereits sehr hoch, die Kosten f\xFCr die F\xF6rderung sind schwer zu vermitteln.",
-  laws: [
-    "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungWieZuBeginn",
-    "SolarstromFoerdernx2",
-    "SolarstromFoerdernx4",
-    "SolarstromFoerdernx8"
-  ],
   apply() {
     return [];
   },
@@ -34622,15 +34662,15 @@ var WahlVerloren_default = defineEvent({
 // src/events/WindkraftAusschreibung.ts
 var WindkraftAusschreibung_default = defineEvent({
   title: "Abstimmung zur Ausschreibung von Windkraftanlagen",
-  description: "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Windkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
-  laws: [
-    "AusschreibungsverfahrenfuerWindkraftWieBisher",
-    "AusschreibungsverfahrenfuerWindkraftVerdoppeln",
-    "AusschreibungsverfahrenfuerWindkraftVervierfachen",
-    "AusschreibungsverfahrenfuerWindkraftVerachtfachen"
-  ],
+  description: "Heute findet wieder einmal eine Abstimmung im Bundestag zur weiteren Ausschreibung von Windkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
   apply() {
     return [];
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { months: 15 })) {
+      return 0;
+    }
+    return 0.7;
   },
   citations: [],
   details: markdown`
@@ -34675,7 +34715,6 @@ var WindkraftForschung_default = defineEvent({
     }
     return 0;
   },
-  laws: [],
   citations: [],
   details: markdown`
 
@@ -34690,7 +34729,6 @@ var allEventsObj = {
   AbstandsregelnWindkraft: AbstandsregelnWindkraft_default,
   AtomKatastrophe: AtomKatastrophe_default,
   Bestechung: Bestechung_default,
-  BSE: BSE_default,
   Duerrewelle: Duerrewelle_default,
   EnergieStrategie: EnergieStrategie_default,
   FinanzKollaps: Finanzkollaps_default,
