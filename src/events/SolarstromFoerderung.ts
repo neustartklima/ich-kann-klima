@@ -5,21 +5,15 @@ import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Bürgerinitiative fordert stärkere Solarförderung",
-  description: "",
-  laws: [
-    "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungWieZuBeginn",
-    "SolarstromFoerdernx2",
-    "SolarstromFoerdernx4",
-    "SolarstromFoerdernx8",
-  ],
+  description:
+    "Du musst entscheiden, wie groß die Förderung ausfällt. Oder willst du sie verkleinern oder sogar abschaffen?",
 
   apply() {
     return []
   },
 
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 1, months: 1 })) {
+    if (lessTimeHasPassed(game, event, { months: 8 })) {
       return 0
     }
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")

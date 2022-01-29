@@ -1,7 +1,7 @@
 import { markdown } from "../../lib/utils"
 import { Change, modify } from "../../params"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
 
 export default defineLaw({
   title: "Solarstrom Förderung einstellen",
@@ -11,7 +11,10 @@ export default defineLaw({
   treatAfterLabels: [],
 
   effort(game) {
-    return monthsEffort(5)
+    if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
+      return monthsEffort(5)
+    }
+    return monthsEffort(13, "So eine Kehrtwende in der Politik ist schwer durchsetzbar. Das braucht {months}.")
   },
 
   effects(game, startYear, currentYear): Change[] {
@@ -19,6 +22,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(0, 100, renewablePercentage(game))
     }

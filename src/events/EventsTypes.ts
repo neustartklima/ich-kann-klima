@@ -2,7 +2,6 @@ import { Event, EventId } from "."
 import { Citations } from "../citations"
 import { startDate } from "../constants"
 import { Game } from "../game"
-import { LawId } from "../laws"
 import { date, Duration, duration, durationBetween, DurationLikeObject, laterOf } from "../lib/Temporal"
 import { Change } from "../params"
 import { Details, Internals, Ratio } from "../types"
@@ -39,7 +38,6 @@ export type EventDefinition = {
    */
   probability?(game: Game, event: Event): Ratio
   acknowledged?: boolean
-  laws?: LawId[]
   citations?: Citations // TODO #79: Make mandatory
   details?: Details // TODO #79: Make mandatory
   internals?: Internals // TODO #79: Make mandatory

@@ -1,19 +1,20 @@
 import { markdown } from "../lib/utils"
-import { defineEvent } from "./EventsTypes"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Abstimmung zur Ausschreibung von Windkraftanlagen",
   description:
-    "Heute findet die Abstimmung im Bundestag zur weiteren Ausschreibung von Windkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
-  laws: [
-    "AusschreibungsverfahrenfuerWindkraftWieBisher",
-    "AusschreibungsverfahrenfuerWindkraftVerdoppeln",
-    "AusschreibungsverfahrenfuerWindkraftVervierfachen",
-    "AusschreibungsverfahrenfuerWindkraftVerachtfachen",
-  ],
+    "Heute findet wieder einmal eine Abstimmung im Bundestag zur weiteren Ausschreibung von Windkraftanlagen statt. Die Meinungen der Parteien sind sehr unterschiedlich.",
 
   apply() {
     return []
+  },
+
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { months: 15 })) {
+      return 0
+    }
+    return 0.7
   },
 
   citations: [],

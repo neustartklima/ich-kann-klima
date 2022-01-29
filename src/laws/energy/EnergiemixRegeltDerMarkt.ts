@@ -2,7 +2,7 @@ import { endYear, startYear } from "../../constants"
 import { Change, modify } from "../../params"
 import { MrdEuro, TWh } from "../../types"
 import { defineLaw, Effort, monthsEffort } from "../LawsTypes"
-import { linear } from "../lawTools"
+import { currentEventIsInList, linear } from "../lawTools"
 
 export default defineLaw({
   title: "Energiemix regelt der Markt",
@@ -28,6 +28,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100
+    }
     return linear(endYear, startYear, game.currentYear)
   },
 })

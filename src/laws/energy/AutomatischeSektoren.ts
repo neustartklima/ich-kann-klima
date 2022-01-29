@@ -13,8 +13,6 @@ export default defineLaw({
   effects(game, startYear, currentYear) {
     if (renewablePercentage(game) < 70) return []
 
-    paramDefinitions.co2emissionsOthers
-
     const industryCo2Red = modify("co2emissionsIndustry").byPercent(-20)
     const industryCo2RedVal = industryCo2Red.getChange(game.values)
     // Amount of electricity producing that amount of CO2 with hard coal:
@@ -29,8 +27,9 @@ export default defineLaw({
       modify("electricityDemand").byValue(industryElectrDemandIncrease),
 
       transfer("buildingsSourceBio", "buildingsSourceOil").byValue(10),
-      transfer("electricityDemand", "buildingsSourceOil").byValue(10),
-      transfer("buildingsSourceBio", "buildingsSourceTele").byValue(5),
+      transfer("buildingsSourceElectricity", "buildingsSourceOil").byValue(10),
+      transfer("buildingsSourceElectricity", "buildingsSourceTele").byValue(5),
+      modify("buildingsSourceElectricity").byValue(Math.min(20, game.values.buildingsSourceGas)),
 
       modify("co2emissionsAgriculture").byValue(-10),
 

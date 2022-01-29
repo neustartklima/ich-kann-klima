@@ -1,11 +1,11 @@
 import { markdown } from "../../lib/utils"
 import { Change } from "../../params"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
 
 export default defineLaw({
-  title: "Solarstrom Förderung wie zu Beginn",
-  description: "Subventionierung für mittlere bis große Solaranlagen wie bisher",
+  title: "Solarstrom Förderung wie zu Beginn 5 TWh",
+  description: "Subventionierung für mittlere bis große Solaranlagen wie bisher. Es werden 5 TWh pro Jahr zugebaut.",
   labels: ["initial", "SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
@@ -19,6 +19,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "SolarstromFoerdernx8")) {
       return linear(70, 100, renewablePercentage(game))
     }

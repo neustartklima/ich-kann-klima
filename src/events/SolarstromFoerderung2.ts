@@ -6,13 +6,6 @@ import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 export default defineEvent({
   title: "Bund der Steuerzahler fordert Abschaffung Solarförderung",
   description: "Der Solaranteil ist bereits sehr hoch, die Kosten für die Förderung sind schwer zu vermitteln.",
-  laws: [
-    "SolarstromFoerderungAbschaffen",
-    "SolarstromFoerderungWieZuBeginn",
-    "SolarstromFoerdernx2",
-    "SolarstromFoerdernx4",
-    "SolarstromFoerdernx8",
-  ],
 
   apply() {
     return []

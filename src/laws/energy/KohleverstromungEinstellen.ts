@@ -2,7 +2,7 @@ import { markdown } from "../../lib/utils"
 import { Change, modify } from "../../params"
 import { MrdEuro, TsdPeople } from "../../types"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { linear } from "../lawTools"
+import { currentEventIsInList, linear } from "../lawTools"
 
 export default defineLaw({
   title: "Kohleverstromung einstellen",
@@ -32,6 +32,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100
+    }
     if (game.values.electricityCoal / game.values.electricityDemand <= 0.1) {
       return 0
     }

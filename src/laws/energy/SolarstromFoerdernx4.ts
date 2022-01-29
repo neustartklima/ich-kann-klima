@@ -2,16 +2,20 @@ import { cite, wuppertalStudie } from "../../citations"
 import { markdown } from "../../lib/utils"
 import { Change, modify } from "../../params"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
 
 export default defineLaw({
-  title: "Solarstrom Förderung x4",
-  description: "Subventionierung für mittlere bis große Solaranlagen vervierfachen",
+  title: "Solarstrom Förderung 20TWh",
+  description:
+    "Subventionierung für mittlere bis große Solaranlagen vervierfachen. Es werden 20 TWh pro Jahr zugebaut.",
   labels: ["SolarFoerderung"],
   removeLawsWithLabels: ["SolarFoerderung"],
 
   effort(game) {
-    return monthsEffort(3)
+    if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
+      return monthsEffort(3)
+    }
+    return monthsEffort(7)
   },
 
   effects(game, startYear, currentYear): Change[] {
@@ -27,6 +31,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
       return linear(100, 30, renewablePercentage(game))
     }

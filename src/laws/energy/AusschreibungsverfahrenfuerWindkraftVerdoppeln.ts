@@ -1,11 +1,11 @@
 import { Change, modify } from "../../params"
 import { TsdPeople } from "../../types"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "../lawTools"
 
 export default defineLaw({
-  title: "Ausschreibungsverfahren für Windkraft verdoppeln",
-  description: "Der jährlich ausgeschriebene Windstrom-Zubau wird auf 16,2TWh verdoppelt.",
+  title: "Ausschreibungsverfahren für Windkraft 16,2 TWh",
+  description: "Der jährlich ausgeschriebene Windstrom-Zubau wird auf 16,2 TWh verdoppelt.",
   labels: ["WindkraftSubvention"],
   removeLawsWithLabels: ["WindkraftSubvention"],
   treatAfterLabels: ["WindkraftAbstandsregel"],
@@ -27,6 +27,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftWieBisher")) {
       return linear(100, 50, renewablePercentage(game))
     }

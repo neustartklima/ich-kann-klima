@@ -1,5 +1,7 @@
 import { allLaws, LawId, LawReference } from "."
+import { EventId, EventReference } from "../events"
 import { Game, GameYear } from "../game"
+import { date } from "../lib/Temporal"
 import { linearFunction, RefPoint } from "../lib/utils"
 import { BaseParams, Change, modify, transfer, WritableParamKey } from "../params"
 import { paramDefinitions } from "../params/Params"
@@ -70,6 +72,27 @@ export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | 
     .sort((law1, law2) => law2.effectiveSince - law1.effectiveSince)
     .find((law) => matcher.test(law.lawId))
   return lawRef?.lawId
+}
+
+/**
+ * Get the current event of a game, or undefined if there is none.
+ * @param game Game to inspect.
+ * @returns The current event or undefined.
+ */
+export function getCurrentEvent(game: Game): EventReference | undefined {
+  const latestEvent = game.events[0] as EventReference | undefined
+  return latestEvent && date(latestEvent.occuredIn).sameInstant(date(game.currentDate)) ? latestEvent : undefined
+}
+
+/**
+ * Check if the current event is one of a given list.
+ * @param game Game to inspect.
+ * @param eventIds: List of event IDs.
+ * @returns True, if the current event is in the list.
+ */
+export function currentEventIsInList(game: Game, eventIds: EventId[]): boolean {
+  const currentEvent = getCurrentEvent(game)
+  return currentEvent != undefined && eventIds.includes(currentEvent.id)
 }
 
 /** Amount of electrical power produced by wind relative to total demand.

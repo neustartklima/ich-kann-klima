@@ -46,6 +46,10 @@ export class Date {
   toJSON(): string {
     return this.lux.toJSON()
   }
+
+  sameInstant(other: Date): boolean {
+    return +this.lux === +other.lux
+  }
 }
 
 export class Duration {

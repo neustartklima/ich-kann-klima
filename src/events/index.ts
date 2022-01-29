@@ -3,7 +3,7 @@ import AbstandsregelnWindkraft from "./AbstandsregelnWindkraft"
 import AtomKatastrophe from "./AtomKatastrophe"
 // import BatteryExplosion from "./BatteryExplosion"
 import Bestechung from "./Bestechung"
-import BSE from "./BSE"
+// import BSE from "./BSE"
 // import CO2PreisDebatte from "./CO2PreisDebatte"
 import Duerrewelle from "./Duerrewelle"
 import EnergieStrategie from "./EnergieStrategie"
@@ -34,7 +34,7 @@ const allEventsObj = {
   AtomKatastrophe,
   // BatteryExplosion,
   Bestechung,
-  BSE,
+  // BSE,
   // CO2PreisDebatte,
   Duerrewelle,
   EnergieStrategie,

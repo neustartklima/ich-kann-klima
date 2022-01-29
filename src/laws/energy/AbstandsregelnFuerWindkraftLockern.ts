@@ -2,7 +2,7 @@ import { markdown } from "../../lib/utils"
 import { Change, modify } from "../../params"
 import { TWh } from "../../types"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, windPercentage } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, windPercentage } from "../lawTools"
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft lockern",
@@ -28,6 +28,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["AbstandsregelnWindkraft"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "AbstandsregelnFuerWindkraftWieBisher")) {
       return linear(70, 27, windPercentage(game))
     }
