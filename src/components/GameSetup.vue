@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, reactive } from "vue"
 import LawProposals from "../components/LawProposals.vue"
 import SpeechBubble from "./SpeechBubble.vue"
 import FinanceIndicator from "./FinanceIndicator.vue"
@@ -52,15 +52,42 @@ const over = computed(() => {
 function acknowledge(): void {
   store.dispatch("acknowledgeEvent", eventToShow.value)
 }
+
+const camera = reactive({ x: 500, y: 200 })
+const cameraX = computed(() => camera.x + "px")
+const cameraY = computed(() => camera.y + "px")
+
+var dragStart: { x: number; y: number } | undefined = undefined
+function dragS(event: MouseEvent) {
+  dragStart = { x: event.x, y: event.y }
+}
+function drag(event: MouseEvent) {
+  if (dragStart != undefined) {
+    camera.x = camera.x + event.x - dragStart.x
+    camera.y = camera.y + event.y - dragStart.y
+    dragStart = { x: event.x, y: event.y }
+  }
+}
+function dragFinish(event: MouseEvent) {
+  if (dragStart != undefined) {
+    camera.x = camera.x + event.x - dragStart.x
+    camera.y = camera.y + event.y - dragStart.y
+    dragStart = undefined
+  }
+}
+function update(event: MouseEvent) {
+  camera.x = event.x
+  camera.y = event.y
+}
 </script>
 
 <template>
   <div class="game-setup">
     <h1>#ich-kann-klima</h1>
     <div id="walls">
-      <div id="wall-back" />
-      <div id="wall-left" />
-      <div id="wall-right" />
+      <div id="wall-back" @mousedown="dragS" @mousemove="drag" @mouseup="dragFinish" @mouseleave="dragFinish" />
+      <div id="wall-left" @mousedown="dragS" @mousemove="drag" @mouseup="dragFinish" @mouseleave="dragFinish" />
+      <div id="wall-right" @mousedown="dragS" @mousemove="drag" @mouseup="dragFinish" @mouseleave="dragFinish" />
     </div>
 
     <Calendar :year="currentYear" :month="currentMonth" />
@@ -83,7 +110,7 @@ function acknowledge(): void {
   width: 1000px;
   height: 800px;
   perspective: 1000px;
-  perspective-origin: 500px 200px;
+  perspective-origin: v-bind(cameraX) v-bind(cameraY);
 }
 
 #walls {
