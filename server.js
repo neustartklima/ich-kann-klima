@@ -32115,10 +32115,21 @@ var co2emissionsEnergy = new ComputedParam({
     TODO: #72 Tatsächliche Summe ist derzeit 152.7 MioTons. Sollte laut Quelle oben 258.043 MioTons sein.
   `
 });
+var co2directAirCapture = new WritableParam({
+  unit: "MioTons",
+  initialValue: 0,
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `
+});
 var co2emissions = new ComputedParam({
   unit: "MioTons",
   valueGetter(data) {
-    return data.co2emissionsEnergy + data.co2emissionsIndustry + data.co2emissionsMobility + data.co2emissionsBuildings + data.co2emissionsAgriculture + data.co2emissionsOthers;
+    return data.co2emissionsEnergy + data.co2emissionsIndustry + data.co2emissionsMobility + data.co2emissionsBuildings + data.co2emissionsAgriculture + data.co2emissionsOthers - data.co2directAirCapture;
   },
   details: markdown`
 
@@ -32570,6 +32581,7 @@ var paramDefinitions = {
   co2emissionsBuildings,
   co2emissionsOthers,
   co2emissionsEnergy,
+  co2directAirCapture,
   co2emissions,
   electricityDemand,
   electricityGridQuality,
@@ -33285,6 +33297,43 @@ var AutomatischeSektoren_default = defineLaw({
   `
 });
 
+// src/laws/energy/CO2AbscheidungUndSpeicherungFoerdern.ts
+var CO2AbscheidungUndSpeicherungFoerdern_default = defineLaw({
+  title: "CO2 Abscheidung und Speicherung (DACCS) f\xF6rdern",
+  description: "Entstehende Technologien zur Abscheidung aus der Luft (DAC) und Speicherung von CO2 werden mit 1 Mrd Euro im Jahr gef\xF6rdert.",
+  effort(game) {
+    return monthsEffort(9);
+  },
+  effects(game, startYear2, currentYear) {
+    const moneyInvested = 1;
+    const co2Captured = moneyInvested / 200 * 1e3;
+    const electricityUsed = co2Captured * 400 / 1e3;
+    return [
+      modify("stateDebt").byValue(moneyInvested),
+      modify("co2directAirCapture").byValue(co2Captured),
+      modify("electricityDemand").byValue(electricityUsed)
+    ];
+  },
+  priority(game) {
+    return linear(70, 90, renewablePercentage(game));
+  },
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+    TDOO #91: So far only https://de.wikipedia.org/wiki/Direct_air_capture.
+
+    Angaben für Kosten reichen von 10 USD bis 1000 USD pro Tonne CO2.
+    Mehrere Angaben 100 USD bis 200 USD. Wir gehen von 250 EUR aus, um
+    versteckte, indirekte Kosten mit einzubeziehen.
+
+    In Wikipedia wird 250 kWh pro Tonne CO2 erwähnt. Dazu kommt noch ein
+    beträchtlicher Wasserverbrauch. Wir nehmen zunächst 400kWh an, auch um
+    potentielle negative Effekte abzubilden.
+  `
+});
+
 // src/laws/energy/EnergiemixRegeltDerMarkt.ts
 var EnergiemixRegeltDerMarkt_default = defineLaw({
   title: "Energiemix regelt der Markt",
@@ -33957,6 +34006,7 @@ var energyLaws = {
   AusschreibungsverfahrenfuerWindkraftVervierfachen: AusschreibungsverfahrenfuerWindkraftVervierfachen_default,
   AusschreibungsverfahrenfuerWindkraftWieBisher: AusschreibungsverfahrenfuerWindkraftWieBisher_default,
   AutomatischeSektoren: AutomatischeSektoren_default,
+  CO2AbscheidungUndSpeicherungFoerdern: CO2AbscheidungUndSpeicherungFoerdern_default,
   EnergiemixRegeltDerMarkt: EnergiemixRegeltDerMarkt_default,
   ForschungDezentraleStromerzeugung: ForschungDezentraleStromerzeugung_default,
   ForschungUndEntwicklungStromspeicherung: ForschungUndEntwicklungStromspeicherung_default,
@@ -34426,6 +34476,27 @@ var EnergieStrategie_default = defineEvent({
   }
 });
 
+// src/Calculator.ts
+function clampToPercent(value) {
+  return Math.max(0, Math.min(100, value));
+}
+function co2BudgetRating(game) {
+  const ratio = game.values.co2budget / defaultValues.co2budget;
+  return clampToPercent(ratio * 100);
+}
+function financeRating(game) {
+  const base = defaultValues.stateDebt;
+  const ratio = (game.values.stateDebt - base) / base;
+  if (ratio > 0) {
+    return clampToPercent(50 - ratio / 0.05 * 50);
+  } else {
+    return clampToPercent(50 - ratio * 50);
+  }
+}
+function popularityRating(game) {
+  return clampToPercent(game.values.popularity);
+}
+
 // src/events/Finanzkollaps.ts
 var Finanzkollaps_default = defineEvent({
   title: "Zusammenbruch des Finanzsystems",
@@ -34437,7 +34508,7 @@ var Finanzkollaps_default = defineEvent({
     return [dispatch("gameOver")];
   },
   probability(game, event) {
-    return game.values.stateDebt > defaultValues.stateDebt * 2 ? specialEventProbs.finanzKollaps : 0;
+    return financeRating(game) <= 0 ? specialEventProbs.finanzKollaps : 0;
   }
 });
 
@@ -34452,7 +34523,7 @@ var Hitzeh_lle_default = defineEvent({
     return [dispatch("gameOver")];
   },
   probability(game, event) {
-    return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0;
+    return co2BudgetRating(game) <= 0 ? specialEventProbs.hitzehoelle : 0;
   }
 });
 
@@ -34473,6 +34544,18 @@ var Klimafluechtlinge_default = defineEvent({
   internals: markdown`
 
   `
+});
+
+// src/events/Klimaneutral.ts
+var Klimaneutral_default = defineEvent({
+  title: "Klimaneutral !!!",
+  description: `Geschafft! Die j\xE4hrlichen CO2 Emissionen sind auf null oder werden vollst\xE4ndig durch Absorption kompensiert.`,
+  apply() {
+    return [dispatch("gameOver")];
+  },
+  probability(game) {
+    return game.values.co2emissions <= 0 ? specialEventProbs.timesUp : 0;
+  }
 });
 
 // src/events/NewYear.ts
@@ -34655,7 +34738,7 @@ var WahlVerloren_default = defineEvent({
     return [dispatch("gameOver")];
   },
   probability(game) {
-    return game.values.popularity <= 0 ? specialEventProbs.wahlVerloren : 0;
+    return popularityRating(game) <= 0 ? specialEventProbs.wahlVerloren : 0;
   }
 });
 
@@ -34734,6 +34817,7 @@ var allEventsObj = {
   FinanzKollaps: Finanzkollaps_default,
   Hitzehoelle: Hitzeh_lle_default,
   Klimafluechtlinge: Klimafluechtlinge_default,
+  Klimaneutral: Klimaneutral_default,
   NewYear: NewYear_default,
   Plagiatsaffaere: Plagiatsaffaere_default,
   PRInnenminister: PR_Innenminister_default,
