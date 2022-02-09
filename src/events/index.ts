@@ -10,6 +10,7 @@ import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
 import Hitzehoelle from "./Hitzehölle"
 import Klimafluechtlinge from "./Klimafluechtlinge"
+import Klimaneutral from "./Klimaneutral"
 import NewYear from "./NewYear"
 import Plagiatsaffaere from "./Plagiatsaffaere"
 import PRInnenminister from "./PR-Innenminister"
@@ -41,6 +42,7 @@ const allEventsObj = {
   FinanzKollaps,
   Hitzehoelle,
   Klimafluechtlinge,
+  Klimaneutral,
   NewYear,
   Plagiatsaffaere,
   PRInnenminister,

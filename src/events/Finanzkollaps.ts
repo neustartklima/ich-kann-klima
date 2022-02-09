@@ -1,4 +1,5 @@
-import { defaultValues, dispatch } from "../params"
+import { financeRating } from "../Calculator"
+import { dispatch } from "../params"
 import { defineEvent, specialEventProbs } from "./EventsTypes"
 
 export default defineEvent({
@@ -13,6 +14,6 @@ export default defineEvent({
   },
 
   probability(game, event) {
-    return game.values.stateDebt > defaultValues.stateDebt * 2 ? specialEventProbs.finanzKollaps : 0
+    return financeRating(game) <= 0 ? specialEventProbs.finanzKollaps : 0
   },
 })

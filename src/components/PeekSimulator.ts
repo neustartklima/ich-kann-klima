@@ -13,6 +13,35 @@ const staticPresets: Preset[] = [
   {
     name: "Happy Path",
     laws: [
+      { lawId: "AutomatischeSektoren", effectiveSince: 2021 },
+      { lawId: "InitialAtomausstieg", effectiveSince: 2021 },
+
+      { lawId: "WindkraftVereinfachen", effectiveSince: 2022 },
+      { lawId: "AbstandsregelnFuerWindkraftLockern", effectiveSince: 2022 },
+      { lawId: "NetzausbauErleichtern", effectiveSince: 2022 },
+
+      { lawId: "NetzausbauFoerdern", effectiveSince: 2023 },
+      { lawId: "ForschungDezentraleStromerzeugung", effectiveSince: 2023 },
+      { lawId: "ForschungUndEntwicklungStromspeicherung", effectiveSince: 2023 },
+      { lawId: "AusschreibungsverfahrenfuerWindkraftVervierfachen", effectiveSince: 2023 },
+      { lawId: "SolarstromFoerdernx4", effectiveSince: 2023 },
+
+      { lawId: "StromspeicherungErleichtern", effectiveSince: 2024 },
+      { lawId: "KohleverstromungEinstellen", effectiveSince: 2024 },
+
+      { lawId: "StromspeicherungFoerdern", effectiveSince: 2025 },
+
+      { lawId: "WasserstofftechnologieFoerdern", effectiveSince: 2026 },
+      { lawId: "CO2PreisErhoehen", effectiveSince: 2026 },
+
+      { lawId: "CO2AbscheidungUndSpeicherungFoerdern", effectiveSince: 2029 },
+
+      // { lawId: "SolarAufAllenDaechernVerpflichtend", effectiveSince: 2024 },
+    ],
+  },
+  {
+    name: "Old Happy Path",
+    laws: [
       /*  1   */ { lawId: "NetzausbauErleichtern", effectiveSince: 2021 },
       /*  1.3 */ { lawId: "WindkraftVereinfachen", effectiveSince: 2021 },
       /*  1.7 */ { lawId: "StromspeicherungErleichtern", effectiveSince: 2021 },

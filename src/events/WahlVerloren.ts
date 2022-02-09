@@ -1,3 +1,4 @@
+import { popularityRating } from "../Calculator"
 import { dispatch } from "../params"
 import { defineEvent, specialEventProbs } from "./EventsTypes"
 
@@ -13,6 +14,6 @@ export default defineEvent({
   },
 
   probability(game) {
-    return game.values.popularity <= 0 ? specialEventProbs.wahlVerloren : 0
+    return popularityRating(game) <= 0 ? specialEventProbs.wahlVerloren : 0
   },
 })

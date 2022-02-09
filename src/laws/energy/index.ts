@@ -7,6 +7,7 @@ import AusschreibungsverfahrenfuerWindkraftVerdoppeln from "./Ausschreibungsverf
 import AusschreibungsverfahrenfuerWindkraftVervierfachen from "./AusschreibungsverfahrenfuerWindkraftVervierfachen"
 import AusschreibungsverfahrenfuerWindkraftWieBisher from "./AusschreibungsverfahrenfuerWindkraftWieBisher"
 import AutomatischeSektoren from "./AutomatischeSektoren"
+import CO2AbscheidungUndSpeicherungFoerdern from "./CO2AbscheidungUndSpeicherungFoerdern"
 import EnergiemixRegeltDerMarkt from "./EnergiemixRegeltDerMarkt"
 import ForschungDezentraleStromerzeugung from "./ForschungDezentraleStromerzeugung"
 import ForschungUndEntwicklungStromspeicherung from "./ForschungUndEntwicklungStromspeicherung"
@@ -40,6 +41,7 @@ export const energyLaws = {
   AusschreibungsverfahrenfuerWindkraftVervierfachen,
   AusschreibungsverfahrenfuerWindkraftWieBisher,
   AutomatischeSektoren,
+  CO2AbscheidungUndSpeicherungFoerdern,
   EnergiemixRegeltDerMarkt,
   ForschungDezentraleStromerzeugung,
   ForschungUndEntwicklungStromspeicherung,
