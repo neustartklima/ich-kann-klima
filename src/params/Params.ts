@@ -207,6 +207,18 @@ const co2emissionsEnergy = new ComputedParam({
   `,
 })
 
+const co2directAirCapture = new WritableParam({
+  unit: "MioTons",
+  initialValue: 0,
+  citations: [],
+  details: markdown`
+
+  `,
+  internals: markdown`
+
+  `,
+})
+
 const co2emissions = new ComputedParam({
   unit: "MioTons",
   valueGetter(data: ParamsBase): MioTons {
@@ -216,7 +228,8 @@ const co2emissions = new ComputedParam({
       data.co2emissionsMobility +
       data.co2emissionsBuildings +
       data.co2emissionsAgriculture +
-      data.co2emissionsOthers
+      data.co2emissionsOthers -
+      data.co2directAirCapture
     )
   },
   // TODO: #72 See `internals`.
@@ -724,6 +737,7 @@ export const paramDefinitions = {
   co2emissionsBuildings,
   co2emissionsOthers,
   co2emissionsEnergy,
+  co2directAirCapture,
   co2emissions,
 
   electricityDemand,
