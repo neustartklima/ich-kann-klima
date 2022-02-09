@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { computed } from "vue"
+import { co2BudgetRating, financeRating, popularityRating } from "../Calculator"
 import LawProposals from "../components/LawProposals.vue"
-import SpeechBubble from "./SpeechBubble.vue"
-import FinanceIndicator from "./FinanceIndicator.vue"
-import PopularityIndicator from "./PopularityIndicator.vue"
-import ClimateIndicator from "./ClimateIndicator.vue"
-import Calendar from "./Calendar.vue"
-import Heater from "./Heater.vue"
-import Table from "./Table.vue"
-import TVSet from "./TVSet.vue"
-import Tour from "./Tour.vue"
-import { allEvents, Event, EventReference } from "../events"
-import { useStore } from "../store"
-import { co2Rating, financeRating } from "../Calculator"
+import { allEvents } from "../events"
 import { date } from "../lib/Temporal"
+import { useStore } from "../store"
+import Calendar from "./Calendar.vue"
+import ClimateIndicator from "./ClimateIndicator.vue"
+import FinanceIndicator from "./FinanceIndicator.vue"
 import GameOver from "./GameOver.vue"
+import Heater from "./Heater.vue"
+import PopularityIndicator from "./PopularityIndicator.vue"
+import SpeechBubble from "./SpeechBubble.vue"
+import Table from "./Table.vue"
+import Tour from "./Tour.vue"
+import TVSet from "./TVSet.vue"
 
 const store = useStore()
 
@@ -39,10 +39,13 @@ const finance = computed(() => {
   const game = store.state.game
   return game ? financeRating(game) : 0
 })
-const popularity = computed(() => store.state.game?.values.popularity || 100)
+const popularity = computed(() => {
+  const game = store.state.game
+  return game ? popularityRating(game) : 0
+})
 const climate = computed(() => {
   const game = store.state.game
-  return game ? co2Rating(game) : 0
+  return game ? co2BudgetRating(game) : 0
 })
 const over = computed(() => {
   const game = store.state.game

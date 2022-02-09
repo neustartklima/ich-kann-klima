@@ -1,6 +1,6 @@
-import { BaseParams, createBaseValues, defaultValues, applyEffects, paramKeys, ParamKey, copyValues } from "./params"
 import { Game } from "./game"
 import { AcceptedLaw, getParamsOfLaws, ParamsOfLaws } from "./laws"
+import { applyEffects, BaseParams, copyValues, createBaseValues, defaultValues } from "./params"
 
 export function calculateNextYear(game: Game, laws: AcceptedLaw[], year: number): BaseParams {
   return calculateNextYearWithLaws(game, laws, year).values
@@ -53,7 +53,23 @@ export function co2Rating(game: Game): number {
   return clampToPercent(ratio * 50)
 }
 
+export function co2BudgetRating(game: Game): number {
+  const ratio = game.values.co2budget / defaultValues.co2budget
+  return clampToPercent(ratio * 100)
+}
+
 export function financeRating(game: Game): number {
-  const ratio = game.values.stateDebt / defaultValues.stateDebt
-  return clampToPercent(100 - ratio * 50)
+  const base = defaultValues.stateDebt
+  const ratio = (game.values.stateDebt - base) / base
+  if (ratio > 0) {
+    // 5% additional debt will lead to 0%.
+    return clampToPercent(50 - (ratio / 0.05) * 50)
+  } else {
+    // no debt at all will lead to 100%.
+    return clampToPercent(50 - ratio * 50)
+  }
+}
+
+export function popularityRating(game: Game): number {
+  return clampToPercent(game.values.popularity)
 }

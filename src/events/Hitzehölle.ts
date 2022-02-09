@@ -1,3 +1,4 @@
+import { co2BudgetRating } from "../Calculator"
 import { dispatch } from "../params"
 import { defineEvent, specialEventProbs } from "./EventsTypes"
 
@@ -13,6 +14,6 @@ export default defineEvent({
   },
 
   probability(game, event) {
-    return game.values.co2budget <= 0 ? specialEventProbs.hitzehoelle : 0
+    return co2BudgetRating(game) <= 0 ? specialEventProbs.hitzehoelle : 0
   },
 })
