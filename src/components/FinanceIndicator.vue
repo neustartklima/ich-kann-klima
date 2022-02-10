@@ -30,8 +30,8 @@ function changed(newValue: number) {
   transform: translate3d(400px, 530px, 480px);
 
   #indicator {
-    left: 86px;
-    top: -200px;
+    left: 210px;
+    top: -180px;
     transform: scale(0.4);
   }
   img {

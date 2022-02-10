@@ -41,7 +41,7 @@ function changed(newValue: number) {
   #indicator {
     position: absolute;
     left: 100px;
-    bottom: 280px;
+    bottom: 350px;
     z-index: 1;
   }
   img {

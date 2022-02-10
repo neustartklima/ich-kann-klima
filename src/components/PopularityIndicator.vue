@@ -30,8 +30,9 @@ function changed(newValue: number) {
 
   #indicator {
     position: absolute;
-    left: 300px;
+    left: 380px;
     bottom: 10px;
+    transform: scale(1.2);
   }
   img {
     width: 511px;
