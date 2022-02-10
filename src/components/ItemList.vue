@@ -7,7 +7,7 @@ interface Item {
   description: string
 }
 
-defineProps<{ items: Item[] }>()
+defineProps<{ items?: Item[] }>()
 
 const opened = ref(undefined as number | undefined)
 

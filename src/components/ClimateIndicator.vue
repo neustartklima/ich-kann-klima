@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import healthy from "../assets/plant-healthy.png"
 import sick from "../assets/plant-sick.png"
 import withered from "../assets/plant-withered.png"
@@ -8,11 +8,12 @@ import IndicatorBar from "./IndicatorBar.vue"
 const levels = { healthy, sick, withered } as Record<string, string>
 
 const props = defineProps<{ value: number }>()
+const indicator = ref(props.value)
 
 const status = computed((): string => {
-  if (props.value > 66) {
+  if (indicator.value > 66) {
     return "healthy"
-  } else if (props.value > 33) {
+  } else if (indicator.value > 33) {
     return "sick"
   } else {
     return "withered"
@@ -20,11 +21,15 @@ const status = computed((): string => {
 })
 
 const imgSrc = computed(() => levels[status.value])
+
+function changed(newValue: number) {
+  indicator.value = newValue
+}
 </script>
 
 <template>
   <div id="plant">
-    <IndicatorBar id="indicator" title="CO2-Budget" :value="value" />
+    <IndicatorBar id="indicator" title="CO2-Budget" :value="indicator" @change="changed" />
     <img :src="imgSrc" :id="status" />
   </div>
 </template>
@@ -37,6 +42,7 @@ const imgSrc = computed(() => levels[status.value])
     position: absolute;
     left: 100px;
     bottom: 280px;
+    z-index: 1;
   }
   img {
     width: 300px;
