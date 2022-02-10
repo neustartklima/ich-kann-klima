@@ -10,12 +10,16 @@ export const mutations = {
     state.game = { ...(state.game as Game), over: true }
   },
 
-  setTour(state: State, tour: { step: string, active: boolean }) {
+  setTour(state: State, tour: { step: string; active: boolean }) {
     state.tour = tour
   },
 
   error(state: State, payload: { error: Error }) {
     console.error(payload.error)
     alert(payload.error.message)
+  },
+
+  setRoom(state: State, payload: { activeRoom: string }) {
+    state.activeRoom = payload.activeRoom
   },
 }

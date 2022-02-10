@@ -132,5 +132,9 @@ export function ActionFactory(router: Router, repository: Repository) {
     error(context: Context, payload: { error: Error }) {
       context.commit("error", payload)
     },
+
+    changeRoom(context: Context, activeRoom: string) {
+      context.commit("setRoom", { activeRoom })
+    },
   }
 }
