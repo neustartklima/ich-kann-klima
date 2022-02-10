@@ -81,7 +81,7 @@ function transEnd(event: TransitionEvent) {
   }
 
   &.poppedUp {
-    transform: translate3d(320px, -80px, 450px) scale(0.4);
+    transform: translate3d(340px, -50px, 450px) scale(0.4);
   }
 }
 
@@ -100,7 +100,7 @@ function transEnd(event: TransitionEvent) {
   padding: 4pt;
   border: 1px solid;
   border-radius: 6pt;
-  transform: translate3d(400px, 333px, 510px);
+  transform: translate3d(430px, 333px, 510px) scale(0.7);
   transition: transform 0.1s, background 0.3s;
   transform-style: flat;
   pointer-events: auto;

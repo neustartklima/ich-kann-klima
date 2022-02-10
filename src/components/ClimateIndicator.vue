@@ -43,6 +43,7 @@ function changed(newValue: number) {
     left: 100px;
     bottom: 350px;
     z-index: 1;
+    transform: scale(1.5);
   }
   img {
     width: 300px;

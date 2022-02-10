@@ -1,36 +1,10 @@
-<script lang="ts">
-import { computed, defineComponent } from "vue"
+<script setup lang="ts">
+import { computed } from "vue"
 import PeekInside from "./components/PeekInside.vue"
 import { useStore } from "./store"
 
-export default defineComponent({
-  components: { PeekInside },
-
-  setup() {
-    const store = useStore()
-
-    return {
-      devMode: computed(() => store.state.devMode),
-    }
-  },
-
-  methods: {
-    updateStyle(): void {
-      const height = window.innerHeight
-      const width = window.innerWidth
-      const scale = Math.min(height / 800, width / 1000)
-      const translateX = (width - 1000 * scale) / 2
-      document.documentElement.style.setProperty("--scale", `${scale}`)
-      document.documentElement.style.setProperty("--translateX", `${translateX}px`)
-    },
-  },
-  beforeMount() {
-    this.updateStyle()
-  },
-  mounted() {
-    window.addEventListener("resize", this.updateStyle)
-  },
-})
+const store = useStore()
+const devMode = computed(() => store.state.devMode)
 </script>
 
 <template>

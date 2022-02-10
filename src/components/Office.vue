@@ -14,9 +14,6 @@ import Table from "./Table.vue"
 import Tour from "./Tour.vue"
 import TVSet from "./TVSet.vue"
 
-const props = defineProps<{
-  withNews: boolean
-}>()
 const store = useStore()
 
 const devMode = computed(() => store.state.devMode)
@@ -43,7 +40,7 @@ const climate = computed(() => {
     <Calendar :year="currentYear" :month="currentMonth" />
     <Heater />
     <PopularityIndicator :value="popularity" />
-    <TVSet :with-news="withNews" />
+    <TVSet />
     <ClimateIndicator :value="climate" />
     <Table />
     <FinanceIndicator :value="finance" />
