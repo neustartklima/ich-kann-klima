@@ -13,22 +13,22 @@ const isMuch = computed(() => props.value >= 80)
 
 <template>
   <div id="finances">
-    <IndicatorBar id="indicator" title="Finanzen" :value="value" />
     <img v-if="isShort" src="../assets/money-short.png" id="short" />
     <img v-if="isLess" src="../assets/money-less.png" id="less" />
     <img v-if="isMore" src="../assets/money-more.png" id="more" />
     <img v-if="isMuch" src="../assets/money-much.png" id="much" />
+    <IndicatorBar id="indicator" title="Finanzen" :value="value" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 #finances {
-  position: absolute;
-  left: 550px;
-  top: 640px;
+  transform: translate3d(570px, 370px, 480px);
+
   #indicator {
-    position: absolute;
-    left: 150px;
+    left: -60px;
+    top: -70px;
+    transform: scale(0.4);
   }
   img {
     position: absolute;
@@ -36,16 +36,16 @@ const isMuch = computed(() => props.value >= 80)
     will-change: transform;
   }
   #short {
-    width: 60px;
+    width: 30px;
   }
   #less {
-    width: 156px;
+    width: 70px;
   }
   #more {
-    width: 200px;
+    width: 100px;
   }
   #much {
-    width: 160px;
+    width: 80px;
   }
 }
 </style>
