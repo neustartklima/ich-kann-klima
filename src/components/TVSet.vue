@@ -72,7 +72,7 @@ img {
 }
 
 #tv {
-  transform: translate3d(33px, -233px, -50px);
+  transform: translate3d(20px, -233px, -50px);
 
   #tv-front {
     background: transparent;
