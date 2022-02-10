@@ -44,5 +44,9 @@ function goBack() {
     display: flex;
     flex-direction: row;
   }
+
+  * {
+    pointer-events: auto;
+  }
 }
 </style>

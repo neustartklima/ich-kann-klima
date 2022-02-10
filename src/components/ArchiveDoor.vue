@@ -44,6 +44,7 @@ function clickArchiveDoor(): void {
 #archiveDoor {
   position: absolute;
   transform: translate3d(-198px, 191px, 50px) rotateX(90deg) rotateY(90deg);
+  pointer-events: auto;
 
   img {
     width: 400px;

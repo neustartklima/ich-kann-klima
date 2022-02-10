@@ -34,6 +34,7 @@ div {
   padding: 1rem;
   background: white;
   box-shadow: 0 0 8px rgba(100, 100, 100, 0.5);
+  pointer-events: auto;
 
   &::before,
   &::after {
