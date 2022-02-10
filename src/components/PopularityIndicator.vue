@@ -21,15 +21,15 @@ const areAngry = computed(() => props.value < 50)
 <style lang="scss" scoped>
 #popularity {
   position: absolute;
-  left: 300px;
-  top: 166px;
+  transform: translate3d(202px, 71px, -500px);
+
   #indicator {
     position: absolute;
-    left: 250px;
+    left: 300px;
     bottom: 10px;
   }
   img {
-    width: 343px;
+    width: 511px;
     position: absolute;
     will-change: transform;
   }

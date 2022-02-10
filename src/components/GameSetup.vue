@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { co2BudgetRating, financeRating, popularityRating } from "../Calculator"
 import LawProposals from "../components/LawProposals.vue"
 import { allEvents } from "../events"
@@ -17,6 +17,7 @@ import Tour from "./Tour.vue"
 import TVSet from "./TVSet.vue"
 
 const store = useStore()
+const activeRoom = ref("main")
 
 const eventRefToShow = computed(() => {
   const game = store.state.game
@@ -55,29 +56,39 @@ const over = computed(() => {
 function acknowledge(): void {
   store.dispatch("acknowledgeEvent", eventToShow.value)
 }
+
+function clickArchiveDoor(): void {
+  activeRoom.value = activeRoom.value === "archive" ? "main" : "archive"
+}
 </script>
 
 <template>
-  <div class="game-setup">
-    <h1>#ich-kann-klima</h1>
-    <div id="walls">
-      <div id="wall-back" />
-      <div id="wall-left" />
-      <div id="wall-right" />
+  <div class="game-setup" :class="activeRoom">
+    <div id="camera">
+      <h1>#ich-kann-klima</h1>
+      <div id="walls">
+        <div id="wall-back" />
+        <div id="wall-left" />
+        <div id="wall-right" />
+      </div>
+
+      <div id="archiveDoor" @click="clickArchiveDoor">
+        <img src="../assets/table-top.png" />
+      </div>
+
+      <Calendar :year="currentYear" :month="currentMonth" />
+      <Heater />
+      <PopularityIndicator :value="popularity" />
+      <TVSet :with-news="!!eventRefToShow" />
+      <ClimateIndicator :value="climate" />
+      <Table />
+      <FinanceIndicator :value="finance" />
+      <LawProposals />
+
+      <SpeechBubble v-if="eventRefToShow" :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
+      <Tour />
+      <GameOver v-if="over" />
     </div>
-
-    <Calendar :year="currentYear" :month="currentMonth" />
-    <Heater />
-    <PopularityIndicator :value="popularity" />
-    <TVSet :with-news="!!eventRefToShow" />
-    <ClimateIndicator :value="climate" />
-    <Table />
-    <FinanceIndicator :value="finance" />
-    <LawProposals />
-
-    <SpeechBubble v-if="eventRefToShow" :title="eventTitle" :text="eventText" @acknowledge="acknowledge" />
-    <Tour />
-    <GameOver v-if="over" />
   </div>
 </template>
 
@@ -87,6 +98,36 @@ function acknowledge(): void {
   height: 800px;
   perspective: 1000px;
   perspective-origin: 500px 200px;
+
+  * {
+    transform-style: preserve-3d;
+  }
+}
+
+.archive #camera {
+  animation: 5s alternate linear forwards gotoArchive;
+}
+
+@keyframes gotoArchive {
+  from {
+    transform: rotateY(0) translate3d(0, 0, 0);
+  }
+
+  20% {
+    transform: rotateY(10deg) translate3d(-200px, 0, 0);
+  }
+
+  50% {
+    transform: rotateY(-20deg) translate3d(0px, 20px, 300px);
+  }
+
+  70% {
+    transform: rotateY(-60deg) translate3d(450px, 40px, 200px);
+  }
+
+  to {
+    transform: rotateY(-90deg) translate3d(1400px, -50px, -50px);
+  }
 }
 
 #walls {
@@ -112,5 +153,14 @@ function acknowledge(): void {
 
 #wall-right {
   transform: translateX(500px) rotateY(90deg);
+}
+
+#archiveDoor {
+  position: absolute;
+  transform: translate3d(-198px, 191px, 50px) rotateX(90deg) rotateY(90deg);
+
+  img {
+    width: 400px;
+  }
 }
 </style>
