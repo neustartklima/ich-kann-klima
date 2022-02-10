@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from "vue"
+import { computed, defineComponent } from "vue"
 import PeekInside from "./components/PeekInside.vue"
 import { useStore } from "./store"
 
@@ -10,8 +10,7 @@ export default defineComponent({
     const store = useStore()
 
     return {
-      store,
-      devMode: import.meta.env.DEV || localStorage.getItem("devMode") === "true",
+      devMode: computed(() => store.state.devMode),
     }
   },
 

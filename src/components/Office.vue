@@ -19,6 +19,7 @@ const props = defineProps<{
 }>()
 const store = useStore()
 
+const devMode = computed(() => store.state.devMode)
 const currentYear = computed(() => store.state.game?.currentYear || 2021)
 const currentMonth = computed(() => date(store.state.game?.currentDate as string).lux.month)
 const finance = computed(() => {
@@ -37,7 +38,7 @@ const climate = computed(() => {
 
 <template>
   <div id="office">
-    <ArchiveDoor />
+    <ArchiveDoor v-if="devMode" />
 
     <Calendar :year="currentYear" :month="currentMonth" />
     <Heater />
