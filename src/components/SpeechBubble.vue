@@ -24,9 +24,8 @@ function acknowledge() {
 div {
   max-width: 250px;
   position: absolute;
-  top: 45%;
-  left: -5%;
-  //transform: translateY(-50%);
+  top: 0;
+  transform: translate3D(175px, 200px, 510px) scale(0.5);
   z-index: 999;
   border: 1px solid black;
   border-radius: 2rem;

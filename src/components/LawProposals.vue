@@ -79,7 +79,7 @@ function transEnd(event: TransitionEvent) {
   }
 
   &.poppedUp {
-    transform: translate3d(320px, -90px, 500px) scale(0.4);
+    transform: translate3d(320px, -80px, 450px) scale(0.4);
   }
 }
 
