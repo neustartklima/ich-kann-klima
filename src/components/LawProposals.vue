@@ -73,9 +73,13 @@ function transEnd(event: TransitionEvent) {
   transform: translate3d(320px, 199px, 400px) scale(0.6) rotateX(90deg) scale(0.4);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
+  transform-style: flat;
+  * {
+    transform-style: flat;
+  }
 
   &.poppedUp {
-    transform: translate3d(320px, -100px, 400px) scale(0.6);
+    transform: translate3d(320px, -90px, 500px) scale(0.4);
   }
 }
 
@@ -94,15 +98,16 @@ function transEnd(event: TransitionEvent) {
   padding: 4pt;
   border: 1px solid;
   border-radius: 6pt;
-  transform: translate3d(400px, 390px, 400px);
+  transform: translate3d(400px, 333px, 510px);
   transition: transform 0.1s, background 0.3s;
+  transform-style: flat;
 
   &:hover {
     background: lightgrey;
   }
 
   &:active {
-    transform: translate3d(400px, 390px, 400px) scale(1.1);
+    transform: translate3d(400px, 333px, 510px) scale(1.1);
   }
 }
 
