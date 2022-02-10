@@ -88,7 +88,8 @@ function acknowledge(): void {
   transform: translateZ(-505px);
 
   h1 {
-    margin-top: -3rem;
+    margin-top: -5rem;
+    margin-left: -4rem;
   }
 }
 
