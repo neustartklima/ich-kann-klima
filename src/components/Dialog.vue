@@ -24,6 +24,7 @@
   border-radius: 2rem;
   box-shadow: 0 0 8px rgba(100, 100, 100, 0.5);
   padding: 1rem;
+  transform: scale(0.5) translate3d(-160px, 0, 520px);
 
   .buttons {
     float: right;

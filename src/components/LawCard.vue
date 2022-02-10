@@ -54,7 +54,7 @@ function sendAccept(event: AnimationEvent) {
   padding: 1rem;
   box-sizing: border-box;
   margin: 0 auto;
-  transform: rotate(3deg);
+  transform: rotate(-3deg) translateX(-50px);
   background-image: url(/src/assets/paper.png);
   background-size: cover;
 
@@ -74,7 +74,7 @@ function sendAccept(event: AnimationEvent) {
   }
 
   &:nth-of-type(odd) {
-    transform: rotate(-3deg);
+    transform: rotate(3deg) translateX(50px);
   }
 
   // @media (max-width: 800px) {
