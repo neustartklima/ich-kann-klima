@@ -49,6 +49,7 @@ function handleClick(event: MouseEvent) {
   border: 1px solid #888888;
   border-radius: 3px;
   z-index: 9999;
+  pointer-events: auto;
 
   .indicator {
     height: 100%;

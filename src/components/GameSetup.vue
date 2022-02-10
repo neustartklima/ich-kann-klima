@@ -62,6 +62,10 @@ function acknowledge(): void {
   perspective: 1000px;
   perspective-origin: 500px 200px;
 
+  #camera {
+    pointer-events: none;
+  }
+
   * {
     transform-style: preserve-3d;
   }

@@ -74,6 +74,8 @@ function transEnd(event: TransitionEvent) {
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
   transform-style: flat;
+  pointer-events: auto;
+
   * {
     transform-style: flat;
   }
@@ -101,6 +103,7 @@ function transEnd(event: TransitionEvent) {
   transform: translate3d(400px, 333px, 510px);
   transition: transform 0.1s, background 0.3s;
   transform-style: flat;
+  pointer-events: auto;
 
   &:hover {
     background: lightgrey;
