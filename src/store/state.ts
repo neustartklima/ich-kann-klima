@@ -6,4 +6,5 @@ export const state = {
     active: true,
     step: "start",
   },
+  activeRoom: "office",
 }
