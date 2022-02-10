@@ -1,11 +1,9 @@
-<script lang="ts">
-import { defineComponent } from "@vue/runtime-core"
+<script setup lang="ts">
+import { computed } from "vue"
+import { useStore } from "../store"
 
-export default defineComponent({
-  props: {
-    withNews: Boolean,
-  },
-})
+const store = useStore()
+const eventToShow = computed(() => store.getters.eventToShow)
 </script>
 
 <template>
@@ -18,7 +16,7 @@ export default defineComponent({
     </div>
     <div id="tv">
       <img id="tv-front" src="../assets/tv-front.png" />
-      <img id="news" src="../assets/news.png" v-if="withNews" />
+      <img id="news" src="../assets/news.png" v-if="eventToShow" />
     </div>
     <div id="legs">
       <img id="legs-front" src="../assets/tvset-legs.png" />

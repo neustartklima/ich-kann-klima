@@ -31,8 +31,8 @@ function changed(newValue: number) {
   #indicator {
     position: absolute;
     left: 380px;
-    bottom: 10px;
-    transform: scale(1.2);
+    bottom: 20px;
+    transform: scale(1.6);
   }
   img {
     width: 511px;

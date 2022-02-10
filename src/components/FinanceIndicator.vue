@@ -27,11 +27,11 @@ function changed(newValue: number) {
 
 <style lang="scss" scoped>
 #finances {
-  transform: translate3d(400px, 530px, 480px);
+  transform: translate3d(380px, 530px, 490px);
 
   #indicator {
-    left: 210px;
-    top: -180px;
+    left: 220px;
+    top: -185px;
     transform: scale(0.4);
   }
   img {
