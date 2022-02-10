@@ -65,20 +65,22 @@ function newGame() {
 
 <template>
   <Dialog>
-    <h2>Das Spiel ist leider zu Ende</h2>
+    <template v-slot:default>
+      <h2>Das Spiel ist leider zu Ende</h2>
 
-    <p>Deine Entscheidungen haben etwas verändert - soviel kann man sagen.</p>
+      <p>Deine Entscheidungen haben etwas verändert - soviel kann man sagen.</p>
 
-    <ul>
-      <li>Die CO2-Emmissionen {{ co2 }}</li>
-      <li>Die Staatsfinanzen {{ debt }}</li>
-      <li>Deine Beliebtheit {{ popularity }}</li>
-    </ul>
+      <ul>
+        <li>Die CO2-Emmissionen {{ co2 }}</li>
+        <li>Die Staatsfinanzen {{ debt }}</li>
+        <li>Deine Beliebtheit {{ popularity }}</li>
+      </ul>
 
-    <p>Gar nicht so einfach, Politiker zu sein, oder?</p>
+      <p>Gar nicht so einfach, Politiker zu sein, oder?</p>
+    </template>
 
-    <div class="button-bar">
+    <template v-slot:buttons>
       <button @click="newGame">Neuer Versuch</button>
-    </div>
+    </template>
   </Dialog>
 </template>

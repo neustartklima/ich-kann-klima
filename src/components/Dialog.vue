@@ -25,6 +25,7 @@
   box-shadow: 0 0 8px rgba(100, 100, 100, 0.5);
   padding: 1rem;
   transform: scale(0.5) translate3d(-160px, 0, 520px);
+  pointer-events: auto;
 
   .buttons {
     float: right;
@@ -37,6 +38,7 @@
       padding: 3px 15px;
       margin-left: 0.5rem;
       cursor: pointer;
+      pointer-events: auto;
 
       &:hover {
         background: #f7f7f7;
