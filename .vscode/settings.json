@@ -6,6 +6,7 @@
   "files.associations": {
     "*.json": "ndjson"
   },
+  "svg.preview.background": "transparent",
   "githubIssues.queries": [
     {
       "label": "My Issues",

@@ -5,7 +5,7 @@ import { currentEventIsInList, lawIsAccepted, linear, windPercentage } from "../
 
 export default defineLaw({
   title: "Abstandsregeln für Windkraft wie zu Beginn",
-  description: "Das Land / Die Kommune bestimmem über Abstände zwischen den Windkraftanlagen und Wohngebäuden.",
+  description: "Das Land / Die Kommune bestimmen über Abstände zwischen den Windkraftanlagen und Wohngebäuden.",
   labels: ["initial", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
 
