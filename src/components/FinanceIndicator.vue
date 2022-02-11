@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed } from "vue"
 import IndicatorBar from "./IndicatorBar.vue"
 
 const props = defineProps<{ value: number }>()
 
-const indicator = ref(props.value)
-const isShort = computed(() => indicator.value < 20)
-const isLess = computed(() => indicator.value >= 20 && indicator.value < 50)
-const isMore = computed(() => indicator.value >= 50 && indicator.value < 80)
-const isMuch = computed(() => indicator.value >= 80)
-
-function changed(newValue: number) {
-  indicator.value = newValue
-}
+const isShort = computed(() => props.value < 20)
+const isLess = computed(() => props.value >= 20 && props.value < 50)
+const isMore = computed(() => props.value >= 50 && props.value < 80)
+const isMuch = computed(() => props.value >= 80)
 </script>
 
 <template>
@@ -21,7 +16,7 @@ function changed(newValue: number) {
     <img v-if="isLess" src="../assets/money-less.png" id="less" />
     <img v-if="isMore" src="../assets/money-more.png" id="more" />
     <img v-if="isMuch" src="../assets/money-much.png" id="much" />
-    <IndicatorBar id="indicator" title="Finanzen" :value="indicator" @change="changed" />
+    <IndicatorBar id="indicator" title="Finanzen" :value="value" />
   </div>
 </template>
 
