@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed } from "vue"
 import IndicatorBar from "./IndicatorBar.vue"
 
 const props = defineProps<{
   value: number
 }>()
 
-const indicator = ref(props.value)
-const areHappy = computed(() => indicator.value >= 50)
-const areAngry = computed(() => indicator.value < 50)
-
-function changed(newValue: number) {
-  indicator.value = newValue
-}
+const areHappy = computed(() => props.value >= 50)
+const areAngry = computed(() => props.value < 50)
 </script>
 
 <template>
   <div id="popularity">
-    <IndicatorBar id="indicator" title="Beliebtheit" :value="indicator" @change="changed" />
+    <IndicatorBar id="indicator" title="Beliebtheit" :value="value" />
     <img v-if="areHappy" src="../assets/people-happy.png" id="happy" />
     <img v-if="areAngry" src="../assets/people-angry.png" id="angry" />
   </div>
