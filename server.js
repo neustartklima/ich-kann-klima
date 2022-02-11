@@ -33079,7 +33079,7 @@ var AbstandsregelnFuerWindkraftVerschaerfen_default = defineLaw({
 // src/laws/energy/AbstandsregelnFuerWindkraftWieBisher.ts
 var AbstandsregelnFuerWindkraftWieBisher_default = defineLaw({
   title: "Abstandsregeln f\xFCr Windkraft wie zu Beginn",
-  description: "Das Land / Die Kommune bestimmem \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
+  description: "Das Land / Die Kommune bestimmen \xFCber Abst\xE4nde zwischen den Windkraftanlagen und Wohngeb\xE4uden.",
   labels: ["initial", "WindkraftAbstandsregel"],
   removeLawsWithLabels: ["WindkraftAbstandsregel"],
   effort(game) {
