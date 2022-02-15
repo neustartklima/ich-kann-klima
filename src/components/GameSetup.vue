@@ -30,27 +30,46 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="game-setup" :class="activeRoom">
-    <div id="camera">
-      <div id="walls">
-        <div id="wall-back">
-          <h1>#ich-kann-klima</h1>
+  <div class="perspective">
+    <div class="game-setup" :class="activeRoom">
+      <div id="camera">
+        <div id="walls">
+          <div id="wall-back">
+            <h1>#ich-kann-klima</h1>
+          </div>
+          <div id="wall-left" />
+          <div id="wall-right" />
         </div>
-        <div id="wall-left" />
-        <div id="wall-right" />
+
+        <Office />
+        <Archive />
+
+        <GameOver v-if="over" />
       </div>
 
-      <Office />
-      <Archive />
-
-      <GameOver v-if="over" />
+      <News />
     </div>
-
-    <News />
   </div>
 </template>
 
 <style lang="scss">
+.perspective {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(var(--translateX)) scale(var(--scale));
+  transform-origin: 0 0;
+}
+
+/* filter breaks preserve3d, so apply highlight filter to child elements */
+.highlighted * {
+  filter: drop-shadow(2px 4px 6px red);
+}
+
 .game-setup {
   width: 1000px;
   height: 800px;
