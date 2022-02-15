@@ -8,9 +8,7 @@ const devMode = computed(() => store.state.devMode)
 </script>
 
 <template>
-  <div class="perspective">
-    <router-view />
-  </div>
+  <router-view />
 
   <div class="peek">
     <PeekInside v-if="devMode" />
@@ -27,22 +25,9 @@ body {
   overflow: hidden;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
-
-.perspective {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+#app {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(var(--translateX)) scale(var(--scale));
-  transform-origin: 0 0;
-}
-
-/* filter breaks preserve3d, so apply highlight filter to child elements */
-.highlighted * {
-  filter: drop-shadow(2px 4px 6px red);
 }
 
 .peek {

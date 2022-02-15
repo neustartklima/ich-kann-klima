@@ -16,6 +16,7 @@
     "hediet.vscode-drawio",
     "johnsoncodehk.vscode-typescript-vue-plugin",
     "stevencl.adddoccomments",
-    "ryanluker.vscode-coverage-gutters"
+    "ryanluker.vscode-coverage-gutters",
+    "streetsidesoftware.code-spell-checker-german"
   ]
 }

@@ -1,6 +1,7 @@
 describe("GameOver", () => {
   it("should  display the game over dialog when 'Sit out' is clicked many times.", () => {
     cy.visit("http://localhost:3000/")
+    cy.contains("Spiel starten").click()
     cy.contains("Tour beenden").click()
     cy.get("#calendar").contains("2021")
     cy.get(".singleLaw").first().click({ force: true })

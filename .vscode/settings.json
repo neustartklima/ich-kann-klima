@@ -20,5 +20,6 @@
   "mochaExplorer.files": "tests/**/*.spec.ts",
   "mochaExplorer.require": "ts-node/register",
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-  "testExplorer.useNativeTesting": true
+  "testExplorer.useNativeTesting": true,
+  "cSpell.language": "en,de-de"
 }
