@@ -25,6 +25,10 @@ body {
   overflow: hidden;
   font-family: Avenir, Helvetica, Arial, sans-serif;
 }
+#app {
+  width: 100%;
+  height: 100%;
+}
 
 .peek {
   display: flex;

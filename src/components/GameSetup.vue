@@ -35,7 +35,7 @@ onMounted(() => {
       <div id="camera">
         <div id="walls">
           <div id="wall-back">
-            <h1>#ich-kann-klima</h1>
+            <h1><router-link to="/">#ich-kann-klima</router-link></h1>
           </div>
           <div id="wall-left" />
           <div id="wall-right" />
@@ -114,5 +114,11 @@ onMounted(() => {
 
 #wall-right {
   transform: translateX(500px) rotateY(90deg);
+}
+
+a {
+  pointer-events: auto;
+  color: inherit;
+  text-decoration: inherit;
 }
 </style>
