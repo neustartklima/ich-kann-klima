@@ -6,8 +6,6 @@ import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePe
 export default defineLaw({
   title: "Solar auf neuen Dächern verpflichtend",
   description: "Alle Neubauten bekommen PV Anlagen auf die Dächer.",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
 
   effort(game) {
