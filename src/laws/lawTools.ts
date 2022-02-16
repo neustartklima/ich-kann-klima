@@ -199,7 +199,7 @@ export function co2PricingEffects(
   const carPopChange = popChangeFunc(game.values.carRenewablePercentage)
 
   return [
-    modify("stateDebt").byValue(((25 - price) / 1000) * game.values.co2emissions),
+    modify("stateDebt").byValue(((25 - price) / 1000) * game.values.co2emissions * 0.5), // Only half the price is actually earned by the state.
 
     modify("popularity").byValue(electricityPopChange + carPopChange),
 

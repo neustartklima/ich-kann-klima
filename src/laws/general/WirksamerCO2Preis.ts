@@ -14,7 +14,7 @@ export default defineLaw({
   },
 
   effects(game, startYear, currentYear) {
-    return [...co2PricingEffects(game, 150, -2, linearPopChange({ value: 80, result: 0 }, { value: 50, result: -3 }))]
+    return [...co2PricingEffects(game, 150, -2, linearPopChange({ value: 80, result: 0 }, { value: 50, result: -6 }))]
   },
 
   priority(game) {
@@ -45,9 +45,9 @@ export default defineLaw({
     Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
 
     - Anteil >= 80%: Popularität sinkt nicht.
-    - Anteil = 65%: Popularität sinkt um 1,5% pro Jahr.
-    - Anteil = 50%: Popularität sinkt um 3% pro Jahr.
-    - Anteil = 20%: Pooularität sinkt um 6% pro Jahr.
+    - Anteil = 65%: Popularität sinkt um 3% pro Jahr.
+    - Anteil = 50%: Popularität sinkt um 6% pro Jahr.
+    - Anteil = 20%: Pooularität sinkt um 12% pro Jahr.
       (dazwischen linear interpoliert.)
 
     ## Fossile

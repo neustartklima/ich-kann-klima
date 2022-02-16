@@ -15,6 +15,7 @@ export default defineLaw({
 
   effects(game, startYear, currentYear): Change[] {
     return [
+      modify("stateDebt").byValue(2),
       modify("popularity")
         .byValue(10)
         .if(startYear === currentYear),

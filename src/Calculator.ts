@@ -62,8 +62,8 @@ export function financeRating(game: Game): number {
   const base = defaultValues.stateDebt
   const ratio = (game.values.stateDebt - base) / base
   if (ratio > 0) {
-    // 5% additional debt will lead to 0%.
-    return clampToPercent(50 - (ratio / 0.05) * 50)
+    // 20% additional debt will lead to 0%.
+    return clampToPercent(50 - (ratio / 0.2) * 50)
   } else {
     // no debt at all will lead to 100%.
     return clampToPercent(50 - ratio * 50)
