@@ -6,7 +6,7 @@ import { linear } from "../lawTools"
 export default defineLaw({
   title: "Forschung und Entwicklung zur Stromspeicherung fördern",
   description:
-    "Ein Förderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd € über 5 Jahre.",
+    "Ein Förderprogramm zur Erforschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd € über 5 Jahre.",
 
   effort(game) {
     return monthsEffort(1)
@@ -37,7 +37,7 @@ export default defineLaw({
     Diese Folgen sind völlig aus der Luft gegriffen.
     TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
 
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Kosten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
     - [x] Nach 2 Jahren zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 0.2%.
 
     # Voraussetzungen
