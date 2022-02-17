@@ -19,7 +19,8 @@ export default defineEvent({
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen")
     const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2")
-    return abgeschafft || beibehalten || x2 ? 0.5 : 0
+    const allRoofs = lawIsAccepted(game, "SolarAufAllenDaechernVerpflichtend")
+    return abgeschafft || beibehalten || x2 || !allRoofs ? 0.5 : 0
   },
 
   citations: [fraunhoferISE2020InstalledPower],

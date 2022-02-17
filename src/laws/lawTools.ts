@@ -64,7 +64,7 @@ export function linearPopChange(basePoint: RefPoint, refPoint: RefPoint) {
  */
 export function lawIsAccepted(game: Game, lawId: LawId, minActiveYears: number = 0): boolean {
   if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
-  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears)
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince - 1 <= game.currentYear + minActiveYears)
 }
 
 export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | undefined {
@@ -81,7 +81,7 @@ export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | 
  */
 export function getCurrentEvent(game: Game): EventReference | undefined {
   const latestEvent = game.events[0] as EventReference | undefined
-  return latestEvent && date(latestEvent.occuredIn).sameInstant(date(game.currentDate)) ? latestEvent : undefined
+  return latestEvent && date(latestEvent.occurredIn).sameInstant(date(game.currentDate)) ? latestEvent : undefined
 }
 
 /**
@@ -199,7 +199,7 @@ export function co2PricingEffects(
   const carPopChange = popChangeFunc(game.values.carRenewablePercentage)
 
   return [
-    modify("stateDebt").byValue(((25 - price) / 1000) * game.values.co2emissions),
+    modify("stateDebt").byValue(((25 - price) / 1000) * game.values.co2emissions * 0.5), // Only half the price is actually earned by the state.
 
     modify("popularity").byValue(electricityPopChange + carPopChange),
 

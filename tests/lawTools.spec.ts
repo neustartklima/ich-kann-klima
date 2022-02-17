@@ -111,7 +111,7 @@ describe("lawTools", () => {
 
   describe("lawIsAccepted()", () => {
     const game: Partial<Game> = {
-      acceptedLaws: [{ lawId: "Test", effectiveSince: 2222 }],
+      acceptedLaws: [{ lawId: "Test", effectiveSince: 2223 }],
       currentYear: 2222,
     }
     it("should return true, if the given law was accepted.", () => {
@@ -151,7 +151,7 @@ describe("lawTools", () => {
     return {
       acknowledged: false,
       id,
-      occuredIn: occuredIn.toJSON(),
+      occurredIn: occuredIn.toJSON(),
     }
   }
   function makeGame(events: EventReference[], currentDate: Date) {
@@ -165,7 +165,10 @@ describe("lawTools", () => {
   describe("getCurrentEvent()", function () {
     it("should return the event if one occurred at the current date.", function () {
       const res = getCurrentEvent(
-        makeGame([makeEventRef("NewYear", makeDate(5)), makeEventRef("Hitzehoelle", makeDate(1))], makeDate(5))
+        makeGame(
+          [makeEventRef("NewYear", makeDate(5)), makeEventRef("CO2BudgetAufgebraucht", makeDate(1))],
+          makeDate(5)
+        )
       )
       should(res).not.be.undefined()
       res?.id.should.equal("NewYear")
@@ -176,7 +179,10 @@ describe("lawTools", () => {
     })
     it("should return undefined if the last event occurred at an earlier date. (Even with a matching event further down in the list.)", function () {
       const res = getCurrentEvent(
-        makeGame([makeEventRef("NewYear", makeDate(4)), makeEventRef("Hitzehoelle", makeDate(5))], makeDate(5))
+        makeGame(
+          [makeEventRef("NewYear", makeDate(4)), makeEventRef("CO2BudgetAufgebraucht", makeDate(5))],
+          makeDate(5)
+        )
       )
       should(res).be.undefined()
     })
@@ -185,24 +191,24 @@ describe("lawTools", () => {
   describe("currentEventIsInList()", function () {
     it("should return true if the current event is in the given list.", function () {
       const game = makeGame(
-        [makeEventRef("NewYear", makeDate(5)), makeEventRef("Hitzehoelle", makeDate(1))],
+        [makeEventRef("NewYear", makeDate(5)), makeEventRef("CO2BudgetAufgebraucht", makeDate(1))],
         makeDate(5)
       )
       currentEventIsInList(game, ["WahlVerloren", "NewYear"]).should.be.true
     })
     it("should return false if the current event is not in the given list.", function () {
       const game = makeGame(
-        [makeEventRef("NewYear", makeDate(5)), makeEventRef("Hitzehoelle", makeDate(1))],
+        [makeEventRef("NewYear", makeDate(5)), makeEventRef("CO2BudgetAufgebraucht", makeDate(1))],
         makeDate(5)
       )
-      currentEventIsInList(game, ["WahlVerloren", "Hitzehoelle"]).should.be.false
+      currentEventIsInList(game, ["WahlVerloren", "CO2BudgetAufgebraucht"]).should.be.false
     })
     it("should return false if there is no current event.", function () {
       const game = makeGame(
-        [makeEventRef("NewYear", makeDate(4)), makeEventRef("Hitzehoelle", makeDate(1))],
+        [makeEventRef("NewYear", makeDate(4)), makeEventRef("CO2BudgetAufgebraucht", makeDate(1))],
         makeDate(5)
       )
-      currentEventIsInList(game, ["NewYear", "Hitzehoelle"]).should.be.false
+      currentEventIsInList(game, ["NewYear", "CO2BudgetAufgebraucht"]).should.be.false
     })
   })
 

@@ -23,6 +23,7 @@ export default defineLaw({
 
   effects(game, startYear, currentYear): Change[] {
     return [
+      modify("stateDebt").byValue(8),
       modify("popularity")
         .byValue(-10)
         .if(startYear === currentYear),
@@ -38,7 +39,7 @@ export default defineLaw({
       return 100
     }
     if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
-      return linear(100, 30, renewablePercentage(game))
+      return linear(100, 50, renewablePercentage(game))
     }
     return 0
   },

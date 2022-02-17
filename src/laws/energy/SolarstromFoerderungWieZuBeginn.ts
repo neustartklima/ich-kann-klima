@@ -1,5 +1,5 @@
 import { markdown } from "../../lib/utils"
-import { Change } from "../../params"
+import { Change, modify } from "../../params"
 import { defineLaw, monthsEffort } from "../LawsTypes"
 import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
 
@@ -15,7 +15,7 @@ export default defineLaw({
   },
 
   effects(game, startYear, currentYear): Change[] {
-    return [...powerTransfer(game, "electricitySolar", 5)]
+    return [modify("stateDebt").byValue(1), ...powerTransfer(game, "electricitySolar", 5)]
   },
 
   priority(game) {

@@ -2,7 +2,7 @@ import { Event, EventId } from "."
 import { Citations } from "../citations"
 import { startDate } from "../constants"
 import { Game } from "../game"
-import { date, Duration, duration, durationBetween, DurationLikeObject, laterOf } from "../lib/Temporal"
+import { Date, date, Duration, duration, durationBetween, DurationLikeObject, laterOf } from "../lib/Temporal"
 import { Change } from "../params"
 import { Details, Internals, Ratio } from "../types"
 
@@ -63,13 +63,54 @@ export const specialEventProbs = {
   hitzehoelle: 6,
 }
 
-export function durationWithoutEvents(game: Game, eventsToConsider: EventId[]): Duration {
+/**
+ * Calculate duration since one of a list of events occurred.
+ * @param game Game to inspect.
+ * @param eventsToConsider Array of event IDs to search for.
+ * @returns A duration since the last of the events to consider occurred or undefined, if none.
+ */
+export function durationWithoutEvents(game: Game, eventsToConsider: EventId[]): Duration | undefined {
   const lastOccurrence = game.events
     .filter((eventRef) => eventsToConsider.includes(eventRef.id))
-    .reduce((yearSoFar, eventRef) => laterOf(yearSoFar, date(eventRef.occuredIn)), date(startDate))
+    .reduce(
+      (yearSoFar, eventRef) =>
+        yearSoFar === undefined ? date(eventRef.occurredIn) : laterOf(yearSoFar, date(eventRef.occurredIn)),
+      undefined as Date | undefined
+    )
+  if (lastOccurrence === undefined) return undefined
   return durationBetween(lastOccurrence, date(game.currentDate))
 }
 
-export function lessTimeHasPassed(game: Game, event: Event, time: DurationLikeObject): boolean {
-  return durationWithoutEvents(game, [event.id]).lessThan(duration(time))
+/**
+ * Calculate duration since one of a list of events occurred or since the start of the game.
+ * @param game Game to inspect.
+ * @param eventsToConsider Array of event IDs to search for.
+ * @returns A duration since the last of the events to consider occurred or since the start of the game.
+ */
+export function durationSinceStartWithoutEvents(game: Game, eventsToConsider: EventId[]): Duration {
+  const durAfterEvents = durationWithoutEvents(game, eventsToConsider)
+  if (durAfterEvents === undefined) return durationBetween(date(startDate), date(game.currentDate))
+  return durAfterEvents
+}
+
+/**
+ * Check if less than a given time has passed since a given event occurred or the start of the game.
+ * @param game Game to inspect.
+ * @param event The event.
+ * @param time The time / duration that shall not have passed since the event occurred.
+ * @param timeAfterStart If given, a separate time for the start of the game. Default: `time`.
+ * @returns True, if less time has passed than `time` since `event` occurred OR than `timeAfterStart` since the start of the game.
+ */
+export function lessTimeHasPassed(
+  game: Game,
+  event: Event,
+  time: DurationLikeObject,
+  timeAfterStart?: DurationLikeObject | undefined
+): boolean {
+  if (timeAfterStart === undefined) {
+    timeAfterStart = time
+  }
+  const durWithoutEvents = durationWithoutEvents(game, [event.id])
+  if (durWithoutEvents != undefined && durWithoutEvents.lessThan(duration(time))) return true
+  return durationBetween(date(startDate), date(game.currentDate)).lessThan(duration(timeAfterStart))
 }

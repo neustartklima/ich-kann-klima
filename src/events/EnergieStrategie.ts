@@ -1,4 +1,4 @@
-import { defineEvent } from "./EventsTypes"
+import { defineEvent, lessTimeHasPassed } from "./EventsTypes"
 
 export default defineEvent({
   title: "Grundsatzdebatte zur Stromerzeugung",
@@ -7,5 +7,12 @@ export default defineEvent({
 
   apply() {
     return []
+  },
+
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 10 }, { years: 2 })) {
+      return 0
+    }
+    return 0.5
   },
 })

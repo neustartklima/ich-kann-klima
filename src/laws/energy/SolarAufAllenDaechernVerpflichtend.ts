@@ -1,13 +1,11 @@
 import { markdown } from "../../lib/utils"
 import { Change, modify } from "../../params"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
+import { currentEventIsInList, lawIsAccepted, linear, powerTransfer, renewablePercentage } from "../lawTools"
 
 export default defineLaw({
   title: "Solar auf neuen Dächern verpflichtend",
   description: "Alle Neubauten bekommen PV Anlagen auf die Dächer.",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
 
   effort(game) {
@@ -16,6 +14,7 @@ export default defineLaw({
 
   effects(game, startYear, currentYear): Change[] {
     return [
+      modify("stateDebt").byValue(4),
       modify("popularity")
         .byValue(-3)
         .if(startYear === currentYear),
@@ -24,6 +23,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100
+    }
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(100, 30, renewablePercentage(game))
     }

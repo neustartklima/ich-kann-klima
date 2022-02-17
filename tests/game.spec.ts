@@ -87,19 +87,19 @@ describe("game", () => {
       const game = newGame(allLaws)
       const events: Event[] = [
         { id: "NewYear", title: "e1", description: "", apply: () => [], probability: () => 2 },
-        { id: "Hitzehoelle", title: "e2", description: "", apply: () => [], probability: () => 3 },
+        { id: "CO2BudgetAufgebraucht", title: "e2", description: "", apply: () => [], probability: () => 3 },
         { id: "SocialMedia", title: "e3", description: "", apply: () => [], probability: () => 0.9 },
       ]
       const ret = prepareNextStep(game, allLaws, events)
       should(ret).not.be.undefined()
-      ret?.id.should.equal("Hitzehoelle")
+      ret?.id.should.equal("CO2BudgetAufgebraucht")
     })
 
     it("should never return event with probability <=0", () => {
       const game = newGame(allLaws)
       const events: Event[] = [
         { id: "NewYear", title: "e1", description: "", apply: () => [], probability: () => 0 },
-        { id: "Hitzehoelle", title: "e2", description: "", apply: () => [], probability: () => -0.01 },
+        { id: "CO2BudgetAufgebraucht", title: "e2", description: "", apply: () => [], probability: () => -0.01 },
         { id: "SocialMedia", title: "e3", description: "", apply: () => [], probability: () => -100 },
       ]
       for (var num = 0; num <= 20; num++) {
@@ -113,7 +113,14 @@ describe("game", () => {
       type CEvent = Event & { count: number }
       const events: CEvent[] = [
         { id: "NewYear", title: "e1", description: "", apply: () => [], probability: () => 0.1, count: 0 },
-        { id: "Hitzehoelle", title: "e2", description: "", apply: () => [], probability: () => 0.9, count: 0 },
+        {
+          id: "CO2BudgetAufgebraucht",
+          title: "e2",
+          description: "",
+          apply: () => [],
+          probability: () => 0.9,
+          count: 0,
+        },
         { id: "SocialMedia", title: "e3", description: "", apply: () => [], probability: () => 0.5, count: 0 },
       ]
       const probSum = events.map((e) => e.probability(game, e)).reduce((a, b) => a + b)

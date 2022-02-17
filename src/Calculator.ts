@@ -43,13 +43,19 @@ function clampToPercent(value: number) {
 }
 
 export function co2Rating(game: Game): number {
-  if (game.values.co2emissions === 0) {
+  if (game.values.co2budget <= 0) {
+    return 0 // budget is used up
+  }
+  if (game.values.co2emissions <= 0) {
     return 100 // nothing is better than no emissions!
   }
-  // the year's budget should be only a part of the remaining total budget
-  const yearBudget = (game.values.co2budget * createBaseValues(defaultValues).co2emissions) / defaultValues.co2budget
-  // the ratio of actual emissions to the yearly budget: < 1 is bad, > 1 is good
-  const ratio = yearBudget / game.values.co2emissions
+
+  // Rating at start of game is 50%.
+  // If years till budget is used up doubled, rating is 100%.
+  // If budget is used in less than a year, rating is 0%.
+  const yearsAtStart = defaultValues.co2budget / createBaseValues(defaultValues).co2emissions
+  const yearsNow = game.values.co2budget / game.values.co2emissions
+  const ratio = yearsNow / yearsAtStart
   return clampToPercent(ratio * 50)
 }
 
@@ -62,8 +68,8 @@ export function financeRating(game: Game): number {
   const base = defaultValues.stateDebt
   const ratio = (game.values.stateDebt - base) / base
   if (ratio > 0) {
-    // 5% additional debt will lead to 0%.
-    return clampToPercent(50 - (ratio / 0.05) * 50)
+    // 20% additional debt will lead to 0%.
+    return clampToPercent(50 - (ratio / 0.2) * 50)
   } else {
     // no debt at all will lead to 100%.
     return clampToPercent(50 - ratio * 50)

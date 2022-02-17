@@ -20,6 +20,7 @@ export default defineLaw({
 
   effects(game, startYear, currentYear): Change[] {
     return [
+      modify("stateDebt").byValue(4),
       modify("popularity")
         .byValue(-2)
         .if(startYear === currentYear),
@@ -53,7 +54,7 @@ export default defineLaw({
 
     # Folgen
 
-    - [x] Schulden +-0
+    - [x] Schulden +-0 (Zur besseren Verständlichkeit 4 MrdEuro pro Jahr.)
     - [x] Popularität: -2%
     - [x] Arbeitsplätze: 500.000 also Arbeitslosigkeit -100 Tausend Menschen im ersten Jahr
     - [ ] Abhängigkeit, ob das Budget ausgeschöpft wird, ist schwierig.)

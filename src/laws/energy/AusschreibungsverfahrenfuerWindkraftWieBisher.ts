@@ -1,4 +1,4 @@
-import { Change } from "../../params"
+import { Change, modify } from "../../params"
 import { defineLaw, monthsEffort } from "../LawsTypes"
 import { currentEventIsInList, lawIsAccepted, linear, renewablePercentage, windPowerExpansion } from "../lawTools"
 
@@ -15,7 +15,7 @@ export default defineLaw({
   },
 
   effects(game, startYear, currentYear): Change[] {
-    return [...windPowerExpansion(game, 6.9, 1.2, startYear)]
+    return [modify("stateDebt").byValue(1), ...windPowerExpansion(game, 6.9, 1.2, startYear)]
   },
 
   priority(game) {

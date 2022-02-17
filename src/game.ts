@@ -125,7 +125,7 @@ export function prepareNextStep(
 ): Event | undefined {
   const event = checkForEvent(game, events, random)
   if (event) {
-    const eventRef: EventReference = { id: event.id, occuredIn: game.currentDate, acknowledged: false }
+    const eventRef: EventReference = { id: event.id, occurredIn: game.currentDate, acknowledged: false }
     game.events.unshift(eventRef)
   }
   const newProposals = determineNewProposals(game, laws)

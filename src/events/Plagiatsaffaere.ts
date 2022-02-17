@@ -11,7 +11,7 @@ export default defineEvent({
   },
 
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 3, months: 10 })) {
+    if (lessTimeHasPassed(game, event, { years: 12 }, { years: 3, months: 10 })) {
       return 0
     }
     return 0.5

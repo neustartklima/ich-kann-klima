@@ -2,7 +2,7 @@ import { idsToLaws } from "../laws"
 import { linear } from "../laws/lawTools"
 import { markdown } from "../lib/utils"
 import { dispatch } from "../params"
-import { defineEvent, durationWithoutEvents } from "./EventsTypes"
+import { defineEvent, durationSinceStartWithoutEvents } from "./EventsTypes"
 
 export default defineEvent({
   title: "Staatsoberhaupt verstorben",
@@ -17,10 +17,9 @@ export default defineEvent({
       return 0
     }
 
-    return Math.min(1, linear(5, 10, durationWithoutEvents(game, [event.id]).lux.as("years")) / 100)
+    return Math.min(1, linear(5, 10, durationSinceStartWithoutEvents(game, [event.id]).lux.as("years")) / 100)
   },
 
-  laws: [],
   citations: [],
   details: markdown`
 
