@@ -8,7 +8,7 @@ import Bestechung from "./Bestechung"
 import Duerrewelle from "./Duerrewelle"
 import EnergieStrategie from "./EnergieStrategie"
 import FinanzKollaps from "./Finanzkollaps"
-import Hitzehoelle from "./Hitzehölle"
+import CO2BudgetAufgebraucht from "./CO2BudgetAufgebraucht"
 import Klimafluechtlinge from "./Klimafluechtlinge"
 import Klimaneutral from "./Klimaneutral"
 import NewYear from "./NewYear"
@@ -40,7 +40,7 @@ const allEventsObj = {
   Duerrewelle,
   EnergieStrategie,
   FinanzKollaps,
-  Hitzehoelle,
+  CO2BudgetAufgebraucht,
   Klimafluechtlinge,
   Klimaneutral,
   NewYear,
