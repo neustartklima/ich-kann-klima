@@ -32904,11 +32904,11 @@ function linearPopChange(basePoint, refPoint) {
 function lawIsAccepted(game, lawId, minActiveYears = 0) {
   if (!allLaws.map((l) => l.id).includes(lawId))
     throw new Error("Unknown law ID " + lawId + " used in a law.");
-  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears);
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince - 1 <= game.currentYear + minActiveYears);
 }
 function getCurrentEvent(game) {
   const latestEvent = game.events[0];
-  return latestEvent && date(latestEvent.occuredIn).sameInstant(date(game.currentDate)) ? latestEvent : void 0;
+  return latestEvent && date(latestEvent.occurredIn).sameInstant(date(game.currentDate)) ? latestEvent : void 0;
 }
 function currentEventIsInList(game, eventIds) {
   const currentEvent = getCurrentEvent(game);
@@ -32958,7 +32958,7 @@ function co2PricingEffects(game, price, relReduction, popChangeFunc) {
   const electricityPopChange = popChangeFunc(renewablePercentage(game));
   const carPopChange = popChangeFunc(game.values.carRenewablePercentage);
   return [
-    modify("stateDebt").byValue((25 - price) / 1e3 * game.values.co2emissions),
+    modify("stateDebt").byValue((25 - price) / 1e3 * game.values.co2emissions * 0.5),
     modify("popularity").byValue(electricityPopChange + carPopChange),
     modify("co2emissionsIndustry").byPercent(relReduction),
     modify("co2emissionsAgriculture").byPercent(relReduction),
@@ -33123,6 +33123,7 @@ var AusschreibungsverfahrenfuerWindkraftVerachtfachen_default = defineLaw({
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(8),
       modify("popularity").byValue(-20).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
       ...windPowerExpansion(game, 55.2, 9.6, startYear2)
@@ -33151,6 +33152,7 @@ var AusschreibungsverfahrenfuerWindkraftVerdoppeln_default = defineLaw({
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(2),
       modify("popularity").byValue(-1).if(startYear2 === currentYear),
       modify("unemployment").byValue(-20).if(startYear2 === currentYear),
       ...windPowerExpansion(game, 13.8, 2.4, startYear2)
@@ -33185,6 +33187,7 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(4),
       modify("popularity").byValue(-2).if(startYear2 === currentYear),
       modify("unemployment").byValue(-100).if(startYear2 === currentYear),
       ...windPowerExpansion(game, 27.6, 4.8, startYear2)
@@ -33213,7 +33216,7 @@ var AusschreibungsverfahrenfuerWindkraftVervierfachen_default = defineLaw({
 
     # Folgen
 
-    - [x] Schulden +-0
+    - [x] Schulden +-0 (Zur besseren Verständlichkeit 4 MrdEuro pro Jahr.)
     - [x] Popularität: -2%
     - [x] Arbeitsplätze: 500.000 also Arbeitslosigkeit -100 Tausend Menschen im ersten Jahr
     - [ ] Abhängigkeit, ob das Budget ausgeschöpft wird, ist schwierig.)
@@ -33248,7 +33251,7 @@ var AusschreibungsverfahrenfuerWindkraftWieBisher_default = defineLaw({
     return monthsEffort(8);
   },
   effects(game, startYear2, currentYear) {
-    return [...windPowerExpansion(game, 6.9, 1.2, startYear2)];
+    return [modify("stateDebt").byValue(1), ...windPowerExpansion(game, 6.9, 1.2, startYear2)];
   },
   priority(game) {
     if (currentEventIsInList(game, ["WindkraftAusschreibung"])) {
@@ -33411,7 +33414,7 @@ var ForschungDezentraleStromerzeugung_default = defineLaw({
 // src/laws/energy/ForschungUndEntwicklungStromspeicherung.ts
 var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
   title: "Forschung und Entwicklung zur Stromspeicherung f\xF6rdern",
-  description: "Ein F\xF6rderprogramm zur Erfoschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
+  description: "Ein F\xF6rderprogramm zur Erforschung und Entwicklung innovativer Technologien zur Stromspeicherung wird aufgesetzt. 10 Mrd \u20AC \xFCber 5 Jahre.",
   effort(game) {
     return monthsEffort(1);
   },
@@ -33439,7 +33442,7 @@ var ForschungUndEntwicklungStromspeicherung_default = defineLaw({
     Diese Folgen sind völlig aus der Luft gegriffen.
     TODO #78: Tatsächliche Folgen recherchieren, korrigieren und belegen werden.
 
-    - [x] Konsten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
+    - [x] Kosten: 2 Mrd Euro pro Jahr für die ersten 5 Jahre
     - [x] Nach 2 Jahren zahlt es sich aus und die Netzqualität steigt (ohne Förderung) jährlich um 0.2%.
 
     # Voraussetzungen
@@ -33653,19 +33656,21 @@ var NetzausbauFoerdern_default = defineLaw({
 var SolarAufAllenDaechernVerpflichtend_default = defineLaw({
   title: "Solar auf neuen D\xE4chern verpflichtend",
   description: "Alle Neubauten bekommen PV Anlagen auf die D\xE4cher.",
-  labels: ["SolarFoerderung"],
-  removeLawsWithLabels: ["SolarFoerderung"],
   treatAfterLabels: [],
   effort(game) {
     return monthsEffort(3);
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(4),
       modify("popularity").byValue(-3).if(startYear2 === currentYear),
       ...powerTransfer(game, "electricitySolar", 2)
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
       return linear(100, 30, renewablePercentage(game));
     }
@@ -33698,6 +33703,7 @@ var SolarstromFoerdernx2_default = defineLaw({
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(2),
       modify("popularity").byValue(10).if(startYear2 === currentYear),
       modify("unemployment").byValue(-31e3).if(startYear2 === currentYear),
       ...powerTransfer(game, "electricitySolar", 10)
@@ -33708,7 +33714,7 @@ var SolarstromFoerdernx2_default = defineLaw({
       return 100;
     }
     if (lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn")) {
-      return linear(100, 30, renewablePercentage(game));
+      return linear(100, 50, renewablePercentage(game));
     }
     return 0;
   },
@@ -33732,6 +33738,7 @@ var SolarstromFoerdernx4_default = defineLaw({
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(4),
       modify("popularity").byValue(20).if(startYear2 === currentYear),
       modify("unemployment").byValue(-89e3).if(startYear2 === currentYear),
       ...powerTransfer(game, "electricitySolar", 20)
@@ -33742,7 +33749,7 @@ var SolarstromFoerdernx4_default = defineLaw({
       return 100;
     }
     if (lawIsAccepted(game, "SolarstromFoerdernx2")) {
-      return linear(100, 30, renewablePercentage(game));
+      return linear(100, 50, renewablePercentage(game));
     }
     return 0;
   },
@@ -33777,6 +33784,7 @@ var SolarstromFoerdernx8_default = defineLaw({
   },
   effects(game, startYear2, currentYear) {
     return [
+      modify("stateDebt").byValue(8),
       modify("popularity").byValue(-10).if(startYear2 === currentYear),
       modify("unemployment").byValue(-209e3).if(startYear2 === currentYear),
       ...powerTransfer(game, "electricitySolar", 40)
@@ -33787,7 +33795,7 @@ var SolarstromFoerdernx8_default = defineLaw({
       return 100;
     }
     if (lawIsAccepted(game, "SolarstromFoerdernx4")) {
-      return linear(100, 30, renewablePercentage(game));
+      return linear(100, 50, renewablePercentage(game));
     }
     return 0;
   },
@@ -33840,7 +33848,7 @@ var SolarstromFoerderungWieZuBeginn_default = defineLaw({
     return monthsEffort(9);
   },
   effects(game, startYear2, currentYear) {
-    return [...powerTransfer(game, "electricitySolar", 5)];
+    return [modify("stateDebt").byValue(1), ...powerTransfer(game, "electricitySolar", 5)];
   },
   priority(game) {
     if (currentEventIsInList(game, ["SolarstromFoerderung", "SolarstromFoerderung2"])) {
@@ -34062,6 +34070,9 @@ var CO2PreisErhoehen_default = defineLaw({
     ];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100;
+    }
     if (lawIsAccepted(game, "VollerCO2Preis") || lawIsAccepted(game, "WirksamerCO2Preis"))
       return 0;
     return 50;
@@ -34155,6 +34166,9 @@ var VollerCO2Preis_default = defineLaw({
     return [...co2PricingEffects(game, 3e3, -5, linearPopChange({ value: 90, result: 0 }, { value: 50, result: -10 }))];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100;
+    }
     if (!lawIsAccepted(game, "WirksamerCO2Preis"))
       return 0;
     return 50;
@@ -34265,9 +34279,12 @@ var WirksamerCO2Preis_default = defineLaw({
     return monthsEffort(8);
   },
   effects(game, startYear2, currentYear) {
-    return [...co2PricingEffects(game, 150, -2, linearPopChange({ value: 80, result: 0 }, { value: 50, result: -3 }))];
+    return [...co2PricingEffects(game, 150, -2, linearPopChange({ value: 80, result: 0 }, { value: 50, result: -6 }))];
   },
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100;
+    }
     if (!lawIsAccepted(game, "CO2PreisErhoehen"))
       return 0;
     return 50;
@@ -34296,9 +34313,9 @@ var WirksamerCO2Preis_default = defineLaw({
     Abhängigkeit vom jeweiligen Anteil der Erneuerbaren wie folgt:
 
     - Anteil >= 80%: Popularität sinkt nicht.
-    - Anteil = 65%: Popularität sinkt um 1,5% pro Jahr.
-    - Anteil = 50%: Popularität sinkt um 3% pro Jahr.
-    - Anteil = 20%: Pooularität sinkt um 6% pro Jahr.
+    - Anteil = 65%: Popularität sinkt um 3% pro Jahr.
+    - Anteil = 50%: Popularität sinkt um 6% pro Jahr.
+    - Anteil = 20%: Pooularität sinkt um 12% pro Jahr.
       (dazwischen linear interpoliert.)
 
     ## Fossile
@@ -34384,11 +34401,19 @@ var specialEventProbs = {
   hitzehoelle: 6
 };
 function durationWithoutEvents(game, eventsToConsider) {
-  const lastOccurrence = game.events.filter((eventRef) => eventsToConsider.includes(eventRef.id)).reduce((yearSoFar, eventRef) => laterOf(yearSoFar, date(eventRef.occuredIn)), date(startDate));
+  const lastOccurrence = game.events.filter((eventRef) => eventsToConsider.includes(eventRef.id)).reduce((yearSoFar, eventRef) => yearSoFar === void 0 ? date(eventRef.occurredIn) : laterOf(yearSoFar, date(eventRef.occurredIn)), void 0);
+  if (lastOccurrence === void 0)
+    return void 0;
   return durationBetween(lastOccurrence, date(game.currentDate));
 }
-function lessTimeHasPassed(game, event, time) {
-  return durationWithoutEvents(game, [event.id]).lessThan(duration(time));
+function lessTimeHasPassed(game, event, time, timeAfterStart) {
+  if (timeAfterStart === void 0) {
+    timeAfterStart = time;
+  }
+  const durWithoutEvents = durationWithoutEvents(game, [event.id]);
+  if (durWithoutEvents != void 0 && durWithoutEvents.lessThan(duration(time)))
+    return true;
+  return durationBetween(date(startDate), date(game.currentDate)).lessThan(duration(timeAfterStart));
 }
 
 // src/events/AbstandsregelnWindkraft.ts
@@ -34473,6 +34498,12 @@ var EnergieStrategie_default = defineEvent({
   description: "Der Bundestag debattierte heute \xFCber die Strategie zur Stromerzeugung in Deutschland. Die Meinungen der Parteien gingen dabei stark auseinander.",
   apply() {
     return [];
+  },
+  probability(game, event) {
+    if (lessTimeHasPassed(game, event, { years: 10 }, { years: 2 })) {
+      return 0;
+    }
+    return 0.5;
   }
 });
 
@@ -34488,7 +34519,7 @@ function financeRating(game) {
   const base = defaultValues.stateDebt;
   const ratio = (game.values.stateDebt - base) / base;
   if (ratio > 0) {
-    return clampToPercent(50 - ratio / 0.05 * 50);
+    return clampToPercent(50 - ratio / 0.2 * 50);
   } else {
     return clampToPercent(50 - ratio * 50);
   }
@@ -34512,12 +34543,14 @@ var Finanzkollaps_default = defineEvent({
   }
 });
 
-// src/events/Hitzehölle.ts
-var Hitzeh_lle_default = defineEvent({
-  title: "Hitzeh\xF6lle",
-  description: `Die CO2-Werte sind soweit gestiegen, dass die Erde nur noch an wenigen Orten bewohnbar ist. Die ehemaligen K\xFCstenregionen
-  stehen unter Wasser, ganze Landstriche sind verschwunden. In den trockeneren Gebieten ist die Temperatur so hoch, dass nichts mehr w\xE4chst.
-  Um die verbleibdenden Teile sind erbitterte K\xE4mpfe ausgebrochen.
+// src/events/CO2BudgetAufgebraucht.ts
+var CO2BudgetAufgebraucht_default = defineEvent({
+  title: "CO2 Budget Aufgebraucht",
+  description: `Wenn sich alle L\xE4nder so verhalten, werden die CO2-Werte soweit steigen,
+  dass die Erde nur noch an wenigen Orten bewohnbar ist.
+  Die ehemaligen K\xFCstenregionen stehen unter Wasser, ganze Landstriche sind verschwunden.
+  In den trockeneren Gebieten ist die Temperatur so hoch, dass nichts mehr w\xE4chst.
+  Um die verbleibenden Teile brechen erbitterte K\xE4mpfe aus.
   `,
   apply() {
     return [dispatch("gameOver")];
@@ -34584,7 +34617,7 @@ var Plagiatsaffaere_default = defineEvent({
     return [modify("popularity").byValue(-10)];
   },
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 3, months: 10 })) {
+    if (lessTimeHasPassed(game, event, { years: 12 }, { years: 3, months: 10 })) {
       return 0;
     }
     return 0.5;
@@ -34603,10 +34636,10 @@ var PR_Innenminister_default = defineEvent({
   title: "PR-Skandal",
   description: `Auf dem Computer deines Innenministers wurden durch Hackerangriff rechtsradikale Inhalte gefunden.`,
   apply() {
-    return [modify("popularity").byValue(-2)];
+    return [modify("popularity").byValue(-10)];
   },
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 2, months: 11 })) {
+    if (lessTimeHasPassed(game, event, { years: 20 }, { years: 5, months: 11 })) {
       return 0;
     }
     return 0.3;
@@ -34628,7 +34661,7 @@ var PR_Kohleindustrie_default = defineEvent({
     return [modify("popularity").byValue(-2)];
   },
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { months: 11 })) {
+    if (lessTimeHasPassed(game, event, { years: 20 }, { years: 3, months: 11 })) {
       return 0;
     }
     if (lawIsAccepted(game, "WirksamerCO2Preis") || lawIsAccepted(game, "VollerCO2Preis") || lawIsAccepted(game, "KohleverstromungEinstellen")) {
@@ -34671,7 +34704,8 @@ var SolarstromFoerderung_default = defineEvent({
     const abgeschafft = lawIsAccepted(game, "SolarstromFoerderungAbschaffen");
     const beibehalten = lawIsAccepted(game, "SolarstromFoerderungWieZuBeginn");
     const x2 = lawIsAccepted(game, "SolarstromFoerdernx2");
-    return abgeschafft || beibehalten || x2 ? 0.5 : 0;
+    const allRoofs = lawIsAccepted(game, "SolarAufAllenDaechernVerpflichtend");
+    return abgeschafft || beibehalten || x2 || !allRoofs ? 0.5 : 0;
   },
   citations: [fraunhoferISE2020InstalledPower],
   details: markdown`
@@ -34783,7 +34817,7 @@ var WindkraftForschung_default = defineEvent({
     return [modify("popularity").byValue(4), modify("electricityWindEfficiency").byPercent(30)];
   },
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 3, months: 7 })) {
+    if (lessTimeHasPassed(game, event, { years: 20 }, { years: 3, months: 7 })) {
       return 0;
     }
     const factor = lawIsAccepted(game, "WindkraftVereinfachen") ? 1.5 : 1;
@@ -34794,7 +34828,7 @@ var WindkraftForschung_default = defineEvent({
       return 0.4 * factor;
     }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
-      return 0.3 * factor;
+      return 0.1 * factor;
     }
     return 0;
   },
@@ -34815,7 +34849,7 @@ var allEventsObj = {
   Duerrewelle: Duerrewelle_default,
   EnergieStrategie: EnergieStrategie_default,
   FinanzKollaps: Finanzkollaps_default,
-  Hitzehoelle: Hitzeh_lle_default,
+  CO2BudgetAufgebraucht: CO2BudgetAufgebraucht_default,
   Klimafluechtlinge: Klimafluechtlinge_default,
   Klimaneutral: Klimaneutral_default,
   NewYear: NewYear_default,
