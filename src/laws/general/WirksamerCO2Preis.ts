@@ -1,7 +1,7 @@
 import { wdr2021KlimaschutzMitCO2Preis } from "../../citations"
 import { markdown } from "../../lib/utils"
 import { defineLaw, monthsEffort } from "../LawsTypes"
-import { co2PricingEffects, lawIsAccepted, linearPopChange } from "../lawTools"
+import { co2PricingEffects, currentEventIsInList, lawIsAccepted, linearPopChange } from "../lawTools"
 
 export default defineLaw({
   title: "Wirksamer CO2 Preis",
@@ -18,6 +18,9 @@ export default defineLaw({
   },
 
   priority(game) {
+    if (currentEventIsInList(game, ["EnergieStrategie"])) {
+      return 100
+    }
     if (!lawIsAccepted(game, "CO2PreisErhoehen")) return 0
     return 50
   },
