@@ -73,7 +73,7 @@ export type Event = EventDefinition & {
 
 export type EventReference = {
   id: EventId
-  occuredIn: string
+  occurredIn: string
   acknowledged: boolean
 }
 

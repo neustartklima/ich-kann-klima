@@ -151,7 +151,7 @@ describe("lawTools", () => {
     return {
       acknowledged: false,
       id,
-      occuredIn: occuredIn.toJSON(),
+      occurredIn: occuredIn.toJSON(),
     }
   }
   function makeGame(events: EventReference[], currentDate: Date) {

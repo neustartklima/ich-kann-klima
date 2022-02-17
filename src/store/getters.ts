@@ -14,7 +14,7 @@ export const getters = {
     if (!state.game) return undefined
     const currDate = state.game.currentDate
     
-    const er = state.game.events.filter((er) => er.occuredIn === currDate && !er.acknowledged)[0]
+    const er = state.game.events.filter((er) => er.occurredIn === currDate && !er.acknowledged)[0]
     return er && allEvents.find((e) => e.id === er.id)
   },
 }

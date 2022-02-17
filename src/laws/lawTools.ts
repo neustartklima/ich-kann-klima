@@ -81,7 +81,7 @@ export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | 
  */
 export function getCurrentEvent(game: Game): EventReference | undefined {
   const latestEvent = game.events[0] as EventReference | undefined
-  return latestEvent && date(latestEvent.occuredIn).sameInstant(date(game.currentDate)) ? latestEvent : undefined
+  return latestEvent && date(latestEvent.occurredIn).sameInstant(date(game.currentDate)) ? latestEvent : undefined
 }
 
 /**

@@ -66,7 +66,7 @@ export const specialEventProbs = {
 export function durationWithoutEvents(game: Game, eventsToConsider: EventId[]): Duration {
   const lastOccurrence = game.events
     .filter((eventRef) => eventsToConsider.includes(eventRef.id))
-    .reduce((yearSoFar, eventRef) => laterOf(yearSoFar, date(eventRef.occuredIn)), date(startDate))
+    .reduce((yearSoFar, eventRef) => laterOf(yearSoFar, date(eventRef.occurredIn)), date(startDate))
   return durationBetween(lastOccurrence, date(game.currentDate))
 }
 
