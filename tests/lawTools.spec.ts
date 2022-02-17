@@ -111,7 +111,7 @@ describe("lawTools", () => {
 
   describe("lawIsAccepted()", () => {
     const game: Partial<Game> = {
-      acceptedLaws: [{ lawId: "Test", effectiveSince: 2222 }],
+      acceptedLaws: [{ lawId: "Test", effectiveSince: 2223 }],
       currentYear: 2222,
     }
     it("should return true, if the given law was accepted.", () => {

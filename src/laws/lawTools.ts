@@ -64,7 +64,7 @@ export function linearPopChange(basePoint: RefPoint, refPoint: RefPoint) {
  */
 export function lawIsAccepted(game: Game, lawId: LawId, minActiveYears: number = 0): boolean {
   if (!allLaws.map((l) => l.id).includes(lawId)) throw new Error("Unknown law ID " + lawId + " used in a law.")
-  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince <= game.currentYear + minActiveYears)
+  return game.acceptedLaws.some((l) => l.lawId === lawId && l.effectiveSince - 1 <= game.currentYear + minActiveYears)
 }
 
 export function getActiveLaw(lawRefs: LawReference[], matcher: RegExp): LawId | undefined {
