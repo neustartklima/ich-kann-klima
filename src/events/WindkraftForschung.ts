@@ -12,7 +12,7 @@ export default defineEvent({
   },
 
   probability(game, event) {
-    if (lessTimeHasPassed(game, event, { years: 3, months: 7 })) {
+    if (lessTimeHasPassed(game, event, { years: 20 }, { years: 3, months: 7 })) {
       return 0
     }
     const factor = lawIsAccepted(game, "WindkraftVereinfachen") ? 1.5 : 1
@@ -23,7 +23,7 @@ export default defineEvent({
       return 0.4 * factor
     }
     if (lawIsAccepted(game, "AusschreibungsverfahrenfuerWindkraftVerdoppeln")) {
-      return 0.3 * factor
+      return 0.1 * factor
     }
     return 0
   },
