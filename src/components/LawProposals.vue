@@ -104,13 +104,14 @@ function transEnd(event: TransitionEvent) {
   transition: transform 0.1s, background 0.3s;
   transform-style: flat;
   pointer-events: auto;
+  user-select: none;
 
   &:hover {
     background: lightgrey;
   }
 
   &:active {
-    transform: translate3d(400px, 333px, 510px) scale(1.1);
+    transform: translate3d(430px, 333px, 510px) scale(1.1);
   }
 }
 
