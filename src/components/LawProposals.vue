@@ -70,7 +70,7 @@ function transEnd(event: TransitionEvent) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  transform: translate3d(320px, 199px, 400px) scale(0.6) rotateX(90deg) scale(0.4);
+  transform: translate3d(345px, 249px, 400px) scale(0.6) rotateX(90deg) scale(0.4);
   --transitiontime: 0.5s;
   transition: all var(--transitiontime);
   transform-style: flat;
@@ -81,7 +81,7 @@ function transEnd(event: TransitionEvent) {
   }
 
   &.poppedUp {
-    transform: translate3d(340px, -50px, 450px) scale(0.4);
+    transform: translate3d(345px, 160px, 450px) scale(0.4);
   }
 }
 
@@ -90,7 +90,7 @@ function transEnd(event: TransitionEvent) {
 }
 .ProposedLaws.poppedUp .singleLaw {
   &:not(:first-of-type) {
-    margin-top: -300px;
+    margin-top: -380px;
   }
 }
 

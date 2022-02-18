@@ -54,7 +54,7 @@ function sendAccept(event: AnimationEvent) {
   padding: 1rem;
   box-sizing: border-box;
   margin: 0 auto;
-  transform: rotate(-3deg) translateX(-50px);
+  transform: rotate(-3deg) translateX(-100px);
   background-image: url(/src/assets/paper.png);
   background-size: cover;
 
@@ -70,22 +70,12 @@ function sendAccept(event: AnimationEvent) {
   }
 
   &:not(:first-of-type) {
-    margin-top: -350px;
+    margin-top: -370px;
   }
 
   &:nth-of-type(odd) {
-    transform: rotate(3deg) translateX(50px);
+    transform: rotate(3deg) translateX(100px);
   }
-
-  // @media (max-width: 800px) {
-  //   width: 50%;
-  //   height: 80%;
-  //   font-size: 1.3vw;
-
-  //   &:not(:first-of-type) {
-  //     margin-top: -150px;
-  //   }
-  // }
 
   /* name |  duration | easing | delay | iteration-count | direction | fill-mode | play-state */
   animation: twistIn var(--transitiontime) ease-out 0s 1 normal both;
