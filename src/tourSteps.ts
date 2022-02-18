@@ -5,6 +5,7 @@ export type TourStep = {
   title: string
   text: string
   highlight?: string
+  offset?: number
 }
 
 export const steps: TourStep[] = [
@@ -21,7 +22,7 @@ export const steps: TourStep[] = [
       - der Klimakatastrophe entgegenzusteuern
       - Deine Beliebtheit in der Bevölkerung zu erhalten
       - und dabei nicht zu viel Geld auszugeben
-    `
+    `,
   },
   {
     id: "room",
@@ -45,8 +46,13 @@ export const steps: TourStep[] = [
     title: "Die Wähler",
     text: "Wenn Du aus dem Fenster schaust, siehst Du, in welcher Stimmung Deine Wähler sind.",
     highlight: "popularity",
+    offset: 100,
   },
-  { id: "climate", title: "Das Klima", text: "Die Pflanze in der Ecke zeigt Dir, wie sich das Klima entwickelt.",
-  highlight: "plant"
-},
+  {
+    id: "climate",
+    title: "Das Klima",
+    text: "Die Pflanze in der Ecke zeigt Dir, wie sich das Klima entwickelt.",
+    highlight: "plant",
+    offset: 100,
+  },
 ]

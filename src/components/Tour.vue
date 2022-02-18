@@ -25,6 +25,13 @@ export default defineComponent({
       return steps.find((step) => step.id === this.$store.state.tour.step)
     },
 
+    offset(): string {
+      if (this.currentStep?.offset != undefined) {
+        return this.currentStep.offset + "px"
+      }
+      return "0px"
+    },
+
     title(): string | undefined {
       return this.currentStep?.title
     },
@@ -63,7 +70,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <Dialog v-if="title && text">
+  <Dialog v-if="title && text" :offset="offset">
     <h2>{{ title }}</h2>
     <div v-html="text" />
 
