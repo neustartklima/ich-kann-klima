@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from "vue"
+
+const props = defineProps({
+  offset: String,
+})
+const top = computed(() => props.offset || "0px")
+</script>
 
 <template>
   <div class="dialog">
@@ -13,8 +20,8 @@
 <style lang="scss" scoped>
 .dialog {
   position: absolute;
-  top: 10vh;
-  left: 20vh;
+  top: v-bind(top);
+  left: 0;
   right: 0;
   margin: 0 auto;
   width: 600px;
@@ -24,7 +31,8 @@
   border-radius: 2rem;
   box-shadow: 0 0 8px rgba(100, 100, 100, 0.5);
   padding: 1rem;
-  transform: scale(0.5) translate3d(-160px, 0, 520px);
+  transform-origin: 0% 0%;
+  transform: scale(0.5) translate3d(300px, 320px, 520px);
   pointer-events: auto;
 
   .buttons {
