@@ -58,14 +58,46 @@ function startTour() {
           "Klima-Wahl-Rechner".
         </p>
         <p>Ein Teil des Teams blieb dabei und entwickelte die Ideen weiter.</p>
-        <p>Wir sind: Anne, Bernd, Clara, Daniel, Elsa, Frido, Gesa und Horst.</p>
-        <p>TODO: Mit Nachnamen? Fotos? Wer soll / will dabei sein?</p>
+        <p>Wir sind:</p>
+        <div id="persons">
+          <div>
+            <img src="../assets/ich-kann-klima-Alina-circle.jpg" />
+            <p>Alina</p>
+            <p>Dietrich</p>
+          </div>
+          <div>
+            <img src="../assets/ich-kann-klima-Joachim-circle.jpg" />
+            <p>Joachim</p>
+            <p>Schirrmacher</p>
+          </div>
+          <div>
+            <img src="../assets/ich-kann-klima-Lisa-circle.jpg" />
+            <p>Lisa</p>
+            <p>Hohmann</p>
+          </div>
+          <div>
+            <img src="../assets/ich-kann-klima-Mathias-circle.jpg" />
+            <p>Mathias</p>
+            <p>de Riese</p>
+          </div>
+          <div>
+            <img src="../assets/ich-kann-klima-Pina-circle.jpg" />
+            <p>Pina</p>
+            <p>Gromotka</p>
+          </div>
+          <div>
+            <img src="../assets/ich-kann-klima-Thomas-circle.jpg" />
+            <p>Thomas</p>
+            <p>Olszamowski</p>
+          </div>
+        </div>
+
         <h2>Kontakt und Impressum</h2>
-        <p>Mario Mustermann (V.i.S.d.P.)</p>
-        <p>Musterstraße 22</p>
-        <p>22222 Musterhausen</p>
-        <p>+49 (222) 2222 2222</p>
-        <p><a href="mailto:info@ich-kann-klima.de">info@ich-kann-klima-de</a></p>
+        <p>Alina Dietrich (V.i.S.d.P.)</p>
+        <p>Hülchrather Straße 13</p>
+        <p>40221 Düsseldorf</p>
+        <p>+49 (151) 2667 3369</p>
+        <p><a href="mailto:info@ich-kann-klima.de">info@ich-kann-klima.de</a></p>
       </div>
     </div>
   </div>
@@ -93,6 +125,7 @@ function startTour() {
 }
 #content {
   // border: 0.1px solid lightgrey;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,7 +140,30 @@ function startTour() {
 }
 .text {
   // border: 0.1px solid lightgrey;
+  width: 100%;
   max-width: 40em;
+}
+#persons {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  @media (max-width: 70em) {
+    grid-template-columns: 50% 50%;
+  }
+  align-items: center;
+  justify-content: center;
+  > div {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    > img {
+      width: 100%;
+    }
+    > p {
+      margin-top: -1em;
+    }
+  }
 }
 #buttons {
   display: flex;
